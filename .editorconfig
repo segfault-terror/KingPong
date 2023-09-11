@@ -1,0 +1,20 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = false
+indent_style = tab
+indent_size = 4
+
+[*.json]
+indent_style = space
+
+[.prettierrc]
+indent_style = space
+
+[.eslintrc.js]
+indent_style = space
+
+[docker-compose.yml]
+indent_style = space

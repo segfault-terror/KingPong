@@ -1,0 +1,32 @@
+services:
+
+  db:
+    container_name: db
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+    ports:
+      - 5432:5432
+
+  frontend:
+    container_name: frontend
+    image: node
+    restart: always
+    command: bash -c "npm install --prefix /app && npm run dev --prefix /app"
+    volumes:
+      - ./frontend:/app
+    ports:
+      - 8080:3000
+
+  backend:
+    container_name: backend
+    image: node
+    restart: always
+    command: bash -c "npm install --prefix /app && npm run start:dev --prefix /app"
+    volumes:
+      - ./backend:/app
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
