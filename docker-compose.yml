@@ -1,34 +1,33 @@
 services:
+    db:
+        container_name: db
+        image: postgres
+        restart: always
+        environment:
+            POSTGRES_PASSWORD: example
+        ports:
+            - 5432:5432
 
-  db:
-    container_name: db
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: example
-    ports:
-      - 5432:5432
+    frontend:
+        container_name: frontend
+        image: node
+        restart: always
+        working_dir: /app
+        command: bash -c "npm install && npm run dev"
+        volumes:
+            - ./frontend:/app
+        ports:
+            - 8080:3000
 
-  frontend:
-    container_name: frontend
-    image: node
-    restart: always
-    working_dir: /app
-    command: bash -c "npm install && npm run dev"
-    volumes:
-      - ./frontend:/app
-    ports:
-      - 8080:3000
-
-  backend:
-    container_name: backend
-    image: node
-    restart: always
-    working_dir: /app
-    command: bash -c "npm install && npm run start:dev"
-    volumes:
-      - ./backend:/app
-    ports:
-      - 3000:3000
-    depends_on:
-      - db
+    backend:
+        container_name: backend
+        image: node
+        restart: always
+        working_dir: /app
+        command: bash -c "npm install && npm run start:dev"
+        volumes:
+            - ./backend:/app
+        ports:
+            - 3000:3000
+        depends_on:
+            - db
