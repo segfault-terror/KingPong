@@ -1,5 +1,6 @@
 import type { Config } from 'tailwindcss';
 
+
 const config: Config = {
     content: [
         './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -12,6 +13,18 @@ const config: Config = {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
                 'gradient-conic':
                     'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+            },
+            colors: {
+                primary: '#4F1754',
+                secondary: '#FFE72D',
+                background: '#250A3B',
+                inactive: {
+                    '200': '#6A6A6A',
+                    '500': '#302F2F',
+                },
+                online: '#03CE18',
+                offline: '#302F2F',
+                inGame: '#FF650B',
             },
         },
     },
