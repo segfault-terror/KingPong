@@ -3,10 +3,17 @@
     "version": "1.0.0",
     "description": "Pong Game",
     "main": "index.js",
+    "workspaces": [
+        "backend",
+        "frontend"
+    ],
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "format": "prettier --write .",
-        "start": "docker compose up --build --detach"
+        "docker:db": "docker compose up db --detach",
+        "client:dev": "npm run dev --workspace=frontend",
+        "server:dev": "wait-on tcp:5432 && npm run start:dev --workspace=backend",
+        "start": "concurrently 'npm:docker:db' 'npm:server:dev' 'npm:client:dev'"
     },
     "repository": {
         "type": "git",
@@ -26,6 +33,8 @@
     },
     "homepage": "https://github.com/Archer-01/KingPong#readme",
     "devDependencies": {
-        "prettier": "^3.0.3"
+        "concurrently": "^8.2.1",
+        "prettier": "^3.0.3",
+        "wait-on": "^7.0.1"
     }
 }
