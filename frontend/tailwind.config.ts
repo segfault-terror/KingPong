@@ -24,8 +24,11 @@ const config: Config = {
                 },
                 online: '#03CE18',
                 offline: '#302F2F',
-                inGame: '#FF650B',
+                ingame: '#FF650B',
             },
+            fontFamily: {
+                nicomoji: ['var(--font-nicomoji)'],
+            }
         },
     },
     plugins: [],
