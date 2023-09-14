@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import localFont from 'next/font/local'
+import localFont from 'next/font/local';
+import { Jost, Mulish } from 'next/font/google';
 
 const nicoMoji = localFont({
     src: [
@@ -10,7 +11,17 @@ const nicoMoji = localFont({
         },
     ],
     variable: '--font-nicomoji',
-})
+});
+
+const jost = Jost({
+    variable: '--font-jost',
+    subsets: ['latin'],
+});
+
+const mulish = Mulish({
+    variable: '--font-mulish',
+    subsets: ['latin'],
+});
 
 export const metadata: Metadata = {
     title: 'KingPong',
@@ -23,7 +34,10 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en" className={`${nicoMoji.variable}`}>
+        <html
+            lang="en"
+            className={`${nicoMoji.variable} ${jost.variable} ${mulish.variable}`}
+        >
             <body>{children}</body>
         </html>
     );

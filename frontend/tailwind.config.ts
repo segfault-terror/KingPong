@@ -1,6 +1,5 @@
 import type { Config } from 'tailwindcss';
 
-
 const config: Config = {
     content: [
         './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -27,8 +26,10 @@ const config: Config = {
                 ingame: '#FF650B',
             },
             fontFamily: {
-                nicomoji: ['var(--font-nicomoji)'],
-            }
+                nicomoji: ['var(--font-nicomoji)', 'sans-serif'],
+                jost: ['var(--font-jost)', 'sans-serif'],
+                mulish: ['var(--font-mulish)', 'sans-serif'],
+            },
         },
     },
     plugins: [],
