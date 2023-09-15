@@ -34,6 +34,7 @@ const config: Config = {
                     '400': '#66ABFF',
                     '500': '#45144B',
                 },
+                silver: '#C6C6C6',
             },
             fontFamily: {
                 nicomoji: ['var(--font-nicomoji)', 'sans-serif'],
