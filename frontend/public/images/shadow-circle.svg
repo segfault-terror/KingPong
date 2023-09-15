@@ -1,0 +1,14 @@
+<svg width="540" height="464" viewBox="0 0 540 464" fill="none" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="284.5" cy="285" rx="284.5" ry="285" fill="url(#paint0_radial_565_2399)" fill-opacity="0.51"/>
+<path d="M565 285C565 440.199 439.409 566 284.5 566C129.591 566 4 440.199 4 285C4 129.801 129.591 4 284.5 4C439.409 4 565 129.801 565 285Z" stroke="url(#paint1_radial_565_2399)" stroke-width="8"/>
+<defs>
+<radialGradient id="paint0_radial_565_2399" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(95 106) rotate(38.5794) scale(278.224 387.105)">
+<stop offset="0.374764" stop-color="#501A55" stop-opacity="0.1"/>
+<stop offset="1"/>
+</radialGradient>
+<radialGradient id="paint1_radial_565_2399" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(323.5 318) rotate(-133.966) scale(274.402 527.976)">
+<stop offset="0.489583" stop-color="#6A6A6A"/>
+<stop offset="1" stop-color="#6A6A6A" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>

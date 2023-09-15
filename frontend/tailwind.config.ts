@@ -17,7 +17,10 @@ const config: Config = {
             },
             colors: {
                 primary: '#4F1754',
-                secondary: '#FFE72D',
+                secondary: {
+                    '200': '#FFE72D',
+                    '500': '#FFA82A',
+                },
                 background: '#250A3B',
                 inactive: {
                     '200': '#6A6A6A',
@@ -32,6 +35,9 @@ const config: Config = {
                 jost: ['var(--font-jost)', 'sans-serif'],
                 mulish: ['var(--font-mulish)', 'sans-serif'],
             },
+            dropShadow: {
+                '3xl': '0 2px 2px rgba(255, 228, 134, 0.68)',
+              }
         },
     },
     plugins: [],
