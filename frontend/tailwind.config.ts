@@ -26,6 +26,11 @@ const config: Config = {
                 online: '#03CE18',
                 offline: '#302F2F',
                 ingame: '#FF650B',
+                cube_palette: {
+                    '200': '#E8D5B5',
+                    '400': '#66ABFF',
+                    '500': '#45144B',
+                },
             },
             fontFamily: {
                 nicomoji: ['var(--font-nicomoji)', 'sans-serif'],
