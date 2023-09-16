@@ -10,6 +10,14 @@ const preview: Preview = {
                 date: /Date$/,
             },
         },
+        backgrounds: {
+            values: [
+                {
+                    name: 'kingpong',
+                    value: '#250A3B',
+                },
+            ],
+        },
     },
 };
 
