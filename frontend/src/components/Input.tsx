@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BiShow, BiHide } from 'react-icons/bi';
+import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
 
 type InputProps = {
     id: string;
@@ -10,9 +10,13 @@ type InputProps = {
 
 function ShowButton({ isShown }: { isShown: boolean }) {
     if (!isShown) {
-        return <BiShow className="text-white absolute top-[50%] right-2" />;
+        return (
+            <MdVisibility className="text-white absolute top-[50%] right-2" />
+        );
     }
-    return <BiHide className="text-white absolute top-[50%] right-2" />;
+    return (
+        <MdVisibilityOff className="text-white absolute top-[50%] right-2" />
+    );
 }
 
 export default function Input({ id, children, type, placeholder }: InputProps) {
