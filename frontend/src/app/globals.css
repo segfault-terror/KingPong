@@ -1,3 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+
+@keyframes moveBall {
+	0% {
+	  left: 0;
+	}
+	50% {
+	  left: 98%;
+	}
+	100% {
+	  left: 0;
+	}
+  }
+
+.animate-ball {
+	animation: moveBall 2s linear infinite;
+}
+
+@keyframes bordshadow{
+	0% {
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+	}
+	50% {
+		box-shadow: 0 0 40px rgba(255, 255, 255, 0.5);
+		box-sizing: inherit;
+	}
+	100% {
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+	}
+}
+
+.animate-bordshadow {
+	animation: bordshadow 1.5s ease-in-out infinite;
+}
