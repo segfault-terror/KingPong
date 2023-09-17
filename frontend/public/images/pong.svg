@@ -1,9 +1,8 @@
 <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
 <circle cx="20" cy="20" r="20" fill="url(#paint0_radial_661_2398)"/>
 <defs>
-<radialGradient id="paint0_radial_661_2398" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(29 14) rotate(122.619) scale(29.6816)">
-<stop stop-color="white"/>
-<stop offset="0.418934" stop-color="#FFE72D"/>
+<radialGradient id="paint0_radial_661_2398" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(9.71429 12.5714) rotate(45.179) scale(32.325 41.4737)">
+<stop offset="0.353683" stop-color="#FFE72D"/>
 <stop offset="1" stop-color="#4A4202"/>
 </radialGradient>
 </defs>
