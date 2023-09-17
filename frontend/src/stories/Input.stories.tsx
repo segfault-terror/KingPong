@@ -10,10 +10,10 @@ export default meta;
 
 export const Default = (): JSX.Element => (
     <>
-        <Input id="uname" type="text">
+        <Input>
             Username
         </Input>
         <br />
-        <Input id="pass" type="password" placeholder="Password" />
+        <Input type="password" placeholder="Password" />
     </>
 );

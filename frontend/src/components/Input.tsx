@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { HtmlHTMLAttributes, useState } from 'react';
+import { customAlphabet } from 'nanoid';
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
+import { RegisterOptions, UseFormRegister } from 'react-hook-form';
 
-type InputProps = {
-    id: string;
+type InputProps = HtmlHTMLAttributes<HTMLInputElement> & {
+    id?: string;
     children?: React.ReactNode;
-    type: string;
+    type?: string;
     placeholder?: string;
 };
 
@@ -19,8 +21,11 @@ function ShowButton({ isShown }: { isShown: boolean }) {
     );
 }
 
-export default function Input({ id, children, type, placeholder }: InputProps) {
+const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10);
+
+export default function Input({ id, children, type="text", placeholder, ...rest }: InputProps) {
     const [isShown, setIsShown] = useState(false);
+    id = id ?? nanoid();
     if (type === 'password') {
         return (
             <div className="relative">
@@ -32,6 +37,7 @@ export default function Input({ id, children, type, placeholder }: InputProps) {
                     className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300
                         focus:outline-none focus:border-secondary-200 bg-transparent
                         font-mulish text-white pl-1"
+                    {...rest}
                 />
                 <label
                     htmlFor={id}
@@ -62,6 +68,7 @@ export default function Input({ id, children, type, placeholder }: InputProps) {
                 className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300
                     focus:outline-none focus:border-secondary-200 bg-transparent
                     font-mulish text-white pl-1"
+                    {...rest}
             />
             <label
                 htmlFor={id}
