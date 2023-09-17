@@ -21,17 +21,17 @@ function DirectMessage({
     lastMessage,
 }: DirectMessageProps) {
     return (
-        <div className="flex justify-around items-center gap-1">
+        <div className="flex items-center justify-around gap-1">
             <Image
                 src={imagePath}
                 alt={username}
                 // WARN: Consider changing this to a more appropriate size
                 width="64"
                 height="64"
-                className="border-solid border-4 border-secondary rounded-full"
+                className="border-secondary rounded-full border-4 border-solid"
             />
             <div className="flex flex-col">
-                <p className="text-white font-jost font-bold">{username}</p>
+                <p className="font-jost font-bold text-white">{username}</p>
                 <p className="font-jost font-light text-white">
                     {truncateString(`You: ${lastMessage}`, 20)}
                 </p>

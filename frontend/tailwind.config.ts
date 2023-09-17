@@ -43,7 +43,7 @@ const config: Config = {
             },
             dropShadow: {
                 '3xl': '0 2px 2px rgba(255, 228, 134, 0.68)',
-              }
+            },
         },
     },
     plugins: [],

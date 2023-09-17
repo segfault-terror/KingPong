@@ -11,11 +11,11 @@ type InputProps = {
 function ShowButton({ isShown }: { isShown: boolean }) {
     if (!isShown) {
         return (
-            <MdVisibility className="text-white absolute top-[50%] right-2" />
+            <MdVisibility className="absolute right-2 top-[50%] text-white" />
         );
     }
     return (
-        <MdVisibilityOff className="text-white absolute top-[50%] right-2" />
+        <MdVisibilityOff className="absolute right-2 top-[50%] text-white" />
     );
 }
 
@@ -29,16 +29,16 @@ export default function Input({ id, children, type, placeholder }: InputProps) {
                     autoComplete="off"
                     type={isShown ? 'text' : 'password'}
                     placeholder="Full Name"
-                    className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300
-                    focus:outline-none focus:border-secondary-200 bg-transparent
-                    font-mulish text-white pl-1"
+                    className="focus:border-secondary-200 font-mulish peer h-10 w-full border-b-2
+                    border-gray-300 bg-transparent pl-1
+                    text-white placeholder-transparent focus:outline-none"
                 />
                 <label
                     htmlFor={id}
-                    className="absolute left-0 -top-3.5 text-[#ccc] text-sm
-                    peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2
-                    transition-all peer-focus:-top-3.5 peer-focus:text-[#ccc] peer-focus:text-sm peer-placeholder-shown:pl-1
-                    font-mulish pl-0 select-none peer-focus:pl-0"
+                    className="font-mulish absolute -top-3.5 left-0 select-none
+                    pl-0 text-sm text-[#ccc]
+                    transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:pl-1 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400
+                    peer-focus:-top-3.5 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-[#ccc]"
                 >
                     {children ?? placeholder}
                 </label>
@@ -59,16 +59,16 @@ export default function Input({ id, children, type, placeholder }: InputProps) {
                 autoComplete="off"
                 type={type}
                 placeholder="Full Name"
-                className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300
-                    focus:outline-none focus:border-secondary-200 bg-transparent
-                    font-mulish text-white pl-1"
+                className="focus:border-secondary-200 font-mulish peer h-10 w-full border-b-2
+                    border-gray-300 bg-transparent pl-1
+                    text-white placeholder-transparent focus:outline-none"
             />
             <label
                 htmlFor={id}
-                className="absolute left-0 -top-3.5 text-[#ccc] text-sm
-                    peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2
-                    transition-all peer-focus:-top-3.5 peer-focus:text-[#ccc] peer-focus:text-sm peer-placeholder-shown:pl-1
-                    font-mulish pl-0 select-none peer-focus:pl-0"
+                className="font-mulish absolute -top-3.5 left-0 select-none
+                    pl-0 text-sm text-[#ccc]
+                    transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:pl-1 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400
+                    peer-focus:-top-3.5 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-[#ccc]"
             >
                 {children ?? placeholder}
             </label>
