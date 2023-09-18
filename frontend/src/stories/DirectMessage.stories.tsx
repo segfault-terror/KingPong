@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import DirectMessage from '../components/DirectMessage';
 
-import Avatar from './assets/2.jpeg';
+import Avatar from './assets/1.jpeg';
 
 const meta: Meta<typeof DirectMessage> = {
     title: 'DirectMessage',
@@ -13,7 +13,7 @@ type Story = StoryObj<typeof DirectMessage>;
 
 export const Primary: Story = {
     args: {
-        username: 'Archer',
+        userName: 'Archer',
         imagePath: Avatar.src,
         lastMessage: 'Wanna play?',
     },
