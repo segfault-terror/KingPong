@@ -70,7 +70,7 @@ export function SignUpForm() {
                         pattern: {
                             value: /^[A-Za-z][A-Za-z0-9_]{1,14}$/g,
                             message:
-                                'Username must be alphanumeric and start with a letter and can contain underscores',
+                                'Username must be alphanumeric and start with a letter',
                         },
                     }}
                 />
