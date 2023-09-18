@@ -13,19 +13,20 @@ type SignUpInputs = {
     password: string;
 };
 
+const onSubmit: SubmitHandler<SignUpInputs> = (data) => {
+    console.log('sending data to backend', data);
+};
+
 export function SignUpForm() {
     const {
         control,
         formState: { errors },
         handleSubmit,
     } = useForm<SignUpInputs>();
-    const onSubmit: SubmitHandler<SignUpInputs> = (data) => {
-        console.debug('sending data to backend', data);
-    };
-    console.log(errors);
+
     return (
-        <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
-            <div className="h-16 my-2">
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="h-16 my-4">
                 <Controller
                     name="fullname"
                     control={control}
@@ -47,7 +48,8 @@ export function SignUpForm() {
                     </span>
                 )}
             </div>
-            <div className="h-16 my-2">
+
+            <div className="h-16 my-4">
                 <Controller
                     name="username"
                     control={control}
@@ -58,12 +60,17 @@ export function SignUpForm() {
                             message: 'Username is required',
                         },
                         minLength: {
-                            value: 3,
-                            message: 'Username must be at least 3 characters',
+                            value: 2,
+                            message: 'Username must be at least 2 characters',
                         },
                         maxLength: {
                             value: 15,
                             message: 'Username must be at most 15 characters',
+                        },
+                        pattern: {
+                            value: /^[A-Za-z][A-Za-z0-9_]{1,14}$/g,
+                            message:
+                                'Username must be alphanumeric and start with a letter and can contain underscores',
                         },
                     }}
                 />
@@ -74,40 +81,75 @@ export function SignUpForm() {
                 )}
             </div>
 
-            <input type="submit" className="text-white" />
+            <div className="h-16 my-4">
+                <Controller
+                    name="email"
+                    control={control}
+                    render={({ field }) => (
+                        <Input type="email" {...field}>
+                            Email
+                        </Input>
+                    )}
+                    rules={{
+                        required: {
+                            value: true,
+                            message: 'Email is required',
+                        },
+                        pattern: {
+                            value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
+                            message:
+                                'Email must in the format of: example@example.com',
+                        },
+                    }}
+                />
+                {errors.email && (
+                    <span className="text-xs text-red-500">
+                        {errors.email.message}
+                    </span>
+                )}
+            </div>
+
+            <div className="h-16 my-4">
+                <Controller
+                    name="password"
+                    control={control}
+                    render={({ field }) => (
+                        <Input type="password" {...field}>
+                            Password
+                        </Input>
+                    )}
+                    rules={{
+                        required: {
+                            value: true,
+                            message: 'Password is required',
+                        },
+                        minLength: {
+                            value: 8,
+                            message: 'Password must be at least 8 characters',
+                        },
+                        maxLength: {
+                            value: 32,
+                            message: 'Password must be at most 32 characters',
+                        },
+                    }}
+                />
+                {errors.password && (
+                    <span className="text-xs text-red-500">
+                        {errors.password.message}
+                    </span>
+                )}
+            </div>
+
+            <button
+                type="submit"
+                className="text-primary bg-secondary-200 font-jost font-bold w-full h-10 rounded-3xl group relative"
+            >
+                Sign up
+            </button>
         </form>
     );
 }
 
 export default function Form() {
-    const {
-        control,
-        watch,
-        formState: { errors },
-        handleSubmit,
-    } = useForm<Inputs>();
-    const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
-
-    console.log(watch('example'));
-    return (
-        <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
-            <Controller
-                name="example"
-                control={control}
-                render={({ field }) => <Input {...field}> Username </Input>}
-            />
-            <br />
-            <Controller
-                name="exampleRequired"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                    <Input {...field} placeholder="Password" />
-                )}
-            />
-            {errors.exampleRequired && <span>This field is required</span>}
-            <br />
-            <input type="submit" className="text-white" />
-        </form>
-    );
+    return <></>;
 }
