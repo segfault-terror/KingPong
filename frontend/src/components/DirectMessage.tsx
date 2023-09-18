@@ -1,14 +1,5 @@
 import Image from 'next/image';
 
-/**
- * Truncates a string to a given length
- * Example: truncateString("Hello World", 8) -> "Hello..."
- */
-function truncateString(str: string, maxLen: number) {
-    if (str.length <= maxLen) return str;
-    return `${str.slice(0, maxLen - 3)}...`;
-}
-
 type DirectMessageProps = {
     username: string;
     imagePath: string;
@@ -21,19 +12,24 @@ function DirectMessage({
     lastMessage,
 }: DirectMessageProps) {
     return (
-        <div className="flex items-center justify-around gap-1">
+        <div className="flex items-center gap-4 h-16">
             <Image
                 src={imagePath}
                 alt={username}
-                // WARN: Consider changing this to a more appropriate size
                 width="64"
                 height="64"
-                className="border-secondary rounded-full border-4 border-solid"
+                objectFit="cover"
+                className="border-secondary rounded-full border-4 border-solid
+                            min-w-[64px] max-w-[64px]
+                            max-h-full"
             />
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
                 <p className="font-jost font-bold text-white">{username}</p>
-                <p className="font-jost font-light text-white">
-                    {truncateString(`You: ${lastMessage}`, 20)}
+                <p
+                    className="font-jost font-light text-white
+                                whitespace-nowrap overflow-hidden text-ellipsis"
+                >
+                    {`You: ${lastMessage}`}
                 </p>
             </div>
         </div>
