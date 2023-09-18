@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import DirectMessage from '../components/DirectMessage';
+import DirectMessage, { UserStatus } from '../components/DirectMessage';
 
 import Avatar from './assets/1.jpeg';
 
@@ -16,5 +16,6 @@ export const Primary: Story = {
         userName: 'Archer',
         imagePath: Avatar.src,
         lastMessage: 'Wanna play?',
+        status: UserStatus.Online,
     },
 };
