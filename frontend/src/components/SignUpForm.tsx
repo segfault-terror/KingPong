@@ -1,11 +1,6 @@
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import Input from './Input';
 
-type Inputs = {
-    example: string;
-    exampleRequired: string;
-};
-
 type SignUpInputs = {
     fullname: string;
     username: string;
@@ -13,11 +8,11 @@ type SignUpInputs = {
     password: string;
 };
 
-const onSubmit: SubmitHandler<SignUpInputs> = (data) => {
+const onSignUp: SubmitHandler<SignUpInputs> = (data) => {
     console.log('sending data to backend', data);
 };
 
-export function SignUpForm() {
+export default function SignUpForm() {
     const {
         control,
         formState: { errors },
@@ -25,7 +20,7 @@ export function SignUpForm() {
     } = useForm<SignUpInputs>();
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSignUp)}>
             <div className="h-16 my-4">
                 <Controller
                     name="fullname"
@@ -149,8 +144,4 @@ export function SignUpForm() {
             </button>
         </form>
     );
-}
-
-export default function Form() {
-    return <></>;
 }
