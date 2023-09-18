@@ -38,7 +38,7 @@ export default function RootLayout({
             lang="en"
             className={`${nicoMoji.variable} ${jost.variable} ${mulish.variable}`}
         >
-            <body>{children}</body>
+            <body className="font-mulish">{children}</body>
         </html>
     );
 }
