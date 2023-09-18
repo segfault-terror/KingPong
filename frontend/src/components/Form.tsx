@@ -69,13 +69,15 @@ export function SignUpForm() {
                         },
                         pattern: {
                             value: /^[A-Za-z][A-Za-z0-9_]{1,14}$/g,
-                            message:
-                                'Username must be alphanumeric and start with a letter',
+                            message: 'Username format is invalid',
                         },
                     }}
                 />
                 {errors.username && (
-                    <span className="text-xs text-red-500">
+                    <span
+                        className="text-xs text-red-500"
+                        title={errors.username.message}
+                    >
                         {errors.username.message}
                     </span>
                 )}
@@ -97,8 +99,7 @@ export function SignUpForm() {
                         },
                         pattern: {
                             value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
-                            message:
-                                'Email must in the format of: example@example.com',
+                            message: 'Email format is invalid.',
                         },
                     }}
                 />
