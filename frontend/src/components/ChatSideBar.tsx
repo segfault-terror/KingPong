@@ -1,53 +1,41 @@
 export default ChatSidebar;
 
-import { useState } from 'react';
 import { BsSend } from 'react-icons/bs';
 import { FaSlackHash } from 'react-icons/fa';
+import { useState } from 'react';
 
 function ChatSidebar() {
-    const [activeTab, setActiveTab] = useState(ChatTab.DirectMessages);
-    const switchToTab = (tab: ChatTab) => setActiveTab(tab);
+    const [currentTab, setCurrentTab] = useState(ChatTab.DirectMessages);
+    const isDM = currentTab === ChatTab.DirectMessages;
+    const changeTab = (tab: ChatTab) => setCurrentTab(tab);
 
     return (
         <>
-            <div className="flex flex-row text-inactive-200">
-                <div
+            <button
+                className="border-solid border-secondary-200 border-2 w-1/2 py-2 text-inactive-200"
+                onClick={() => changeTab(ChatTab.DirectMessages)}
+            >
+                <BsSend
                     className={`${
-                        activeTab === ChatTab.DirectMessages &&
-                        'text-secondary-200'
-                    }
-                                w-1/2
-                                border-solid border-secondary-200 border-2
-                                py-2`}
-                >
-                    <button
-                        className="mx-auto block"
-                        onClick={() => switchToTab(ChatTab.DirectMessages)}
-                    >
-                        <BsSend className="w-8 h-8" />
-                    </button>
-                </div>
-                <div
+                        isDM && 'text-secondary-200'
+                    } w-8 h-8 mx-auto`}
+                />
+            </button>
+            <button
+                className="border-solid border-secondary-200 border-2 w-1/2 py-2 text-inactive-200"
+                onClick={() => changeTab(ChatTab.Channels)}
+            >
+                <FaSlackHash
                     className={`${
-                        activeTab === ChatTab.Channels && 'text-secondary-200'
-                    }
-                                w-1/2
-                                border-solid border-secondary-200 border-2
-                                py-2`}
-                >
-                    <button
-                        className="mx-auto block"
-                        onClick={() => switchToTab(ChatTab.Channels)}
-                    >
-                        <FaSlackHash className="w-8 h-8" />
-                    </button>
-                </div>
-            </div>
+                        !isDM && 'text-secondary-200'
+                    } w-8 h-8 mx-auto`}
+                />
+            </button>
         </>
     );
 }
 
-enum ChatTab {
+export enum ChatTab {
     DirectMessages = 'Direct Messages',
     Channels = 'Channels',
 }
