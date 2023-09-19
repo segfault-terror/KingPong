@@ -1,5 +1,5 @@
 import type { Meta } from '@storybook/react';
-import SignInForm from '../components/SignInForm';
+import SignInForm from '../app/(authentication)/signin/SignInForm';
 
 const meta: Meta<typeof SignInForm> = {
     component: SignInForm,

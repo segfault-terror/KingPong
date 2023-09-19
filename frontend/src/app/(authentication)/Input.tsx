@@ -23,7 +23,13 @@ function ShowButton({ isShown }: { isShown: boolean }) {
 
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10);
 
-export default function Input({ id, children, type="text", placeholder, ...rest }: InputProps) {
+export default function Input({
+    id,
+    children,
+    type = 'text',
+    placeholder,
+    ...rest
+}: InputProps) {
     const [isShown, setIsShown] = useState(false);
     id = id ?? nanoid();
     if (type === 'password') {
@@ -68,7 +74,7 @@ export default function Input({ id, children, type="text", placeholder, ...rest 
                 className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300
                     focus:outline-none focus:border-secondary-200 bg-transparent
                     font-mulish text-white pl-1"
-                    {...rest}
+                {...rest}
             />
             <label
                 htmlFor={id}

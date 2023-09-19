@@ -1,5 +1,7 @@
+'use client';
+
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import Input from './Input';
+import Input from '../Input';
 
 type SignUpInputs = {
     fullname: string;
