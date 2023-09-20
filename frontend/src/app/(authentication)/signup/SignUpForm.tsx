@@ -27,7 +27,11 @@ export default function SignUpForm() {
                 <Controller
                     name="fullname"
                     control={control}
-                    render={({ field }) => <Input {...field}>Full Name</Input>}
+                    render={({ field }) => (
+                        <Input id="fname" {...field}>
+                            Full Name
+                        </Input>
+                    )}
                     rules={{
                         required: {
                             value: true,
@@ -50,7 +54,11 @@ export default function SignUpForm() {
                 <Controller
                     name="username"
                     control={control}
-                    render={({ field }) => <Input {...field}>Username</Input>}
+                    render={({ field }) => (
+                        <Input id="uname" {...field}>
+                            Username
+                        </Input>
+                    )}
                     rules={{
                         required: {
                             value: true,
@@ -85,7 +93,7 @@ export default function SignUpForm() {
                     name="email"
                     control={control}
                     render={({ field }) => (
-                        <Input type="email" {...field}>
+                        <Input id="email" type="email" {...field}>
                             Email
                         </Input>
                     )}
@@ -112,7 +120,7 @@ export default function SignUpForm() {
                     name="password"
                     control={control}
                     render={({ field }) => (
-                        <Input type="password" {...field}>
+                        <Input id="pass" type="password" {...field}>
                             Password
                         </Input>
                     )}

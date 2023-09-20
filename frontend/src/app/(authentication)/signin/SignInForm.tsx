@@ -74,7 +74,9 @@ export default function SignInForm() {
                         name="username"
                         control={control}
                         render={({ field }) => (
-                            <Input {...field}>Username</Input>
+                            <Input id="uname" {...field}>
+                                Username
+                            </Input>
                         )}
                         rules={{
                             required: {
@@ -112,7 +114,7 @@ export default function SignInForm() {
                         name="password"
                         control={control}
                         render={({ field }) => (
-                            <Input type="password" {...field}>
+                            <Input id="pass" type="password" {...field}>
                                 Password
                             </Input>
                         )}
