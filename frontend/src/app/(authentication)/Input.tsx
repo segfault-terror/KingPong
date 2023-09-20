@@ -1,10 +1,9 @@
 import { HtmlHTMLAttributes, useState } from 'react';
 import { customAlphabet } from 'nanoid';
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
-import { RegisterOptions, UseFormRegister } from 'react-hook-form';
 
 type InputProps = HtmlHTMLAttributes<HTMLInputElement> & {
-    id?: string;
+    id: string;
     children?: React.ReactNode;
     type?: string;
     placeholder?: string;

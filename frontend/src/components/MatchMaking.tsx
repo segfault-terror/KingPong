@@ -1,26 +1,31 @@
-import PlayerCard from "./PlayerCard";
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element */
+import PlayerCard from './PlayerCard';
+import MatchMakingLeft from '../../public/images/MatchMacking_l.svg';
+import MatchMakingRight from '../../public/images/MatchMacking_r.svg';
+import MatchMakingTop from '../../public/images/MatchMacking_t.svg';
+import MatchMakingBottom from '../../public/images/MatchMacking_b.svg';
 
 export default function MatchMaking() {
-	return (
-		<div className="w-screen h-screen flex items-center justify-center
-					bg-gradient-to-b from-background via-primary to-background relative">
-			<Image
-				src="/images/MatchMacking_back_r.svg"
-				alt="MatchMaking_back_r"
-				fill={true}
-				className="object-cover absolute z-0"
-			/>
-			<Image
-				src="/images/MatchMacking_back_l.svg"
-				alt="MatchMaking_back_l"
-				fill={true}
-				className="object-cover absolute z-0"
-			/>
-			<div className="absolute z-10">
-				<PlayerCard img="/images/1.jpeg" name="Tommy" />
-			</div>
-			{/* <PlayerCard img="/images/1.jpeg" name="Tommy" /> */}
-		</div>
-	);
+    return (
+        <div
+            className="bg-gradient-to-b from-background via-primary to-background h-screen
+			flex flex-col items-center justify-between"
+        >
+            <div className="w-screen flex flex-col justify-start">
+                <img
+                    src={MatchMakingTop.src}
+                    alt="Left!"
+                    className="object-cover object-bottom"
+                />
+            </div>
+            <PlayerCard img="/images/1.jpeg" name="Tommy" />
+            <div className="w-screen flex flex-col justify-end">
+                <img
+                    src={MatchMakingBottom.src}
+                    alt="Right!"
+                    className="object-cover object-top"
+                />
+            </div>
+        </div>
+    );
 }
