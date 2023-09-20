@@ -10,23 +10,17 @@ const config: Config = {
     theme: {
         extend: {
             screens: {
-                    sm: '375px',
-                    md: '650px',
-                    lg: '1024px',
-                    xl: '1440px',
-                },
+                sm: '375px',
+                md: '650px',
+                lg: '1024px',
+                xl: '1440px',
+            },
             backgroundImage: {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
                 'gradient-conic':
                     'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
                 points: 'url("/images/background-point.png")',
             },
-            keyframes: {
-                wiggle: {
-                  '0%': { opacity: '0' },
-                  '100%': { opacity: '100'  },
-                },
-              },
             colors: {
                 primary: '#4F1754',
                 secondary: {
@@ -53,16 +47,50 @@ const config: Config = {
                 jost: ['var(--font-jost)', 'sans-serif'],
                 mulish: ['var(--font-mulish)', 'sans-serif'],
             },
-            dropShadow: {   
+            dropShadow: {
                 '3xl': '0 2px 2px rgba(255, 228, 134, 0.68)',
                 'neon-white': '0 0 10px rgba(255, 255, 255, 0.5)',
                 'neon-black': '0 0 20px rgba(0, 0, 0, 0.6)',
                 'neon-orange': '-2px 0 8px rgba(255, 200, 45, 0.58)',
-                'neon-bord': '0 0 30px rgba(255, 255, 255, 0.5)'
+                'neon-bord': '0 0 30px rgba(255, 255, 255, 0.5)',
+            },
+            keyframes: {
+                wiggle: {
+                    '0%': { opacity: '0' },
+                    '100%': { opacity: '100' },
+                },
+                playball: {
+                    '0%': {
+                        top: '22px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                    },
+                    '100%': {
+                        top: '22px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                    },
+                    '25%': {
+                        top: '50%',
+                        left: '0',
+                        transform: 'translateX(-50%) translateY(-58px)',
+                    },
+                    '50%': {
+                        top: '100%',
+                        left: '50%',
+                        transform: 'translateX(-50%) translateY(-58px)',
+                    },
+                    '75%': {
+                        top: '50%',
+                        left: '100%',
+                        transform: 'translateX(-50%) translateY(-58px)',
+                    },
+                },
             },
             animation: {
                 wiggle: 'wiggle 1s ease-in-out delay-3s duration-3s',
                 // moveball: 'moveball 1s ease-in-out infinite',
+                playball: 'playball 4s linear infinite',
             },
         },
     },
