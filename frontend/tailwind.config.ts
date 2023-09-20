@@ -10,10 +10,10 @@ const config: Config = {
     theme: {
         extend: {
             screens: {
-                sm: '375px',
-                md: '768px',
-                lg: '1024px',
-                xl: '1440px',
+                    sm: '375px',
+                    md: '650px',
+                    lg: '1024px',
+                    xl: '1440px',
                 },
             backgroundImage: {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -23,14 +23,9 @@ const config: Config = {
             },
             keyframes: {
                 wiggle: {
-                  '0%, 100%': { transform: 'rotate(-3deg)' },
-                  '50%': { transform: 'rotate(3deg)' },
+                  '0%': { opacity: '0' },
+                  '100%': { opacity: '100'  },
                 },
-                // moveball: {
-                //     '0%, 100%': { left: '100%' },
-                //     '50%': { left: '0' },
-                //     // '100%': { transform: 'translateX(1000%)' },
-                // }
               },
             colors: {
                 primary: '#4F1754',
@@ -66,7 +61,7 @@ const config: Config = {
                 'neon-bord': '0 0 30px rgba(255, 255, 255, 0.5)'
             },
             animation: {
-                wiggle: 'wiggle 1s ease-in-out infinite',
+                wiggle: 'wiggle 1s ease-in-out delay-3s duration-3s',
                 // moveball: 'moveball 1s ease-in-out infinite',
             },
         },

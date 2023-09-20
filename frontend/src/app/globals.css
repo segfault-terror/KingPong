@@ -20,19 +20,55 @@
 	animation: moveBall 2s linear infinite;
 }
 
-@keyframes bordshadow{
-	0% {
-		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-	}
-	50% {
-		box-shadow: 0 0 40px rgba(255, 255, 255, 0.5);
-		box-sizing: inherit;
-	}
-	100% {
-		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-	}
+@property --gradient-angle{
+	syntax: '<angle>';
+	initial-value: 0deg;
+	inherits: false;
+}
+
+@keyframes rotationColor {
+	0% {--gradient-angle: 0deg;}
+	100% {--gradient-angle: 360deg}
+}
+
+
+:root{
+	--premary: #250A3B;
+	--secondary: #FFE72D;
+	--backgroud: #4F1754;
+	--inactive: #FFFFFF;
 }
 
 .animate-bordshadow {
-	animation: bordshadow 1.5s ease-in-out infinite;
+	content: '';
+	position: absolute;
+	/* inset: 0; */
+	z-index: 0;
+	background: conic-gradient(
+		from var(--gradient-angle),
+		/* var(--inactive), */
+		var(--backgroud) ,
+		var(--inactive),
+		var(--secondary)
+		);
+	filter: blur(3rem);
+	/* border-radius: inherit; */
+	animation: rotationColor 7s linear infinite;
+}
+
+.animate-border {
+	content: '';
+	/* inset: 0; */
+	z-index: 0;
+	background: linear-gradient(
+		var(--gradient-angle),
+		/* var(--inactive), */
+		var(--premary),
+		var(--backgroud),
+		var(--premary)
+		);
+	/* filter: blur(3rem); */
+	border-radius: inherit;
+	border-radius: 10px;
+	animation: rotationColor 7s linear infinite;
 }
