@@ -2,7 +2,7 @@
 
 import PlayerCard from './PlayerCard';
 
-import Archer from '../stories/assets/2.jpeg';
+import Archer from '../../../../public/images/2.jpeg';
 
 type Props = {
     topImg: string;
