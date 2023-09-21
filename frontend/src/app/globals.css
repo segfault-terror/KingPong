@@ -6,18 +6,18 @@
 
 @keyframes moveBall {
 	0% {
-	  left: 0;
+	  left: 2%;
 	}
 	50% {
-	  left: 98%;
+	  left: 97%;
 	}
 	100% {
-	  left: 0;
+	  left: 5%;
 	}
   }
 
 .animate-ball {
-	animation: moveBall 2s linear infinite;
+	animation: moveBall 4s linear infinite;
 }
 
 @property --gradient-angle{
@@ -46,29 +46,171 @@
 	z-index: 0;
 	background: conic-gradient(
 		from var(--gradient-angle),
-		/* var(--inactive), */
 		var(--backgroud) ,
 		var(--inactive),
 		var(--secondary)
 		);
 	filter: blur(3rem);
-	/* border-radius: inherit; */
 	animation: rotationColor 7s linear infinite;
 }
 
 .animate-border {
 	content: '';
-	/* inset: 0; */
 	z-index: 0;
 	background: linear-gradient(
 		var(--gradient-angle),
-		/* var(--inactive), */
 		var(--premary),
 		var(--backgroud),
 		var(--premary)
 		);
-	/* filter: blur(3rem); */
 	border-radius: inherit;
 	border-radius: 10px;
 	animation: rotationColor 7s linear infinite;
+}
+
+
+/* // ----- general ----- */
+
+
+/* // ----- keyframes ------ */
+
+@keyframes ball {
+	0% { 
+		top: 34%;
+		left: 52%;
+	}
+	8.3% { 
+		top: 52%;
+		left: 90%;
+	}
+	24.9% { 
+		top: 85%;
+		left: 8%;
+	}
+	30% {
+		top: 98%;
+		left: 27%;
+	}
+	41.5% { 
+		top: 70%;
+		left: 90%;
+	}
+	58.1% { 
+		top: 55%;
+		left: 8%;
+	}
+	74.7% { 
+		top: 13%;
+		left: 90%;
+	}
+	79% {
+		top: 1%;
+		left: 70%;
+	}
+	91.3% { 
+		top: 22%;
+		left: 8%;
+	}
+	100% { 
+		top: 34%;
+		left: 52%;
+	}
+}
+
+@keyframes ping { 
+	0% {
+		top: 10%;
+	}
+	5% {
+		top: 10%;
+	}
+	9% {
+		top: 24%;
+	}
+	13% {
+		top: 17%;
+	}
+	24.9% { 
+		top: 82%;
+	}
+	47% {
+		top: 37%;
+	}
+	52% {
+		top: 41%;
+	}
+	56% {
+		top: 64%;
+	}
+	58.1% { 
+		top: 44%;
+	}
+	70% {
+		top: 55%;
+	}
+	84% {
+		top: 12%;
+	}
+	91.3% { 
+		top: 18%;
+	}
+	100% {
+		top: 10%;
+	}
+}
+
+@keyframes pong { 
+	0% {
+		top: 80%;
+	}
+	8.3% { 
+		top: 51%;
+	}
+	20% {
+		top: 60%;
+	}
+	25% {
+		top: 34%;
+	}
+	41.5% { 
+		top: 68%;
+	}
+	46% {
+		top: 36%;
+	}
+	52% {
+		top: 18%;
+	}
+	58.1% {
+		top: 53%;
+	}
+	66% {
+		top: 14%;
+	}
+	70% {
+		top: 20%;
+	}
+	74.7% {
+		top: 10%;
+	}
+	91.3% {
+		top: 10%;
+	}
+	100% {
+		top: 80%;
+	}
+}
+
+.animate-loading-ball{
+	animation: ball 6s linear infinite;
+}
+
+.animate-loading-ping{
+	position: absolute;
+	animation: ping 6s linear infinite;
+}
+
+.animate-loading-pong{
+	position: absolute;
+	animation: pong 6s linear infinite;
 }
