@@ -1,7 +1,8 @@
 import type { Meta } from '@storybook/react';
-import MatchMaking from '../components/MatchMaking';
+import MatchMaking from '../app/(game)/matchmaking/MatchMaking';
 
-import img from './assets/1.jpeg';
+import TopImage from '../../public/images/MatchMacking_t.svg';
+import BottomImage from '../../public/images/MatchMacking_b.svg';
 
 const meta: Meta<typeof MatchMaking> = {
     title: 'MatchMaking',
@@ -12,6 +13,6 @@ export default meta;
 
 export const Default = (): JSX.Element => (
     <>
-        <MatchMaking />
+        <MatchMaking topImg={TopImage.src} bottomImg={BottomImage.src} />
     </>
 );

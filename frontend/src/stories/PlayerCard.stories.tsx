@@ -1,5 +1,5 @@
 import type { Meta } from '@storybook/react';
-import PlayerCard from '../components/PlayerCard';
+import PlayerCard from '../app/(game)/matchmaking/PlayerCard';
 
 import img from './assets/1.jpeg';
 
