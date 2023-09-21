@@ -1,31 +1,39 @@
 /* eslint-disable @next/next/no-img-element */
-import PlayerCard from './PlayerCard';
-import MatchMakingLeft from '../../public/images/MatchMacking_l.svg';
-import MatchMakingRight from '../../public/images/MatchMacking_r.svg';
-import MatchMakingTop from '../../public/images/MatchMacking_t.svg';
-import MatchMakingBottom from '../../public/images/MatchMacking_b.svg';
 
-export default function MatchMaking() {
+import PlayerCard from './PlayerCard';
+
+import Archer from '../stories/assets/2.jpeg';
+
+type Props = {
+    topImg: string;
+    bottomImg: string;
+};
+
+export default function MatchMaking({ topImg, bottomImg }: Props) {
     return (
         <div
-            className="bg-gradient-to-b from-background via-primary to-background h-screen
-			flex flex-col items-center justify-between"
+            className="bg-gradient-to-r from-background via-primary to-background
+                h-screen
+                border-4 border-[red]
+                overflow-hidden
+                flex flex-col justify-center"
         >
-            <div className="w-screen flex flex-col justify-start">
-                <img
-                    src={MatchMakingTop.src}
-                    alt="Left!"
-                    className="object-cover object-bottom"
-                />
+            <img
+                src={topImg}
+                alt="Top Side"
+                className="border-4 border-[yellow] object-cover h-full translate-y-[-40%]"
+            />
+            <div className="self-center border-4 border-[green]">
+                <PlayerCard img={Archer.src} name="Archer" />
             </div>
-            <PlayerCard img="/images/1.jpeg" name="Tommy" />
-            <div className="w-screen flex flex-col justify-end">
-                <img
-                    src={MatchMakingBottom.src}
-                    alt="Right!"
-                    className="object-cover object-top"
-                />
+            <div className="self-center border-4 border-[green]">
+                <PlayerCard img={Archer.src} name="Archer" />
             </div>
+            <img
+                src={bottomImg}
+                alt="Bottom Side"
+                className="border-4 border-[yellow] object-cover h-full translate-y-[40%]"
+            />
         </div>
     );
 }
