@@ -2,6 +2,8 @@ import './globals.css';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { Jost, Mulish } from 'next/font/google';
+import { Suspense } from 'react';
+import Loading from '@/components/Loading';
 
 const nicoMoji = localFont({
     src: [
@@ -38,6 +40,7 @@ export default function RootLayout({
             lang="en"
             className={`${nicoMoji.variable} ${jost.variable} ${mulish.variable}`}
         >
+            <Suspense fallback={<Loading />} />
             <body className="font-mulish bg-background text-white">
                 {children}
             </body>
