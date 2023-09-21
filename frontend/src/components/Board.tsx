@@ -15,7 +15,7 @@ export default function Board() {
             <Image
                 width={160}
                 height={22}
-                className="absolute rotate-180 left-1/2 -translate-x-1/2"
+                className="absolute rotate-180 animate-moveTop -translate-x-1/2"
                 src={bar.src}
                 alt="bar"
             />
@@ -29,7 +29,7 @@ export default function Board() {
             <Image
                 width={160}
                 height={22}
-                className="absolute bottom-0 left-1/2 -translate-x-1/2"
+                className="absolute bottom-0 animate-moveBottom -translate-x-1/2"
                 src={bar.src}
                 alt="bar"
             />
