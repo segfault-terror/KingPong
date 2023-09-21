@@ -1,6 +1,6 @@
 import type { Meta } from '@storybook/react';
 
-import Board from '../components/Board';
+import Board from '../app/(authentication)/Board';
 
 export default {
     component: Board,
