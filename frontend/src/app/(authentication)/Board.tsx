@@ -2,15 +2,15 @@ import bar from './bar.svg';
 import ball from './ball.svg';
 import Image from 'next/image';
 
-export default function Board() {
+export default function Board({ className }: { className?: string }) {
     return (
         <div
-            className="
+            className={`
                     w-[500px] h-[800px] 
-                    border-[7px] border-secondary-200 rounded-[32px]
-                    drop-shadow-[0_0_20px_rgba(255,231,45,1)]
+                    border-[7px] border-secondary-500 rounded-[32px]
+                    drop-shadow-[0_0_20px_rgba(255,168,42,1)]
                     bg-gradient-radial from-primary from-[40%] to-[#1E0837] to-[90%]
-                    relative"
+                    relative ${className ? className : ''}`}
         >
             <Image
                 width={160}

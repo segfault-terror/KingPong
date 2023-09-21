@@ -112,8 +112,8 @@ const config: Config = {
                     },
                     '100%': {
                         top: '100%',
-                        left: '50%',
-                        transform: 'translateX(-50%) translateY(-58px)',
+                        left: '80%',
+                        transform: 'translateX(-50%) translateY(-20px)',
                     },
                 },
                 moveTop: {
@@ -183,16 +183,16 @@ const config: Config = {
                         left: '85%',
                     },
                     '100%': {
-                        left: '0%',
+                        left: '15%',
                     },
                 },
             },
             animation: {
                 wiggle: 'wiggle 1s ease-in-out delay-3s duration-3s',
                 // moveball: 'moveball 1s ease-in-out infinite',
-                playball: 'playball 10s linear infinite',
-                moveTop: 'moveTop 10s linear infinite',
-                moveBottom: 'moveBottom 10s linear infinite',
+                playball: 'playball 5s linear infinite',
+                moveTop: 'moveTop 5s linear infinite',
+                moveBottom: 'moveBottom 5s linear infinite',
             },
         },
     },
