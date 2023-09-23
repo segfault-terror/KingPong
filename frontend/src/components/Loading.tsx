@@ -62,9 +62,7 @@ export const MovingAnimation = ({
                     position: 'absolute',
                     top: 0,
                     left: 0,
-                    // display: 'inline-block',
                     transform,
-                    zIndex: -1,
                 }}
             >
                 {children}
@@ -74,9 +72,7 @@ export const MovingAnimation = ({
 };
 
 export default function Loading() {
-    const borderRadius = '1.75rem';
     return (
-        <div className="min-h-screen bg-center bg-cover flex items-center justify-center relative overflow-hidden">
             <div className="bg-transparent relative text-xl  w-40 h-24 sm:w-40 sm:h-24 md:w-48 md:h-32 lg:w-60 lg:h-40 xl:w-80 xl:h-52 rounded-2xl p-[1px] overflow-hidden ">
                 <div className="absolute inset-0 rounded-2xl">
                     <MovingAnimation duration={2500} rx="30%" ry="30%">
@@ -95,6 +91,5 @@ export default function Loading() {
                     <div className="h-4 w-[4px] lg:h-5 lg:w-[5px] xl:h-7 xl:w-[6px] border-[1px] rounded-r-xl bg-neutral-200 mx-2 animate-loading-pong absolute right-[1%]"></div>
                 </div>
             </div>
-        </div>
     );
 }
