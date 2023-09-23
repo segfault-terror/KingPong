@@ -10,7 +10,7 @@ export default function PlayerCard({
 }) {
     return (
         <div
-            className="h-48 w-36 rounded-2xl
+            className="h-48 w-36 lg:h-96 lg:w-72 rounded-2xl
 				bg-gradient-to-t from-gray-500 via-gray-300 to-white p-[2px]"
         >
             <div
