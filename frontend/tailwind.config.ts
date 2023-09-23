@@ -186,6 +186,23 @@ const config: Config = {
                         left: '15%',
                     },
                 },
+
+                'slide-down-gate': {
+                    '0%': { transform: 'translateY(0)' },
+                    '100%': { transform: 'translateY(35%)' },
+                },
+                'slide-up-gate': {
+                    '0%': { transform: 'translateY(0)' },
+                    '100%': { transform: 'translateY(-35%)' },
+                },
+                'slide-down-opponent': {
+                    '0%': { transform: 'translateY(0)' },
+                    '100%': { transform: 'translateY(60%)' },
+                },
+                'slide-up-player': {
+                    '0%': { transform: 'translateY(0)' },
+                    '100%': { transform: 'translateY(-60%)' },
+                },
             },
             animation: {
                 wiggle: 'wiggle 1s ease-in-out delay-3s duration-3s',
@@ -193,6 +210,11 @@ const config: Config = {
                 playball: 'playball 5s linear infinite',
                 moveTop: 'moveTop 5s linear infinite',
                 moveBottom: 'moveBottom 5s linear infinite',
+                'slide-down-gate': 'slide-down-gate 1s ease-out forwards 2s',
+                'slide-up-gate': 'slide-up-gate 1s ease-out forwards 2s',
+                'slide-down-opponent':
+                    'slide-down-opponent 1s ease-out forwards 2s',
+                'slide-up-player': 'slide-up-player 1s ease-out forwards 2s',
             },
         },
     },
