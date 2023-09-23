@@ -70,17 +70,17 @@ export default function MatchMaking({
                 <img
                     src={Ball.src}
                     alt="Ball"
-                    className="inline-block w-4 h-4 animate-first-dot"
+                    className="inline-block w-2 h-2 lg:w-4 lg:h-4 animate-first-dot"
                 />
                 <img
                     src={Ball.src}
                     alt="Ball"
-                    className="inline-block w-4 h-4 mx-2 animate-second-dot"
+                    className="inline-block w-2 h-2 lg:w-4 lg:h-4 mx-2 animate-second-dot"
                 />
                 <img
                     src={Ball.src}
                     alt="Ball"
-                    className="inline-block w-4 h-4 animate-third-dot"
+                    className="inline-block w-2 h-2 lg:w-4 lg:h-4 animate-third-dot"
                 />
             </p>
         </div>
