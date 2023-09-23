@@ -186,7 +186,7 @@ const config: Config = {
                         left: '15%',
                     },
                 },
-
+                // Matchmaking page - Mobile animations
                 'slide-down-gate': {
                     '0%': { transform: 'translateY(0)' },
                     '100%': { transform: 'translateY(35%)' },
@@ -203,6 +203,28 @@ const config: Config = {
                     '0%': { transform: 'translateY(0)' },
                     '100%': { transform: 'translateY(-60%)' },
                 },
+                // Matchmaking page - Desktop animations
+                'slide-left-gate': {
+                    '0%': { transform: 'translateX(0)' },
+                    '100%': { transform: 'translateX(-35%)' },
+                },
+                'slide-right-gate': {
+                    '0%': { transform: 'translateX(0)' },
+                    '100%': { transform: 'translateX(35%)' },
+                },
+                'slide-left-player': {
+                    '0%': { transform: 'translateX(0)' },
+                    '100%': { transform: 'translateX(-90%)' },
+                },
+                'slide-right-opponent': {
+                    '0%': { transform: 'translateX(0)' },
+                    '100%': { transform: 'translateX(90%)' },
+                },
+
+                'matchmaking-loading-dot': {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-10px)' },
+                },
             },
             animation: {
                 wiggle: 'wiggle 1s ease-in-out delay-3s duration-3s',
@@ -210,11 +232,25 @@ const config: Config = {
                 playball: 'playball 5s linear infinite',
                 moveTop: 'moveTop 5s linear infinite',
                 moveBottom: 'moveBottom 5s linear infinite',
-                'slide-down-gate': 'slide-down-gate 1s ease-out forwards 2s',
-                'slide-up-gate': 'slide-up-gate 1s ease-out forwards 2s',
+                'slide-down-gate': 'slide-down-gate 200ms ease-out forwards 1s',
+                'slide-up-gate': 'slide-up-gate 200ms ease-out forwards 1s',
                 'slide-down-opponent':
-                    'slide-down-opponent 1s ease-out forwards 2s',
-                'slide-up-player': 'slide-up-player 1s ease-out forwards 2s',
+                    'slide-down-opponent 200ms ease-out forwards 1s',
+                'slide-up-player': 'slide-up-player 200ms ease-out forwards 1s',
+                'slide-left-gate': 'slide-left-gate 200ms ease-out forwards 1s',
+                'slide-right-gate':
+                    'slide-right-gate 200ms ease-out forwards 1s',
+                'slide-left-player':
+                    'slide-left-player 200ms ease-out forwards 1s',
+                'slide-right-opponent':
+                    'slide-right-opponent 200ms ease-out forwards 1s',
+
+                'first-dot':
+                    'matchmaking-loading-dot 1s ease-in-out 0ms infinite',
+                'second-dot':
+                    'matchmaking-loading-dot 1s ease-in-out 150ms infinite',
+                'third-dot':
+                    'matchmaking-loading-dot 1s ease-in-out 300ms infinite',
             },
         },
     },
