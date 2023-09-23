@@ -16,6 +16,10 @@ const preview: Preview = {
                     name: 'kingpong',
                     value: '#250A3B',
                 },
+                {
+                    name: 'about',
+                    value: '#0F5262',
+                },
             ],
         },
     },
