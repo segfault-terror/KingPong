@@ -12,7 +12,11 @@ export default function ProfilePage() {
                 <Logo mylogo="/images/logo.svg" className="w-1/2" />
                 <AiOutlineBell className="text-secondary-200 text-3xl" />
             </div>
-            <UserCircleInfo avatarPath={Archer.src} level={100} status={UserStatus.Online} />
+            <UserCircleInfo
+                avatarPath={Archer.src}
+                level={100}
+                status={UserStatus.Online}
+            />
         </>
     );
 }
