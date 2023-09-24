@@ -20,6 +20,7 @@ const config: Config = {
                 'gradient-conic':
                     'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
                 points: 'url("/images/background-point.png")',
+                aboutBg: 'url("/images/bg-about.svg")',
             },
             colors: {
                 primary: '#4F1754',
@@ -55,6 +56,20 @@ const config: Config = {
                 'neon-bord': '0 0 30px rgba(255, 255, 255, 0.5)',
             },
             keyframes: {
+                blob: {
+                    '0%': {
+                        transform: 'translate(0px, 0px) scale(1)',
+                    },
+                    '33%': {
+                        transform: 'translate(30px, -50px) scale(1.1)',
+                    },
+                    '66%': {
+                        transform: 'translate(-20px, 20px) scale(0.9)',
+                    },
+                    '100%': {
+                        transform: 'translate(0px, 0px) scale(1)',
+                    },
+                },
                 wiggle: {
                     '0%': { opacity: '0' },
                     '100%': { opacity: '100' },
@@ -228,7 +243,9 @@ const config: Config = {
             },
             animation: {
                 wiggle: 'wiggle 1s ease-in-out delay-3s duration-3s',
-                // moveball: 'moveball 1s ease-in-out infinite',
+                blob: 'blob 7s ease-in-out  infinite',
+                blob1: 'blob 8s ease-in-out infinite',
+                blob2: 'blob 10s ease-in-out infinite',
                 playball: 'playball 5s linear infinite',
                 moveTop: 'moveTop 5s linear infinite',
                 moveBottom: 'moveBottom 5s linear infinite',
