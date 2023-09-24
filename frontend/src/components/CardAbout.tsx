@@ -19,7 +19,7 @@ export default function CardAbout(props: CardAboutProps) {
     return (
         <div className="w-48 h-24 sm:w-48 sm:h-24 md:w-64 md:h-32 lg:w-80 lg:h-40 xl:w-96 xl:h-48 bg-[#041111]  grid grid-cols-2 relative rounded-r-xl ">
             <img
-                src="https://cdn.intra.42.fr/users/90acb3217b4be8350fa9f9fc32dd2200/aaggoujj.jpg"
+                src={props.image}
                 alt="image"
                 className="object-cover rounded-r-xl]"
             />
@@ -34,13 +34,13 @@ export default function CardAbout(props: CardAboutProps) {
                     <p>{props.LastName}</p>
                 </div>
                 <div className="flex justify-around items-center mx-2 z-10">
-                    <Link href="#" className="w-[25%]">
+                    <Link href={props.links[0]} className="w-[25%]">
                         <img src={github.src} alt="" />
                     </Link>
-                    <Link href="#" className="w-[25%]">
+                    <Link href={props.links[1]} className="w-[25%]">
                         <img src={linkedin.src} alt="" />
                     </Link>
-                    <Link href="" className="w-[25%]">
+                    <Link href={props.links[2]} className="w-[25%]">
                         <img src={portfolio.src} alt="" />
                     </Link>
                 </div>
