@@ -1,4 +1,4 @@
-type GameResultProps = {
+export type GameResultProps = {
     playerAvatar: string;
     opponentAvatar: string;
     playerLevel: number;
@@ -19,7 +19,7 @@ export default function GameResult({
     const loserShadow = 'drop-shadow-[0_0_10px_rgba(255,0,0,1)]';
 
     return (
-        <div className="flex justify-between items-center w-full">
+        <div className="flex justify-between items-center gap-2 w-full my-4">
             <div
                 className={
                     playerScore > opponentScore ? winnerShadow : loserShadow
@@ -28,7 +28,7 @@ export default function GameResult({
                 <UserCircle avatarPath={playerAvatar} level={playerLevel} />
             </div>
 
-            <p className="text-secondary-200 text-4xl font-jost">
+            <p className="text-secondary-200 text-xl font-jost">
                 {playerScore} - {opponentScore}
             </p>
 
