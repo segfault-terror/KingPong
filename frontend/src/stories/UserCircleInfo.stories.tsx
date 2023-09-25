@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import UserCircleInfo from '../../src/app/profile/UserCircleInfo';
 
-import Avatar from './assets/3.jpeg';
+import Avatar from './assets/2.jpeg';
 import { UserStatus } from '../components/DirectMessage';
 
 const meta: Meta<typeof UserCircleInfo> = {
