@@ -30,7 +30,7 @@ function HomePage() {
 			<div className='absolute z-0 top-[12%] after:blur-[3.5rem] flex h-[100px] w-[200px] items-center justify-between rounded-3xl sm:h-[250px] sm:w-[350px] md:h-[380px] md:w-[620px] lg:h-[500px] lg:w-[1000px] xl:h-[600px] xl:w-[1200px] aspect-[1/1.5] animate-bordshadow'
 			></div>
 			<Link
-                    href="#"
+                    href="/about"
                     placeholder="about"
                     className="flex items-center absolute bottom-0 z-20 sm:w-[20px] md:xl:lg:w-[40px]"
                     type="button"

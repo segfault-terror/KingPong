@@ -1,7 +1,9 @@
+import About from '@/components/About';
+
 export default function aboutPage() {
   return (
-	<div>
-	  <h1>About Page</h1>
+	<div className="bg-aboutBg min-w-full min-h-screen bg-cover">
+		<About />
 	</div>
   );
 }
