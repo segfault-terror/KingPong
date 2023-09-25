@@ -14,11 +14,11 @@ const Animation = () => {
 //grid sm:grid-row-5 items-center
 export default function About() {
     return (
-        <div className="flex flex-col justify-center">
-            <div className="my-6 flex justify-center text-white drop-shadow-neon-white text-lg">
+        <div className="flex flex-col justify-center md:grid md:grid-cols-2 md:gap-x-4 relative">
+            <div className="my-6 flex justify-center text-white drop-shadow-neon-white text-lg border-red-400 border-2 col-span-2">
                 About
             </div>
-            <div className="text-sm text-[#E6E6E6] z-10">
+            <div className="text-sm text-[#E6E6E6] z-10 border-2 border-green-400 mx-2 col-span-2">
                 Lorem Ipsum is simply dummy text of the printing and typesetting
                 industry. Lorem Ipsum has been the industry's standard dummy
                 text ever since the 1500s, when an unknown printer took a galley
@@ -28,43 +28,49 @@ export default function About() {
                 popularised in the 1960s with the release of Letraset sheets
                 containing Lorem Ipsum passages
             </div>
-			<div className="flex justify-center" >
+            {/* <div className="flex justify-center" >
 				<Animation />
-			</div>
-            <div className="flex justify-start my-1">
+			</div> */}
+            <div className="relative flex justify-start my-2 border-2 border-yellow-300 col-span-1">
                 <CardAbout
                     firstName="Aymane"
                     LastName="Aggoujjil"
                     links={['', '', '']}
                     description=""
                     image="https://cdn.intra.42.fr/users/90acb3217b4be8350fa9f9fc32dd2200/aaggoujj.jpg"
+                    className="absolute animate-dragR w-full h-auto"
                 />
             </div>
-            <div className="flex justify-end my-1">
+            <div className="flex justify-end  my-2 border-2 border-yellow-300 col-span-1">
                 <CardAbout
                     firstName="Omar"
                     LastName="Aizab"
                     links={['', '', '']}
                     description=""
                     image="https://cdn.intra.42.fr/users/10ebb5a3e3bf8fdf210566bfe0a102e0/oaizab.jpg"
+                    className="absolute animate-dragL w-full h-auto"
                 />
             </div>
-            <div className="flex justify-start my-1">
+            <div className="flex justify-start   my-2 border-2 border-yellow-300 col-span-1">
                 <CardAbout
                     firstName="Moussa"
                     LastName="Seddik"
                     links={['', '', '']}
                     description=""
                     image="https://cdn.intra.42.fr/users/811c6da3283271dcc1794c667938159c/moseddik.jpg"
+                    className="absolute animate-dragR w-full h-auto"
+
                 />
             </div>
-            <div className="flex justify-end my-1">
+            <div className="flex justify-end my-2 border-2 border-yellow-300 col-span-1">
                 <CardAbout
                     firstName="Hamza"
                     LastName="Haddani"
                     links={['', '', '']}
                     description=""
                     image="https://cdn.intra.42.fr/users/40ff48680a112910914c132211cbc9a3/hhamza.jpg"
+                    className="absolute animate-dragL w-full h-auto"
+
                 />
             </div>
         </div>

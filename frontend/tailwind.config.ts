@@ -70,6 +70,22 @@ const config: Config = {
                         transform: 'translate(0px, 0px) scale(1)',
                     },
                 },
+                dragR: {
+                    '0%': {
+                        justifySelf: 'start',
+                    },
+                    '100%': {
+                        justifySelf: 'end',
+                    },
+                },
+                dragL: {
+                    '0%': {
+                        justifySelf: 'end',
+                    },
+                    '100%': {
+                        justifySelf: 'start',
+                    },
+                },
                 wiggle: {
                     '0%': { opacity: '0' },
                     '100%': { opacity: '100' },

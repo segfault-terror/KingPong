@@ -2,215 +2,241 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 @keyframes moveBall {
-	0% {
-	  left: 2%;
-	}
-	50% {
-	  left: 97%;
-	}
-	100% {
-	  left: 5%;
-	}
-  }
-
-.animate-ball {
-	animation: moveBall 4s linear infinite;
+    0% {
+        left: 2%;
+    }
+    50% {
+        left: 97%;
+    }
+    100% {
+        left: 5%;
+    }
 }
 
-@property --gradient-angle{
-	syntax: '<angle>';
-	initial-value: 0deg;
-	inherits: false;
+.animate-ball {
+    animation: moveBall 4s linear infinite;
+}
+
+@property --gradient-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
 }
 
 @keyframes rotationColor {
-	0% {--gradient-angle: 0deg;}
-	100% {--gradient-angle: 360deg}
+    0% {
+        --gradient-angle: 0deg;
+    }
+    100% {
+        --gradient-angle: 360deg;
+    }
 }
 
-
-:root{
-	--premary: #250A3B;
-	--secondary: #FFE72D;
-	--backgroud: #4F1754;
-	--inactive: #FFFFFF;
+:root {
+    --premary: #250a3b;
+    --secondary: #ffe72d;
+    --backgroud: #4f1754;
+    --inactive: #ffffff;
 }
 
 .animate-bordshadow {
-	content: '';
-	position: absolute;
-	/* inset: 0; */
-	z-index: 0;
-	background: conic-gradient(
-		from var(--gradient-angle),
-		var(--backgroud) ,
-		var(--inactive),
-		var(--secondary)
-		);
-	filter: blur(3rem);
-	animation: rotationColor 7s linear infinite;
+    content: '';
+    position: absolute;
+    /* inset: 0; */
+    z-index: 0;
+    background: conic-gradient(
+        from var(--gradient-angle),
+        var(--backgroud),
+        var(--inactive),
+        var(--secondary)
+    );
+    filter: blur(3rem);
+    animation: rotationColor 7s linear infinite;
 }
 
 .animate-border {
-	content: '';
-	z-index: 0;
-	background: linear-gradient(
-		var(--gradient-angle),
-		var(--premary),
-		var(--backgroud),
-		var(--premary)
-		);
-	border-radius: inherit;
-	border-radius: 10px;
-	animation: rotationColor 7s linear infinite;
+    content: '';
+    z-index: 0;
+    background: linear-gradient(
+        var(--gradient-angle),
+        var(--premary),
+        var(--backgroud),
+        var(--premary)
+    );
+    border-radius: inherit;
+    border-radius: 10px;
+    animation: rotationColor 7s linear infinite;
 }
 
-
 /* // ----- general ----- */
-
 
 /* // ----- keyframes ------ */
 
 @keyframes ball {
-	0% { 
-		top: 34%;
-		left: 52%;
-	}
-	8.3% { 
-		top: 52%;
-		left: 90%;
-	}
-	24.9% { 
-		top: 85%;
-		left: 8%;
-	}
-	30% {
-		top: 98%;
-		left: 27%;
-	}
-	41.5% { 
-		top: 70%;
-		left: 90%;
-	}
-	58.1% { 
-		top: 55%;
-		left: 8%;
-	}
-	74.7% { 
-		top: 13%;
-		left: 90%;
-	}
-	79% {
-		top: 1%;
-		left: 70%;
-	}
-	91.3% { 
-		top: 22%;
-		left: 8%;
-	}
-	100% { 
-		top: 34%;
-		left: 52%;
-	}
+    0% {
+        top: 34%;
+        left: 52%;
+    }
+    8.3% {
+        top: 52%;
+        left: 90%;
+    }
+    24.9% {
+        top: 85%;
+        left: 8%;
+    }
+    30% {
+        top: 98%;
+        left: 27%;
+    }
+    41.5% {
+        top: 70%;
+        left: 90%;
+    }
+    58.1% {
+        top: 55%;
+        left: 8%;
+    }
+    74.7% {
+        top: 13%;
+        left: 90%;
+    }
+    79% {
+        top: 1%;
+        left: 70%;
+    }
+    91.3% {
+        top: 22%;
+        left: 8%;
+    }
+    100% {
+        top: 34%;
+        left: 52%;
+    }
 }
 
-@keyframes ping { 
-	0% {
-		top: 10%;
-	}
-	5% {
-		top: 10%;
-	}
-	9% {
-		top: 24%;
-	}
-	13% {
-		top: 17%;
-	}
-	24.9% { 
-		top: 82%;
-	}
-	47% {
-		top: 37%;
-	}
-	52% {
-		top: 41%;
-	}
-	56% {
-		top: 64%;
-	}
-	58.1% { 
-		top: 44%;
-	}
-	70% {
-		top: 55%;
-	}
-	84% {
-		top: 12%;
-	}
-	91.3% { 
-		top: 18%;
-	}
-	100% {
-		top: 10%;
-	}
+@keyframes ping {
+    0% {
+        top: 10%;
+    }
+    5% {
+        top: 10%;
+    }
+    9% {
+        top: 24%;
+    }
+    13% {
+        top: 17%;
+    }
+    24.9% {
+        top: 82%;
+    }
+    47% {
+        top: 37%;
+    }
+    52% {
+        top: 41%;
+    }
+    56% {
+        top: 64%;
+    }
+    58.1% {
+        top: 44%;
+    }
+    70% {
+        top: 55%;
+    }
+    84% {
+        top: 12%;
+    }
+    91.3% {
+        top: 18%;
+    }
+    100% {
+        top: 10%;
+    }
 }
 
-@keyframes pong { 
-	0% {
-		top: 80%;
-	}
-	8.3% { 
-		top: 51%;
-	}
-	20% {
-		top: 60%;
-	}
-	25% {
-		top: 34%;
-	}
-	41.5% { 
-		top: 68%;
-	}
-	46% {
-		top: 36%;
-	}
-	52% {
-		top: 18%;
-	}
-	58.1% {
-		top: 53%;
-	}
-	66% {
-		top: 14%;
-	}
-	70% {
-		top: 20%;
-	}
-	74.7% {
-		top: 10%;
-	}
-	91.3% {
-		top: 10%;
-	}
-	100% {
-		top: 80%;
-	}
+@keyframes pong {
+    0% {
+        top: 80%;
+    }
+    8.3% {
+        top: 51%;
+    }
+    20% {
+        top: 60%;
+    }
+    25% {
+        top: 34%;
+    }
+    41.5% {
+        top: 68%;
+    }
+    46% {
+        top: 36%;
+    }
+    52% {
+        top: 18%;
+    }
+    58.1% {
+        top: 53%;
+    }
+    66% {
+        top: 14%;
+    }
+    70% {
+        top: 20%;
+    }
+    74.7% {
+        top: 10%;
+    }
+    91.3% {
+        top: 10%;
+    }
+    100% {
+        top: 80%;
+    }
 }
 
-.animate-loading-ball{
-	animation: ball 6s linear infinite;
+.animate-loading-ball {
+    animation: ball 6s linear infinite;
 }
 
-.animate-loading-ping{
-	position: absolute;
-	animation: ping 6s linear infinite;
+.animate-loading-ping {
+    position: absolute;
+    animation: ping 6s linear infinite;
 }
 
-.animate-loading-pong{
-	position: absolute;
-	animation: pong 6s linear infinite;
+.animate-loading-pong {
+    position: absolute;
+    animation: pong 6s linear infinite;
+}
+
+@keyframes dragR {
+    0% {
+		translate: 90%;
+    }
+    100% {
+		translate: 0;
+    }
+}
+
+@keyframes dragL {
+    0% {
+		translate: -90%;
+    }
+    100% {
+		translate: 0;
+    }
+}
+.animate-dragR {
+    animation: dragR 5s alternate;
+    /* transition: justify-self 0.3s ease-in-out; */
+}
+
+.animate-dragL {
+    animation: dragL 5s alternate;
+    /* transition: justify-self 0.3s ease-in-out; */
 }
