@@ -12,13 +12,19 @@ export default function FullFriendList({ lastFriends }: FullFriendListProps) {
         throw new Error('FullFriendList can only display 3 friends');
     }
     if (lastFriends.length === 0) {
-        return <div className='bg-primary bg-opacity-80 rounded-2xl
-        flex flex-col items-center py-2'>
-            <div className='w-[30%]'>
-                <Lottie animationData={Ghost} loop={true} autoPlay={true} />
+        return (
+            <div
+                className="bg-primary bg-opacity-80 rounded-2xl
+        flex flex-col items-center py-2"
+            >
+                <div className="w-[30%]">
+                    <Lottie animationData={Ghost} loop={true} />
+                </div>
+                <p className="text-gray-400">
+                    No friends, your friend list is empty!
+                </p>
             </div>
-            <p className='text-gray-400'>No friends, your friend list is empty!</p>
-        </div>
+        );
     }
 
     return (
