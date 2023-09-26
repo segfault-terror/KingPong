@@ -1,10 +1,24 @@
 import GameResult, { GameResultProps } from './GameResult';
+import PaddleAndBall from '../../../public/images/paddle-and-ball.svg';
 
 type MatchHistoryProps = {
     gameResults: GameResultProps[];
 };
 
 export default function MatchHistory({ gameResults }: MatchHistoryProps) {
+    if (gameResults.length === 0) {
+        return (
+            <div className="bg-primary bg-opacity-80 rounded-2xl flex flex-col items-center p-2">
+                <img
+                    src={PaddleAndBall.src}
+                    alt="Paddle and Ball"
+                    className="w-24"
+                />
+                <p className="text-gray-400">No matches yet, go play some!</p>
+            </div>
+        );
+    }
+
     return (
         <div className="bg-primary bg-opacity-80 rounded-2xl">
             <div className="px-4 py-1">
