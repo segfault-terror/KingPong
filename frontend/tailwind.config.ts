@@ -42,7 +42,7 @@ const config: Config = {
                     '500': '#45144B',
                 },
                 silver: '#C6C6C6',
-                pink: '#FF00FF'
+                pink: '#FF00FF',
             },
             fontFamily: {
                 nicomoji: ['var(--font-nicomoji)', 'sans-serif'],
@@ -57,6 +57,10 @@ const config: Config = {
                 'neon-bord': '0 0 30px rgba(255, 255, 255, 0.5)',
             },
             keyframes: {
+                waggle: {
+                    '0%': { transform: 'opacity 0' },
+                    '100%': { transform: 'opacity 1' },
+                },
                 blob: {
                     '0%': {
                         transform: 'translate(0px, 0px) scale(1)',
@@ -69,6 +73,14 @@ const config: Config = {
                     },
                     '100%': {
                         transform: 'translate(0px, 0px) scale(1)',
+                    },
+                },
+                rotation: {
+                    '0%': {
+                        transform: 'rotate(0deg)',
+                    },
+                    '100%': {
+                        transform: 'rotate(360deg)',
                     },
                 },
                 dragR: {
@@ -259,7 +271,7 @@ const config: Config = {
                 },
             },
             animation: {
-                wiggle: 'wiggle 1s ease-in-out delay-3s duration-3s',
+                wiggle: 'wiggle 6s ease-in-out',
                 blob: 'blob 7s ease-in-out  infinite',
                 blob1: 'blob 8s ease-in-out infinite',
                 blob2: 'blob 10s ease-in-out infinite',
