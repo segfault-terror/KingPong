@@ -1,4 +1,5 @@
 import Achievement, { AchievementProps } from './Achievement';
+import EmptyAchievement from '../../../public/images/empty-achievement.svg';
 
 export type AchievementListProps = {
     achievements: AchievementProps[];
@@ -7,6 +8,18 @@ export type AchievementListProps = {
 export default function AchievementList({
     achievements,
 }: AchievementListProps) {
+    if (achievements.length === 0) {
+        return (
+            <div className="bg-primary bg-opacity-80 rounded-2xl p-2">
+                <Achievement
+                    title="No achievement yet"
+                    description="Without failure there's no achievement"
+                    image={EmptyAchievement.src}
+                />
+            </div>
+        );
+    }
+
     return (
         <>
             <div className="bg-primary bg-opacity-80 rounded-2xl">
