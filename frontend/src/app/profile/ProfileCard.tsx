@@ -1,15 +1,27 @@
-/* eslint-disable @next/next/no-img-element */
-
-import UserCircleInfo from './UserCircleInfo';
-
-import Archer from '../../../public/images/2.jpeg';
-import { UserStatus } from '../../components/DirectMessage';
 import { AiFillTrophy, AiOutlineClose } from 'react-icons/ai';
 import { TbMessage2, TbUserPlus, TbUserX } from 'react-icons/tb';
+import { UserStatus } from '../../components/DirectMessage';
+import UserCircleInfo from './UserCircleInfo';
 
-import GoldLeague from '../../../public/images/gold-league.svg';
+type ProfileCardProps = {
+    userName: string;
+    avatarPath: string;
+    level: number;
+    status: UserStatus;
+    league: string;
+    wins: number;
+    losses: number;
+};
 
-export default function ProfileCard() {
+export default function ProfileCard({
+    userName,
+    avatarPath,
+    level,
+    status,
+    league,
+    wins,
+    losses,
+}: ProfileCardProps) {
     return (
         <div
             className="bg-primary bg-opacity-80
@@ -20,16 +32,16 @@ export default function ProfileCard() {
             <div className="flex items-start relative">
                 <div className="absolute bottom-0">
                     <UserCircleInfo
-                        avatarPath={Archer.src}
-                        level={42}
-                        status={UserStatus.InGame}
+                        avatarPath={avatarPath}
+                        level={level}
+                        status={status}
                     />
                 </div>
                 <div className="flex items-center justify-between pt-2 pl-1 ml-24">
                     <h1 className="text-secondary-200 font-mulish font-bold text-xl">
-                        Archer
+                        {userName}
                     </h1>
-                    <img src={GoldLeague.src} alt="League" className="ml-2" />
+                    <img src={league} alt="League" className="ml-2" />
                 </div>
             </div>
 
@@ -37,11 +49,11 @@ export default function ProfileCard() {
                 <div className="flex gap-1 items-center">
                     <div className="flex items-center text-online">
                         <AiFillTrophy />
-                        <span>2</span>
+                        <span>{wins}</span>
                     </div>
                     <div className="flex items-center text-red-600">
                         <AiOutlineClose />
-                        <span>1</span>
+                        <span>{losses}</span>
                     </div>
                 </div>
 
