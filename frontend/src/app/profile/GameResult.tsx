@@ -50,7 +50,7 @@ type UserCircleProps = {
 
 function UserCircle({ avatarPath, level }: UserCircleProps) {
     return (
-        <div className="rounded-full w-24 h-24">
+        <div className="rounded-full w-16 h-16 sm:w-24 sm:h-24">
             <div className="rounded-full w-full h-full overflow-hidden">
                 <img
                     src={avatarPath}
@@ -59,7 +59,7 @@ function UserCircle({ avatarPath, level }: UserCircleProps) {
                 />
                 <div
                     className="text-primary bg-secondary-200
-                                text-center text-sm font-bold font-jost
+                                text-center text-xs sm:text-sm font-bold font-jost
                                 h-[30%]
                                 relative bottom-[20%]"
                 >
