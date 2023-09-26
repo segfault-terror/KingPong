@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { UserStatus } from '../../components/DirectMessage';
 
-type UserCircleInfoProps = {
+export type UserCircleInfoProps = {
     avatarPath: string;
     level: number;
     status: UserStatus;
