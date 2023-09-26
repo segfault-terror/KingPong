@@ -1,27 +1,27 @@
 import CardAbout from './CardAbout';
-import Image from 'next/image';
-import line from '/public/images/about-lines.svg';
 
-const Animation = () => {
+
+const AnimationSpin = () => {
     return (
-        <div className="w-full max-w-lg z-0">
-            <div className="absolute top-0 left-4 w-36 h-36 rounded-full bg-cyan-300  filter blur-xl animate-blob"></div>
-            <div className="absolute top-0 left- w-36 h-36 rounded-full bg-secondary-200  filter blur-xl animate-blob1"></div>
-            <div className="absolute top-10 left-16 w-36 h-36 rounded-full bg-background  filter blur-xl animate-blob2"></div>
+        <div className=" flex items-center justify-center absolute inset-0 animate-[rotation_1.5s_linear_infinite] blur-xl h-48 w-48 xl:w-64 xl:h-64 ">
+            <div className="h-24 w-24 xl:h-36 xl:w-36 bg-green-600 absolute left-0 rounded-full mix-blend-screen "></div>
+            <div className="h-24 w-24 xl:h-36 xl:w-36 bg-secondary-500 absolute right-0 rounded-full mix-blend-screen "></div>
+            <div className="h-24 w-24 xl:h-36 xl:w-36 bg-red-600 rounded-full absolute top-1 mix-blend-screen"></div>
+            <div className="h-24 w-24 xl:h-36 xl:w-36 bg-cyan-600 rounded-full absolute bottom-1 mix-blend-screen"></div>
         </div>
     );
 };
-//grid sm:grid-row-5 items-center
+
 export default function About() {
     return (
-        <div className="relative h-screen">
-            <div className="flex flex-col relative z-10">
-                <div className="my-6 flex justify-center text-white drop-shadow-neon-white text-4xl border-red-400 border-2 col-span-2">
+        <div className="relative min-h-screen w-screen justify-center items-center">
+            <div className="flex flex-col z-10">
+                <div className="sm:m-12 md:mt-36 flex justify-center text-white drop-shadow-neon-white text-4xl border-red-400 col-span-2 ">
                     About
                 </div>
-                <div className="text-sm text-[#E6E6E6]  md:absolute md:inset-0 flex justify-center items-center">
-                    <div className='bg-blend-darken backdrop-blur backdrop-brightness-75 shadow-inner rounded-xl z-20'>
-                        <div className="m-4">
+                <div className="sm:text-sm md:text-md lg:text-lg xl:text-xl  text-[#E6E6E6]  md:absolute md:inset-y-0 flex justify-center items-center">
+                    <div className="bg-blend-darken backdrop-blur backdrop-brightness-75 shadow-inner rounded-xl z-20 xl:mx-96 lg:mx-80 md:mx-60">
+                        <div className="m-6">
                             Lorem Ipsum is simply dummy text of the printing and
                             typesetting industry. Lorem Ipsum has been the
                             industry's standard dummy text ever since the 1500s,
@@ -35,42 +35,58 @@ export default function About() {
                         </div>
                     </div>
                 </div>
-                <div className="grid grid-cols-4">
-                    <div className="my-2 border-2 border-yellow-300 col-span-4 flex justify-start">
+                <div className="w-screen grid sm:grid-cols-2 md:grid-cols-6 md:my-52 z-10">
+                    <div className="my-2 border-yellow-300 sm:col-span-2 flex justify-start md:col-start-1 md:col-span-2">
                         <CardAbout
                             firstName="Aymane"
                             LastName="Aggoujjil"
-                            links={['', '', '']}
+                            links={[
+                                'https://github.com/AymanAkashi',
+                                'https://www.linkedin.com/in/aymane-aggoujjil/',
+                                '',
+                            ]}
                             description=""
                             image="https://cdn.intra.42.fr/users/90acb3217b4be8350fa9f9fc32dd2200/aaggoujj.jpg"
                             className="animate-dragR w-full h-auto"
                         />
                     </div>
-                    <div className="my-2 border-2 border-yellow-300 col-span-4 flex justify-end">
+                    <div className="my-2 border-yellow-300 sm:col-span-2 md:col-start-5 md:col-span-2 flex justify-end">
                         <CardAbout
                             firstName="Omar"
                             LastName="Aizab"
-                            links={['', '', '']}
+                            links={[
+                                'https://github.com/oaizab',
+                                'https://www.linkedin.com/in/omaraizab/',
+                                '',
+                            ]}
                             description=""
                             image="https://cdn.intra.42.fr/users/10ebb5a3e3bf8fdf210566bfe0a102e0/oaizab.jpg"
                             className="animate-dragL w-full h-auto"
                         />
                     </div>
-                    <div className="my-2 border-2 border-yellow-300 col-span-4 flex justify-start">
+                    <div className="my-2 border-yellow-300 sm:col-span-2 flex justify-start md:col-start-1 md:col-span-2">
                         <CardAbout
                             firstName="Moussa"
                             LastName="Seddik"
-                            links={['', '', '']}
+                            links={[
+                                'https://github.com/Mou-SED',
+                                'https://www.linkedin.com/in/moussaseddik/',
+                                '',
+                            ]}
                             description=""
                             image="https://cdn.intra.42.fr/users/811c6da3283271dcc1794c667938159c/moseddik.jpg"
                             className="animate-dragR w-full h-auto"
                         />
                     </div>
-                    <div className="my-2 border-2 border-yellow-300 col-span-4 flex justify-end">
+                    <div className="my-2 border-yellow-300 sm:col-span-2 flex justify-end md:col-start-5 md:col-span-2 ">
                         <CardAbout
                             firstName="Hamza"
                             LastName="Haddani"
-                            links={['', '', '']}
+                            links={[
+                                'https://github.com/Archer-01/',
+                                'https://www.linkedin.com/in/hamza-haddani/',
+                                '',
+                            ]}
                             description=""
                             image="https://cdn.intra.42.fr/users/40ff48680a112910914c132211cbc9a3/hhamza.jpg"
                             className="animate-dragL w-full h-auto"
@@ -78,8 +94,16 @@ export default function About() {
                     </div>
                 </div>
             </div>
-            <div className="flex items-center justify-center absolute inset-0 z-0">
-                <Animation />
+            <div
+                className="absolute flex justify-center items-center w-48 h-48 xl:w-64 xl:h-64 opacity-100 animate-wiggle"
+                style={{
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                }}
+            >
+                <AnimationSpin />
             </div>
         </div>
     );
