@@ -12,67 +12,6 @@ import ProfileCard from './ProfileCard';
 import GoldLeague from '../../../public/images/gold-league.svg';
 
 export default function ProfilePage() {
-    const achievements = [
-        {
-            title: 'First Win',
-            description: 'Win your first game',
-            image: AchievementGold.src,
-        },
-        {
-            title: 'First Win',
-            description: 'Win your first game',
-            image: AchievementGold.src,
-        },
-        {
-            title: 'First Win',
-            description: 'Win your first game',
-            image: AchievementGold.src,
-        },
-    ];
-    const lastFriends = [
-        {
-            avatarPath: Archer.src,
-            level: 99,
-            status: UserStatus.Online,
-        },
-        {
-            avatarPath: Tommy.src,
-            level: 72,
-            status: UserStatus.Online,
-        },
-        {
-            avatarPath: Moussa.src,
-            level: 64,
-            status: UserStatus.Online,
-        },
-    ];
-    const matchHistory = [
-        {
-            playerAvatar: Archer.src,
-            opponentAvatar: Archer.src,
-            playerLevel: 72,
-            opponentLevel: 84,
-            playerScore: 3,
-            opponentScore: 11,
-        },
-        {
-            playerAvatar: Archer.src,
-            opponentAvatar: Archer.src,
-            playerLevel: 72,
-            opponentLevel: 84,
-            playerScore: 3,
-            opponentScore: 11,
-        },
-        {
-            playerAvatar: Archer.src,
-            opponentAvatar: Archer.src,
-            playerLevel: 72,
-            opponentLevel: 84,
-            playerScore: 3,
-            opponentScore: 11,
-        },
-    ];
-
     return (
         <>
             <div className="p-4 flex justify-between items-center">
@@ -83,15 +22,15 @@ export default function ProfilePage() {
                 <ProfileCard
                     userName="Archer"
                     avatarPath={Archer.src}
-                    level={99}
+                    level={1}
                     status={UserStatus.Online}
                     league={GoldLeague.src}
-                    wins={100}
+                    wins={0}
                     losses={0}
                 />
-                <AchievementList achievements={achievements} />
-                <FullFriendList lastFriends={lastFriends} />
-                <MatchHistory gameResults={matchHistory} />
+                <AchievementList achievements={[]} />
+                <FullFriendList lastFriends={[]} />
+                <MatchHistory gameResults={[]} />
             </div>
         </>
     );
