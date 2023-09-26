@@ -22,21 +22,6 @@ export const Primary: Story = {
     ),
 	args: {
 		lastFriends: [
-			{
-				avatarPath: Tommy.src,
-				level: 100,
-				status: UserStatus.Online,
-			},
-			{
-				avatarPath: Archer.src,
-				level: 89,
-				status: UserStatus.Offline,
-			},
-			{
-				avatarPath: Moussa.src,
-				level: 12,
-				status: UserStatus.InGame,
-			},
 		],
 	},
 };

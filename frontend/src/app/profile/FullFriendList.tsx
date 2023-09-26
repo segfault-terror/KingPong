@@ -1,3 +1,6 @@
+'use client';
+import Lottie from 'lottie-react';
+import Ghost from '../../../public/lottie/ghost.json';
 import UserCircleInfo, { UserCircleInfoProps } from './UserCircleInfo';
 
 type FullFriendListProps = {
@@ -7,6 +10,15 @@ type FullFriendListProps = {
 export default function FullFriendList({ lastFriends }: FullFriendListProps) {
     if (lastFriends.length > 3) {
         throw new Error('FullFriendList can only display 3 friends');
+    }
+    if (lastFriends.length === 0) {
+        return <div className='bg-primary bg-opacity-80 rounded-2xl
+        flex flex-col items-center py-2'>
+            <div className='w-[30%]'>
+                <Lottie animationData={Ghost} loop={true} autoPlay={true} />
+            </div>
+            <p className='text-gray-400'>No friends, your friend list is empty!</p>
+        </div>
     }
 
     return (
