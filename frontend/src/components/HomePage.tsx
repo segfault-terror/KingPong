@@ -1,8 +1,11 @@
+'use client'
 import React from 'react';
 import Logo from '@/components/Logo';
 import BordGame from './BordGame';
 import WelcomeMessage from './WelcomeMessage';
 import Link from 'next/link';
+import Lottie from 'lottie-react';
+import LightAbout from "../../public/LightAbout.json";
 
 function HomePage() {
     return (
@@ -27,18 +30,14 @@ function HomePage() {
             <div className="z-10 absolute top-[12%] blur-[1.5px]">
                 <BordGame />
             </div>
-			<div className='absolute z-0 top-[12%] after:blur-[3.5rem] flex h-[100px] w-[200px] items-center justify-between rounded-3xl sm:h-[250px] sm:w-[350px] md:h-[380px] md:w-[620px] lg:h-[500px] lg:w-[1000px] xl:h-[600px] xl:w-[1200px] aspect-[1/1.5] animate-bordshadow'
-			></div>
-			<Link
-                    href="/about"
-                    placeholder="about"
-                    className="flex items-center absolute bottom-0 z-20 sm:w-[20px] md:xl:lg:w-[40px]"
-                    type="button"
-                >
-                    <Logo
-                        className="animate-bounce drop-shadow-neon-white transition-all duration-1000 delay-1000 w-[20px] md:w-[40px]"
-                        mylogo="/images/arrow-about.svg"
-                    />
+            <div className="absolute z-0 top-[12%] after:blur-[3.5rem] flex h-[100px] w-[200px] items-center justify-between rounded-3xl sm:h-[250px] sm:w-[350px] md:h-[380px] md:w-[620px] lg:h-[500px] lg:w-[1000px] xl:h-[600px] xl:w-[1200px] aspect-[1/1.5] animate-bordshadow"></div>
+            <Link
+                href="/about"
+                placeholder="about"
+                className="flex items-center absolute bottom-0 z-0 sm:w-[80px] md:w-[200px]"
+                type="button"
+            >
+                <Lottie animationData={LightAbout} loop={true} />
             </Link>
         </main>
     );
