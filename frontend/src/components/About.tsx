@@ -1,12 +1,5 @@
 import CardAbout from './CardAbout';
 
-import { Jockey_One } from 'next/font/google';
-
-
-
-
-
-
 const AnimationSpin = () => {
     return (
         <div className=" flex items-center justify-center absolute inset-0 animate-[rotation_1.5s_linear_infinite] blur-xl h-48 w-48 xl:w-64 xl:h-64 ">
@@ -20,14 +13,16 @@ const AnimationSpin = () => {
 
 export default function About() {
     return (
-        <div className="justify-center items-center">
-            <div className="flex flex-col ">
-                <div className="flex justify-center text-white drop-shadow-neon-white text-4xl border-red-400 col-span-2 border-2 z-20 font-jockey-one  ">
-                    About
+        <div className="flex justify-between items-center">
+            <div className="flex flex-col justify-between">
+                <div className="flex justify-center text-white drop-shadow-neon-white text-xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl  z-20 font-jockey mb-40 sm:mb-20">
+                    About Us
                 </div>
-                <div className="sm:text-sm md:text-md lg:text-lg xl:text-xl  text-[#E6E6E6]  md:absolute md:inset-0 flex justify-center items-center border-2">
-                    <div className="bg-blend-darken backdrop-blur backdrop-brightness-75 shadow-inner rounded-xl z-20 xl:mx-[42%] lg:mx-[38%] md:mx-64 ">
-                        <div className="m-6 ">
+                <div className="w-screen grid sm:grid-cols-2 md:grid-cols-6 z-20">
+                    <div className='md:col-start-3 md:col-span-2 md:row-start-1 md:row-span-2 sm:col-span-2'>
+
+                    <div className="bg-blend-darken backdrop-blur backdrop-brightness-75 shadow-inner rounded-xl z-30 sm:text-sm md:text-md lg:text-lg xl:text-xl  text-[#E6E6E6] sm:mx-10 md:mx-0">
+                        <div className="m-6">
                             Lorem Ipsum is simply dummy text of the printing and
                             typesetting industry. Lorem Ipsum has been the
                             industry's standard dummy text ever since the 1500s,
@@ -40,9 +35,8 @@ export default function About() {
                             passages
                         </div>
                     </div>
-                </div>
-                <div className=" md:w-screen lg:w-fit grid sm:grid-cols-2 md:grid-cols-6 md:my-52 z-20 border-2 border-green-500">
-                    <div className="my-2 sm:col-span-2 flex justify-start md:col-start-1 md:col-span-2">
+                    </div>
+                    <div className="my-2 sm:col-span-2 flex sm:justify-start md:justify-center md:col-start-1 md:col-span-2">
                         <CardAbout
                             firstName="Aymane"
                             LastName="Aggoujjil"
@@ -56,7 +50,7 @@ export default function About() {
                             className="animate-dragR w-full h-auto"
                         />
                     </div>
-                    <div className="my-2 sm:col-span-2 md:col-start-5 md:col-span-2 flex justify-end">
+                    <div className="my-2 sm:col-span-2 md:col-start-5 md:col-span-2 flex sm:justify-end md:justify-center ">
                         <CardAbout
                             firstName="Omar"
                             LastName="Aizab"
@@ -70,7 +64,7 @@ export default function About() {
                             className="animate-dragL w-full h-auto"
                         />
                     </div>
-                    <div className="my-2 sm:col-span-2 flex justify-start md:col-start-1 md:col-span-2">
+                    <div className="my-2 sm:col-span-2 flex sm:justify-start md:justify-center md:col-start-1 md:col-span-2">
                         <CardAbout
                             firstName="Moussa"
                             LastName="Seddik"
@@ -84,7 +78,7 @@ export default function About() {
                             className="animate-dragR w-full h-auto"
                         />
                     </div>
-                    <div className="my-2 sm:col-span-2 flex justify-end md:col-start-5 md:col-span-2 ">
+                    <div className="my-2 sm:col-span-2 flex sm:justify-end md:justify-center  md:col-start-5 md:col-span-2 ">
                         <CardAbout
                             firstName="Hamza"
                             LastName="Haddani"
@@ -115,7 +109,7 @@ export default function About() {
             <div className="w-56 h-56 fixed -right-24 bg-[#467483] -bottom-4 rotate-[25deg] overflow z-0"></div>
             <div className="w-72 h-64 fixed -left-20 bg-[#0F2325] -top-32 rotate-[-24deg] overflow z-10"></div>
             <div className="w-56 h-56 fixed -left-24 bg-[#467483] -top-4 rotate-[25deg] overflow z-0"></div>
-            <div className="fixed bottom-0 left-0 z-0 sm:w-48 lg:w-auto">
+            <div className="fixed bottom-0 left-0 -z-10 sm:w-48 lg:w-auto">
                 <img src="/images/lines-about.svg" alt="" />
             </div>
         </div>
