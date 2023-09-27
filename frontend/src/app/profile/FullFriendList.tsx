@@ -16,7 +16,7 @@ export default function FullFriendList({ lastFriends }: FullFriendListProps) {
         return (
             <div
                 className="bg-primary bg-opacity-80 rounded-2xl
-        flex flex-col items-center py-2"
+        flex flex-col items-center justify-center py-2 h-full"
             >
                 <div className="w-[30%]">
                     <Lottie animationData={Ghost} loop={true} />
