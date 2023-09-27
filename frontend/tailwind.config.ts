@@ -14,6 +14,7 @@ const config: Config = {
                 md: '650px',
                 lg: '1024px',
                 xl: '1440px',
+                xxl: '1920px',
             },
             backgroundImage: {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -48,6 +49,7 @@ const config: Config = {
                 nicomoji: ['var(--font-nicomoji)', 'sans-serif'],
                 jost: ['var(--font-jost)', 'sans-serif'],
                 mulish: ['var(--font-mulish)', 'sans-serif'],
+                jockey: ['var(--font-jockey-one)', 'sans-serif'],
             },
             dropShadow: {
                 '3xl': '0 2px 2px rgba(255, 228, 134, 0.68)',

@@ -1,7 +1,8 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import { Jost, Mulish } from 'next/font/google';
+import { Jost, Mulish, Jockey_One } from 'next/font/google';
+
 import { Suspense } from 'react';
 import Loading from '@/components/Loading';
 
@@ -13,6 +14,12 @@ const nicoMoji = localFont({
         },
     ],
     variable: '--font-nicomoji',
+});
+
+const jockeyOne = Jockey_One({
+    variable: '--font-jockey-one',
+    subsets: ['latin'],
+    weight: '400',
 });
 
 const jost = Jost({
@@ -38,7 +45,7 @@ export default function RootLayout({
     return (
         <html
             lang="en"
-            className={`${nicoMoji.variable} ${jost.variable} ${mulish.variable}`}
+            className={`${nicoMoji.variable} ${jost.variable} ${mulish.variable} ${jockeyOne.variable}`}
         >
             <Suspense fallback={<Loading />} />
             <body className="font-mulish bg-background text-white">
