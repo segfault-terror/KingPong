@@ -21,7 +21,7 @@ const config: Config = {
                 'gradient-conic':
                     'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
                 points: 'url("/images/background-point.png")',
-                aboutBg: 'url("/images/bg-about1.svg")',
+                aboutBg: 'url("/images/bg-about.svg")',
             },
             colors: {
                 primary: '#4F1754',
