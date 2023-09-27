@@ -8,7 +8,8 @@ type MatchHistoryProps = {
 export default function MatchHistory({ gameResults }: MatchHistoryProps) {
     if (gameResults.length === 0) {
         return (
-            <div className="bg-primary bg-opacity-80 rounded-2xl flex flex-col items-center p-2">
+            <div className="bg-primary bg-opacity-80 rounded-2xl
+                            flex flex-col items-center lg:justify-center p-2 lg:h-full">
                 <img
                     src={PaddleAndBall.src}
                     alt="Paddle and Ball"

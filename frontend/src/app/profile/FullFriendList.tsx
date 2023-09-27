@@ -11,11 +11,13 @@ export default function FullFriendList({ lastFriends }: FullFriendListProps) {
     if (lastFriends.length > 3) {
         throw new Error('FullFriendList can only display 3 friends');
     }
+
     if (lastFriends.length === 0) {
         return (
             <div
                 className="bg-primary bg-opacity-80 rounded-2xl
-        flex flex-col items-center py-2"
+                        flex flex-col items-center justify-center
+                        py-2 h-full"
             >
                 <div className="w-[30%]">
                     <Lottie animationData={Ghost} loop={true} />
@@ -28,10 +30,15 @@ export default function FullFriendList({ lastFriends }: FullFriendListProps) {
     }
 
     return (
-        <div>
+        <div
+            className="md:h-full
+                        flex flex-col justify-between
+                        bg-primary bg-opacity-80
+                        rounded-t-2xl"
+        >
             <div
-                className="bg-primary bg-opacity-80 rounded-t-2xl
-                    flex justify-evenly py-4"
+                className="flex justify-evenly py-4
+                            md:grid md:grid-cols-2 md:justify-items-center md:gap-4"
             >
                 {lastFriends.map((friend, idx) => {
                     return <UserCircleInfo key={idx} {...friend} />;

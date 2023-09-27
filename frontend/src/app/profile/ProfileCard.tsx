@@ -26,19 +26,19 @@ export default function ProfileCard({
         <div
             className="bg-primary bg-opacity-80
             border-2 border-secondary-200 rounded-3xl
-            h-28
+            h-28 md:h-32
             flex flex-col justify-between"
         >
             <div className="flex items-start relative">
-                <div className="absolute bottom-0">
+                <div className="absolute bottom-0 md:-bottom-2">
                     <UserCircleInfo
                         avatarPath={avatarPath}
                         level={level}
                         status={status}
                     />
                 </div>
-                <div className="flex items-center justify-between pt-2 pl-1 ml-24">
-                    <h1 className="text-secondary-200 font-mulish font-bold text-xl">
+                <div className="flex items-center justify-between pt-2 pl-1 ml-24 md:ml-32">
+                    <h1 className="text-secondary-200 font-mulish font-bold text-xl md:text-2xl">
                         {userName}
                     </h1>
                     <img src={league} alt="League" className="ml-2" />
@@ -46,7 +46,7 @@ export default function ProfileCard({
             </div>
 
             <div className="m-4 text-xl flex justify-between">
-                <div className="flex gap-1 items-center">
+                <div className="flex gap-1 items-center md:text-2xl">
                     <div className="flex items-center text-online">
                         <AiFillTrophy />
                         <span>{wins}</span>
@@ -57,7 +57,7 @@ export default function ProfileCard({
                     </div>
                 </div>
 
-                <div className="flex gap-4 text-secondary-200 items-center">
+                <div className="flex gap-4 text-secondary-200 items-center md:text-2xl">
                     <TbMessage2 />
                     <TbUserPlus />
                     <TbUserX />

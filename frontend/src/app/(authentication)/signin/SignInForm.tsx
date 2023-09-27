@@ -1,9 +1,8 @@
 'use client';
+
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import Input from '../Input';
 import { IoLogoGoogle } from 'react-icons/io';
-import intraIcon from './42_logo.svg';
-import Image from 'next/image';
 
 type SignInInputs = {
     fullname: string;

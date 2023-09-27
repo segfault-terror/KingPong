@@ -13,7 +13,7 @@ export default function UserCircleInfo({
     status,
 }: UserCircleInfoProps) {
     return (
-        <div className="rounded-full w-24 h-24">
+        <div className="rounded-full w-24 h-24 md:w-32 md:h-32">
             <div className="rounded-full w-full h-full overflow-hidden">
                 <img
                     src={avatarPath}
@@ -34,7 +34,7 @@ export default function UserCircleInfo({
                 ${status === UserStatus.Offline && 'bg-inactive-200'}
                 ${status === UserStatus.InGame && 'bg-ingame'}
                         relative bottom-[25%] left-[80%]
-                        w-3 h-3 rounded-full`}
+                        w-3 h-3 md:w-4 md:h-4 rounded-full`}
             ></div>
         </div>
     );

@@ -10,7 +10,10 @@ export default function AchievementList({
 }: AchievementListProps) {
     if (achievements.length === 0) {
         return (
-            <div className="bg-primary bg-opacity-80 rounded-2xl p-2">
+            <div
+                className="bg-primary bg-opacity-80 rounded-2xl p-2 h-full
+                flex flex-col justify-center"
+            >
                 <Achievement
                     title="No achievement yet"
                     description="Without failure there's no achievement"
@@ -22,8 +25,11 @@ export default function AchievementList({
 
     return (
         <>
-            <div className="bg-primary bg-opacity-80 rounded-2xl">
-                <div className="p-2">
+            <div
+                className="bg-primary bg-opacity-80 rounded-2xl h-full
+                            flex flex-col justify-between"
+            >
+                <div className="p-2 lg:flex lg:flex-col lg:gap-2">
                     {achievements.map((achievement, idx) => {
                         return (
                             <>
