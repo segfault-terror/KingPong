@@ -1,4 +1,9 @@
+'use client';
+
 import CardAbout from './CardAbout';
+import Lottie from 'lottie-react';
+import LightAbout from '../../public/lottie/HomePage.json';
+import Link from 'next/link';
 
 const AnimationSpin = () => {
     return (
@@ -19,22 +24,21 @@ export default function About() {
                     About Us
                 </div>
                 <div className="w-screen grid sm:grid-cols-2 md:grid-cols-6 z-20">
-                    <div className='md:col-start-3 md:col-span-2 md:row-start-1 md:row-span-2 sm:col-span-2'>
-
-                    <div className="bg-blend-darken backdrop-blur backdrop-brightness-75 shadow-inner rounded-xl z-30 sm:text-sm md:text-md lg:text-lg xl:text-xl  text-[#E6E6E6] sm:mx-10 md:mx-0">
-                        <div className="m-6">
-                            Lorem Ipsum is simply dummy text of the printing and
-                            typesetting industry. Lorem Ipsum has been the
-                            industry's standard dummy text ever since the 1500s,
-                            when an unknown printer took a galley of type and
-                            scrambled it to make a type specimen book. It has
-                            survived not only five centuries, but also the leap
-                            into electronic typesetting, remaining essentially
-                            unchanged. It was popularised in the 1960s with the
-                            release of Letraset sheets containing Lorem Ipsum
-                            passages
+                    <div className="md:col-start-3 md:col-span-2 md:row-start-1 md:row-span-2 sm:col-span-2">
+                        <div className="bg-blend-darken backdrop-blur backdrop-brightness-75 shadow-inner rounded-xl z-30 sm:text-sm md:text-md lg:text-lg xl:text-xl  text-[#E6E6E6] sm:mx-10 md:mx-0">
+                            <div className="m-6">
+                                Lorem Ipsum is simply dummy text of the printing
+                                and typesetting industry. Lorem Ipsum has been
+                                the industry's standard dummy text ever since
+                                the 1500s, when an unknown printer took a galley
+                                of type and scrambled it to make a type specimen
+                                book. It has survived not only five centuries,
+                                but also the leap into electronic typesetting,
+                                remaining essentially unchanged. It was
+                                popularised in the 1960s with the release of
+                                Letraset sheets containing Lorem Ipsum passages
+                            </div>
                         </div>
-                    </div>
                     </div>
                     <div className="my-2 sm:col-span-2 flex sm:justify-start md:justify-center md:col-start-1 md:col-span-2">
                         <CardAbout
@@ -110,8 +114,11 @@ export default function About() {
             <div className="w-72 h-64 fixed -left-20 bg-[#0F2325] -top-32 rotate-[-24deg] overflow z-10"></div>
             <div className="w-56 h-56 fixed -left-24 bg-[#467483] -top-4 rotate-[25deg] overflow z-0"></div>
             <div className="fixed bottom-0 left-0 -z-10 sm:w-48 lg:w-auto">
-                <img src="/images/lines-about.svg" alt="" />
+                <img src="/images/lines-about.svg" alt="Lines" />
             </div>
+            <Link className="absolute top-10 left-10 z-30 lg:w-24 md:w-20 sm:w-16 hover:drop-shadow-[0px_0px_10px_#4F1754]" href="/">
+                <Lottie animationData={LightAbout} />
+            </Link>
         </div>
     );
 }

@@ -5,7 +5,7 @@ import BordGame from './BordGame';
 import WelcomeMessage from './WelcomeMessage';
 import Link from 'next/link';
 import Lottie from 'lottie-react';
-import LightAbout from "../../public/LightAbout.json";
+import LightAbout from "../../public/lottie/LightAbout.json";
 
 function HomePage() {
     return (
