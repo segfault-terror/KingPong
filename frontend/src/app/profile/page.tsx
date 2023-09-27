@@ -81,9 +81,11 @@ export default function ProfilePage() {
             </div>
             <div
                 className="flex flex-col gap-2 mx-4 mt-12 mb-8
-                            md:grid md:grid-cols-4 md:gap-3"
+                            md:grid md:grid-cols-4 md:gap-3
+                            lg:grid-cols-3
+                            lg:px-20 xl:px-36 2xl:px-96"
             >
-                <div className="md:col-span-4">
+                <div className="md:col-span-full">
                     <ProfileCard
                         userName="Archer"
                         avatarPath={Archer.src}
@@ -95,14 +97,14 @@ export default function ProfilePage() {
                     />
                 </div>
 
-                <div className="md:col-span-2">
+                <div className="md:col-span-2 lg:col-span-1">
                     <AchievementList achievements={achievements} />
                 </div>
 
-                <div className="md:col-span-2">
+                <div className="md:col-span-2 lg:col-span-1">
                     <FullFriendList lastFriends={lastFriends} />
                 </div>
-                <div className="md:col-start-2 md:col-end-4">
+                <div className="md:col-start-2 md:col-end-4 lg:col-span-1">
                     <MatchHistory gameResults={gameResults} />
                 </div>
             </div>
