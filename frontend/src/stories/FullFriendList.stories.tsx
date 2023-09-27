@@ -16,12 +16,27 @@ type Story = StoryObj<typeof FullFriendList>;
 
 export const Primary: Story = {
     render: (args) => (
-        <div className="mt-40">
+        <div className="mt-40 mx-60">
             <FullFriendList {...args} />
         </div>
     ),
-	args: {
-		lastFriends: [
-		],
-	},
+    args: {
+        lastFriends: [
+            {
+                avatarPath: Tommy.src,
+                level: 1,
+                status: UserStatus.Online,
+            },
+            {
+                avatarPath: Tommy.src,
+                level: 1,
+                status: UserStatus.Online,
+            },
+            {
+                avatarPath: Tommy.src,
+                level: 1,
+                status: UserStatus.Online,
+            },
+        ],
+    },
 };

@@ -12,25 +12,99 @@ import ProfileCard from './ProfileCard';
 import GoldLeague from '../../../public/images/gold-league.svg';
 
 export default function ProfilePage() {
+    const achievements = [
+        {
+            title: 'First Win',
+            description: 'Win your first game',
+            image: AchievementGold.src,
+        },
+        {
+            title: 'First Win',
+            description: 'Win your first game',
+            image: AchievementGold.src,
+        },
+        {
+            title: 'First Win',
+            description: 'Win your first game',
+            image: AchievementGold.src,
+        },
+    ];
+    const lastFriends = [
+        {
+            avatarPath: Tommy.src,
+            level: 1,
+            status: UserStatus.Online,
+        },
+        {
+            avatarPath: Tommy.src,
+            level: 1,
+            status: UserStatus.Online,
+        },
+        {
+            avatarPath: Tommy.src,
+            level: 1,
+            status: UserStatus.Online,
+        },
+    ];
+    const gameResults = [
+        {
+            playerAvatar: Archer.src,
+            opponentAvatar: Moussa.src,
+            playerLevel: 1,
+            opponentLevel: 1,
+            playerScore: 11,
+            opponentScore: 9,
+        },
+        {
+            playerAvatar: Archer.src,
+            opponentAvatar: Moussa.src,
+            playerLevel: 1,
+            opponentLevel: 1,
+            playerScore: 11,
+            opponentScore: 9,
+        },
+        {
+            playerAvatar: Archer.src,
+            opponentAvatar: Moussa.src,
+            playerLevel: 1,
+            opponentLevel: 1,
+            playerScore: 11,
+            opponentScore: 9,
+        },
+    ];
+
     return (
         <>
             <div className="p-4 flex justify-between items-center">
                 <Logo mylogo="/images/logo.svg" className="w-1/2" />
                 <AiOutlineBell className="text-secondary-200 text-3xl" />
             </div>
-            <div className="flex flex-col gap-2 mx-4 mt-12 mb-8">
-                <ProfileCard
-                    userName="Archer"
-                    avatarPath={Archer.src}
-                    level={1}
-                    status={UserStatus.Online}
-                    league={GoldLeague.src}
-                    wins={0}
-                    losses={0}
-                />
-                <AchievementList achievements={[]} />
-                <FullFriendList lastFriends={[]} />
-                <MatchHistory gameResults={[]} />
+            <div
+                className="flex flex-col gap-2 mx-4 mt-12 mb-8
+                            md:grid md:grid-cols-4 md:gap-3"
+            >
+                <div className="md:col-span-4">
+                    <ProfileCard
+                        userName="Archer"
+                        avatarPath={Archer.src}
+                        level={1}
+                        status={UserStatus.Online}
+                        league={GoldLeague.src}
+                        wins={0}
+                        losses={0}
+                    />
+                </div>
+
+                <div className="md:col-span-2">
+                    <AchievementList achievements={achievements} />
+                </div>
+
+                <div className="md:col-span-2">
+                    <FullFriendList lastFriends={lastFriends} />
+                </div>
+                <div className="md:col-start-2 md:col-end-4">
+                    <MatchHistory gameResults={gameResults} />
+                </div>
             </div>
         </>
     );

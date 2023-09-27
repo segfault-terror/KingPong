@@ -22,7 +22,7 @@ export default function AchievementList({
 
     return (
         <>
-            <div className="bg-primary bg-opacity-80 rounded-2xl">
+            <div className="bg-primary bg-opacity-80 rounded-2xl h-full flex flex-col justify-between">
                 <div className="p-2">
                     {achievements.map((achievement, idx) => {
                         return (
