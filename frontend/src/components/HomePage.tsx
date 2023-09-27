@@ -34,7 +34,7 @@ function HomePage() {
             <Link
                 href="/about"
                 placeholder="about"
-                className="flex items-center absolute bottom-0 z-0 sm:w-[80px] md:w-[200px]"
+                className="flex items-center absolute bottom-0 z-0 sm:w-[80px] md:w-[200px] hover:drop-shadow-[-5px_0px_10px_#467483]"
                 type="button"
             >
                 <Lottie animationData={LightAbout} loop={true} />

@@ -29,8 +29,8 @@ function Welcome(){
 		<p
 			className="font-jost
 		z-30 mx-10 text-lg font-light leading-7
-		sm:mx-16 sm:text-lg md:mx-40 md:text-2xl lg:mx-64
-		lg:text-3xl xl:mx-[550px] xl:text-4xl"
+		sm:mx-[20%] sm:text-lg md:mx-40 md:text-2xl lg:mx-64
+		lg:text-3xl xl:mx-[30%] xl:text-4xl"
 		>
 			{welcomeMessage}
 		</p>
