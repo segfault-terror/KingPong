@@ -20,7 +20,12 @@ export default function SignInForm() {
         control,
         formState: { errors },
         handleSubmit,
-    } = useForm<SignInInputs>();
+    } = useForm<SignInInputs>({
+        defaultValues: {
+            username: '',
+            password: '',
+        },
+    });
 
     return (
         <>

@@ -19,7 +19,14 @@ export default function SignUpForm() {
         control,
         formState: { errors },
         handleSubmit,
-    } = useForm<SignUpInputs>();
+    } = useForm<SignUpInputs>({
+        defaultValues: {
+            fullname: '',
+            username: '',
+            email: '',
+            password: '',
+        },
+    });
 
     return (
         <form onSubmit={handleSubmit(onSignUp)}>
