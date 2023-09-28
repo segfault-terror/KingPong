@@ -83,7 +83,7 @@ export default function ProfilePage() {
                 className="flex flex-col gap-2 mx-4 mt-12 mb-8
                             md:grid md:grid-cols-4 md:gap-3
                             lg:grid-cols-3
-                            lg:px-20 xl:px-36 2xl:px-96"
+                            lg:max-w-5xl lg:mx-auto"
             >
                 <div className="md:col-span-full">
                     <ProfileCard
