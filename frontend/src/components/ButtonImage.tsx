@@ -5,21 +5,20 @@ type Props = {
     rest?: HtmlHTMLAttributes<HTMLButtonElement>;
 };
 
-export default function ButtonIcon({ children, ...rest }: Props) {
-    const renderIcon = () => {
+export default function ButtonImage({ children, ...rest }: Props) {
+    const renderImage = () => {
         return React.cloneElement(children as React.ReactElement, {
-            className: 'w-6 h-6',
+            className: 'w-9 h-9 object-cover',
         });
     };
     return (
         <div
             className="w-9 h-9 bg-primary flex items-center justify-center rounded-3xl relative
-                    before:w-0 before:h-0 before:rounded-3xl before:absolute before:bg-background 
-                    hover:before:h-9 hover:before:w-9 before:transition-all before:duration-200
+                    border-2 border-secondary-200 overflow-hidden
                     "
         >
             <button className="text-secondary-200 z-10" {...rest}>
-                {renderIcon()}
+                {renderImage()}
             </button>
         </div>
     );
