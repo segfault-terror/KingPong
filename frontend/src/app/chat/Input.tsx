@@ -16,7 +16,8 @@ export default function Input({ placeholder, type }: InputProps) {
             className="border-[1px] border-secondary-200 rounded-2xl outline-none
                             bg-background
                             px-4 py-[1px]
-                            text-white font-jost"
+                            text-white font-jost
+                            w-full"
         />
     );
 }

@@ -1,6 +1,9 @@
 import Input, { InputType } from './Input';
+import { useState } from 'react';
 
 export default function CreateNewChannel() {
+    const [visibility, setVisibility] = useState('public');
+
     return (
         <form
             className="text-white accent-secondary-200
@@ -19,6 +22,8 @@ export default function CreateNewChannel() {
                         name="visibility"
                         id="public"
                         className="peer"
+                        onClick={() => setVisibility('public')}
+                        required
                     />
                     <label
                         htmlFor="public"
@@ -34,6 +39,8 @@ export default function CreateNewChannel() {
                         name="visibility"
                         id="private"
                         className="peer"
+                        onClick={() => setVisibility('private')}
+                        required
                     />
                     <label
                         htmlFor="private"
@@ -49,6 +56,8 @@ export default function CreateNewChannel() {
                         name="visibility"
                         id="protected"
                         className="peer"
+                        onClick={() => setVisibility('protected')}
+                        required
                     />
                     <label
                         htmlFor="protected"
@@ -59,7 +68,12 @@ export default function CreateNewChannel() {
                 </div>
             </div>
 
-            <Input placeholder="Channel Password" type={InputType.PASSWORD} />
+            <div className={visibility === 'protected' ? 'block' : 'hidden'}>
+                <Input
+                    placeholder="Channel Password"
+                    type={InputType.PASSWORD}
+                />
+            </div>
 
             <button
                 className="bg-secondary-200
