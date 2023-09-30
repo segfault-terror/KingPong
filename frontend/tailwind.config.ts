@@ -59,6 +59,18 @@ const config: Config = {
                 'neon-bord': '0 0 30px rgba(255, 255, 255, 0.5)',
             },
             keyframes: {
+                opacityUp:{
+                    '0%': { opacity: '0' },
+                    '100%': { opacity: '100' },
+                },
+                zoomin: {
+                    '0%': { transform: 'scale(0)' },
+                    '100%': { transform: 'scale(1)' },
+                },
+                zoomin2: {
+                    '0%': { transform: 'scale(0.3)' },
+                    '100%': { transform: 'scale(1)' },
+                },
                 waggle: {
                     '0%': { transform: 'opacity 0' },
                     '100%': { transform: 'opacity 1' },
@@ -299,6 +311,7 @@ const config: Config = {
                     'matchmaking-loading-dot 1s ease-in-out 150ms infinite',
                 'third-dot':
                     'matchmaking-loading-dot 1s ease-in-out 300ms infinite',
+                opacityUp: 'opacityUp 1s ease-in-out 1000ms 1',
             },
         },
     },
