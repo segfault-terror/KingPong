@@ -59,7 +59,7 @@ const config: Config = {
                 'neon-bord': '0 0 30px rgba(255, 255, 255, 0.5)',
             },
             keyframes: {
-                opacityUp:{
+                opacityUp: {
                     '0%': { opacity: '0' },
                     '100%': { opacity: '100' },
                 },
@@ -315,6 +315,6 @@ const config: Config = {
             },
         },
     },
-    plugins: [],
+    plugins: [require('tailwind-scrollbar')],
 };
 export default config;
