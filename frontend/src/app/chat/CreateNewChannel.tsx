@@ -13,9 +13,10 @@ export default function CreateNewChannel() {
                 Create new channel
             </h1>
 
-            <Input placeholder="Channel name" />
+            <Input placeholder="Name" />
 
             <div>
+                <p className="text-inactive-200 mb-2">Visibility</p>
                 <div className="flex justify-start gap-1">
                     <input
                         type="radio"
@@ -69,10 +70,7 @@ export default function CreateNewChannel() {
             </div>
 
             <div className={visibility === 'protected' ? 'block' : 'hidden'}>
-                <Input
-                    placeholder="Channel Password"
-                    type={InputType.PASSWORD}
-                />
+                <Input placeholder="Password" type={InputType.PASSWORD} />
             </div>
 
             <button
