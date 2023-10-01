@@ -337,3 +337,15 @@
     animation-name: fade-in;
     animation-fill-mode: forwards;
 }
+
+.StandingBg {
+    overflow: hidden;
+    background: linear-gradient(
+        181deg,
+        #fbe24f 0.74%,
+        #4f1754 44.76%,
+        #250a3b 72.27%,
+        rgba(37, 10, 59, 0) 82%
+    );
+    /* filter: blur(20px); */
+}

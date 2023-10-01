@@ -59,6 +59,10 @@ const config: Config = {
                 'neon-bord': '0 0 30px rgba(255, 255, 255, 0.5)',
             },
             keyframes: {
+                TranslateYDown: {
+                    '0%': { bottom: '40%' },
+                    '100%': { bottom: '0' },
+                },
                 opacityUp: {
                     '0%': { opacity: '0' },
                     '100%': { opacity: '100' },
