@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 
-export default function ToggleButton({ img }: { img: string }) {
+export default function ToggleButton() {
     const [toggle, setToggle] = useState<boolean>(false);
 
     return (
