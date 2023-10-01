@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import DirectMessage, { UserStatus } from '../components/DirectMessage';
+import DirectMessage, { UserStatus } from '../app/chat/DirectMessage';
 
 import Avatar from './assets/1.jpeg';
 

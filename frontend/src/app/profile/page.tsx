@@ -1,4 +1,4 @@
-import { UserStatus } from '@/components/DirectMessage';
+import { UserStatus } from '@/app/chat/DirectMessage';
 import { AiOutlineBell } from 'react-icons/ai';
 import AchievementGold from '../../../public/images/gold-achievement.svg';
 import Logo from '../../components/Logo';

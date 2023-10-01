@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import FullFriendList from '../app/profile/FullFriendList';
-import { UserStatus } from '../components/DirectMessage';
+import { UserStatus } from '../app/chat/DirectMessage';
 
 import Tommy from './assets/1.jpeg';
 import Archer from './assets/2.jpeg';

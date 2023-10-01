@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { UserStatus } from '../../components/DirectMessage';
+import { UserStatus } from '../chat/DirectMessage';
 
 export type UserCircleInfoProps = {
     avatarPath: string;

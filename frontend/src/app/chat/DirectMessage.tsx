@@ -1,7 +1,5 @@
 export default DirectMessage;
 
-import Image from 'next/image';
-
 function DirectMessage({
     userName,
     imagePath,
@@ -11,19 +9,15 @@ function DirectMessage({
     const statusColor = getStatusColor(status);
 
     return (
-        <div className="flex items-center gap-4 h-16">
+        <div className="flex items-center gap-4">
             <div className="relative">
-                <Image
+                <img
                     src={imagePath}
                     alt={`${userName}'a avatar`}
                     title={`${userName}'a avatar`}
-                    width="64"
-                    height="64"
-                    objectFit="cover"
-                    className="border-secondary-200 rounded-full border-4 border-solid
-                                min-w-[64px] max-w-[64px]
-                                min-h-[64px] max-h-[64px]
-                                text-white"
+                    className="border-secondary-200 rounded-full border-4
+                                w-[64px] h-[64px]
+                                text-white object-cover"
                 />
                 <div
                     className={`w-[12px] h-[12px]
@@ -62,7 +56,7 @@ function getStatusColor(status: UserStatus) {
     }
 }
 
-type DirectMessageProps = {
+export type DirectMessageProps = {
     userName: string;
     imagePath: string;
     lastMessage: string;
