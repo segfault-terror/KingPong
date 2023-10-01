@@ -13,7 +13,6 @@ type StandingGameResult = {
     result?: string;
 };
 
-import MyImage from '/Users/aaggoujj/Documents/photo/IMG_6282.jpeg';
 
 const YouWin = () => {
     return (
@@ -28,7 +27,7 @@ const YouWin = () => {
                     </p>
                 </div>
                 <div className="row-span-2 flex justify-center items-center col-span-4">
-                    <img src={MyImage.src} alt="" className="rounded-full w-1/2 border-4 border-secondary-200" />
+                    <img src="https://cdn.intra.42.fr/users/90acb3217b4be8350fa9f9fc32dd2200/aaggoujj.jpg" alt="" className="rounded-full w-1/2 border-4 border-secondary-200" />
                 </div>
                 <div className="col-start-2 col-span-2 relative">
 					<div className='h-28 w-24 bg-gray-300 blur-sm opacity-20'>
@@ -47,7 +46,7 @@ const YouWin = () => {
 					</div>
 				</div>
                 <div className="row-span-2 flex justify-center items-center col-span-4">
-                    <img src={MyImage.src} alt="" className="rounded-full w-1/3 border-4 border-gray-400" />
+                    <img src="https://cdn.intra.42.fr/users/90acb3217b4be8350fa9f9fc32dd2200/aaggoujj.jpg" alt="" className="rounded-full w-1/3 border-4 border-gray-400" />
                 </div>
             </div>
         </div>
