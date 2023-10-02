@@ -29,7 +29,7 @@ function DirectMessage({
             <div className="flex flex-col min-w-0">
                 <p className="font-jost font-bold text-white">{userName}</p>
                 <p
-                    className="font-jost font-light text-inactive-200
+                    className="font-jost font-light text-gray-400
                                 whitespace-nowrap overflow-hidden text-ellipsis"
                 >
                     {`You: ${lastMessage}`}
