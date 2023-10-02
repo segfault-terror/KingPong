@@ -10,15 +10,8 @@ export default meta;
 export const Default: StoryObj<typeof StandingGame> = {
     render: (props) => <StandingGame {...props} />,
     args: {
-        me: {
-			name: 'me',
-			image: '',
-		},
-		opp: {
-			name: 'opp',
-			image: '',
-		},
+		myimage: 'https://cdn.intra.42.fr/users/90acb3217b4be8350fa9f9fc32dd2200/aaggoujj.jpg',
+		oppimage: 'https://cdn.intra.42.fr/users/90acb3217b4be8350fa9f9fc32dd2200/aaggoujj.jpg',
 		youWin: true,
-		result: 'YouWin',
     },
 };
