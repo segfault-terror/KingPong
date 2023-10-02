@@ -139,9 +139,11 @@ export default function Header() {
                                     <li className="hover:bg-background px-4 py-2 cursor-pointer">
                                         <Link href="/profile">Profile</Link>
                                     </li>
+                                    <hr className="border-inactive-500" />
                                     <li className="hover:bg-background px-4 py-2 cursor-pointer">
                                         <Link href="/settings">Settings</Link>
                                     </li>
+                                    <hr className="border-inactive-500" />
                                     <li className="hover:bg-background px-4 py-2 cursor-pointer">
                                         <Link href="/logout">Logout</Link>
                                     </li>
