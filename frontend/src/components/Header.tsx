@@ -6,30 +6,74 @@ import LinkIcon from './LinkIcon';
 import { useState } from 'react';
 import Link from 'next/link';
 
-function SearchProfile() {
+type SearchProfileProps = {
+    avatar: string;
+    fullname: string;
+    username: string;
+};
+
+function SearchProfile({ avatar, fullname, username }: SearchProfileProps) {
     return (
         <Link href="#">
             <div className="flex items-center p-1 hover:bg-background">
                 <div className="w-12 h-12 rounded-full bg-secondary-200">
                     <img
-                        src="/images/4.jpeg"
+                        src={avatar}
                         className="w-full h-full object-cover rounded-full"
                         alt="avatar"
                     />
                 </div>
                 <div className="ml-2">
                     <h3 className="text-secondary-200 font-jost font-medium">
-                        Fullname
+                        {fullname}
                     </h3>
-                    <p className="text-secondary-200/70 font-jost">@username</p>
+                    <p className="text-secondary-200/70 font-jost">
+                        @{username}
+                    </p>
                 </div>
             </div>
         </Link>
     );
 }
 
+function SearchResults({ results }: { results?: SearchProfileProps[] }) {
+    return (
+        <div
+            className={`absolute top-11 ${results ? 'block' : 'hidden'}
+        bg-primary w-full max-h-96 overflow-y-scroll
+         scrollbar-thumb-secondary-500 scrollbar-thin`}
+        >
+            {results?.map((result) => (
+                <SearchProfile
+                    key={result.username}
+                    avatar={result.avatar}
+                    fullname={result.fullname}
+                    username={result.username}
+                />
+            ))}
+        </div>
+    );
+}
+
 function SearchBar() {
     const [search, setSearch] = useState('');
+    const profiles = [
+        {
+            avatar: '/images/1.jpeg',
+            fullname: 'Tommy Shelby',
+            username: 'Tommy',
+        },
+        {
+            avatar: '/images/2.jpeg',
+            fullname: 'Archer',
+            username: 'Archer-01',
+        },
+        {
+            avatar: '/images/4.jpeg',
+            fullname: 'Note',
+            username: 'note',
+        },
+    ];
     return (
         <div className="bg-primary w-full relative">
             <div className="absolute left-0 inset-y-0 pl-1 flex items-center pointer-events-none">
@@ -44,21 +88,7 @@ function SearchBar() {
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search Player"
             />
-            <div
-                className={`absolute top-11 ${search ? 'block' : 'hidden'}
-                    bg-primary w-full max-h-96 overflow-y-scroll
-                     scrollbar-thumb-secondary-500 scrollbar-thin`}
-            >
-                <SearchProfile />
-                <SearchProfile />
-                <SearchProfile />
-                <SearchProfile />
-                <SearchProfile />
-                <SearchProfile />
-                <SearchProfile />
-                <SearchProfile />
-                <SearchProfile />
-            </div>
+            <SearchResults results={search ? profiles : undefined} />
         </div>
     );
 }
