@@ -54,23 +54,23 @@ const YouWin = (myimage: string, oppimage: string) => {
     return (
         <div className="flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 relative">
             {Winner(myimage)}
-            <div className="relative lg:mx-16 xl:mx-24">
-                <div className="h-32 w-32  md:h-48 md:w-44 bg-[#868686] shadow-inner opacity-10 rounded-lg md:rounded-xl "></div>
+            <div className="relative mx-12">
+                <div className="h-32 w-32  md:h-48 md:w-40 lg:h-56 lg:w-56 xl:h-64 xl:w-60 bg-[#868686] shadow-inner opacity-10 rounded-lg md:rounded-xl "></div>
                 <div className=" absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col justify-between items-center font-nicomoji text-center text-black text-sm">
                     <Link
-                        className="w-24 h-8 md:w-36 md:h-12 md:text-lg  rounded-lg lg:rounded-2xl border-t-2 border-b-2 border-gray-600 bg-gradient-radial from-secondary-200 to-secondary-500 flex justify-center items-center"
+                        className="w-24 h-8 md:w-36 md:h-12 lg:w-44 lg:h-14 lg:text-xl xl:w-48 xl:h-16 xl:text-2xl md:text-lg  rounded-lg lg:rounded-2xl border-t-2 border-b-2 border-gray-600 hover:border-white bg-gradient-radial from-secondary-200 to-secondary-500 flex justify-center items-center"
                         href="#"
                     >
                         Rematch
                     </Link>
                     <Link
-                        className="m-2 w-24 h-8 md:w-36 md:h-12 md:text-lg bg-gradient-radial from-green-400 to-green-700 rounded-lg lg:rounded-2xl border-t-2 border-b-2 flex justify-center items-center"
+                        className="m-2 w-24 h-8 md:w-36 md:h-12 lg:w-44 lg:h-14 lg:text-xl xl:w-48 xl:h-16 xl:text-2xl md:text-lg bg-gradient-radial from-green-400 to-green-700 rounded-lg lg:rounded-2xl border-t-2 border-b-2 border-gray-600 hover:border-green-300 flex justify-center items-center"
                         href="#"
                     >
                         New Game
                     </Link>
                     <Link
-                        className="w-24 h-8 md:w-36 md:h-12 md:text-lg bg-gradient-radial from-inactive-200 to-inactive-500 rounded-lg lg:rounded-2xl border-t-2 border-b-2 flex justify-center items-center"
+                        className="w-24 h-8 md:w-36 md:h-12 lg:w-44 lg:h-14 lg:text-xl xl:w-48 xl:h-16 xl:text-2xl md:text-lg bg-gradient-radial from-inactive-200 to-inactive-500 rounded-lg lg:rounded-2xl border-t-2 border-b-2 border-gray-600 hover:border-white flex justify-center items-center"
                         href="/dashboard"
                     >
                         Exit
