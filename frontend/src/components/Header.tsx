@@ -55,8 +55,7 @@ function SearchResults({ results }: { results?: SearchProfileProps[] }) {
     );
 }
 
-function SearchBar() {
-    const [search, setSearch] = useState('');
+function getSearchResults(search: string) {
     const profiles = [
         {
             avatar: '/images/1.jpeg',
@@ -74,6 +73,19 @@ function SearchBar() {
             username: 'note',
         },
     ];
+    if (!search) return undefined;
+    const result = profiles.filter((profile) => {
+        return (
+            profile.fullname.toLowerCase().includes(search.toLowerCase()) ||
+            profile.username.toLowerCase().includes(search.toLowerCase())
+        );
+    });
+    return result.length > 0 ? result : undefined;
+}
+
+function SearchBar() {
+    const [search, setSearch] = useState('');
+
     return (
         <div className="bg-primary w-full relative">
             <div className="absolute left-0 inset-y-0 pl-1 flex items-center pointer-events-none">
@@ -88,7 +100,7 @@ function SearchBar() {
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search Player"
             />
-            <SearchResults results={search ? profiles : undefined} />
+            <SearchResults results={getSearchResults(search)} />
         </div>
     );
 }
