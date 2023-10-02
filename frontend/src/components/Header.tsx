@@ -15,7 +15,7 @@ type SearchProfileProps = {
 function SearchProfile({ avatar, fullname, username }: SearchProfileProps) {
     return (
         <Link href="#">
-            <div className="flex items-center p-1 hover:bg-background">
+            <div className="flex items-center px-4 py-2 hover:bg-background">
                 <div className="w-12 h-12 rounded-full bg-secondary-200">
                     <img
                         src={avatar}
@@ -106,8 +106,11 @@ function SearchBar() {
 }
 
 export default function Header() {
+    function handleClicked() {
+        console.log('clicked');
+    }
     return (
-        <header className="fixed p-3 w-full">
+        <header className="fixed p-3 w-full bg-background">
             <div className="grid grid-cols-1 md:grid-cols-3 items-center">
                 <div className="">
                     <img
@@ -118,16 +121,32 @@ export default function Header() {
                 </div>
                 <SearchBar />
                 <nav className="">
-                    <ul className="flex gap-2">
+                    <ul className="flex gap-2 justify-end">
                         <li className="hidden md:block">
                             <LinkIcon href="#">
                                 <MdChatBubbleOutline />
                             </LinkIcon>
                         </li>
-                        <li>
-                            <ButtonImage>
+                        <li className="relative">
+                            <ButtonImage onClick={handleClicked}>
                                 <img src="/images/4.jpeg" alt="avatar" />
                             </ButtonImage>
+                            <div
+                                className="absolute right-0 top-12 bg-primary text-secondary-200 rounded-lg w-48
+                                        border border-secondary-500 p-2"
+                            >
+                                <ul className="flex flex-col gap-2">
+                                    <li className="hover:bg-background px-4 py-2 cursor-pointer">
+                                        <Link href="/profile">Profile</Link>
+                                    </li>
+                                    <li className="hover:bg-background px-4 py-2 cursor-pointer">
+                                        <Link href="/settings">Settings</Link>
+                                    </li>
+                                    <li className="hover:bg-background px-4 py-2 cursor-pointer">
+                                        <Link href="/logout">Logout</Link>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                     </ul>
                 </nav>
