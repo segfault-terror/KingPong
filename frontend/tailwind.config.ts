@@ -60,8 +60,8 @@ const config: Config = {
             },
             keyframes: {
                 TranslateYDown: {
-                    '0%': { bottom: '40%' },
-                    '100%': { bottom: '0' },
+                    '0%': { transform: 'translateY(-50%)' },
+                    '100%': { transform: 'translateY(0)' },
                 },
                 opacityUp: {
                     '0%': { opacity: '0' },
