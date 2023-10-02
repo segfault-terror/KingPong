@@ -1,0 +1,34 @@
+<svg
+	xmlns="http://www.w3.org/2000/svg"
+	width="75"
+	height="19"
+	viewBox="0 0 75 19"
+	fill="none"
+>
+	<ellipse
+		cx="37.5"
+		cy="9.5"
+		rx="37.5"
+		ry="9.5"
+		transform="matrix(1 0 0 -1 0 19)"
+		fill="url(#paint0_radial_1297_3512)"
+		fill-opacity="0.19"
+	/>
+	<defs>
+		<radialGradient
+			id="paint0_radial_1297_3512"
+			cx="0"
+			cy="0"
+			r="1"
+			gradientUnits="userSpaceOnUse"
+			gradientTransform="translate(37.2781 10.0816) rotate(88.5748) scale(8.92113 34.5501)"
+		>
+			<stop offset="0.108099" stop-color="#888787" />
+			<stop
+				offset="1"
+				stop-color="#5B5B5B"
+				stop-opacity="0"
+			/>
+		</radialGradient>
+	</defs>
+</svg>
