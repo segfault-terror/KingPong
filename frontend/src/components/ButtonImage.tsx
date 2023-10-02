@@ -1,11 +1,11 @@
 import React, { HtmlHTMLAttributes } from 'react';
 
-type Props = {
+type Props = HtmlHTMLAttributes<HTMLButtonElement> & {
     children: React.ReactNode;
-    rest?: HtmlHTMLAttributes<HTMLButtonElement>;
 };
 
-export default function ButtonImage({ children, ...rest }: Props) {
+export default function ButtonImage(props: Props) {
+    const { children, ...rest } = props;
     const renderImage = () => {
         return React.cloneElement(children as React.ReactElement, {
             className: 'w-9 h-9 object-cover',
@@ -17,7 +17,7 @@ export default function ButtonImage({ children, ...rest }: Props) {
                     border-2 border-secondary-200 overflow-hidden
                     "
         >
-            <button className="text-secondary-200 z-10" {...rest}>
+            <button {...rest} className="text-secondary-200 z-10">
                 {renderImage()}
             </button>
         </div>
