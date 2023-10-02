@@ -9,7 +9,7 @@ export default function EmptyChat() {
             <BiMessageAdd className="w-20 h-20 mx-auto" />
             <h1 className="text-2xl">Your messages</h1>
             <p className="text-xs font-light mb-3">
-                Send private messages to a friend or channel
+                Send private messages to a friend
             </p>
             <button
                 onClick={() => console.log('Send a message')}

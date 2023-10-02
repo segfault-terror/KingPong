@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import EmptyChat from '../components/EmptyChat';
+import EmptyChat from '../app/chat/EmptyChat';
 
 const meta: Meta<typeof EmptyChat> = {
     title: 'EmptyChat',
