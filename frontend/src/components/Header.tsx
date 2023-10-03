@@ -97,7 +97,7 @@ function SearchBar() {
                             text-secondary-200 font-jost
                             outline-none"
                 type="text"
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => setSearch(e.target.value.trim())}
                 placeholder="Search Player"
             />
             <SearchResults results={getSearchResults(search)} />
@@ -106,19 +106,18 @@ function SearchBar() {
 }
 
 export default function Header() {
-    function handleClicked() {
-        console.log('clicked');
-    }
+    const [open, setOpen] = useState(false);
+
     return (
-        <header className="fixed p-3 w-full bg-background">
+        <header className="p-3 w-full">
             <div className="grid grid-cols-1 md:grid-cols-3 items-center">
-                <div className="">
+                <Link href="/" className="">
                     <img
                         src="/images/logo.svg"
                         className="w-56 md:w-56"
                         alt="logo"
                     />
-                </div>
+                </Link>
                 <SearchBar />
                 <nav className="">
                     <ul className="flex gap-2 justify-end">
@@ -128,24 +127,59 @@ export default function Header() {
                             </LinkIcon>
                         </li>
                         <li className="relative">
-                            <ButtonImage onClick={handleClicked}>
+                            <ButtonImage onClick={() => setOpen(!open)}>
                                 <img src="/images/4.jpeg" alt="avatar" />
                             </ButtonImage>
                             <div
-                                className="absolute right-0 top-12 bg-primary text-secondary-200 rounded-lg w-48
-                                        border border-secondary-500 p-2"
+                                className={`absolute ${
+                                    open ? 'block' : 'hidden'
+                                } right-0 top-12 bg-primary text-secondary-200 rounded-lg w-48
+                                        border border-secondary-500 p-2`}
                             >
                                 <ul className="flex flex-col gap-2">
-                                    <li className="hover:bg-background px-4 py-2 cursor-pointer">
-                                        <Link href="/profile">Profile</Link>
+                                    <li className="hover:bg-background px-4 py-2">
+                                        <Link
+                                            className="block w-full h-full"
+                                            href="/profile"
+                                        >
+                                            Profile
+                                        </Link>
                                     </li>
                                     <hr className="border-inactive-500" />
-                                    <li className="hover:bg-background px-4 py-2 cursor-pointer">
-                                        <Link href="/settings">Settings</Link>
+                                    <li className="hover:bg-background px-4 py-2">
+                                        <Link
+                                            className="block w-full h-full"
+                                            href="/chat"
+                                        >
+                                            Chat
+                                        </Link>
                                     </li>
                                     <hr className="border-inactive-500" />
-                                    <li className="hover:bg-background px-4 py-2 cursor-pointer">
-                                        <Link href="/logout">Logout</Link>
+                                    <li className="hover:bg-background px-4 py-2">
+                                        <Link
+                                            className="block w-full h-full"
+                                            href="/notifications"
+                                        >
+                                            Notifiations
+                                        </Link>
+                                    </li>
+                                    <hr className="border-inactive-500" />
+                                    <li className="hover:bg-background px-4 py-2">
+                                        <Link
+                                            className="block w-full h-full"
+                                            href="/settings"
+                                        >
+                                            Settings
+                                        </Link>
+                                    </li>
+                                    <hr className="border-inactive-500" />
+                                    <li className="hover:bg-background px-4 py-2">
+                                        <Link
+                                            className="block w-full h-full"
+                                            href="/logout"
+                                        >
+                                            Logout
+                                        </Link>
                                     </li>
                                 </ul>
                             </div>
