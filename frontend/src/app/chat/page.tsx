@@ -28,9 +28,12 @@ export default function ChatPage() {
         },
     ];
 
-    const channelList = ['segfault_terror', 'fc_mota9a3idin'];
+    const channelList = ['segfault_terror', 'fc_mota9a3idin',
+                        'segfault_terror', 'fc_mota9a3idin', 'segfault_terror',
+                        'fc_mota9a3idin', 'segfault_terror', 'fc_mota9a3idin',
+                        'fc_mota9a3idin', 'segfault_terror', 'fc_mota9a3idin',];
     return (
-        <div className='py-8 px-4 h-screen'>
+        <div className='py-8 px-4 h-screen bg-background'>
             <ChatSideBar
                 messagesList={messagesList}
                 channelList={channelList}
