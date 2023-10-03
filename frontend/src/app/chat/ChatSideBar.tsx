@@ -50,15 +50,25 @@ function ChannelList({ channelList, toggle, setToggle }: ChannelListProps) {
 
     return (
         <>
-            <div className="text-lg font-jost text-gray-300">
+            <div className="text-lg font-jost text-gray-300 flex-grow">
                 {channelList.map((channel, idx) => {
                     return (
                         <>
-                            {`# ${channel}`}
-                            {idx < channelList.length - 1 && <br />}
+                            <div
+                                className="hover:bg-background hover:bg-opacity-80
+                                        hover:rounded-2xl"
+                            >{`# ${channel}`}</div>
+                            <div className="mt-1"></div>
                         </>
                     );
                 })}
+            </div>
+            <div
+                className="flex justify-between
+                    text-secondary-200 font-jost"
+            >
+                <button>Join channel</button>
+                <button>Create new channel</button>
             </div>
         </>
     );
