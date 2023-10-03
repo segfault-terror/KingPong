@@ -11,7 +11,7 @@ export default function AchievementList({
     if (achievements.length === 0) {
         return (
             <div
-                className="bg-primary bg-opacity-80 rounded-2xl p-2 h-full
+                className="bg-primary bg-opacity-90 rounded-2xl p-2 h-full
                 flex flex-col justify-center"
             >
                 <Achievement
@@ -26,7 +26,7 @@ export default function AchievementList({
     return (
         <>
             <div
-                className="bg-primary bg-opacity-80 rounded-2xl h-full
+                className="bg-primary bg-opacity-90 rounded-2xl h-full
                             flex flex-col justify-between"
             >
                 <div className="p-2 lg:flex lg:flex-col lg:gap-2">

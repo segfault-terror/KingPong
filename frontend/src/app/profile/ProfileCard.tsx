@@ -24,7 +24,7 @@ export default function ProfileCard({
 }: ProfileCardProps) {
     return (
         <div
-            className="bg-primary bg-opacity-80
+            className="bg-primary bg-opacity-90
             border-2 border-secondary-200 rounded-3xl
             h-28 md:h-32
             flex flex-col justify-between"

@@ -15,7 +15,7 @@ export default function FullFriendList({ lastFriends }: FullFriendListProps) {
     if (lastFriends.length === 0) {
         return (
             <div
-                className="bg-primary bg-opacity-80 rounded-2xl
+                className="bg-primary bg-opacity-90 rounded-2xl
                         flex flex-col items-center justify-center
                         py-2 h-full"
             >
@@ -33,7 +33,7 @@ export default function FullFriendList({ lastFriends }: FullFriendListProps) {
         <div
             className="md:h-full
                         flex flex-col justify-between
-                        bg-primary bg-opacity-80
+                        bg-primary bg-opacity-90
                         rounded-t-2xl"
         >
             <div

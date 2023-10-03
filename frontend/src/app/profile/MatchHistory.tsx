@@ -8,8 +8,10 @@ type MatchHistoryProps = {
 export default function MatchHistory({ gameResults }: MatchHistoryProps) {
     if (gameResults.length === 0) {
         return (
-            <div className="bg-primary bg-opacity-80 rounded-2xl
-                            flex flex-col items-center lg:justify-center p-2 lg:h-full">
+            <div
+                className="bg-primary bg-opacity-90 rounded-2xl
+                            flex flex-col items-center lg:justify-center p-2 lg:h-full"
+            >
                 <img
                     src={PaddleAndBall.src}
                     alt="Paddle and Ball"
@@ -21,7 +23,7 @@ export default function MatchHistory({ gameResults }: MatchHistoryProps) {
     }
 
     return (
-        <div className="bg-primary bg-opacity-80 rounded-2xl">
+        <div className="bg-primary bg-opacity-90 rounded-2xl">
             <div className="px-4 py-1">
                 {gameResults.map((gameResult: GameResultProps, idx: number) => {
                     return (
