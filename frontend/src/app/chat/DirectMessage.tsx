@@ -45,7 +45,7 @@ export enum UserStatus {
     InGame = 'in-game',
 }
 
-function getStatusColor(status: UserStatus) {
+export function getStatusColor(status: UserStatus) {
     switch (status) {
         case UserStatus.Online:
             return 'bg-online';
