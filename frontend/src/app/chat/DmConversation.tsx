@@ -1,24 +1,50 @@
 import { createContext, useContext } from 'react';
 import { HiDotsVertical } from 'react-icons/hi';
+import ChatInput from './ChatInput';
 import { UserStatus, getStatusColor } from './DirectMessage';
+
+type Message = {
+    isMe: boolean;
+    text: string;
+};
 
 type DmConversationProps = {
     userImg: string;
     userName: string;
     userStatus: UserStatus;
+    messages?: Message[];
 };
 
-const DmContext = createContext<DmConversationProps>({} as DmConversationProps);
+type DmHeaderProps = Pick<
+    DmConversationProps,
+    'userImg' | 'userName' | 'userStatus'
+>;
+
+const DmContext = createContext<DmHeaderProps>({} as DmHeaderProps);
 
 export default function DmConversation({
     userImg,
     userName,
     userStatus,
+    messages,
 }: DmConversationProps) {
     return (
-        <DmContext.Provider value={{ userImg, userName, userStatus }}>
-            <DmConversationHeader />
-        </DmContext.Provider>
+        <div
+            className="flex flex-col gap-8 h-full w-full
+                        bg-primary rounded-2xl
+                        bg-opacity-80
+                        px-4 py-3"
+        >
+            <DmContext.Provider value={{ userImg, userName, userStatus }}>
+                <DmConversationHeader />
+            </DmContext.Provider>
+
+            <div className="flex-grow overflow-scroll scrollbar-none">
+                <DmMessageList messages={messages} />
+            </div>
+
+            <ChatInput />
+        </div>
     );
 }
 
@@ -69,5 +95,35 @@ function UserDMInfo() {
                 </div>
             </div>
         </div>
+    );
+}
+
+type DmMessageListProps = Pick<DmConversationProps, 'messages'>;
+
+function DmMessageList({ messages }: DmMessageListProps) {
+    if (!messages) return <div className="text-white">No messages</div>;
+
+    function generateMessage(msg: Message, idx: number) {
+        const userStyles =
+            'rounded-bl-xl rounded-br-xl rounded-tr-xl bg-white self-start';
+        const myStyles =
+            'rounded-tl-xl rounded-tr-xl rounded-bl-xl bg-secondary-200 self-end';
+
+        return (
+            <li
+                key={idx}
+                className={`text-background font-mulish p-2 w-fit max-w-[80%] hyphens-auto ${
+                    msg.isMe ? myStyles : userStyles
+                }`}
+            >
+                {msg.text}
+            </li>
+        );
+    }
+
+    return (
+        <ul className="flex flex-col gap-2">
+            {messages.map((msg, idx) => generateMessage(msg, idx))}
+        </ul>
     );
 }

@@ -16,5 +16,19 @@ export const Primary: Story = {
         userImg: Archer.src,
         userName: 'Archer',
         userStatus: UserStatus.Online,
+        messages: [
+            {
+                isMe: false,
+                text: 'Wa fin hadchi',
+            },
+            {
+                isMe: true,
+                text: 'fin',
+            },
+            {
+                isMe: false,
+                text: 'Wach bant lik?',
+            },
+        ],
     },
 };
