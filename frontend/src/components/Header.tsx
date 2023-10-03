@@ -1,107 +1,49 @@
 'use client';
 
-import { MdChatBubbleOutline, MdSearch } from 'react-icons/md';
+import {
+    MdChatBubbleOutline,
+    MdOutlineNotificationsNone,
+    MdOutlinePeopleAlt,
+} from 'react-icons/md';
 import ButtonImage from './ButtonImage';
 import LinkIcon from './LinkIcon';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import SearchBar from './SearchBar';
 
-type SearchProfileProps = {
-    avatar: string;
-    fullname: string;
-    username: string;
-};
-
-function SearchProfile({ avatar, fullname, username }: SearchProfileProps) {
+function NavItem({
+    href,
+    children,
+}: {
+    href: string;
+    children: React.ReactNode;
+}) {
     return (
-        <Link href="#">
-            <div className="flex items-center px-4 py-2 hover:bg-background">
-                <div className="w-12 h-12 rounded-full bg-secondary-200">
-                    <img
-                        src={avatar}
-                        className="w-full h-full object-cover rounded-full"
-                        alt="avatar"
-                    />
-                </div>
-                <div className="ml-2">
-                    <h3 className="text-secondary-200 font-jost font-medium">
-                        {fullname}
-                    </h3>
-                    <p className="text-secondary-200/70 font-jost">
-                        @{username}
-                    </p>
-                </div>
-            </div>
-        </Link>
+        <li className="hidden md:block">
+            <LinkIcon href={href}>{children}</LinkIcon>
+        </li>
     );
 }
 
-function SearchResults({ results }: { results?: SearchProfileProps[] }) {
+function DropdownItem({
+    href,
+    children,
+    hidden,
+}: {
+    href: string;
+    children: React.ReactNode;
+    hidden?: boolean;
+}) {
     return (
-        <div
-            className={`absolute top-11 ${results ? 'block' : 'hidden'}
-        bg-primary w-full max-h-96 overflow-y-scroll
-         scrollbar-thumb-secondary-500 scrollbar-thin`}
+        <li
+            className={`hover:bg-background px-4 py-2 ${
+                hidden ? 'lg:hidden' : ''
+            }`}
         >
-            {results?.map((result) => (
-                <SearchProfile
-                    key={result.username}
-                    avatar={result.avatar}
-                    fullname={result.fullname}
-                    username={result.username}
-                />
-            ))}
-        </div>
-    );
-}
-
-function getSearchResults(search: string) {
-    const profiles = [
-        {
-            avatar: '/images/1.jpeg',
-            fullname: 'Tommy Shelby',
-            username: 'Tommy',
-        },
-        {
-            avatar: '/images/2.jpeg',
-            fullname: 'Archer',
-            username: 'Archer-01',
-        },
-        {
-            avatar: '/images/4.jpeg',
-            fullname: 'Note',
-            username: 'note',
-        },
-    ];
-    if (!search) return undefined;
-    const result = profiles.filter((profile) => {
-        return (
-            profile.fullname.toLowerCase().includes(search.toLowerCase()) ||
-            profile.username.toLowerCase().includes(search.toLowerCase())
-        );
-    });
-    return result.length > 0 ? result : undefined;
-}
-
-function SearchBar() {
-    const [search, setSearch] = useState('');
-
-    return (
-        <div className="bg-primary w-full relative">
-            <div className="absolute left-0 inset-y-0 pl-1 flex items-center pointer-events-none">
-                <MdSearch className="w-6 h-6 text-secondary-200/70" />
-            </div>
-            <input
-                className="bg-transparent w-full pl-8 py-2 px-3
-                            placeholder:text-secondary-200/70
-                            text-secondary-200 font-jost
-                            outline-none"
-                type="text"
-                onChange={(e) => setSearch(e.target.value.trim())}
-                placeholder="Search Player"
-            />
-            <SearchResults results={getSearchResults(search)} />
-        </div>
+            <Link className="block w-full h-full" href={href}>
+                {children}
+            </Link>
+        </li>
     );
 }
 
@@ -110,22 +52,26 @@ export default function Header() {
 
     return (
         <header className="p-3 w-full">
-            <div className="grid grid-cols-1 md:grid-cols-3 items-center">
-                <Link href="/" className="">
+            <div className="grid grid-cols-2 md:grid-cols-3 items-center">
+                <Link href="/" className="block w-56">
                     <img
                         src="/images/logo.svg"
                         className="w-56 md:w-56"
                         alt="logo"
                     />
                 </Link>
-                <SearchBar />
+                <SearchBar className="order-last lg:order-none col-span-2 lg:col-span-1 border border-secondary-500" />
                 <nav className="">
-                    <ul className="flex gap-2 justify-end">
-                        <li className="hidden md:block">
-                            <LinkIcon href="#">
-                                <MdChatBubbleOutline />
-                            </LinkIcon>
-                        </li>
+                    <ul className="flex gap-4 pr-6 justify-end">
+                        <NavItem href="/friends">
+                            <MdOutlinePeopleAlt />
+                        </NavItem>
+                        <NavItem href="/chat">
+                            <MdChatBubbleOutline />
+                        </NavItem>
+                        <NavItem href="/notifications">
+                            <MdOutlineNotificationsNone />
+                        </NavItem>
                         <li className="relative">
                             <ButtonImage onClick={() => setOpen(!open)}>
                                 <img src="/images/4.jpeg" alt="avatar" />
@@ -134,53 +80,32 @@ export default function Header() {
                                 className={`absolute ${
                                     open ? 'block' : 'hidden'
                                 } right-0 top-12 bg-primary text-secondary-200 rounded-lg w-48
-                                        border border-secondary-500 p-2`}
+                                        border border-secondary-500 p-2 z-50`}
                             >
                                 <ul className="flex flex-col gap-2">
-                                    <li className="hover:bg-background px-4 py-2">
-                                        <Link
-                                            className="block w-full h-full"
-                                            href="/profile"
-                                        >
-                                            Profile
-                                        </Link>
-                                    </li>
+                                    <DropdownItem href="/profile">
+                                        Profile
+                                    </DropdownItem>
+                                    <hr className="border-inactive-500 lg:hidden" />
+                                    <DropdownItem href="/chat" hidden>
+                                        Chat
+                                    </DropdownItem>
+                                    <hr className="border-inactive-500 lg:hidden" />
+                                    <DropdownItem hidden href="/notifications">
+                                        Notifiations
+                                    </DropdownItem>
+                                    <hr className="border-inactive-500 lg:hidden" />
+                                    <DropdownItem hidden href="/friends">
+                                        Friends
+                                    </DropdownItem>
                                     <hr className="border-inactive-500" />
-                                    <li className="hover:bg-background px-4 py-2">
-                                        <Link
-                                            className="block w-full h-full"
-                                            href="/chat"
-                                        >
-                                            Chat
-                                        </Link>
-                                    </li>
+                                    <DropdownItem href="/settings">
+                                        Settings
+                                    </DropdownItem>
                                     <hr className="border-inactive-500" />
-                                    <li className="hover:bg-background px-4 py-2">
-                                        <Link
-                                            className="block w-full h-full"
-                                            href="/notifications"
-                                        >
-                                            Notifiations
-                                        </Link>
-                                    </li>
-                                    <hr className="border-inactive-500" />
-                                    <li className="hover:bg-background px-4 py-2">
-                                        <Link
-                                            className="block w-full h-full"
-                                            href="/settings"
-                                        >
-                                            Settings
-                                        </Link>
-                                    </li>
-                                    <hr className="border-inactive-500" />
-                                    <li className="hover:bg-background px-4 py-2">
-                                        <Link
-                                            className="block w-full h-full"
-                                            href="/logout"
-                                        >
-                                            Logout
-                                        </Link>
-                                    </li>
+                                    <DropdownItem href="/logout">
+                                        Logout
+                                    </DropdownItem>
                                 </ul>
                             </div>
                         </li>
