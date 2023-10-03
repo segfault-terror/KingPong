@@ -68,7 +68,7 @@ export default function SignInForm() {
             </button>
             <div className="inline-flex items-center justify-center w-full">
                 <hr className="w-full h-[0.5px] my-8 border-secondary-200" />
-                <span className="absolute px-3 font-medium -translate-x-1/2 bg-background left-1/2 lg:left-1/4 text-white select-none">
+                <span className="absolute px-3 font-medium -translate-x-1/2 bg-background left-1/2 text-white select-none">
                     or
                 </span>
             </div>

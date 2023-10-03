@@ -14,11 +14,8 @@ export default function AuthLayout({
         <div className="h-screen relative">
             <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
                 <div>
-                    <Logo
-                        className="w-[50%] bg-background"
-                        mylogo="/images/logo.svg"
-                    />
-                    <div className="col-span-1 lg:w-1/2 lg:m-auto bg-background">
+                    <Logo className="w-[50%]" mylogo="/images/logo.svg" />
+                    <div className="col-span-1 lg:w-1/2 lg:m-auto backdrop-blur-sm bg-background/70 rounded-2xl">
                         {children}
                     </div>
                 </div>
@@ -27,11 +24,11 @@ export default function AuthLayout({
                 </div>
             </div>
             <div
-                className="absolute top-[50%] translate-x-[-51%] rotate-[93deg]
+                className="absolute hidden lg:block top-[50%] translate-x-[-51%] rotate-[93deg]
                          h-[27px] w-[417px] rounded-3xl bg-[#A88733]"
             ></div>
             <div
-                className="absolute top-[18%] left-0 translate-x-[-50%]
+                className="absolute hidden lg:block top-[18%] left-0 translate-x-[-50%]
                         w-36 h-36"
             >
                 <Image
@@ -39,16 +36,6 @@ export default function AuthLayout({
                     alt="side Hexagone"
                     width={144}
                     height={144}
-                />
-            </div>
-            <div className="absolute overflow-hidden bottom-0 w-full h-full -z-10">
-                <Image
-                    className="absolute bottom-0 left-0 w-96 h-auto
-                        rotate-45"
-                    src={dots.src}
-                    alt="dots"
-                    width={105}
-                    height={130}
                 />
             </div>
         </div>
