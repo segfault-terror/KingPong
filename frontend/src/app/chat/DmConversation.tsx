@@ -40,7 +40,7 @@ export default function DmConversation({
             </DmContext.Provider>
 
             <div className="flex-grow overflow-scroll scrollbar-none">
-                <DmMessageList messages={messages} />
+                <DmMessageList messages={messages} userName={userName} />
             </div>
 
             <ChatInput />
@@ -98,10 +98,15 @@ function UserDMInfo() {
     );
 }
 
-type DmMessageListProps = Pick<DmConversationProps, 'messages'>;
+type DmMessageListProps = Pick<DmConversationProps, 'messages' | 'userName'>;
 
-function DmMessageList({ messages }: DmMessageListProps) {
-    if (!messages) return <div className="text-white">No messages</div>;
+function DmMessageList({ messages, userName }: DmMessageListProps) {
+    if (!messages || messages.length === 0)
+        return (
+            <div className="text-cube_palette-200 font-jost font-light text-center">
+                Send a private message to {userName}
+            </div>
+        );
 
     function generateMessage(msg: Message, idx: number) {
         const userStyles =
