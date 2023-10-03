@@ -9,7 +9,7 @@ import LightAbout from "../../public/lottie/LightAbout.json";
 
 function HomePage() {
     return (
-        <main className="bg-points min-h-screen bg-center bg-cover flex items-center justify-center relative overflow-y-auto overflow-x-hidden">
+        <main className="min-h-screen bg-center bg-cover flex items-center justify-center relative overflow-y-auto overflow-x-hidden">
             <Logo
                 className="absolute top-0 left-0 w-[75%] md:w-[50%] sm:w-[40%] z-20"
                 mylogo="/images/logo.svg"

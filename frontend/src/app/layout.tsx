@@ -48,7 +48,7 @@ export default function RootLayout({
             className={`${nicoMoji.variable} ${jost.variable} ${mulish.variable} ${jockeyOne.variable}`}
         >
             <Suspense fallback={<Loading />} />
-            <body className="font-mulish bg-background text-white">
+            <body className="font-mulish bg-default bg-fixed bg-cover text-white">
                 {children}
             </body>
         </html>
