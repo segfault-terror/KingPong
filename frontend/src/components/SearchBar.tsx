@@ -43,7 +43,7 @@ function SearchResults({
         <div
             className={`absolute top-11 ${results ? 'block' : 'hidden'}
         bg-primary w-full max-h-96 overflow-y-scroll
-         scrollbar-thumb-secondary-500 scrollbar-thin ${className}`}
+         scrollbar-thumb-secondary-500 scrollbar-track-transparent scrollbar-thin ${className}`}
         >
             {results?.map((result) => (
                 <SearchProfile
