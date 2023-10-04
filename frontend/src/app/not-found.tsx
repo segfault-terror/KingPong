@@ -6,7 +6,7 @@ export default function NotFound() {
         <>
             <header className="p-3 w-full">
                 <div className="grid grid-cols-1 md:grid-cols-3 items-center">
-                    <Link href="/dashboard" className="">
+                    <Link href="/dashboard" className="block w-56">
                         <img
                             src="/images/logo.svg"
                             className="w-56 h-auto md:w-56"
