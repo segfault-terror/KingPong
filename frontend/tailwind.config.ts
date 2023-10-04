@@ -60,6 +60,10 @@ const config: Config = {
                 'neon-bord': '0 0 30px rgba(255, 255, 255, 0.5)',
             },
             keyframes: {
+                TranslateLeft: {
+                    '0%': { transform: 'translateX(50%)' },
+                    '100%': { transform: 'translateX(0)' },
+                },
                 TranslateYDown: {
                     '0%': { transform: 'translateY(-50%)' },
                     '100%': { transform: 'translateY(0)' },
