@@ -19,7 +19,7 @@ function NavItem({
     children: React.ReactNode;
 }) {
     return (
-        <li className="hidden md:block">
+        <li className="hidden lg:block">
             <LinkIcon href={href}>{children}</LinkIcon>
         </li>
     );
@@ -56,11 +56,11 @@ export default function Header() {
                 <Link href="/" className="block w-56">
                     <img
                         src="/images/logo.svg"
-                        className="w-56 md:w-56"
+                        className="w-56 lg:w-56"
                         alt="logo"
                     />
                 </Link>
-                <SearchBar className="order-last lg:order-none col-span-2 lg:col-span-1 border border-secondary-500" />
+                <SearchBar className="order-last md:order-none col-span-2 md:col-span-1 border border-secondary-500" />
                 <nav className="">
                     <ul className="flex gap-4 pr-6 justify-end">
                         <NavItem href="/friends">
