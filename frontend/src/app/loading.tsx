@@ -73,15 +73,16 @@ export const MovingAnimation = ({
 
 export default function Loading() {
     return (
-            <div className="bg-transparent relative text-xl  w-40 h-24 sm:w-40 sm:h-24 md:w-48 md:h-32 lg:w-60 lg:h-40 xl:w-80 xl:h-52 rounded-2xl p-[1px] overflow-hidden ">
+        <div className="min-h-screen w-screen flex flex-col justify-center items-center backdrop-blur-sm">
+            <div className="bg-transparent relative text-xl  w-40 h-24 sm:w-40 sm:h-24 md:w-48 md:h-32 lg:w-60 lg:h-40 xl:w-80 xl:h-52 rounded-2xl p-[1px] overflow-hidden drop-shadow-neon-white">
                 <div className="absolute inset-0 rounded-2xl">
                     <MovingAnimation duration={2500} rx="30%" ry="30%">
                         <div
                             style={{
                                 background:
-                                    'radial-gradient(var(--inactive) 40%, transparent 60%)',
+                                    'radial-gradient(var(--secondary) 100%, transparent 20%)',
                             }}
-                            className="h-24 w-24 opacity-[0.8] "
+                            className="h-24 w-24 opacity-[0.9] "
                         />
                     </MovingAnimation>
                 </div>
@@ -91,5 +92,11 @@ export default function Loading() {
                     <div className="h-4 w-[4px] lg:h-5 lg:w-[5px] xl:h-7 xl:w-[6px] border-[1px] rounded-r-xl bg-neutral-200 mx-2 animate-loading-pong absolute right-[1%]"></div>
                 </div>
             </div>
+            <div>
+                <h1 className="text-3xl text-white font-jost font-bold mt-4">
+                    Loading...
+                </h1>
+            </div>
+        </div>
     );
 }
