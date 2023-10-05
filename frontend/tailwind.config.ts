@@ -38,6 +38,7 @@ const config: Config = {
                 online: '#03CE18',
                 offline: '#302F2F',
                 ingame: '#FF650B',
+                opponent: '#C44536',
                 cube_palette: {
                     '200': '#E8D5B5',
                     '400': '#66ABFF',
