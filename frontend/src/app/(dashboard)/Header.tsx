@@ -5,11 +5,10 @@ import {
     MdOutlineNotificationsNone,
     MdOutlinePeopleAlt,
 } from 'react-icons/md';
-import ButtonImage from './ButtonImage';
 import LinkIcon from './LinkIcon';
-import React, { useState } from 'react';
 import Link from 'next/link';
 import SearchBar from './SearchBar';
+import DropdownMenu from './Dropdown';
 
 function NavItem({
     href,
@@ -25,31 +24,7 @@ function NavItem({
     );
 }
 
-function DropdownItem({
-    href,
-    children,
-    hidden,
-}: {
-    href: string;
-    children: React.ReactNode;
-    hidden?: boolean;
-}) {
-    return (
-        <li
-            className={`hover:bg-background px-4 py-2 ${
-                hidden ? 'lg:hidden' : ''
-            }`}
-        >
-            <Link className="block w-full h-full" href={href}>
-                {children}
-            </Link>
-        </li>
-    );
-}
-
 export default function Header() {
-    const [open, setOpen] = useState(false);
-
     return (
         <header className="p-3 w-full">
             <div className="grid grid-cols-2 md:grid-cols-3 items-center">
@@ -72,43 +47,7 @@ export default function Header() {
                         <NavItem href="/notifications">
                             <MdOutlineNotificationsNone />
                         </NavItem>
-                        <li className="relative">
-                            <ButtonImage onClick={() => setOpen(!open)}>
-                                <img src="/images/4.jpeg" alt="avatar" />
-                            </ButtonImage>
-                            <div
-                                className={`absolute ${
-                                    open ? 'block' : 'hidden'
-                                } right-0 top-12 bg-primary text-secondary-200 rounded-lg w-48
-                                        border border-secondary-500 p-2 z-50`}
-                            >
-                                <ul className="flex flex-col gap-2">
-                                    <DropdownItem href="/profile">
-                                        Profile
-                                    </DropdownItem>
-                                    <hr className="border-inactive-500 lg:hidden" />
-                                    <DropdownItem href="/chat" hidden>
-                                        Chat
-                                    </DropdownItem>
-                                    <hr className="border-inactive-500 lg:hidden" />
-                                    <DropdownItem hidden href="/notifications">
-                                        Notifiations
-                                    </DropdownItem>
-                                    <hr className="border-inactive-500 lg:hidden" />
-                                    <DropdownItem hidden href="/friends">
-                                        Friends
-                                    </DropdownItem>
-                                    <hr className="border-inactive-500" />
-                                    <DropdownItem href="/settings">
-                                        Settings
-                                    </DropdownItem>
-                                    <hr className="border-inactive-500" />
-                                    <DropdownItem href="/logout">
-                                        Logout
-                                    </DropdownItem>
-                                </ul>
-                            </div>
-                        </li>
+                        <DropdownMenu />
                     </ul>
                 </nav>
             </div>
