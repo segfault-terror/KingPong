@@ -4,6 +4,7 @@ import Board from './Board';
 import Image from 'next/image';
 import dots from './dots.svg';
 import side from './sideHexagone.svg';
+import Link from 'next/link';
 
 export default function AuthLayout({
     children,
@@ -14,7 +15,9 @@ export default function AuthLayout({
         <div className="h-screen relative">
             <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
                 <div>
-                    <Logo className="w-[50%]" mylogo="/images/logo.svg" />
+                    <Link href="/">
+                        <Logo className="w-[50%]" mylogo="/images/logo.svg" />
+                    </Link>
                     <div className="col-span-1 lg:w-1/2 lg:m-auto backdrop-blur-sm bg-background/70 rounded-2xl">
                         {children}
                     </div>
