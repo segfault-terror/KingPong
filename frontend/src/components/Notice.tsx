@@ -34,11 +34,15 @@ export default function Notification(props: NotificationProps) {
         setAnimate(true);
         setTimeout(() => {
             setAnimate(false);
-        }, 5000);
+        }, 1000);
     }, []);
 
+    const handleClick = () => {
+        setAnimate(false);
+        console.log("clicked");
+    }
     return (
-        <div className={animate == true ? `min-h-screen w-screen flex justify-end` : `min-h-screen w-screen flex justify-end animate-[TranslateLeft_1.5s_linear] `}>
+        <div className={animate == true ? `min-h-screen w-screen flex justify-end opacity-0` : `flex justify-end animate-[TranslateLeft_1.5s_linear] overflow-hidden `}>
             <div className="w-screen md:w-2/5 h-24 md:h-36 xl:w-4/12 xxl:w-[20%] bg-white  rounded-es-xl grid grid-cols-4 grid-rows-2 shadow-inner drop-shadow-[0px_2px_5px_#ffffffAA]">
                 <div className="mx-1 col-span-1 row-span-2 flex flex-col justify-center items-center w-full ">
                     <img
@@ -61,6 +65,7 @@ export default function Notification(props: NotificationProps) {
                     <Link
                         href={'#'}
                         className="w-2/5 h-2/4 md:w-2/4 md:h-2/6 bg-red-600 rounded-lg drop-shadow-[0px_0px_5px_#A0A0A0] flex flex-col justify-center items-center"
+                        onClick={handleClick}
                     >
                         {Cross() }
                     </Link>
