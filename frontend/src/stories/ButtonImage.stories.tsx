@@ -1,5 +1,5 @@
 import type { Meta } from '@storybook/react';
-import ButtonImage from '../components/ButtonImage';
+import ButtonImage from '../app/(dashboard)/ButtonImage';
 import avatar from './assets/4.jpeg';
 
 export default {
