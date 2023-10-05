@@ -1,4 +1,3 @@
-import Header from '@/components/Header';
 import Link from 'next/link';
 
 export default function NotFound() {
@@ -30,7 +29,7 @@ export default function NotFound() {
                     Try our{' '}
                     <Link
                         className="text-secondary-200 text-xl font-jost"
-                        href="/dashboard"
+                        href="/home"
                     >
                         homepage
                     </Link>{' '}
