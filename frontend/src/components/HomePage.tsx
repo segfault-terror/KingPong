@@ -1,11 +1,11 @@
-'use client'
+'use client';
 import React from 'react';
 import Logo from '@/components/Logo';
 import BordGame from './BordGame';
 import WelcomeMessage from './WelcomeMessage';
 import Link from 'next/link';
 import Lottie from 'lottie-react';
-import LightAbout from "../../public/lottie/LightAbout.json";
+import LightAbout from '../../public/lottie/LightAbout.json';
 
 function HomePage() {
     return (
@@ -30,7 +30,7 @@ function HomePage() {
             <div className="z-10 absolute top-[12%] blur-[1.5px]">
                 <BordGame />
             </div>
-            <div className="absolute z-0 top-[12%] after:blur-[3.5rem] flex h-[100px] w-[200px] items-center justify-between rounded-3xl sm:h-[250px] sm:w-[350px] md:h-[380px] md:w-[620px] lg:h-[500px] lg:w-[1000px] xl:h-[600px] xl:w-[1200px] aspect-[1/1.5] animate-bordshadow"></div>
+            <div className="absolute z-0 top-[12%] after:blur-[3.5rem] flex h-[100px] w-[200px] items-center justify-between rounded-3xl sm:h-[250px] sm:w-[350px] md:h-[380px] md:w-[620px] lg:h-[500px] lg:w-[1000px] xl:h-[600px] xl:w-[1200px] aspect-[1/1.5] filter blur-[3rem] animate-rotation-color"></div>
             <Link
                 href="/about"
                 placeholder="about"

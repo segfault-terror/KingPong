@@ -19,10 +19,14 @@ const config: Config = {
             backgroundImage: {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
                 'gradient-conic':
-                    'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+                    'conic-gradient(from (180deg) at 50% 50%, var(--tw-gradient-stops))',
+                gradient:
+                    'conic-gradient(from 0deg, var(--inactive), var(--secondary))',
                 points: 'url("/images/background-point.png")',
                 aboutBg: 'url("/images/bg-about.svg")',
                 default: 'url("/images/bg-new.svg")',
+                borderLinear:
+                    'linear-gradient(var(--gradient-angle)), var(--tw-gradient-from-position),var(--tw-gradient-to-position),var(--tw-gradient-to))',
             },
             colors: {
                 primary: '#4F1754',
@@ -61,6 +65,33 @@ const config: Config = {
                 'neon-bord': '0 0 30px rgba(255, 255, 255, 0.5)',
             },
             keyframes: {
+                rotationColor: {
+                    '0%': {
+                        '--gradient-angle': '0deg',
+                        background:
+                            'conic-gradient(from var(--gradient-angle), var(--inactive), var(--secondary))',
+                    },
+                    '25%': {
+                        '--gradient-angle': '90deg',
+                        background:
+                            'conic-gradient(from var(--gradient-angle), var(--inactive), var(--secondary))',
+                    },
+                    '50%': {
+                        '--gradient-angle': '180deg',
+                        background:
+                            'conic-gradient(from var(--gradient-angle), var(--inactive), var(--secondary))',
+                    },
+                    '75%': {
+                        '--gradient-angle': '270deg',
+                        background:
+                            'conic-gradient(from var(--gradient-angle), var(--inactive), var(--secondary))',
+                    },
+                    '100%': {
+                        '--gradient-angle': '360deg',
+                        background:
+                            'conic-gradient(from var(--gradient-angle), var(--inactive), var(--secondary))',
+                    },
+                },
                 TranslateLeft: {
                     '0%': { transform: 'translateX(50%)' },
                     '100%': { transform: 'translateX(0)' },
@@ -254,6 +285,130 @@ const config: Config = {
                         left: '15%',
                     },
                 },
+                ball: {
+                    '0%': {
+                        top: '34%',
+                        left: '52%',
+                    },
+                    '8.3%': {
+                        top: '52%',
+                        left: '90%',
+                    },
+                    '24.9%': {
+                        top: '85%',
+                        left: '8%',
+                    },
+                    '30%': {
+                        top: '98%',
+                        left: '27%',
+                    },
+                    '41.5%': {
+                        top: '70%',
+                        left: '90%',
+                    },
+                    '58.1%': {
+                        top: '55%',
+                        left: '8%',
+                    },
+                    '74.7%': {
+                        top: '13%',
+                        left: '90%',
+                    },
+                    '79%': {
+                        top: '1%',
+                        left: '70%',
+                    },
+                    '91.3%': {
+                        top: '22%',
+                        left: '8%',
+                    },
+                    '100%': {
+                        top: '34%',
+                        left: '52%',
+                    }
+                },
+                Ping: {
+                    '0%': {
+                        top: '10%',
+                    },
+                    '5%': {
+                        top: '10%',
+                    },
+                    '9%': {
+                        top: '24%',
+                    },
+                    '13%': {
+                        top: '17%',
+                    },
+                    '24.9%': {
+                        top: '82%',
+                    },
+                    '47%': {
+                        top: '37%',
+                    },
+                    '52%': {
+                        top: '41%',
+                    },
+                    '56%': {
+                        top: '64%',
+                    },
+                    '58.1%': {
+                        top: '44%',
+                    },
+                    '70%': {
+                        top: '55%',
+                    },
+                    '84%': {
+                        top: '12%',
+                    },
+                    '91.3%': {
+                        top: '18%',
+                    },
+                    '100%': {
+                        top: '10%',
+                    },
+                },
+                pong: {
+                    '0%': {
+                        top: '80%',
+                    },
+                    '8.3%': {
+                        top: '51%',
+                    },
+                    '20%': {
+                        top: '60%',
+                    },
+                    '25%': {
+                        top: '34%',
+                    },
+                    '41.5%': {
+                        top: '68%',
+                    },
+                    '46%': {
+                        top: '36%',
+                    },
+                    '52%': {
+                        top: '18%',
+                    },
+                    '58.1%': {
+                        top: '53%',
+                    },
+                    '66%': {
+                        top: '14%',
+                    },
+                    '70%': {
+                        top: '20%',
+                    },
+                    '74.7%': {
+                        top: '10%',
+                    },
+                    '91.3%': {
+                        top: '10%',
+                    },
+                    '100%': {
+                        top: '80%',
+                    },
+                },
                 // Matchmaking page - Mobile animations
                 'slide-down-gate': {
                     '0%': { transform: 'translateY(0)' },
@@ -322,7 +477,12 @@ const config: Config = {
                 'third-dot':
                     'matchmaking-loading-dot 1s ease-in-out 300ms infinite',
                 opacityUp: 'opacityUp 1s ease-in-out 1000ms 1',
+                'rotation-color': 'rotationColor 3s linear infinite',
+                LoadingBall: 'ball 6s linear infinite',
+                LoadingPing: 'Ping 6s linear infinite',
+                LoadingPong: 'pong 6s linear infinite',
             },
+            addComponents: {},
         },
     },
     plugins: [require('tailwind-scrollbar')],
