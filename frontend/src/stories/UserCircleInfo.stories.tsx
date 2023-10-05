@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import UserCircleInfo from '../../src/app/profile/UserCircleInfo';
+import UserCircleInfo from '../app/(dashboard)/profile/UserCircleInfo';
 
 import Avatar from './assets/2.jpeg';
 import { UserStatus } from '../app/chat/DirectMessage';

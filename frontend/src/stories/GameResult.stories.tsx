@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import GameResult from '../app/profile/GameResult';
+import GameResult from '../app/(dashboard)/profile/GameResult';
 import Tommy from './assets/1.jpeg';
 import Archer from './assets/2.jpeg';
 

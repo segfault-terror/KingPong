@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import FullFriendList from '../app/profile/FullFriendList';
+import FullFriendList from '../app/(dashboard)/profile/FullFriendList';
 import { UserStatus } from '../app/chat/DirectMessage';
 
 import Tommy from './assets/1.jpeg';

@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
-import Achievement from '../app/profile/Achievement';
+import Achievement from '../app/(dashboard)/profile/Achievement';
 
-import imgAchievement from '../../public/images/gold-achievement.svg'
+import imgAchievement from '../../public/images/gold-achievement.svg';
 
 const meta: Meta<typeof Achievement> = {
     title: 'Achievement',
@@ -14,7 +14,8 @@ type Story = StoryObj<typeof Achievement>;
 export const Primary: Story = {
     args: {
         title: 'Paddle Master',
-        description: 'Score 10 points in a row without letting the ball pass your paddle.',
+        description:
+            'Score 10 points in a row without letting the ball pass your paddle.',
         image: imgAchievement.src,
     },
     render: (args) => (

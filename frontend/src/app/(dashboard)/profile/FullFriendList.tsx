@@ -1,6 +1,6 @@
 'use client';
 import Lottie from 'lottie-react';
-import Ghost from '../../../public/lottie/ghost.json';
+import Ghost from '../../../../public/lottie/ghost.json';
 import UserCircleInfo, { UserCircleInfoProps } from './UserCircleInfo';
 
 type FullFriendListProps = {

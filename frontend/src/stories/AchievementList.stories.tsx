@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import AchievementList from '../app/profile/AchievementList';
+import AchievementList from '../app/(dashboard)/profile/AchievementList';
 import AchievementImg from '../../public/images/gold-achievement.svg';
 
 const meta: Meta<typeof AchievementList> = {

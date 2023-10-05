@@ -1,15 +1,15 @@
 import { UserStatus } from '@/app/chat/DirectMessage';
 import { AiOutlineBell } from 'react-icons/ai';
-import AchievementGold from '../../../public/images/gold-achievement.svg';
-import Logo from '../../components/Logo';
-import Tommy from '../../stories/assets/1.jpeg';
-import Archer from '../../stories/assets/2.jpeg';
-import Moussa from '../../stories/assets/3.jpeg';
+import AchievementGold from '../../../../public/images/gold-achievement.svg';
+import Logo from '../../../components/Logo';
 import AchievementList from './AchievementList';
 import FullFriendList from './FullFriendList';
 import MatchHistory from './MatchHistory';
 import ProfileCard from './ProfileCard';
-import GoldLeague from '../../../public/images/gold-league.svg';
+import GoldLeague from '../../../../public/images/gold-league.svg';
+import Tommy from '../../../stories/assets/1.jpeg';
+import Archer from '../../../stories/assets/2.jpeg';
+import Moussa from '../../../stories/assets/3.jpeg';
 
 export default function ProfilePage() {
     const achievements = [
@@ -75,12 +75,8 @@ export default function ProfilePage() {
 
     return (
         <>
-            <div className="p-4 flex justify-between items-center">
-                <Logo mylogo="/images/logo.svg" className="w-1/2" />
-                <AiOutlineBell className="text-secondary-200 text-3xl" />
-            </div>
             <div
-                className="flex flex-col gap-2 mx-4 mt-12 mb-8
+                className="flex flex-col gap-2 mx-4 mt-20 mb-8
                             md:grid md:grid-cols-4 md:gap-3
                             lg:grid-cols-3
                             lg:max-w-5xl lg:mx-auto"

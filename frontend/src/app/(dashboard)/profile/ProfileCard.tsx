@@ -1,6 +1,6 @@
 import { AiFillTrophy, AiOutlineClose } from 'react-icons/ai';
 import { TbMessage2, TbUserPlus, TbUserX } from 'react-icons/tb';
-import { UserStatus } from '../chat/DirectMessage';
+import { UserStatus } from '../../chat/DirectMessage';
 import UserCircleInfo from './UserCircleInfo';
 
 type ProfileCardProps = {

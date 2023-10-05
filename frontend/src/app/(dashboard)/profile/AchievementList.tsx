@@ -1,5 +1,5 @@
 import Achievement, { AchievementProps } from './Achievement';
-import EmptyAchievement from '../../../public/images/empty-achievement.svg';
+import EmptyAchievement from '../../../../public/images/empty-achievement.svg';
 
 export type AchievementListProps = {
     achievements: AchievementProps[];

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import MatchHistory from '../app/profile/MatchHistory';
+import MatchHistory from '../app/(dashboard)/profile/MatchHistory';
 import Tommy from './assets/1.jpeg';
 import Archer from './assets/2.jpeg';
 

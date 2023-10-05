@@ -1,5 +1,5 @@
 import GameResult, { GameResultProps } from './GameResult';
-import PaddleAndBall from '../../../public/images/paddle-and-ball.svg';
+import PaddleAndBall from '../../../../public/images/paddle-and-ball.svg';
 
 type MatchHistoryProps = {
     gameResults: GameResultProps[];
