@@ -1,7 +1,14 @@
+'use client';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 
-export default function ToggleButton({toggle, setToggle}: {toggle: boolean, setToggle: (toggle: boolean) => void}) {
+export default function ToggleButton({
+    toggle,
+    setToggle,
+}: {
+    toggle: boolean;
+    setToggle: (toggle: boolean) => void;
+}) {
     return (
         <div
             onClick={() => setToggle(!toggle)}
@@ -22,7 +29,7 @@ export default function ToggleButton({toggle, setToggle}: {toggle: boolean, setT
                 className="text-center text-xs select-none text-secondary-200 font-jost
                         flex-grow flex justify-center"
             >
-                {toggle ? "Channels" : "Direct Messages"}
+                {toggle ? 'Channels' : 'Direct Messages'}
             </p>
         </div>
     );
