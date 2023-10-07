@@ -1,4 +1,4 @@
-import Notification from '@/components/Notifications';
+import Notification from './Notifications';
 
 const NotificationState = {
     notification: [
