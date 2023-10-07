@@ -10,8 +10,24 @@ const profile = {
     avatar: '/images/4.jpeg',
 };
 
-export default function Settings() {
+function UploadAvatar() {
     const [image, setImage] = React.useState(profile.avatar);
+
+    return (
+        <>
+            <Image
+                src={image}
+                alt="avatar"
+                width={128}
+                height={128}
+                className="w-32 h-32 object-cover rounded-full border border-secondary-200"
+            />
+            <UploadInput setImage={setImage} defaultImage={profile.avatar} />
+        </>
+    );
+}
+
+export default function Settings() {
     return (
         <main className="flex items-center justify-center my-9">
             <div
@@ -23,17 +39,7 @@ export default function Settings() {
                 </h2>
                 <div>
                     <div className="flex flex-col items-center justify-center gap-4">
-                        <Image
-                            src={image}
-                            alt="avatar"
-                            width={128}
-                            height={128}
-                            className="w-32 h-32 object-cover rounded-full border border-secondary-200"
-                        />
-                        <UploadInput
-                            setImage={setImage}
-                            defaultImage={profile.avatar}
-                        />
+                        <UploadAvatar />
                     </div>
                     <div></div>
                 </div>
