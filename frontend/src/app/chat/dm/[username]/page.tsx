@@ -10,6 +10,7 @@ type UsernameDMProps = {
 };
 
 export default function UsernameDM({ params }: UsernameDMProps) {
-    const props: DmConversationProps = DMConversations[params.username];
+    const props: DmConversationProps =
+        DMConversations[params.username as keyof typeof DMConversations];
     return <DmConversation {...props} />;
 }
