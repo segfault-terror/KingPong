@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default DirectMessage;
 
 function DirectMessage({
@@ -9,33 +11,38 @@ function DirectMessage({
     const statusColor = getStatusColor(status);
 
     return (
-        <div className="flex items-center gap-4">
-            <div className="relative">
-                <img
-                    src={imagePath}
-                    alt={`${userName}'a avatar`}
-                    title={`${userName}'a avatar`}
-                    className="border-secondary-200 rounded-full border-4
+        <Link
+            href={`/chat/dm/${userName}`}
+            className="hover:bg-background/80 hover:rounded-full"
+        >
+            <div className="flex items-center gap-4">
+                <div className="relative">
+                    <img
+                        src={imagePath}
+                        alt={`${userName}'a avatar`}
+                        title={`${userName}'a avatar`}
+                        className="border-secondary-200 rounded-full border-4
                                 w-[64px] h-[64px]
                                 text-white object-cover"
-                />
-                <div
-                    className={`w-[12px] h-[12px]
+                    />
+                    <div
+                        className={`w-[12px] h-[12px]
                                 rounded-full
                                 ${statusColor}
                                 absolute right-0 bottom-2`}
-                ></div>
-            </div>
-            <div className="flex flex-col min-w-0">
-                <p className="font-jost font-bold text-white">{userName}</p>
-                <p
-                    className="font-jost font-light text-gray-400
+                    ></div>
+                </div>
+                <div className="flex flex-col min-w-0">
+                    <p className="font-jost font-bold text-white">{userName}</p>
+                    <p
+                        className="font-jost font-light text-gray-400
                                 whitespace-nowrap overflow-hidden text-ellipsis"
-                >
-                    {`You: ${lastMessage}`}
-                </p>
+                    >
+                        {`You: ${lastMessage}`}
+                    </p>
+                </div>
             </div>
-        </div>
+        </Link>
     );
 }
 
