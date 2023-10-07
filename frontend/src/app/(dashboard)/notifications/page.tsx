@@ -99,5 +99,5 @@ const NotificationState = {
 
 
 export default function Page(){
-	return <Notification notification={[]} />
+	return <Notification notification={NotificationState.notification} />
 }

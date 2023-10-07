@@ -1,11 +1,10 @@
-'use client'
+'use client';
 
-import Header from '@/app/(dashboard)/Header';
+import Header from '../app/(dashboard)/Header';
 import Image from 'next/image';
-import Ghost from '@/components/Ghost';
+import Ghost from '../components/Ghost';
 
-
-import Decline from '@/../public/images/decline.svg';
+import Decline from '../../public/images/decline.svg';
 import { read } from 'fs';
 
 const Cross = () => {
@@ -47,7 +46,12 @@ const Notife = (type: string, sender: User, readed: boolean = false) => {
             />
             <div className="font-jost text-white">{message}</div>
             <img src={image} alt="fight" className="w-12 px-1" />
-            <button className="px-2">
+            <button
+                className="px-2"
+                type="button"
+                name="Decline"
+                title="Decline"
+            >
                 <Image src={Decline} alt="Decline"></Image>
             </button>
         </div>
@@ -57,7 +61,9 @@ const Notife = (type: string, sender: User, readed: boolean = false) => {
 const Empty = () => {
     return (
         <div className="relative flex justify-center items-center h-24 w-full my-1 bg-background rounded-2xl">
-            <div className=" absolute inset-0 flex flex-col justify-center items-center font-jost text-white">No new notifications</div>
+            <div className=" absolute inset-0 flex flex-col justify-center items-center font-jost text-white">
+                No new notifications
+            </div>
             <Ghost className="w-[30%] md:w-[20%] drop-shadow-neon-white" />
         </div>
     );
@@ -65,16 +71,11 @@ const Empty = () => {
 
 export default function Notification({ notification }: NotificationState) {
     return (
-        <>
-            <Header />
-            <div className="flex justify-center items-center w-full">
-                {/* <h1 className="font-jost text-3xl text-white">Notifications</h1> */}
-            </div>
             <div className="felx flex-col justify-center items-center w-full p-3 md:p-6">
-                <div className="flex justify-center items-center w-full lg:max-w-3xl lg:mx-auto pl-4 py-2 px-3 bg-primary border rounded-lg border-secondary-500 drop-shadow-neon-orange">
-                    <div className="flex flex-col justify-between items-center w-full lg:px-3">
+                <div className="flex justify-center items-center w-ful lg:max-w-3xl lg:mx-auto pl-4 py-2 px-3 bg-primary border rounded-lg border-secondary-500 drop-shadow-neon-orange">
+                    <div className="flex flex-col justify-between items-center w-full lg:px-3 overflow-auto">
                         {notification.length == 0
-                            ? Empty() 
+                            ? Empty()
                             : notification.map((notif) => (
                                   <div className="w-full flex justify-between items-center my-1 rounded-xl">
                                       {Notife(
@@ -87,6 +88,5 @@ export default function Notification({ notification }: NotificationState) {
                     </div>
                 </div>
             </div>
-        </>
     );
 }
