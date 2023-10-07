@@ -22,18 +22,20 @@ function UploadInput({ setImage }: { setImage: (image: string) => void }) {
             >
                 Upload Avatar
             </button>
-            {fileSelected && (
-                <button
-                    onClick={() => {
-                        if (!inputRef.current) return;
-                        inputRef.current.value = '';
-                        setFileSelected(inputRef.current?.files?.length === 1);
-                        setImage(profile.avatar);
-                    }}
-                >
-                    {inputRef.current?.files?.[0].name}
-                </button>
-            )}
+            <button
+                className="font-jost font-bold text-sm text-secondary-200 border border-secondary-200 rounded-3xl
+                            px-4 py-2 bg-primary hover:bg-secondary-200 hover:text-background transition-all
+                            disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => {
+                    if (!inputRef.current) return;
+                    inputRef.current.value = '';
+                    setFileSelected(inputRef.current?.files?.length === 1);
+                    setImage(profile.avatar);
+                }}
+                {...(fileSelected ? {} : { disabled: true })}
+            >
+                Reset Avatar
+            </button>
             <input
                 onChange={() => {
                     setFileSelected(inputRef.current?.files?.length === 1);
