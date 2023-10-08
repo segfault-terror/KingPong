@@ -13,9 +13,10 @@
         "docker:db": "docker compose up db --detach",
         "client:dev": "npm run dev --workspace=frontend",
         "server:dev": "wait-on tcp:5432 && npm run start:dev --workspace=backend",
-        "start": "npm install && concurrently 'npm:docker:db' 'npm:server:dev' 'npm:client:dev'",
+        "start": "npm install && npm: && concurrently 'npm:docker:db' 'npm:server:dev' 'npm:client:dev'",
         "storybook": "npm install && npm run storybook --workspace=frontend",
-        "studio": "npm run studio --workspace=backend"
+        "studio": "npm run studio --workspace=backend",
+        "generate": "npm run generate --workspace=backend"
     },
     "repository": {
         "type": "git",
