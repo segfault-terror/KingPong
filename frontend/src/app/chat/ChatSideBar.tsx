@@ -82,7 +82,7 @@ export default function ChatSideBar({
 }: ChatSideBarProps) {
     return (
         <div
-            className="bg-primary bg-opacity-80
+            className="bg-primary border-secondary-200 border-[1px]
 						w-full h-full rounded-2xl py-6 px-8
 						flex flex-col justify-between"
         >

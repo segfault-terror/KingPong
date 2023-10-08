@@ -8,7 +8,7 @@ type Message = {
     text: string;
 };
 
-type DmConversationProps = {
+export type DmConversationProps = {
     userImg: string;
     userName: string;
     userStatus: UserStatus;
@@ -31,9 +31,10 @@ export default function DmConversation({
     return (
         <div
             className="flex flex-col gap-8 h-full w-full
-                        bg-primary rounded-2xl
-                        bg-opacity-80
-                        px-4 py-3"
+                bg-primary
+                rounded-2xl
+                px-4 py-3
+                border-secondary-200 border-[1px]"
         >
             <DmContext.Provider value={{ userImg, userName, userStatus }}>
                 <DmConversationHeader />
@@ -91,7 +92,9 @@ function UserDMInfo() {
                     <div
                         className={`w-3 h-3 rounded-full ${statusColor}`}
                     ></div>
-                    <p className="text-white text-xs">{statusMsg}</p>
+                    <p className="text-white text-xs select-none">
+                        {statusMsg}
+                    </p>
                 </div>
             </div>
         </div>
@@ -117,9 +120,9 @@ function DmMessageList({ messages, userName }: DmMessageListProps) {
         return (
             <li
                 key={idx}
-                className={`text-background font-mulish p-2 w-fit max-w-[80%] hyphens-auto ${
-                    msg.isMe ? myStyles : userStyles
-                }`}
+                className={`text-background font-mulish p-2 w-fit max-w-[80%] hyphens-auto
+                            shadow-[5px_5px_0px_0px_rgba(37,10,59)]
+                            ${msg.isMe ? myStyles : userStyles}`}
             >
                 {msg.text}
             </li>
