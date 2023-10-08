@@ -18,7 +18,8 @@
         "test:cov": "jest --coverage",
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
         "test:e2e": "jest --config ./test/jest-e2e.json",
-        "studio": "prisma studio"
+        "studio": "prisma studio",
+        "generate": "prisma generate"
     },
     "dependencies": {
         "@nestjs/common": "^10.0.0",
@@ -26,6 +27,7 @@
         "@nestjs/core": "^10.0.0",
         "@nestjs/platform-express": "^10.0.0",
         "@prisma/client": "^5.4.1",
+        "nestjs-prisma": "^0.22.0",
         "reflect-metadata": "^0.1.13",
         "rxjs": "^7.8.1"
     },
