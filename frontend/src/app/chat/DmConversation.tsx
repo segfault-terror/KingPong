@@ -91,7 +91,7 @@ function UserDMInfo() {
                     <div
                         className={`w-3 h-3 rounded-full ${statusColor}`}
                     ></div>
-                    <p className="text-white text-xs">{statusMsg}</p>
+                    <p className="text-white text-xs select-none">{statusMsg}</p>
                 </div>
             </div>
         </div>
