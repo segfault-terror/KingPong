@@ -31,9 +31,10 @@ export default function DmConversation({
     return (
         <div
             className="flex flex-col gap-8 h-full w-full
-                        bg-primary rounded-2xl
-                        px-4 py-3
-                        border-secondary-200 border-[1px]"
+                bg-primary
+                rounded-2xl
+                px-4 py-3
+                border-secondary-200 border-[1px]"
         >
             <DmContext.Provider value={{ userImg, userName, userStatus }}>
                 <DmConversationHeader />
@@ -91,7 +92,9 @@ function UserDMInfo() {
                     <div
                         className={`w-3 h-3 rounded-full ${statusColor}`}
                     ></div>
-                    <p className="text-white text-xs select-none">{statusMsg}</p>
+                    <p className="text-white text-xs select-none">
+                        {statusMsg}
+                    </p>
                 </div>
             </div>
         </div>
