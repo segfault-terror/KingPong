@@ -3,8 +3,6 @@ import React, { useEffect, useState } from 'react';
 import Header from '../../(dashboard)/Header';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import EmptyChat from '../EmptyChat';
-import ChatSideBar from '../ChatSideBar';
-import { DMList } from '../data/ChatData';
 
 type ChatLayoutProps = {
     children: React.ReactNode;
