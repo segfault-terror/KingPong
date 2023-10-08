@@ -17,11 +17,6 @@ const DMList = [
     },
 ];
 
-// userImg: string;
-// userName: string;
-// userStatus: UserStatus;
-// messages?: Message[];
-
 const DMConversations = {
     Tommy: {
         userName: 'Tommy',
@@ -66,6 +61,97 @@ const DMConversations = {
             {
                 text: 'Same here',
                 isMe: false,
+            },
+        ],
+    },
+};
+
+export const Channels = ['segfault_terror', 'fc_mota9a3idin'];
+
+export const ChannelConversations = {
+    segfault_terror: {
+        channelName: 'segfault_terror',
+        members: [
+            {
+                name: 'Tommy',
+                img: '/images/1.jpeg',
+            },
+            {
+                name: 'Archer',
+                img: '/images/2.jpeg',
+            },
+            {
+                name: 'omarox',
+                img: '/images/4.jpeg',
+            },
+        ],
+        messages: [
+            {
+                text: "Hey, what's up",
+                isMe: false,
+                sender: {
+                    name: 'Tommy',
+                    img: '/images/1.jpeg',
+                },
+            },
+            {
+                text: "I'm fine, how about you?",
+                isMe: true,
+                sender: {
+                    name: 'Archer',
+                    img: '/images/2.jpeg',
+                },
+            },
+            {
+                text: 'Wa fin a drari',
+                isMe: false,
+                sender: {
+                    name: 'omarox',
+                    img: '/images/4.jpeg',
+                },
+            },
+        ],
+    },
+    fc_mota9a3idin: {
+        channelName: 'fc_mota9a3idin',
+        members: [
+            {
+                name: 'Tommy',
+                img: '/images/1.jpeg',
+            },
+            {
+                name: 'Archer',
+                img: '/images/2.jpeg',
+            },
+            {
+                name: 'omarox',
+                img: '/images/4.jpeg',
+            },
+        ],
+        messages: [
+            {
+                text: 'chi match a drari?',
+                isMe: false,
+                sender: {
+                    name: 'Tommy',
+                    img: '/images/1.jpeg',
+                },
+            },
+            {
+                text: 'ana mala3ebch',
+                isMe: true,
+                sender: {
+                    name: 'Archer',
+                    img: '/images/2.jpeg',
+                },
+            },
+            {
+                text: 'chkon la3eb b3da?',
+                isMe: false,
+                sender: {
+                    name: 'omarox',
+                    img: '/images/4.jpeg',
+                },
             },
         ],
     },
