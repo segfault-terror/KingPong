@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import ChatSideBar from './ChatSideBar';
-import { DMList } from './data/ChatData';
+import ChatSideBar from '../ChatSideBar';
+import { DMList } from '../data/ChatData';
 
 export default function ChatPage() {
     const [toggle, setToggle] = useState<boolean>(false);
