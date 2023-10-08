@@ -14,7 +14,8 @@
         "client:dev": "npm run dev --workspace=frontend",
         "server:dev": "wait-on tcp:5432 && npm run start:dev --workspace=backend",
         "start": "npm install && concurrently 'npm:docker:db' 'npm:server:dev' 'npm:client:dev'",
-        "storybook": "npm install && npm run storybook --workspace=frontend"
+        "storybook": "npm install && npm run storybook --workspace=frontend",
+        "studio": "npm run studio --workspace=backend"
     },
     "repository": {
         "type": "git",
