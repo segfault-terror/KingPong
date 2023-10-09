@@ -23,12 +23,12 @@ export default function ChannelConversation(props: ChannelConversationProps) {
         >
             <div
                 className="flex justify-between items-center
-                            text-xl"
+                            mt-4"
             >
-                <h1 className="text-cube_palette-200">{props.channelName}</h1>
-                <div className="text-secondary-200">
-                    <HiDotsVertical />
-                </div>
+                <h1 className="text-cube_palette-200 text-2xl">{props.channelName}</h1>
+                <button className="text-secondary-200">
+                    <HiDotsVertical className="w-8 h-8" />
+                </button>
             </div>
 
             <div className="flex-grow overflow-scroll scrollbar-none">
