@@ -10,11 +10,10 @@ type ChannelProps = {
 
 export default function Channel({ params }: ChannelProps) {
     return (
-        <div>
-            <h1 className="text-center text-2xl">
-                Channel {params.channelname}
-            </h1>
-            <ChannelConversation {...ChannelConversations.segfault_terror} />
-        </div>
+        <ChannelConversation
+            {...ChannelConversations[
+                params.channelname as keyof typeof ChannelConversations
+            ]}
+        />
     );
 }
