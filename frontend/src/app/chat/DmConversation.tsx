@@ -1,7 +1,7 @@
-import { createContext, useContext } from 'react';
 import { HiDotsVertical } from 'react-icons/hi';
 import ChatInput from './ChatInput';
 import { UserStatus, getStatusColor } from './DirectMessage';
+import { DMConversations } from './data/ChatData';
 
 type Message = {
     isMe: boolean;
@@ -9,25 +9,10 @@ type Message = {
 };
 
 export type DmConversationProps = {
-    userImg: string;
     userName: string;
-    userStatus: UserStatus;
-    messages?: Message[];
 };
 
-type DmHeaderProps = Pick<
-    DmConversationProps,
-    'userImg' | 'userName' | 'userStatus'
->;
-
-const DmContext = createContext<DmHeaderProps>({} as DmHeaderProps);
-
-export default function DmConversation({
-    userImg,
-    userName,
-    userStatus,
-    messages,
-}: DmConversationProps) {
+export default function DmConversation({ userName }: DmConversationProps) {
     return (
         <div
             className="flex flex-col gap-8 h-full w-full
@@ -36,12 +21,10 @@ export default function DmConversation({
                 px-4 py-3
                 border-secondary-200 border-[1px]"
         >
-            <DmContext.Provider value={{ userImg, userName, userStatus }}>
-                <DmConversationHeader />
-            </DmContext.Provider>
+            <DmConversationHeader userName={userName} />
 
             <div className="flex-grow overflow-scroll scrollbar-none">
-                <DmMessageList messages={messages} userName={userName} />
+                <DmMessageList userName={userName} />
             </div>
 
             <ChatInput />
@@ -62,10 +45,10 @@ function getStatusMsg(status: UserStatus) {
     }
 }
 
-function DmConversationHeader() {
+function DmConversationHeader({ userName }: DmConversationProps) {
     return (
         <div className="flex justify-between items-center">
-            <UserDMInfo />
+            <UserDMInfo userName={userName} />
             <button>
                 <HiDotsVertical className="text-secondary-200 h-8 w-8" />
             </button>
@@ -73,15 +56,16 @@ function DmConversationHeader() {
     );
 }
 
-function UserDMInfo() {
-    const { userImg, userName, userStatus } = useContext(DmContext);
-    const statusColor = getStatusColor(userStatus);
-    const statusMsg = getStatusMsg(userStatus);
+function UserDMInfo({ userName }: DmConversationProps) {
+    const user = DMConversations[userName as keyof typeof DMConversations];
+
+    const statusColor = getStatusColor(user.userStatus);
+    const statusMsg = getStatusMsg(user.userStatus);
 
     return (
         <div className="flex items-center gap-3">
             <img
-                src={userImg}
+                src={user.userImg}
                 alt={`${userName}'s avatar`}
                 className="w-16 h-16 object-cover border-[3px] border-secondary-200 rounded-full"
             />
@@ -101,9 +85,10 @@ function UserDMInfo() {
     );
 }
 
-type DmMessageListProps = Pick<DmConversationProps, 'messages' | 'userName'>;
+function DmMessageList({ userName }: DmConversationProps) {
+    const messages =
+        DMConversations[userName as keyof typeof DMConversations].messages;
 
-function DmMessageList({ messages, userName }: DmMessageListProps) {
     if (!messages || messages.length === 0)
         return (
             <div className="text-cube_palette-200 font-jost font-light text-center">
