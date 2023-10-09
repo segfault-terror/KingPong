@@ -31,7 +31,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                 </button>
             </div>
 
-            <div className="flex-grow overflow-scroll scrollbar-none">
+            <div className="flex-grow overflow-scroll scrollbar-none pb-2">
                 <ul className="flex flex-col gap-4 p-6 bg-primary">
                     {channelConversation.messages.length === 0 && (
                         <div className="text-cube_palette-200 font-jost font-light text-center">

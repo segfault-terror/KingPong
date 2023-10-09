@@ -15,7 +15,7 @@ export type DmConversationProps = {
 export default function DmConversation({ userName }: DmConversationProps) {
     return (
         <div
-            className="flex flex-col gap-8 h-full w-full
+            className="flex flex-col gap-8 h-full
                 bg-primary
                 rounded-2xl
                 px-4 py-3
@@ -23,7 +23,7 @@ export default function DmConversation({ userName }: DmConversationProps) {
         >
             <DmConversationHeader userName={userName} />
 
-            <div className="flex-grow overflow-scroll scrollbar-none">
+            <div className="flex-grow overflow-scroll scrollbar-none pb-2">
                 <DmMessageList userName={userName} />
             </div>
 
