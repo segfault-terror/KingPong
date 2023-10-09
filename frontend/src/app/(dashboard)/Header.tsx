@@ -26,7 +26,7 @@ function NavItem({
 
 export default function Header() {
     return (
-        <header className="p-3 w-full">
+        <header className="p-3 w-full absolute">
             <div className="grid grid-cols-2 md:grid-cols-3 items-center">
                 <Link href="/home" className="block w-56">
                     <img
