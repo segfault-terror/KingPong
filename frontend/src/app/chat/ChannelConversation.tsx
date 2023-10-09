@@ -15,7 +15,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
 
     return (
         <div
-            className="flex flex-col gap-8 h-full w-full
+            className="flex flex-col items-stretch gap-8 h-full w-full
                 bg-primary
                 rounded-2xl
                 px-4 py-3
@@ -23,7 +23,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
         >
             <div
                 className="flex justify-between items-center
-                            text-3xl"
+                            text-xl"
             >
                 <h1 className="text-cube_palette-200">{props.channelName}</h1>
                 <div className="text-secondary-200">
@@ -32,7 +32,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
             </div>
 
             <div className="flex-grow overflow-scroll scrollbar-none">
-                <ul className="flex flex-col gap-2 p-6 bg-primary">
+                <ul className="flex flex-col gap-4 p-6 bg-primary">
                     {channelConversation.messages.length === 0 && (
                         <div className="text-cube_palette-200 font-jost font-light text-center">
                             Send a message to start a conversation

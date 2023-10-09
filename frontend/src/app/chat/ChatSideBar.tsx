@@ -1,8 +1,7 @@
-import DirectMessage, { UserStatus } from './DirectMessage';
-import ToggleButton from './ToggleButton';
-import { DirectMessageProps } from './DirectMessage';
+import Link from 'next/link';
+import DirectMessage, { DirectMessageProps } from './DirectMessage';
 import EmptyChat from './EmptyChat';
-import { type } from 'os';
+import ToggleButton from './ToggleButton';
 
 type ChatSideBarProps = {
     messagesList: DirectMessageProps[];
@@ -51,13 +50,13 @@ function ChannelList({ channelList, toggle, setToggle }: ChannelListProps) {
     return (
         <>
             <div className="text-lg font-jost text-gray-300 flex-grow">
-                {channelList.map((channel, idx) => {
+                {channelList.map((channel) => {
                     return (
                         <>
-                            <div
-                                className="hover:bg-background hover:bg-opacity-80
-                                        hover:rounded-2xl"
-                            >{`# ${channel}`}</div>
+                            <Link
+                                href={`/chat/channel/${channel}`}
+                                className="hover:bg-background hover:bg-opacity-80"
+                            >{`# ${channel}`}</Link>
                             <div className="mt-1"></div>
                         </>
                     );
