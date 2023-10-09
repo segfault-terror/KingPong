@@ -4,6 +4,7 @@ import { Strategy } from 'passport-42';
 import { AuthService } from '../auth.service';
 import { ConfigService } from '@nestjs/config';
 import { Profile } from './intra.types';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class IntraStrategy extends PassportStrategy(Strategy) {
@@ -25,7 +26,17 @@ export class IntraStrategy extends PassportStrategy(Strategy) {
         done: (err: Error, user: any) => void,
     ) {
         const profileParsed: Profile = await JSON.parse(profile._raw);
-        // const user = await this.authService.validateUserOAuth2(profile);
-        done(null, profileParsed);
+        const {
+            login,
+            usual_full_name,
+            email,
+            image: { link: avatar },
+        } = profileParsed;
+        const user = await this.authService.validateUserOAuth2({
+            username: login,
+            email,
+            avatar,
+        });
+        done(null, user);
     }
 }
