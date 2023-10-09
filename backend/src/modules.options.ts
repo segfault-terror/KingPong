@@ -22,5 +22,7 @@ export const prismaModuleOptions: PrismaModuleOptions = {
                 return await next(params);
             },
         ],
+        explicitConnect: true,
     },
+    isGlobal: true,
 };
