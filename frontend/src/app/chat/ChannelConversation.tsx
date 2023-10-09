@@ -25,14 +25,16 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                 className="flex justify-between items-center
                             mt-4"
             >
-                <h1 className="text-cube_palette-200 text-2xl">{props.channelName}</h1>
+                <h1 className="text-cube_palette-200 text-2xl">
+                    {props.channelName}
+                </h1>
                 <button className="text-secondary-200">
                     <HiDotsVertical className="w-8 h-8" />
                 </button>
             </div>
 
             <div className="flex-grow overflow-scroll scrollbar-none pb-2">
-                <ul className="flex flex-col gap-4 p-6 bg-primary">
+                <ul className="flex flex-col gap-8 p-6 bg-primary">
                     {channelConversation.messages.length === 0 && (
                         <div className="text-cube_palette-200 font-jost font-light text-center">
                             Send a message to start a conversation
@@ -72,8 +74,8 @@ function ChannelMessage(props: ChannelMessageProps) {
     const othersStyles =
         'rounded-bl-xl rounded-br-xl rounded-tr-xl bg-white self-start';
 
-    const myImgStyles = 'absolute -right-5 bottom-5';
-    const otherImgStyles = 'absolute -left-5 bottom-5';
+    const myImgStyles = '-top-5 -right-5';
+    const otherImgStyles = '-top-5 -left-5';
 
     const channelData =
         ChannelConversations[
@@ -88,7 +90,6 @@ function ChannelMessage(props: ChannelMessageProps) {
             className={`${defaultStyles}
                         ${props.isMe ? myStyles : othersStyles}`}
         >
-            {props.text}
             <Link href="#">
                 <img
                     src={senderData?.img}
@@ -97,9 +98,12 @@ function ChannelMessage(props: ChannelMessageProps) {
                     className={`w-8 h-8
                             object-cover
                             border-[1px] border-secondary-200 rounded-full
-                            ${props.isMe ? myImgStyles : otherImgStyles}`}
+                            absolute ${
+                                props.isMe ? myImgStyles : otherImgStyles
+                            }`}
                 />
             </Link>
+            {props.text}
         </li>
     );
 }
