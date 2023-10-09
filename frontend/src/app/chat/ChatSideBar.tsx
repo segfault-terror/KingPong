@@ -2,6 +2,7 @@ import Link from 'next/link';
 import DirectMessage, { DirectMessageProps } from './DirectMessage';
 import EmptyChat from './EmptyChat';
 import ToggleButton from './ToggleButton';
+import { usePathname } from 'next/navigation';
 
 type ChatSideBarProps = {
     messagesList: DirectMessageProps[];
@@ -39,6 +40,8 @@ function DmList({ messagesList, toggle, setToggle }: DmListProps) {
 }
 
 function ChannelList({ channelList, toggle, setToggle }: ChannelListProps) {
+    const pathname = usePathname();
+
     if (channelList.length === 0) {
         return (
             <div className="m-auto">
@@ -56,6 +59,7 @@ function ChannelList({ channelList, toggle, setToggle }: ChannelListProps) {
                             <Link
                                 href={`/chat/channel/${channel}`}
                                 className="hover:bg-background hover:bg-opacity-80"
+                                replace={pathname.startsWith('/chat/channel')}
                             >{`# ${channel}`}</Link>
                             <div className="mt-1"></div>
                         </>
