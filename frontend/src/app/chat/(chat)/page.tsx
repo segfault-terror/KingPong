@@ -1,11 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import ChatSideBar from '../ChatSideBar';
 import { Channels, DMList } from '../data/ChatData';
+import { ToggleContext } from '../layout';
+
+
 
 export default function ChatPage() {
-    const [toggle, setToggle] = useState<boolean>(false);
+    const {toggle, setToggle} = useContext(ToggleContext);
 
     return (
         <ChatSideBar

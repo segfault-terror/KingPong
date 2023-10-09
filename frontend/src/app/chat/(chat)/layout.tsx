@@ -1,8 +1,9 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Header from '../../(dashboard)/Header';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import EmptyChat from '../EmptyChat';
+import { ToggleContext } from '../layout';
 
 type ChatLayoutProps = {
     children: React.ReactNode;
@@ -11,6 +12,7 @@ type ChatLayoutProps = {
 export default function ChatLayout({ children }: ChatLayoutProps) {
     const matches = useMediaQuery('(min-width: 1024px)');
     const [isRendred, setIsRendred] = useState<boolean>(false);
+    const { toggle } = useContext(ToggleContext);
 
     useEffect(() => {
         setIsRendred(true);
@@ -27,7 +29,7 @@ export default function ChatLayout({ children }: ChatLayoutProps) {
                 <div className="flex items-center gap-4 h-full p-6">
                     <div className="h-full w-1/4">{children}</div>
                     <div className="flex-grow">
-                        <EmptyChat toggle={false} />
+                        <EmptyChat toggle={toggle} />
                     </div>
                 </div>
             </div>
