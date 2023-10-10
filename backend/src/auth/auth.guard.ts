@@ -4,9 +4,10 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 export class AuthGard implements CanActivate {
     canActivate(context: ExecutionContext): boolean | Promise<boolean> {
         const request = context.switchToHttp().getRequest();
-        if (request.user) {
-            return true;
-        }
-        return false;
+        // if (request.user) {
+        //     return true;
+        // }
+        // return false;
+        return request.isAuthenticated();
     }
 }
