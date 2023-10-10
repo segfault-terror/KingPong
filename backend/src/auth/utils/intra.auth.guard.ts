@@ -4,12 +4,17 @@ import { AuthGuard } from '@nestjs/passport';
 @Injectable()
 export class IntraAuthGuard extends AuthGuard('42') {
     async canActivate(context: ExecutionContext) {
+        const request = context.switchToHttp().getRequest();
         try {
             const result = (await super.canActivate(context)) as boolean;
-            const request = context.switchToHttp().getRequest();
             await super.logIn(request);
+            if (result) {
+                return true;
+            }
+            request.res.redirect('http://localhost:8080/signin');
             return result;
         } catch {
+            request.res.redirect('http://localhost:8080/signin');
             return false;
         }
     }
