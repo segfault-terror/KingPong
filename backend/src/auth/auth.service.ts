@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
     constructor(private readonly userService: UserService) {}
 
-    async validateUserOAuth2(details: any): Promise<any> {
+    async validateUserOAuth2(details: Prisma.UserCreateInput): Promise<any> {
         const user = await this.userService.user({ email: details.email });
 
         if (user) {

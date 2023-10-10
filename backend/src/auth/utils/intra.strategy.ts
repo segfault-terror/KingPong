@@ -4,7 +4,6 @@ import { Strategy } from 'passport-42';
 import { AuthService } from '../auth.service';
 import { ConfigService } from '@nestjs/config';
 import { Profile } from './intra.types';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class IntraStrategy extends PassportStrategy(Strategy) {
@@ -36,7 +35,10 @@ export class IntraStrategy extends PassportStrategy(Strategy) {
             username: login,
             email,
             avatar,
+            fullname: usual_full_name,
         });
-        done(null, user);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, ...result } = user;
+        done(null, result);
     }
 }

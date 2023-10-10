@@ -1,5 +1,12 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import {
+    Controller,
+    ForbiddenException,
+    Get,
+    Req,
+    UseGuards,
+} from '@nestjs/common';
 import { IntraAuthGuard } from './utils/intra.auth.guard';
+import { AuthGard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -14,5 +21,26 @@ export class AuthController {
     async intraLoginRedirect() {
         // handles the redirect from 42 with the user token
         return { message: 'You are now logged in.' };
+    }
+
+    @Get('status')
+    @UseGuards(AuthGard)
+    async status() {
+        // checks if the user is authenticated
+        // console.log(req.user);
+        return { message: 'You are authenticated.' };
+    }
+
+    @Get('logout')
+    @UseGuards(AuthGard)
+    async logout(@Req() req: any) {
+        // logs out the user
+        req.logOut(function (err) {
+            if (err) {
+                throw new ForbiddenException(err);
+            }
+            return { message: 'You are logged out.' };
+        });
+        return { message: 'You are logged out.' };
     }
 }
