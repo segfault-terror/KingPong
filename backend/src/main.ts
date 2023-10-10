@@ -25,7 +25,7 @@ async function bootstrap() {
                 maxAge: 1000 * 60 * 60 * 24 * 15,
             },
             store: new PrismaSessionStore(new PrismaClient(), {
-                checkPeriod: 2 * 60 * 1000, //ms
+                checkPeriod: 30 * 24 * 60 * 60 * 1000, //ms
                 dbRecordIdIsSessionId: true,
                 dbRecordIdFunction: undefined,
             }),
