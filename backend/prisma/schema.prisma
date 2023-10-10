@@ -27,6 +27,7 @@ model User {
   id        String   @id @default(cuid())
   username  String   @unique
   email     String   @unique
+  fullname  String
   password  String?
   avatar    String
   status    Status   @default(OFFLINE)
