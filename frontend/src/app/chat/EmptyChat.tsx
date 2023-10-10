@@ -1,5 +1,8 @@
+'use client';
 import { BiMessageAdd } from 'react-icons/bi';
 import { MdOutlineExplore } from 'react-icons/md';
+import { useContext } from 'react';
+import { ModalContext } from './layout';
 
 function EmptyDM() {
     return (
@@ -28,6 +31,8 @@ function EmptyDM() {
 }
 
 function EmptyChannels() {
+    const { setCreateChannel } = useContext(ModalContext);
+
     return (
         <div
             className="grid justify-center align-center
@@ -39,7 +44,7 @@ function EmptyChannels() {
                 Create or join a new channel
             </p>
             <button
-                onClick={() => console.log('Create channel')}
+                onClick={() => setCreateChannel(true)}
                 className="text-primary bg-secondary-200
                             text-xs font-bold font-jost
                             rounded-xl

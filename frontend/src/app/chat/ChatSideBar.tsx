@@ -1,8 +1,10 @@
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useContext } from 'react';
 import DirectMessage, { DirectMessageProps } from './DirectMessage';
 import EmptyChat from './EmptyChat';
 import ToggleButton from './ToggleButton';
-import { usePathname } from 'next/navigation';
+import { ModalContext } from './layout';
 
 type ChatSideBarProps = {
     messagesList: DirectMessageProps[];
@@ -11,10 +13,10 @@ type ChatSideBarProps = {
     setToggle: (toggle: boolean) => void;
 };
 
-type DmListProps = Omit<ChatSideBarProps, 'channelList'>;
-type ChannelListProps = Omit<ChatSideBarProps, 'messagesList'>;
+type DmListProps = Omit<ChatSideBarProps, 'channelList' | 'setToggle'>;
+type ChannelListProps = Omit<ChatSideBarProps, 'messagesList' | 'setToggle'>;
 
-function DmList({ messagesList, toggle, setToggle }: DmListProps) {
+function DmList({ messagesList, toggle }: DmListProps) {
     if (messagesList.length === 0) {
         return (
             <div className="m-auto">
@@ -39,8 +41,9 @@ function DmList({ messagesList, toggle, setToggle }: DmListProps) {
     );
 }
 
-function ChannelList({ channelList, toggle, setToggle }: ChannelListProps) {
+function ChannelList({ channelList, toggle }: ChannelListProps) {
     const pathname = usePathname();
+    const { setCreateChannel } = useContext(ModalContext);
 
     if (channelList.length === 0) {
         return (
@@ -71,7 +74,9 @@ function ChannelList({ channelList, toggle, setToggle }: ChannelListProps) {
                     text-secondary-200 font-jost"
             >
                 <button>Join channel</button>
-                <button>Create new channel</button>
+                <button onClick={() => setCreateChannel(true)}>
+                    Create new channel
+                </button>
             </div>
         </>
     );
