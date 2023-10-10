@@ -5,6 +5,7 @@ import { Jost, Mulish, Jockey_One } from 'next/font/google';
 
 import { Suspense } from 'react';
 import Loading from '@/app/loading';
+import QueryProvider from './QueryProvider';
 
 const nicoMoji = localFont({
     src: [
@@ -48,9 +49,11 @@ export default function RootLayout({
             className={`${nicoMoji.variable} ${jost.variable} ${mulish.variable} ${jockeyOne.variable}`}
         >
             <body className="font-mulish bg-default bg-fixed bg-cover text-white">
-                <Suspense fallback={<h1>Hello from Loading page</h1>}>
-                    {children}
-                </Suspense>
+                <QueryProvider>
+                    <Suspense fallback={<h1>Hello from Loading page</h1>}>
+                        {children}
+                    </Suspense>
+                </QueryProvider>
             </body>
         </html>
     );
