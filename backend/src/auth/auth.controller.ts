@@ -30,6 +30,7 @@ export class AuthController {
 
     @Get('logout')
     @UseGuards(AuthGard)
+    @Redirect('http://localhost:8080/')
     async logout(@Req() req: any) {
         // logs out the user
         req.session.destroy();

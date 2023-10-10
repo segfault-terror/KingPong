@@ -9,6 +9,7 @@ import {
     MdOutlineLogout,
 } from 'react-icons/md';
 import ButtonImage from './ButtonImage';
+import axios from 'axios';
 
 function DropdownItem({
     href,
@@ -88,9 +89,23 @@ export default function DropdownMenu() {
                         Settings
                     </DropdownItem>
                     <hr className="border-inactive-500" />
-                    <DropdownItem href="/logout" icon={<MdOutlineLogout />}>
+                    {/* <DropdownItem href="/logout" icon={<MdOutlineLogout />}>
                         Logout
-                    </DropdownItem>
+                    </DropdownItem> */}
+                    <li className={`hover:bg-background px-4 py-2`}>
+                        <button
+                            className="w-full h-full flex items-start gap-2"
+                            onClick={() => {
+                                window.open(
+                                    'http://localhost:3000/auth/logout',
+                                    '_self',
+                                );
+                            }}
+                        >
+                            <MdOutlineLogout className="w-6 h-6" />
+                            Logout
+                        </button>
+                    </li>
                 </ul>
             </div>
         </li>
