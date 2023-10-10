@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import Logo from '@/components/Logo';
 import Board from './Board';
@@ -5,12 +6,34 @@ import Image from 'next/image';
 import dots from './dots.svg';
 import side from './sideHexagone.svg';
 import Link from 'next/link';
+import Loading from '../loading';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import { redirect } from 'next/navigation';
 
 export default function AuthLayout({
     children,
 }: {
     children: React.ReactNode;
 }): JSX.Element {
+    const { error, data, isLoading } = useQuery({
+        queryKey: ['auth'],
+        queryFn: async () => {
+            try {
+                return await axios.get('http://localhost:3000/auth/status', {
+                    withCredentials: true,
+                });
+            } catch {
+                redirect('/signin');
+            }
+        },
+    });
+    if (isLoading) {
+        return <Loading />;
+    }
+    if (data?.data.status === true) {
+        redirect('/home');
+    }
     return (
         <div className="h-screen relative">
             <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
