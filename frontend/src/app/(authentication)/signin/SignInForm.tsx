@@ -15,6 +15,10 @@ const onSignIn: SubmitHandler<SignInInputs> = (data) => {
     console.log('sending data to backend', data);
 };
 
+const onSignInWith42 = () => {
+    window.open('http://localhost:3000/auth/intra/login', '_self');
+};
+
 export default function SignInForm() {
     const {
         control,
@@ -32,6 +36,7 @@ export default function SignInForm() {
             <button
                 className="text-white bg-primary font-jost font-bold 
                         w-full h-10 rounded-3xl my-4 flex items-center justify-center gap-2"
+                onClick={onSignInWith42}
             >
                 <svg
                     viewBox="0 -200 960 960"

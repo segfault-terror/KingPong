@@ -12,18 +12,20 @@ export class AuthController {
 
     @Get('intra/redirect')
     @UseGuards(IntraAuthGuard)
-    @Redirect('http://localhost:3000/auth/status')
+    @Redirect('http://localhost:8080/home')
     async intraLoginRedirect() {
         // handles the redirect from 42 with the user token
         return { message: 'You are now logged in.' };
     }
 
     @Get('status')
-    @UseGuards(AuthGard)
-    async status() {
+    async status(@Req() req: any) {
         // checks if the user is authenticated
         // console.log(req.user);
-        return { message: 'You are authenticated.' };
+        if (req.isAuthenticated()) {
+            return { message: 'You are authenticated.', status: true };
+        }
+        return { message: 'You are not authenticated.', status: false };
     }
 
     @Get('logout')
