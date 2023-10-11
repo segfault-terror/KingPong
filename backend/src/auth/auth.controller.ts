@@ -52,10 +52,10 @@ export class AuthController {
 
     @Get('logout')
     @UseGuards(AuthGard)
-    @Redirect('http://localhost:8080/')
+    @Redirect('http://localhost:8080/signin')
     async logout(@Req() req: any, @Headers('referer') referer: string) {
         // logs out the user
         req.session.destroy();
-        return { url: referer };
+        return { url: referer + '/signin' };
     }
 }
