@@ -43,7 +43,7 @@ function DmList({ messagesList, toggle }: DmListProps) {
 
 function ChannelList({ channelList, toggle }: ChannelListProps) {
     const pathname = usePathname();
-    const { setCreateChannel } = useContext(ModalContext);
+    const { setCreateChannel, setJoinChannel } = useContext(ModalContext);
 
     if (channelList.length === 0) {
         return (
@@ -73,7 +73,9 @@ function ChannelList({ channelList, toggle }: ChannelListProps) {
                 className="flex justify-between
                     text-secondary-200 font-jost"
             >
-                <button>Join channel</button>
+                <button onClick={() => setJoinChannel(true)}>
+                    Join channel
+                </button>
                 <button onClick={() => setCreateChannel(true)}>
                     Create new channel
                 </button>

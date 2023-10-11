@@ -66,7 +66,22 @@ const DMConversations = {
     },
 };
 
-export const Channels = ['segfault_terror', 'fc_mota9a3idin'];
+export const Channels = [
+    'segfault_terror',
+    'fc_mota9a3idin',
+    '1337',
+    '42',
+    '01',
+    'fc_lishbona',
+    'fc_madrid',
+    'fc_barcelona',
+    'fc_manchester',
+    'instagram',
+    'facebook',
+    'twitter',
+    'snapchat',
+    'youtube',
+];
 
 export const ChannelConversations = {
     segfault_terror: {

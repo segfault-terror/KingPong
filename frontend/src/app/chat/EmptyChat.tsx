@@ -3,6 +3,7 @@ import { BiMessageAdd } from 'react-icons/bi';
 import { MdOutlineExplore } from 'react-icons/md';
 import { useContext } from 'react';
 import { ModalContext } from './layout';
+import { set } from 'react-hook-form';
 
 function EmptyDM() {
     return (
@@ -31,7 +32,7 @@ function EmptyDM() {
 }
 
 function EmptyChannels() {
-    const { setCreateChannel } = useContext(ModalContext);
+    const { setCreateChannel, setJoinChannel } = useContext(ModalContext);
 
     return (
         <div
@@ -55,7 +56,7 @@ function EmptyChannels() {
                 Create channel
             </button>
             <button
-                onClick={() => console.log('Join channel')}
+                onClick={() => setJoinChannel(true)}
                 className="text-primary bg-secondary-200
                             text-xs font-bold font-jost
                             rounded-xl
