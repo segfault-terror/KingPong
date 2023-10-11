@@ -57,7 +57,8 @@ function ChannelList({ toggle }: ChatSideBarProps) {
                         <>
                             <Link
                                 href={`/chat/channel/${channel.name}`}
-                                className="hover:bg-background hover:bg-opacity-80"
+                                className="block w-full text-left
+                                            hover:bg-background hover:bg-opacity-80 hover:rounded-xl"
                                 replace={pathname.startsWith('/chat/channel')}
                             >{`# ${channel.name}`}</Link>
                             <div className="mt-1"></div>
