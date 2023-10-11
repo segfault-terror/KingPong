@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { IntraAuthGuard } from './utils/intra.auth.guard';
 import { AuthGard } from './auth.guard';
+import { GoogleAuthGuard } from './utils/google.auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -22,6 +23,20 @@ export class AuthController {
     @Redirect('http://localhost:3000/')
     async intraLoginRedirect() {
         // handles the redirect from 42 with the user token
+        return '<script>window.opener.postMessage({ message: "done" }, "*");window.close();</script>';
+    }
+
+    @Get('google/login')
+    @UseGuards(GoogleAuthGuard)
+    async googleLogin() {
+        // initiates the google login flow
+    }
+
+    @Get('google/redirect')
+    @UseGuards(GoogleAuthGuard)
+    @Redirect('http://localhost:3000/')
+    async googleLoginRedirect() {
+        // handles the redirect from google with the user token
         return '<script>window.opener.postMessage({ message: "done" }, "*");window.close();</script>';
     }
 

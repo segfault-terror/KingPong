@@ -23,6 +23,14 @@ const onSignInWith42 = () => {
     );
 };
 
+const onSignInWithGoogle = () => {
+    window.open(
+        'http://localhost:3000/auth/google/login',
+        'loginGoogle',
+        'width=550,height=800,toolbar=0,status=0,',
+    );
+};
+
 export default function SignInForm() {
     const {
         control,
@@ -71,6 +79,7 @@ export default function SignInForm() {
             <button
                 className="text-white bg-primary font-jost font-bold 
                         w-full h-10 rounded-3xl mb-6 flex items-center justify-center"
+                onClick={onSignInWithGoogle}
             >
                 <IoLogoGoogle className="inline-block mr-2 w-5 h-5" />
                 Sign In with Google
