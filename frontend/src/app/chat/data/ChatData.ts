@@ -67,20 +67,20 @@ const DMConversations = {
 };
 
 export const Channels = [
-    'segfault_terror',
-    'fc_mota9a3idin',
-    '1337',
-    '42',
-    '01',
-    'fc_lishbona',
-    'fc_madrid',
-    'fc_barcelona',
-    'fc_manchester',
-    'instagram',
-    'facebook',
-    'twitter',
-    'snapchat',
-    'youtube',
+    { name: 'segfault_terror', visibility: 'public' },
+    { name: 'fc_mota9a3idin', visibility: 'protected' },
+    { name: '1337', visibility: 'protected' },
+    { name: '42', visibility: 'public' },
+    { name: '01', visibility: 'protected' },
+    { name: 'fc_lishbona', visibility: 'public' },
+    { name: 'fc_madrid', visibility: 'protected' },
+    { name: 'fc_barcelona', visibility: 'public' },
+    { name: 'fc_manchester', visibility: 'protected' },
+    { name: 'instagram', visibility: 'public' },
+    { name: 'facebook', visibility: 'protected' },
+    { name: 'twitter', visibility: 'public' },
+    { name: 'snapchat', visibility: 'protected' },
+    { name: 'youtube', visibility: 'public' },
 ];
 
 export const ChannelConversations = {

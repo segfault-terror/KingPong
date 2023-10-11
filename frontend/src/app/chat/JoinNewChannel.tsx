@@ -3,14 +3,19 @@ import { Channels } from './data/ChatData';
 
 function filterChannels(query: string) {
     return Channels.filter((channel) => {
-        const channelName = channel.toLowerCase();
+        const channelName = channel.name.toLowerCase();
 
         return channelName.includes(query.toLowerCase());
     });
 }
 
+type Channel = {
+    name: string;
+    visibility: string;
+};
+
 export default function JoinNewChannel() {
-    const [results, setResults] = useState<string[]>([]);
+    const [results, setResults] = useState<Channel[]>([]);
 
     return (
         <form
@@ -52,8 +57,10 @@ export default function JoinNewChannel() {
                             className="hover:bg-background/80 hover:rounded-xl block w-full text-left py-1"
                         >
                             <li className="flex justify-between">
-                                <p># {result}</p>
-                                <p className="text-cube_palette-200">public</p>
+                                <p># {result.name}</p>
+                                <p className="text-cube_palette-200">
+                                    {result.visibility}
+                                </p>
                             </li>
                         </button>
                     ))}

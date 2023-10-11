@@ -1,23 +1,19 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useContext } from 'react';
-import DirectMessage, { DirectMessageProps } from './DirectMessage';
+import DirectMessage from './DirectMessage';
 import EmptyChat from './EmptyChat';
 import ToggleButton from './ToggleButton';
+import { Channels, DMList } from './data/ChatData';
 import { ModalContext } from './layout';
 
 type ChatSideBarProps = {
-    messagesList: DirectMessageProps[];
-    channelList: string[];
     toggle: boolean;
     setToggle: (toggle: boolean) => void;
 };
 
-type DmListProps = Omit<ChatSideBarProps, 'channelList' | 'setToggle'>;
-type ChannelListProps = Omit<ChatSideBarProps, 'messagesList' | 'setToggle'>;
-
-function DmList({ messagesList, toggle }: DmListProps) {
-    if (messagesList.length === 0) {
+function DmList({ toggle }: ChatSideBarProps) {
+    if (DMList.length === 0) {
         return (
             <div className="m-auto">
                 <EmptyChat toggle={toggle} />
@@ -27,11 +23,11 @@ function DmList({ messagesList, toggle }: DmListProps) {
 
     return (
         <>
-            {messagesList.map((message, idx) => {
+            {DMList.map((message, idx) => {
                 return (
                     <>
                         <DirectMessage key={idx} {...message} />
-                        {idx < messagesList.length - 1 && (
+                        {idx < DMList.length - 1 && (
                             <div className="mt-4"></div>
                         )}
                     </>
@@ -41,11 +37,11 @@ function DmList({ messagesList, toggle }: DmListProps) {
     );
 }
 
-function ChannelList({ channelList, toggle }: ChannelListProps) {
+function ChannelList({ toggle }: ChatSideBarProps) {
     const pathname = usePathname();
     const { setCreateChannel, setJoinChannel } = useContext(ModalContext);
 
-    if (channelList.length === 0) {
+    if (Channels.length === 0) {
         return (
             <div className="m-auto">
                 <EmptyChat toggle={toggle} />
@@ -56,14 +52,14 @@ function ChannelList({ channelList, toggle }: ChannelListProps) {
     return (
         <>
             <div className="text-lg font-jost text-gray-300 flex-grow">
-                {channelList.map((channel) => {
+                {Channels.map((channel) => {
                     return (
                         <>
                             <Link
-                                href={`/chat/channel/${channel}`}
+                                href={`/chat/channel/${channel.name}`}
                                 className="hover:bg-background hover:bg-opacity-80"
                                 replace={pathname.startsWith('/chat/channel')}
-                            >{`# ${channel}`}</Link>
+                            >{`# ${channel.name}`}</Link>
                             <div className="mt-1"></div>
                         </>
                     );
@@ -84,12 +80,7 @@ function ChannelList({ channelList, toggle }: ChannelListProps) {
     );
 }
 
-export default function ChatSideBar({
-    messagesList,
-    channelList,
-    toggle,
-    setToggle,
-}: ChatSideBarProps) {
+export default function ChatSideBar({ toggle, setToggle }: ChatSideBarProps) {
     return (
         <div
             className="bg-primary border-secondary-200 border-[1px]
@@ -103,9 +94,9 @@ export default function ChatSideBar({
                             overflow-auto scrollbar-thumb-secondary-200 scrollbar-thin`}
             >
                 {toggle ? (
-                    <ChannelList {...{ channelList, toggle, setToggle }} />
+                    <ChannelList {...{ toggle, setToggle }} />
                 ) : (
-                    <DmList {...{ messagesList, toggle, setToggle }} />
+                    <DmList {...{ toggle, setToggle }} />
                 )}
             </div>
         </div>
