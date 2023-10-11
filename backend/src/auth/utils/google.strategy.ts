@@ -33,6 +33,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
             fullname: profile.displayName,
         });
 
-        done(null, user);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, ...result } = user;
+
+        done(null, result);
     }
 }
