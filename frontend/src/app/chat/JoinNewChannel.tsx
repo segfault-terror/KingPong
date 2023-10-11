@@ -63,7 +63,7 @@ export default function JoinNewChannel() {
                                 });
                             }}
                             key={idx}
-                            className="hover:bg-background/80 hover:rounded-xl block w-full text-left py-1"
+                            className="hover:bg-background/80 hover:rounded-xl block w-full text-left p-1"
                         >
                             <li className="flex justify-between">
                                 <p># {result.name}</p>

@@ -6,6 +6,7 @@ import EmptyChat from './EmptyChat';
 import ToggleButton from './ToggleButton';
 import { Channels, DMList } from './data/ChatData';
 import { ModalContext } from './layout';
+import { AiOutlinePlusCircle } from 'react-icons/ai';
 
 type ChatSideBarProps = {
     toggle: boolean;
@@ -13,6 +14,7 @@ type ChatSideBarProps = {
 };
 
 function DmList({ toggle }: ChatSideBarProps) {
+    const { setNewConversation } = useContext(ModalContext);
     if (DMList.length === 0) {
         return (
             <div className="m-auto">
@@ -23,16 +25,32 @@ function DmList({ toggle }: ChatSideBarProps) {
 
     return (
         <>
-            {DMList.map((message, idx) => {
-                return (
-                    <>
-                        <DirectMessage key={idx} {...message} />
-                        {idx < DMList.length - 1 && (
-                            <div className="mt-4"></div>
-                        )}
-                    </>
-                );
-            })}
+            <div className="flex-grow">
+                {DMList.map((message, idx) => {
+                    return (
+                        <>
+                            <DirectMessage key={idx} {...message} />
+                            {idx < DMList.length - 1 && (
+                                <div className="mt-4"></div>
+                            )}
+                        </>
+                    );
+                })}
+            </div>
+            <div>
+                <div
+                    className="flex items-center justify-center
+                                font-jost
+                                py-2 px-4"
+                >
+                    <button onClick={() => setNewConversation(true)}>
+                        <AiOutlinePlusCircle className="mr-2 text-4xl text-secondary-200" />
+                    </button>
+                    <p className="text-lg text-silver select-none">
+                        Start Conversation
+                    </p>
+                </div>
+            </div>
         </>
     );
 }

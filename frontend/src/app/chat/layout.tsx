@@ -4,6 +4,7 @@ import Modal from './Modal';
 import CreateNewChannel from './CreateNewChannel';
 import JoinNewChannel, { Channel } from './JoinNewChannel';
 import WelcomeChannel from './WelcomeChannel';
+import NewConversation from './NewConversation';
 
 type ToggleProps = {
     toggle: boolean;
@@ -18,6 +19,8 @@ type ModalContextProps = {
     welcomeChannel: boolean;
     setWelcomeChannel: (val: boolean) => void;
     setChannel: (channel: Channel) => void;
+    newConversation: boolean;
+    setNewConversation: (val: boolean) => void;
 };
 
 export const ModalContext = createContext({} as ModalContextProps);
@@ -33,6 +36,7 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
     const [joinChannel, setJoinChannel] = useState(false);
     const [welcomeChannel, setWelcomeChannel] = useState(false);
     const [channel, setChannel] = useState<Channel>({} as Channel);
+    const [newConversation, setNewConversation] = useState(false);
 
     return (
         <ToggleContext.Provider value={{ toggle, setToggle }}>
@@ -45,6 +49,8 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
                     welcomeChannel,
                     setWelcomeChannel,
                     setChannel,
+                    newConversation,
+                    setNewConversation,
                 }}
             >
                 {createChannel && (
@@ -77,6 +83,15 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
                             setWelcomeChannel={setWelcomeChannel}
                             setJoinChannel={setJoinChannel}
                         />
+                    </Modal>
+                )}
+                {newConversation && (
+                    <Modal
+                        onClose={() => setNewConversation(false)}
+                        childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%] h-[300px]
+                                        lg:w-2/3 max-w-[600px]"
+                    >
+                        <NewConversation />
                     </Modal>
                 )}
                 {children}

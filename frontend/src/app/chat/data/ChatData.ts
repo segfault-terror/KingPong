@@ -171,3 +171,13 @@ export const ChannelConversations = {
         ],
     },
 };
+
+export const Friends = [
+    { fullname: 'Thommas Shelby', img: '/images/1.jpeg', username: 'Tommy' },
+    { fullname: 'Hamza Haddani', img: '/images/2.jpeg', username: 'Archer' },
+    { fullname: 'Omar Aaizab', img: '/images/4.jpeg', username: 'omarox' },
+    { fullname: 'Abdellah Aghbal', img: '/images/1.jpeg', username: 'Aghbal' },
+    { fullname: 'Aymane Aggoujjil', img: '/images/2.jpeg', username: 'Akashi' },
+    { fullname: 'Naruto Uzumaki', img: '/images/4.jpeg', username: 'Naruto' },
+    { fullname: 'Hamza Oumansour', img: '/images/1.jpeg', username: 'Wahid' },
+];
