@@ -16,7 +16,11 @@ const onSignIn: SubmitHandler<SignInInputs> = (data) => {
 };
 
 const onSignInWith42 = () => {
-    window.open('http://localhost:3000/auth/intra/login', '_self');
+    window.open(
+        'http://localhost:3000/auth/intra/login',
+        'login42',
+        'width=550,height=800,toolbar=0,status=0,',
+    );
 };
 
 export default function SignInForm() {

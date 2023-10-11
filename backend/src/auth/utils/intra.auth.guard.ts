@@ -11,10 +11,10 @@ export class IntraAuthGuard extends AuthGuard('42') {
             if (result) {
                 return true;
             }
-            request.res.redirect('http://localhost:8080/signin');
+            request.res.redirect('/');
             return result;
         } catch {
-            request.res.redirect('http://localhost:8080/signin');
+            request.res.redirect('/');
             return false;
         }
     }

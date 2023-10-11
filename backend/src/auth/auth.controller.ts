@@ -1,4 +1,11 @@
-import { Controller, Get, Redirect, Req, UseGuards } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Headers,
+    Redirect,
+    Req,
+    UseGuards,
+} from '@nestjs/common';
 import { IntraAuthGuard } from './utils/intra.auth.guard';
 import { AuthGard } from './auth.guard';
 
@@ -12,10 +19,10 @@ export class AuthController {
 
     @Get('intra/redirect')
     @UseGuards(IntraAuthGuard)
-    @Redirect('http://localhost:8080/home')
+    @Redirect('http://localhost:3000/')
     async intraLoginRedirect() {
         // handles the redirect from 42 with the user token
-        return { message: 'You are now logged in.' };
+        return '<script>window.opener.postMessage({ message: "done" }, "*");window.close();</script>';
     }
 
     @Get('status')
@@ -31,9 +38,9 @@ export class AuthController {
     @Get('logout')
     @UseGuards(AuthGard)
     @Redirect('http://localhost:8080/')
-    async logout(@Req() req: any) {
+    async logout(@Req() req: any, @Headers('referer') referer: string) {
         // logs out the user
         req.session.destroy();
-        return { message: 'You are logged out.' };
+        return { url: referer };
     }
 }
