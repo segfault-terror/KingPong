@@ -16,7 +16,7 @@ export default function CreateNewChannel() {
             <Input placeholder="Name" />
 
             <div>
-                <p className="text-inactive-200 mb-2">Visibility</p>
+                <p className="text-silver mb-2">Visibility</p>
                 <div className="flex justify-start gap-1">
                     <input
                         type="radio"
