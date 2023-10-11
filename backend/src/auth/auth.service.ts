@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { UserService } from 'src/user/user.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -25,5 +26,15 @@ export class AuthService {
             details.username += Math.floor(Math.random() * 10);
         }
         return await this.userService.createUser(details);
+    }
+
+    async validateUserLocal(username: string, password: string): Promise<any> {
+        const user = await this.userService.user({ username });
+
+        if (user && (await bcrypt.compare(password, user.password))) {
+            return user;
+        }
+
+        return null;
     }
 }

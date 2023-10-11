@@ -2,6 +2,7 @@ import {
     Controller,
     Get,
     Headers,
+    Post,
     Redirect,
     Req,
     UseGuards,
@@ -9,6 +10,7 @@ import {
 import { IntraAuthGuard } from './utils/intra.auth.guard';
 import { AuthGard } from './auth.guard';
 import { GoogleAuthGuard } from './utils/google.auth.guard';
+import { LocalGuard } from './utils/local.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -38,6 +40,12 @@ export class AuthController {
     async googleLoginRedirect() {
         // handles the redirect from google with the user token
         return '<script>window.opener.postMessage({ message: "done" }, "*");window.close();</script>';
+    }
+
+    @Post('login')
+    @UseGuards(LocalGuard)
+    async login() {
+        return { message: 'Login successful.', status: true };
     }
 
     @Get('status')
