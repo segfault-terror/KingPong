@@ -25,7 +25,7 @@ export default function ChatLayout({ children }: ChatLayoutProps) {
     if (matches) {
         return (
             <>
-                <div className="flex flex-col h-screen bg-background">
+                <div className="flex flex-col h-screen bg-background overflow-auto">
                     <Header />
                     <div
                         className="flex items-center gap-4 p-6 h-[90%]
@@ -43,7 +43,7 @@ export default function ChatLayout({ children }: ChatLayoutProps) {
 
     return (
         <>
-            <div className="flex flex-col h-screen bg-background">
+            <div className="flex flex-col h-screen bg-background overflow-auto">
                 <Header />
                 <div
                     className="py-8 px-4 flex-grow h-[85%]

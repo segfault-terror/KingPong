@@ -7,7 +7,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ToggleContext } from '../layout';
 
 export default function DMLayout({ children }: { children: React.ReactNode }) {
-    const {toggle, setToggle} = useContext(ToggleContext);
+    const { toggle, setToggle } = useContext(ToggleContext);
     const matches = useMediaQuery('(min-width: 1024px)');
     const [isRendred, setIsRendred] = useState<boolean>(false);
 
@@ -21,10 +21,12 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
 
     if (matches) {
         return (
-            <div className="flex flex-col h-screen bg-background">
+            <div className="flex flex-col h-screen bg-background overflow-auto">
                 <Header />
-                <div className="flex gap-4 p-6 h-[90%]
-                            mt-[120px] lg:mt-[110px]">
+                <div
+                    className="flex gap-4 p-6 h-[90%]
+                            mt-[120px] lg:mt-[110px]"
+                >
                     <div className="w-1/4">
                         <ChatSideBar
                             messagesList={DMList}
@@ -39,10 +41,14 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
         );
     }
     return (
-        <div className="flex flex-col h-screen bg-background">
+        <div className="flex flex-col h-screen bg-background overflow-auto">
             <Header />
-            <div className="py-8 px-4 flex-grow h-[85%]
-                        mt-[120px] lg:mt-[110px]">{children}</div>
+            <div
+                className="py-8 px-4 flex-grow h-[85%]
+                        mt-[120px] lg:mt-[110px]"
+            >
+                {children}
+            </div>
         </div>
     );
 }

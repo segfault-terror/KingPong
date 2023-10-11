@@ -22,7 +22,7 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
     if (matches) {
         return (
             <>
-                <div className="flex flex-col bg-background h-screen">
+                <div className="flex flex-col bg-background h-screen overflow-auto">
                     <Header />
                     <div
                         className="flex-grow flex gap-4 p-6 h-[90%]
@@ -44,7 +44,7 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
     }
     return (
         <>
-            <div className="flex flex-col bg-background h-screen">
+            <div className="flex flex-col bg-background h-screen overflow-auto">
                 <Header />
                 <div
                     className="py-8 px-4 flex-grow h-[85%]
