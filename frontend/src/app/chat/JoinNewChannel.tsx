@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Channels } from './data/ChatData';
+import { ModalContext } from './layout';
 
 function filterChannels(query: string) {
     return Channels.filter((channel) => {
@@ -9,13 +10,15 @@ function filterChannels(query: string) {
     });
 }
 
-type Channel = {
+export type Channel = {
     name: string;
     visibility: string;
 };
 
 export default function JoinNewChannel() {
     const [results, setResults] = useState<Channel[]>([]);
+    const { setJoinChannel, setWelcomeChannel, setChannel } =
+        useContext(ModalContext);
 
     return (
         <form
@@ -52,6 +55,12 @@ export default function JoinNewChannel() {
                         <button
                             onClick={(event) => {
                                 event.preventDefault();
+                                setJoinChannel(false);
+                                setWelcomeChannel(true);
+                                setChannel({
+                                    name: result.name,
+                                    visibility: result.visibility,
+                                });
                             }}
                             key={idx}
                             className="hover:bg-background/80 hover:rounded-xl block w-full text-left py-1"
