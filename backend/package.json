@@ -19,7 +19,8 @@
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
         "test:e2e": "jest --config ./test/jest-e2e.json",
         "studio": "prisma studio",
-        "generate": "prisma generate"
+        "generate": "prisma generate",
+        "migrate": "prisma migrate reset"
     },
     "dependencies": {
         "@nestjs/common": "^10.0.0",
