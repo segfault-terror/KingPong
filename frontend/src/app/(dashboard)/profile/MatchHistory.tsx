@@ -51,6 +51,7 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
                         <>
                             <GameResult
                                 key={idx}
+                                opponentUsername={gameResult.opponentUsername}
                                 playerAvatar={user!.avatarPath}
                                 opponentAvatar={opponent!.avatarPath}
                                 playerLevel={userStats!.level}

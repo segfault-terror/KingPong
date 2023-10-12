@@ -1,4 +1,7 @@
+import Link from 'next/link';
+
 export type GameResultProps = {
+    opponentUsername: string;
     playerAvatar: string;
     opponentAvatar: string;
     playerLevel: number;
@@ -8,6 +11,7 @@ export type GameResultProps = {
 };
 
 export default function GameResult({
+    opponentUsername,
     playerAvatar,
     opponentAvatar,
     playerLevel,
@@ -37,7 +41,12 @@ export default function GameResult({
                     playerScore > opponentScore ? loserShadow : winnerShadow
                 }
             >
-                <UserCircle avatarPath={opponentAvatar} level={opponentLevel} />
+                <Link href={`/profile/${opponentUsername}`}>
+                    <UserCircle
+                        avatarPath={opponentAvatar}
+                        level={opponentLevel}
+                    />
+                </Link>
             </div>
         </div>
     );

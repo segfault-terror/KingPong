@@ -3,6 +3,7 @@ import Lottie from 'lottie-react';
 import Ghost from '../../../../public/lottie/ghost.json';
 import UserCircleInfo from './UserCircleInfo';
 import { UsersFriends } from './data/ProfileData';
+import Link from 'next/link';
 
 type FullFriendListProps = {
     username: string;
@@ -48,7 +49,11 @@ export default function FullFriendList({ username }: FullFriendListProps) {
                             md:grid md:grid-cols-2 md:justify-items-center md:gap-4"
             >
                 {userFriends!.map((friendName, idx) => {
-                    return <UserCircleInfo key={idx} username={friendName} />;
+                    return (
+                        <Link key={idx} href={`/profile/${friendName}`}>
+                            <UserCircleInfo username={friendName} />
+                        </Link>
+                    );
                 })}
             </div>
             <div
