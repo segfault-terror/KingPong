@@ -26,7 +26,7 @@ export default function DmConversation({ userName }: DmConversationProps) {
                 border-secondary-200 border-[1px]"
         >
             <DmConversationHeader userName={userName} />
-            <div className="flex-grow overflow-scroll scrollbar-none pb-2">
+            <div className="flex-grow overflow-y-scroll scrollbar-none pb-2">
                 <DmMessageList userName={userName} />
             </div>
 
@@ -75,7 +75,7 @@ function UserDMInfo({ userName }: DmConversationProps) {
                 <img
                     src={user.userImg}
                     alt={`${userName}'s avatar`}
-                    className="w-16 h-16 object-cover border-[3px] border-secondary-200 rounded-full"
+                    className="w-12 h-12 object-cover border-[3px] border-secondary-200 rounded-full"
                 />
             </Link>
 

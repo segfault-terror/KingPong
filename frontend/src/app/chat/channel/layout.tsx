@@ -22,11 +22,11 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
     if (matches) {
         return (
             <>
-                <div className="flex flex-col bg-background h-screen">
+                <div className="flex flex-col bg-background min-h-screen">
                     <Header />
                     <div
-                        className="flex-grow flex gap-4 p-6 h-[90%]
-                            mt-[120px] lg:mt-[110px]"
+                        className="flex gap-4 p-6 h-[90vh]
+                            mt-[110px]"
                     >
                         <div className="w-1/4">
                             <ChatSideBar
@@ -34,7 +34,7 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
                                 setToggle={setToggle}
                             />
                         </div>
-                        <div className="flex-grow w-3/4">{children}</div>
+                        <div className="w-3/4">{children}</div>
                     </div>
                 </div>
             </>
@@ -42,13 +42,15 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
     }
     return (
         <>
-            <div className="flex flex-col bg-background h-screen">
+            <div className="flex flex-col bg-background min-h-screen">
                 <Header />
                 <div
-                    className="py-8 px-4 flex-grow h-[85%]
-                        mt-[120px] lg:mt-[110px]"
+                    className="flex py-8 px-4 h-[90vh]
+                        mt-[110px]"
                 >
-                    {children}
+                    <div className='flex-grow'>
+                        {children}
+                    </div>
                 </div>
             </div>
         </>

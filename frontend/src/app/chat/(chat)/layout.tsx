@@ -25,11 +25,11 @@ export default function ChatLayout({ children }: ChatLayoutProps) {
     if (matches) {
         return (
             <>
-                <div className="flex flex-col h-screen bg-background">
+                <div className="flex flex-col min-h-screen bg-background">
                     <Header />
                     <div
-                        className="flex items-center gap-4 p-6 h-[90%]
-                            mt-[120px] lg:mt-[110px]"
+                        className="flex items-center gap-4 p-6 h-[90vh]
+                            mt-[110px]"
                     >
                         <div className="h-full w-1/4">{children}</div>
                         <div className="flex-grow">
@@ -43,13 +43,16 @@ export default function ChatLayout({ children }: ChatLayoutProps) {
 
     return (
         <>
-            <div className="flex flex-col h-screen bg-background">
+            <div className="flex flex-col min-h-screen bg-background">
                 <Header />
                 <div
-                    className="py-8 px-4 flex-grow h-[85%]
-                        mt-[120px] lg:mt-[110px]"
+                    className="flex py-8 px-4 h-[85vh]
+                        mt-[120px]"
                 >
+                    <div className='flex-grow'>
                     {children}
+
+                    </div>
                 </div>
             </div>
         </>
