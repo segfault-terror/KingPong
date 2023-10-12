@@ -46,6 +46,7 @@ function DmList({ toggle }: ChatSideBarProps) {
                     <button onClick={() => setNewConversation(true)}>
                         <AiOutlinePlusCircle className="mr-2 text-4xl text-secondary-200" />
                     </button>
+                    {/* TODO: Handle small size (desktop) */}
                     <p className="text-lg text-silver select-none">
                         Start Conversation
                     </p>

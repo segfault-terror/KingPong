@@ -1,7 +1,11 @@
+'use client';
+import Link from 'next/link';
+import { useContext } from 'react';
 import { HiDotsVertical } from 'react-icons/hi';
 import ChatInput from './ChatInput';
 import { UserStatus, getStatusColor } from './DirectMessage';
 import { DMConversations } from './data/ChatData';
+import { ModalContext } from './layout';
 
 type Message = {
     isMe: boolean;
@@ -22,7 +26,6 @@ export default function DmConversation({ userName }: DmConversationProps) {
                 border-secondary-200 border-[1px]"
         >
             <DmConversationHeader userName={userName} />
-
             <div className="flex-grow overflow-scroll scrollbar-none pb-2">
                 <DmMessageList userName={userName} />
             </div>
@@ -46,13 +49,17 @@ function getStatusMsg(status: UserStatus) {
 }
 
 function DmConversationHeader({ userName }: DmConversationProps) {
+    const { setDotsDropdown } = useContext(ModalContext);
+
     return (
-        <div className="flex justify-between items-center">
-            <UserDMInfo userName={userName} />
-            <button>
-                <HiDotsVertical className="text-secondary-200 h-8 w-8" />
-            </button>
-        </div>
+        <>
+            <div className="flex justify-between items-center">
+                <UserDMInfo userName={userName} />
+                <button onClick={() => setDotsDropdown(true)}>
+                    <HiDotsVertical className="text-secondary-200 h-8 w-8" />
+                </button>
+            </div>
+        </>
     );
 }
 
@@ -64,14 +71,19 @@ function UserDMInfo({ userName }: DmConversationProps) {
 
     return (
         <div className="flex items-center gap-3">
-            <img
-                src={user.userImg}
-                alt={`${userName}'s avatar`}
-                className="w-16 h-16 object-cover border-[3px] border-secondary-200 rounded-full"
-            />
+            <Link href="/profile">
+                <img
+                    src={user.userImg}
+                    alt={`${userName}'s avatar`}
+                    className="w-16 h-16 object-cover border-[3px] border-secondary-200 rounded-full"
+                />
+            </Link>
 
             <div>
-                <h1 className="text-white text-lg font-bold">{userName}</h1>
+                {/* TODO: Make profile dynamic later (/profile/username) */}
+                <Link href="/profile">
+                    <h1 className="text-white text-lg font-bold">{userName}</h1>
+                </Link>
                 <div className="flex items-center gap-1">
                     <div
                         className={`w-3 h-3 rounded-full ${statusColor}`}

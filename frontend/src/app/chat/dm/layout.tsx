@@ -1,7 +1,6 @@
 'use client';
 import Header from '@/app/(dashboard)/Header';
 import ChatSideBar from '@/app/chat/ChatSideBar';
-import { Channels, DMList } from '@/app/chat/data/ChatData';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import React, { useContext, useEffect, useState } from 'react';
 import { ToggleContext } from '../layout';
@@ -28,12 +27,7 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
                             mt-[120px] lg:mt-[110px]"
                 >
                     <div className="w-1/4">
-                        <ChatSideBar
-                            messagesList={DMList}
-                            channelList={Channels}
-                            toggle={toggle}
-                            setToggle={setToggle}
-                        />
+                        <ChatSideBar toggle={toggle} setToggle={setToggle} />
                     </div>
                     <div className="flex-grow w-3/4">{children}</div>
                 </div>

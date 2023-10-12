@@ -1,10 +1,12 @@
 'use client';
 import { createContext, useState } from 'react';
-import Modal from './Modal';
 import CreateNewChannel from './CreateNewChannel';
 import JoinNewChannel, { Channel } from './JoinNewChannel';
 import WelcomeChannel from './WelcomeChannel';
 import NewConversation from './NewConversation';
+import Modal from './Modal';
+import DropdownModal from './DropdownModal';
+import ChatMenu from './ChatMenu';
 
 type ToggleProps = {
     toggle: boolean;
@@ -21,6 +23,8 @@ type ModalContextProps = {
     setChannel: (channel: Channel) => void;
     newConversation: boolean;
     setNewConversation: (val: boolean) => void;
+    dotsDropdown: boolean;
+    setDotsDropdown: (val: boolean) => void;
 };
 
 export const ModalContext = createContext({} as ModalContextProps);
@@ -37,6 +41,7 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
     const [welcomeChannel, setWelcomeChannel] = useState(false);
     const [channel, setChannel] = useState<Channel>({} as Channel);
     const [newConversation, setNewConversation] = useState(false);
+    const [dotsDropdown, setDotsDropdown] = useState(false);
 
     return (
         <ToggleContext.Provider value={{ toggle, setToggle }}>
@@ -51,6 +56,8 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
                     setChannel,
                     newConversation,
                     setNewConversation,
+                    dotsDropdown,
+                    setDotsDropdown,
                 }}
             >
                 {createChannel && (
@@ -93,6 +100,11 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
                     >
                         <NewConversation />
                     </Modal>
+                )}
+                {dotsDropdown && (
+                    <DropdownModal onClose={() => setDotsDropdown(false)}>
+                        <ChatMenu />
+                    </DropdownModal>
                 )}
                 {children}
             </ModalContext.Provider>
