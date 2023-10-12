@@ -22,7 +22,7 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
     if (matches) {
         return (
             <>
-                <div className="flex flex-col bg-background h-screen overflow-auto">
+                <div className="flex flex-col bg-background h-screen">
                     <Header />
                     <div
                         className="flex-grow flex gap-4 p-6 h-[90%]
@@ -30,8 +30,6 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
                     >
                         <div className="w-1/4">
                             <ChatSideBar
-                                messagesList={DMList}
-                                channelList={Channels}
                                 toggle={toggle}
                                 setToggle={setToggle}
                             />
@@ -44,7 +42,7 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
     }
     return (
         <>
-            <div className="flex flex-col bg-background h-screen overflow-auto">
+            <div className="flex flex-col bg-background h-screen">
                 <Header />
                 <div
                     className="py-8 px-4 flex-grow h-[85%]
