@@ -2,6 +2,9 @@
 
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import Input from '../Input';
+import axios, { AxiosError } from 'axios';
+import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
 
 type SignUpInputs = {
     fullname: string;
@@ -10,11 +13,53 @@ type SignUpInputs = {
     password: string;
 };
 
-const onSignUp: SubmitHandler<SignUpInputs> = (data) => {
-    console.log('sending data to backend', data);
+type CustomError = AxiosError & {
+    response: {
+        data: {
+            message: string;
+        };
+    };
+};
+
+const registerUser = async (data: SignUpInputs) => {
+    try {
+        const { data: response } = await axios.post(
+            'http://localhost:3000/user/register',
+            data,
+        );
+        return response;
+    } catch (error) {
+        const err = error as CustomError;
+        throw err.response?.data?.message;
+    }
 };
 
 export default function SignUpForm() {
+    const [password, setPassword] = useState('');
+    const { mutate, isLoading, isError, error } = useMutation(registerUser, {
+        onSuccess: async (data) => {
+            const { data: res } = await axios.post(
+                'http://localhost:3000/auth/login',
+                {
+                    username: data.username,
+                    password: password,
+                },
+            );
+            console.log(res);
+        },
+        onError: async (error: string) => {},
+    });
+
+    const onSignUp: SubmitHandler<SignUpInputs> = (data) => {
+        const { fullname, username, email, password } = data;
+        setPassword(password);
+        mutate({
+            fullname,
+            username,
+            email,
+            password,
+        });
+    };
     const {
         control,
         formState: { errors },
@@ -152,10 +197,14 @@ export default function SignUpForm() {
                     </span>
                 )}
             </div>
-
+            <div className=" my-4">
+                {isError && <span className=" text-red-500">{error}</span>}
+            </div>
             <button
                 type="submit"
-                className="text-primary bg-secondary-200 font-jost font-bold w-full h-10 rounded-3xl group relative"
+                disabled={isLoading}
+                className="text-primary bg-secondary-200 font-jost font-bold w-full h-10 rounded-3xl group relative
+                        disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 Sign up
             </button>
