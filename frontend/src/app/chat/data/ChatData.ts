@@ -7,13 +7,19 @@ const DMList = [
         userName: 'Tommy',
         imagePath: '/images/1.jpeg',
         lastMessage: 'Hello',
-        status: UserStatus.Online,
+        status: UserStatus.Offline,
     },
     {
         userName: 'Archer',
         imagePath: '/images/2.jpeg',
         lastMessage: 'Hello',
-        status: UserStatus.Offline,
+        status: UserStatus.InGame,
+    },
+    {
+        userName: 'omarox',
+        imagePath: '/images/4.jpeg',
+        lastMessage: 'Hey, what are you doing?',
+        status: UserStatus.Online,
     },
 ];
 
@@ -21,7 +27,7 @@ const DMConversations = {
     Tommy: {
         userName: 'Tommy',
         userImg: '/images/1.jpeg',
-        userStatus: UserStatus.Online,
+        userStatus: UserStatus.Offline,
         messages: [
             {
                 text: 'Hello',
@@ -44,7 +50,30 @@ const DMConversations = {
     Archer: {
         userName: 'Archer',
         userImg: '/images/2.jpeg',
-        userStatus: UserStatus.Offline,
+        userStatus: UserStatus.InGame,
+        messages: [
+            {
+                text: 'Hello',
+                isMe: true,
+            },
+            {
+                text: "Hi, what's up?",
+                isMe: false,
+            },
+            {
+                text: 'Nothing much, you?',
+                isMe: true,
+            },
+            {
+                text: 'Same here',
+                isMe: false,
+            },
+        ],
+    },
+    omarox: {
+        userName: 'omarox',
+        userImg: '/images/4.jpeg',
+        userStatus: UserStatus.Online,
         messages: [
             {
                 text: 'Hello',
