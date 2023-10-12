@@ -71,7 +71,7 @@ function UserDMInfo({ userName }: DmConversationProps) {
 
     return (
         <div className="flex items-center gap-3">
-            <Link href="/profile">
+            <Link href={`/profile/${userName}`}>
                 <img
                     src={user.userImg}
                     alt={`${userName}'s avatar`}
@@ -81,7 +81,7 @@ function UserDMInfo({ userName }: DmConversationProps) {
 
             <div>
                 {/* TODO: Make profile dynamic later (/profile/username) */}
-                <Link href="/profile">
+                <Link href={`/profile/${userName}`}>
                     <h1 className="text-white text-lg font-bold">{userName}</h1>
                 </Link>
                 <div className="flex items-center gap-1">

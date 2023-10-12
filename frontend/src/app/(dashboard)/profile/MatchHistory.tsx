@@ -1,11 +1,20 @@
-import GameResult, { GameResultProps } from './GameResult';
 import PaddleAndBall from '../../../../public/images/paddle-and-ball.svg';
+import GameResult from './GameResult';
+import { Users, UsersMatchHistory, UsersStats } from './data/ProfileData';
 
 type MatchHistoryProps = {
-    gameResults: GameResultProps[];
+    username: string;
 };
 
-export default function MatchHistory({ gameResults }: MatchHistoryProps) {
+export default function MatchHistory({ username }: MatchHistoryProps) {
+    const gameResults = UsersMatchHistory.filter(
+        (gameResult) => gameResult.username === username,
+    );
+    const user = Users.find((user) => user.username === username);
+    const userStats = UsersStats.find(
+        (userStat) => userStat.username === username,
+    );
+
     if (gameResults.length === 0) {
         return (
             <div
@@ -25,10 +34,26 @@ export default function MatchHistory({ gameResults }: MatchHistoryProps) {
     return (
         <div className="bg-primary bg-opacity-90 rounded-2xl">
             <div className="px-4 py-1">
-                {gameResults.map((gameResult: GameResultProps, idx: number) => {
+                {gameResults.map((gameResult, idx: number) => {
+                    const opponent = Users.find(
+                        (user) => user.username === gameResult.opponentUsername,
+                    );
+                    const opponentStats = UsersStats.find((userStat) => {
+                        return (
+                            userStat.username === gameResult.opponentUsername
+                        );
+                    });
                     return (
                         <>
-                            <GameResult key={idx} {...gameResult} />
+                            <GameResult
+                                key={idx}
+                                playerAvatar={user!.avatarPath}
+                                opponentAvatar={opponent!.avatarPath}
+                                playerLevel={userStats!.level}
+                                opponentLevel={opponentStats!.level}
+                                playerScore={gameResult.playerScore}
+                                opponentScore={gameResult.opponentScore}
+                            />
                             {idx < gameResults.length - 1 && (
                                 <hr className="border-1 border-secondary-200 rounded-full" />
                             )}

@@ -1,27 +1,17 @@
+import Link from 'next/link';
 import { AiFillTrophy, AiOutlineClose } from 'react-icons/ai';
 import { TbMessage2, TbUserPlus, TbUserX } from 'react-icons/tb';
-import { UserStatus } from '../../chat/DirectMessage';
 import UserCircleInfo from './UserCircleInfo';
+import { UsersStats } from './data/ProfileData';
 
 type ProfileCardProps = {
-    userName: string;
-    avatarPath: string;
-    level: number;
-    status: UserStatus;
-    league: string;
-    wins: number;
-    losses: number;
+    username: string;
 };
 
-export default function ProfileCard({
-    userName,
-    avatarPath,
-    level,
-    status,
-    league,
-    wins,
-    losses,
-}: ProfileCardProps) {
+export default function ProfileCard({ username }: ProfileCardProps) {
+    const stats = UsersStats.find((stats) => stats.username === username);
+    const leagueImgPath = `/images/${stats!.league.toLowerCase()}-league.svg`;
+
     return (
         <div
             className="bg-primary bg-opacity-90
@@ -31,17 +21,18 @@ export default function ProfileCard({
         >
             <div className="flex items-start relative">
                 <div className="absolute bottom-0 md:-bottom-2">
-                    <UserCircleInfo
-                        avatarPath={avatarPath}
-                        level={level}
-                        status={status}
-                    />
+                    <UserCircleInfo username={username} />
                 </div>
                 <div className="flex items-center justify-between pt-2 pl-1 ml-24 md:ml-32">
                     <h1 className="text-secondary-200 font-mulish font-bold text-xl md:text-2xl">
-                        {userName}
+                        {username}
                     </h1>
-                    <img src={league} alt="League" className="ml-2" />
+                    <img
+                        src={leagueImgPath}
+                        alt="League"
+                        title={`${stats!.league} League`}
+                        className="ml-2"
+                    />
                 </div>
             </div>
 
@@ -49,16 +40,18 @@ export default function ProfileCard({
                 <div className="flex gap-1 items-center md:text-2xl">
                     <div className="flex items-center text-online">
                         <AiFillTrophy />
-                        <span>{wins}</span>
+                        <span>{stats!.wins}</span>
                     </div>
                     <div className="flex items-center text-red-600">
                         <AiOutlineClose />
-                        <span>{losses}</span>
+                        <span>{stats!.losses}</span>
                     </div>
                 </div>
 
                 <div className="flex gap-4 text-secondary-200 items-center md:text-2xl">
-                    <TbMessage2 />
+                    <Link href={`/chat/dm/${username}`}>
+                        <TbMessage2 />
+                    </Link>
                     <TbUserPlus />
                     <TbUserX />
                 </div>

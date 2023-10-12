@@ -1,14 +1,17 @@
-import Achievement, { AchievementProps } from './Achievement';
 import EmptyAchievement from '../../../../public/images/empty-achievement.svg';
+import Achievement from './Achievement';
+import { UsersAchievements } from './data/ProfileData';
 
-export type AchievementListProps = {
-    achievements: AchievementProps[];
+type AchievementListProps = {
+    username: string;
 };
 
-export default function AchievementList({
-    achievements,
-}: AchievementListProps) {
-    if (achievements.length === 0) {
+export default function AchievementList({ username }: AchievementListProps) {
+    const userAchievements = UsersAchievements.filter(
+        (achievement) => achievement.username === username,
+    );
+
+    if (userAchievements.length === 0) {
         return (
             <div
                 className="bg-primary bg-opacity-90 rounded-2xl p-2 h-full
@@ -30,11 +33,11 @@ export default function AchievementList({
                             flex flex-col justify-between"
             >
                 <div className="p-2 lg:flex lg:flex-col lg:gap-2">
-                    {achievements.map((achievement, idx) => {
+                    {userAchievements.map((achievement, idx) => {
                         return (
                             <>
                                 <Achievement key={idx} {...achievement} />
-                                {idx < achievements.length - 1 && (
+                                {idx < userAchievements.length - 1 && (
                                     <hr className="border-1 border-secondary-200 rounded-full" />
                                 )}
                             </>
