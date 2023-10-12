@@ -1,7 +1,10 @@
+'use client';
 import { HiDotsVertical } from 'react-icons/hi';
 import { ChannelConversations } from './data/ChatData';
 import Link from 'next/link';
 import ChatInput from './ChatInput';
+import { useContext } from 'react';
+import { ModalContext } from './layout';
 
 type ChannelConversationProps = {
     channelName: string;
@@ -12,6 +15,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
         ChannelConversations[
             props.channelName as keyof typeof ChannelConversations
         ];
+    const { setDotsDropdown } = useContext(ModalContext);
 
     return (
         <div
@@ -28,7 +32,10 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                 <h1 className="text-cube_palette-200 text-2xl">
                     {props.channelName}
                 </h1>
-                <button className="text-secondary-200">
+                <button
+                    className="text-secondary-200"
+                    onClick={() => setDotsDropdown(true)}
+                >
                     <HiDotsVertical className="w-8 h-8" />
                 </button>
             </div>

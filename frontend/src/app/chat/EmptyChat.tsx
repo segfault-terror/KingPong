@@ -6,6 +6,8 @@ import { ModalContext } from './layout';
 import { set } from 'react-hook-form';
 
 function EmptyDM() {
+    const { setNewConversation } = useContext(ModalContext);
+
     return (
         <div
             className="grid justify-center align-center
@@ -17,7 +19,7 @@ function EmptyDM() {
                 Send private messages to a friend
             </p>
             <button
-                onClick={() => console.log('Send a message')}
+                onClick={() => setNewConversation(true)}
                 className="text-primary bg-secondary-200
                             text-xs font-bold font-jost
                             rounded-xl
