@@ -32,7 +32,7 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
     }
 
     return (
-        <div className="bg-primary bg-opacity-90 rounded-2xl">
+        <div className="bg-primary bg-opacity-90 rounded-2xl lg:h-full flex flex-col justify-between">
             <div className="px-4 py-1">
                 {gameResults.map((gameResult, idx: number) => {
                     const opponent = Users.find(
