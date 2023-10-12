@@ -5,6 +5,7 @@ import Input from '../Input';
 import axios, { AxiosError } from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
+import { redirect } from 'next/navigation';
 
 type SignUpInputs = {
     fullname: string;
@@ -36,6 +37,7 @@ const registerUser = async (data: SignUpInputs) => {
 
 export default function SignUpForm() {
     const [password, setPassword] = useState('');
+    const [loggedIn, setLoggedIn] = useState(false);
     const { mutate, isLoading, isError, error } = useMutation(registerUser, {
         onSuccess: async (data) => {
             const { data: res } = await axios.post(
@@ -44,11 +46,18 @@ export default function SignUpForm() {
                     username: data.username,
                     password: password,
                 },
+                {
+                    withCredentials: true,
+                },
             );
-            console.log(res);
+            setLoggedIn(true);
         },
         onError: async (error: string) => {},
     });
+
+    if (loggedIn) {
+        redirect('/home');
+    }
 
     const onSignUp: SubmitHandler<SignUpInputs> = (data) => {
         const { fullname, username, email, password } = data;
