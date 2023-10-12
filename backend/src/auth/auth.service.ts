@@ -31,6 +31,10 @@ export class AuthService {
     async validateUserLocal(username: string, password: string): Promise<any> {
         const user = await this.userService.user({ username });
 
+        if (!user || !user.password) {
+            return null;
+        }
+
         if (user && (await bcrypt.compare(password, user.password))) {
             return user;
         }

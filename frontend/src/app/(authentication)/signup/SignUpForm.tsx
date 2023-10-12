@@ -56,6 +56,7 @@ export default function SignUpForm() {
     });
 
     if (loggedIn) {
+        setLoggedIn(false);
         redirect('/home');
     }
 

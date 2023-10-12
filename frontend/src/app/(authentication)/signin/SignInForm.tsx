@@ -3,16 +3,38 @@
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import Input from '../Input';
 import { IoLogoGoogle } from 'react-icons/io';
+import axios, { AxiosError } from 'axios';
+import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
+import { redirect } from 'next/navigation';
 
 type SignInInputs = {
-    fullname: string;
     username: string;
-    email: string;
     password: string;
 };
 
-const onSignIn: SubmitHandler<SignInInputs> = (data) => {
-    console.log('sending data to backend', data);
+type CustomError = AxiosError & {
+    response: {
+        data: {
+            message: string;
+        };
+    };
+};
+
+const loginUser = async (data: SignInInputs) => {
+    try {
+        const { data: response } = await axios.post(
+            'http://localhost:3000/auth/login',
+            data,
+            {
+                withCredentials: true,
+            },
+        );
+        return response;
+    } catch (error) {
+        const err = error as CustomError;
+        throw err.response?.data?.message;
+    }
 };
 
 const onSignInWith42 = () => {
@@ -32,6 +54,19 @@ const onSignInWithGoogle = () => {
 };
 
 export default function SignInForm() {
+    const [loggedIn, setLoggedIn] = useState(false);
+    const { mutate, isLoading, isError } = useMutation(loginUser, {
+        onSuccess: async (data) => {
+            setLoggedIn(true);
+        },
+    });
+
+    const onSignIn: SubmitHandler<SignInInputs> = (data) => {
+        mutate({
+            username: data.username,
+            password: data.password,
+        });
+    };
     const {
         control,
         formState: { errors },
@@ -42,6 +77,11 @@ export default function SignInForm() {
             password: '',
         },
     });
+
+    if (loggedIn) {
+        setLoggedIn(false);
+        redirect('/home');
+    }
 
     return (
         <>
@@ -164,9 +204,19 @@ export default function SignInForm() {
                     )}
                 </div>
 
+                <div className="my-4">
+                    {isError && (
+                        <span className="text-xs text-red-500">
+                            Username or password is incorrect
+                        </span>
+                    )}
+                </div>
+
                 <button
                     type="submit"
-                    className="text-primary bg-secondary-200 font-jost font-bold w-full h-10 rounded-3xl"
+                    disabled={isLoading}
+                    className="text-primary bg-secondary-200 font-jost font-bold w-full h-10 rounded-3xl
+                        disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     Sign in
                 </button>
