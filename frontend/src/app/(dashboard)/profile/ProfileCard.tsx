@@ -14,10 +14,10 @@ export default function ProfileCard({ username }: ProfileCardProps) {
 
     return (
         <div
-            className="bg-primary bg-opacity-90
-            border-2 border-secondary-200 rounded-3xl
-            h-28 md:h-32
-            flex flex-col justify-between"
+            className="bg-primary
+                        border-2 border-secondary-200 rounded-3xl
+                        h-28 md:h-32
+                        flex flex-col justify-between"
         >
             <div className="flex items-start relative">
                 <div className="absolute bottom-0 md:-bottom-2">

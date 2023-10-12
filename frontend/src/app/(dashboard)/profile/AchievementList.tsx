@@ -14,8 +14,9 @@ export default function AchievementList({ username }: AchievementListProps) {
     if (userAchievements.length === 0) {
         return (
             <div
-                className="bg-primary bg-opacity-90 rounded-2xl p-2 h-full
-                flex flex-col justify-center"
+                className="bg-primary rounded-2xl p-2 h-full
+                flex flex-col justify-center
+                border-2 border-secondary-200"
             >
                 <Achievement
                     title="No achievement yet"
@@ -29,8 +30,9 @@ export default function AchievementList({ username }: AchievementListProps) {
     return (
         <>
             <div
-                className="bg-primary bg-opacity-90 rounded-2xl h-full
-                            flex flex-col justify-between"
+                className="bg-primary rounded-2xl h-full
+                            flex flex-col justify-between
+                            border-2 border-secondary-200"
             >
                 <div className="p-2 lg:flex lg:flex-col lg:gap-2">
                     {userAchievements.map((achievement, idx) => {

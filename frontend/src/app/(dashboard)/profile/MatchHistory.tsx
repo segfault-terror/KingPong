@@ -18,8 +18,9 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
     if (gameResults.length === 0) {
         return (
             <div
-                className="bg-primary bg-opacity-90 rounded-2xl
-                            flex flex-col items-center lg:justify-center p-2 lg:h-full"
+                className="bg-primary rounded-2xl
+                            flex flex-col items-center lg:justify-center p-2 lg:h-full
+                            border-2 border-secondary-200"
             >
                 <img
                     src={PaddleAndBall.src}
@@ -32,7 +33,10 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
     }
 
     return (
-        <div className="bg-primary bg-opacity-90 rounded-2xl lg:h-full flex flex-col justify-between">
+        <div
+            className="bg-primary rounded-2xl lg:h-full flex flex-col justify-between
+                        border-2 border-secondary-200"
+        >
             <div className="px-4 py-1">
                 {gameResults.map((gameResult, idx: number) => {
                     const opponent = Users.find(

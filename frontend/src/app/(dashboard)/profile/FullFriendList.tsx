@@ -20,9 +20,10 @@ export default function FullFriendList({ username }: FullFriendListProps) {
     if (userFriends!.length === 0) {
         return (
             <div
-                className="bg-primary bg-opacity-90 rounded-2xl
+                className="bg-primary rounded-2xl
                         flex flex-col items-center justify-center
-                        py-2 h-full"
+                        py-2 h-full
+                        border-2 border-secondary-200"
             >
                 <div className="w-[30%]">
                     <Lottie animationData={Ghost} loop={true} />
@@ -38,8 +39,9 @@ export default function FullFriendList({ username }: FullFriendListProps) {
         <div
             className="md:h-full
                         flex flex-col justify-between
-                        bg-primary bg-opacity-90
-                        rounded-t-2xl"
+                        bg-primary
+                        rounded-2xl
+                        border-2 border-secondary-200"
         >
             <div
                 className="flex justify-evenly py-4

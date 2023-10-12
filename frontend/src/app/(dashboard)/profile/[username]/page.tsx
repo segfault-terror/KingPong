@@ -1,11 +1,8 @@
-import GoldLeague from '../../../../../public/images/gold-league.svg';
-import Archer from '../../../../stories/assets/2.jpeg';
-import Moussa from '../../../../stories/assets/3.jpeg';
 import AchievementList from '../AchievementList';
 import FullFriendList from '../FullFriendList';
 import MatchHistory from '../MatchHistory';
 import ProfileCard from '../ProfileCard';
-import { Users, UsersStats } from '../data/ProfileData';
+import { Users } from '../data/ProfileData';
 
 type ProfilePageProps = {
     params: {
@@ -22,7 +19,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
                 className="flex flex-col gap-2 mx-4 mt-20 mb-8
                             md:grid md:grid-cols-4 md:gap-3
                             lg:grid-cols-3
-                            lg:max-w-5xl lg:mx-auto"
+                            lg:max-w-5xl lg:mx-auto lg:my-40"
             >
                 <div className="md:col-span-full">
                     <ProfileCard username={currentUser!.username} />
