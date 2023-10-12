@@ -16,9 +16,8 @@ function DirectMessage({
         <Link
             href={`/chat/dm/${userName}`}
             replace={pathname.startsWith('/chat/dm')}
-            className="hover:bg-background/80 hover:rounded-full"
         >
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 hover:bg-background/80 hover:rounded-full">
                 <div className="relative">
                     <img
                         src={imagePath}
