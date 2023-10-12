@@ -80,7 +80,6 @@ function UserDMInfo({ userName }: DmConversationProps) {
             </Link>
 
             <div>
-                {/* TODO: Make profile dynamic later (/profile/username) */}
                 <Link href={`/profile/${userName}`}>
                     <h1 className="text-white text-lg font-bold">{userName}</h1>
                 </Link>
