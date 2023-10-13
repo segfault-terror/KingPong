@@ -1,3 +1,4 @@
+"use client";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -18,7 +19,7 @@ function DirectMessage({
             replace={pathname.startsWith('/chat/dm')}
         >
             <div className="flex items-center gap-4 hover:bg-background/80 hover:rounded-full">
-                <div className="relative">
+                <div className="relative flex-shrink-0">
                     <img
                         src={imagePath}
                         alt={`${userName}'a avatar`}
@@ -38,7 +39,7 @@ function DirectMessage({
                     <p className="font-jost font-bold text-white">{userName}</p>
                     <p
                         className="font-jost font-light text-gray-400
-                                whitespace-nowrap overflow-hidden text-ellipsis"
+                                whitespace-nowrap overflow-hidden text-ellipsis max-w-[calc(100vw-200px)]"
                     >
                         {`You: ${lastMessage}`}
                     </p>
