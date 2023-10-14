@@ -1,15 +1,29 @@
 'use client';
 import Header from '@/app/(dashboard)/Header';
 import ChatSideBar from '@/app/chat/ChatSideBar';
-import { Channels, DMList } from '@/app/chat/data/ChatData';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { ToggleContext } from '../layout';
+import { usePathname } from 'next/navigation';
+import path from 'path';
+import ChannelSideBar from '../ChannelSideBar';
+import Modal from '../Modal';
+
+type ChannelModalContextProps = {
+    showMembers: boolean;
+    setShowMembers: (value: boolean) => void;
+};
+
+export const ChannelModalContext = createContext(
+    {} as ChannelModalContextProps,
+);
 
 export default function DMLayout({ children }: { children: React.ReactNode }) {
     const { toggle, setToggle } = useContext(ToggleContext);
     const matches = useMediaQuery('(min-width: 1024px)');
     const [isRendred, setIsRendred] = useState<boolean>(false);
+    const [showMembers, setShowMembers] = useState(false);
+    const pathname = usePathname();
 
     useEffect(() => {
         setIsRendred(true);
@@ -42,15 +56,22 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
     }
     return (
         <>
+            {showMembers && (
+                <Modal onClose={() => setShowMembers(false)}>
+                    <ChannelSideBar channelName={path.basename(pathname)} />
+                </Modal>
+            )}
             <div className="flex flex-col bg-background min-h-screen">
                 <Header />
                 <div
                     className="flex py-8 px-4 h-[90vh]
                         mt-[110px]"
                 >
-                    <div className='flex-grow'>
-                        {children}
-                    </div>
+                    <ChannelModalContext.Provider
+                        value={{ showMembers, setShowMembers }}
+                    >
+                        <div className="flex-grow">{children}</div>
+                    </ChannelModalContext.Provider>
                 </div>
             </div>
         </>

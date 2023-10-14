@@ -5,6 +5,8 @@ import Link from 'next/link';
 import ChatInput from './ChatInput';
 import { useContext } from 'react';
 import { ModalContext } from './layout';
+import { FaUserFriends } from 'react-icons/fa';
+import { ChannelModalContext } from './channel/layout';
 
 type ChannelConversationProps = {
     channelName: string;
@@ -16,6 +18,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
             props.channelName as keyof typeof ChannelConversations
         ];
     const { setDotsDropdown } = useContext(ModalContext);
+    const { setShowMembers } = useContext(ChannelModalContext);
 
     return (
         <div
@@ -32,12 +35,17 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                 <h1 className="text-cube_palette-200 text-2xl">
                     {props.channelName}
                 </h1>
-                <button
-                    className="text-secondary-200"
-                    onClick={() => setDotsDropdown(true)}
-                >
-                    <HiDotsVertical className="w-8 h-8" />
-                </button>
+                <div className="flex gap-4 text-secondary-200">
+                    <button onClick={() => setShowMembers(true)}>
+                        <FaUserFriends className="w-8 h-8" />
+                    </button>
+                    <button
+                        className="text-secondary-200"
+                        onClick={() => setDotsDropdown(true)}
+                    >
+                        <HiDotsVertical className="w-8 h-8" />
+                    </button>
+                </div>
             </div>
 
             <div className="flex-grow overflow-scroll scrollbar-none pb-2">
