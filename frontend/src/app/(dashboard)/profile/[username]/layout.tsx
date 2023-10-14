@@ -57,7 +57,9 @@ export default function ProfileLayout({ children }: ProfileLayoutProps) {
                 <Modal
                     onClose={() => setMatches(false)}
                     childrenClassName="bg-background p-6 border-2 border-white w-[90%]
-                                        lg:w-2/3 max-w-[600px]"
+                                       lg:w-2/3 max-w-[600px] max-h-[635px]
+                                        overflow-y-auto
+                                        scrollbar-thumb-secondary-200 scrollbar-thin"
                 >
                     <p>matches list modal</p>
                 </Modal>
