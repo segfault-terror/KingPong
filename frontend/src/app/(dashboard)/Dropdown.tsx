@@ -10,6 +10,7 @@ import {
 } from 'react-icons/md';
 import ButtonImage from './ButtonImage';
 import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 
 function DropdownItem({
     href,
@@ -44,11 +45,19 @@ function DropdownItem({
 
 export default function DropdownMenu() {
     const [open, setOpen] = useState(false);
+    const { data } = useQuery({
+        queryKey: ['user'],
+        queryFn: async () => {
+            return await axios.get('http://localhost:3000/user/me', {
+                withCredentials: true,
+            });
+        },
+    });
 
     return (
         <li className="relative">
             <ButtonImage onClick={() => setOpen(!open)}>
-                <img src="/images/4.jpeg" alt="avatar" />
+                <img src={data?.data.avatar} alt="avatar" />
             </ButtonImage>
             <div
                 className={`absolute ${

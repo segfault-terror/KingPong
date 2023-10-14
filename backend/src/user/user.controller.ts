@@ -5,6 +5,8 @@ import {
     Req,
     Body,
     ConflictException,
+    UsePipes,
+    ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './utils/create.user.dto';
@@ -15,11 +17,13 @@ export class UserController {
 
     @Get('me')
     async me(@Req() req: any) {
-        // returns the user data
-        return req.user;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, ...user } = req.user;
+        return user;
     }
 
     @Post('register')
+    @UsePipes(new ValidationPipe())
     async register(@Body() body: CreateUserDto) {
         body.avatar = 'https://robohash.org/' + body.username + '?set=set3';
         const userByUsername = await this.userService.user({
