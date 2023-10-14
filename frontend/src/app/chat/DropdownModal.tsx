@@ -13,7 +13,7 @@ export default function Modal({
 }: ModalProps) {
     return createPortal(
         <>
-            <div className="absolute h-screen inset-0 z-10" onClick={onClose} />
+            <div className="fixed h-screen inset-0 z-10" onClick={onClose} />
             <div
                 className={`absolute top-56 lg:top-52 right-12 z-20 ${childrenClassName}`}
             >

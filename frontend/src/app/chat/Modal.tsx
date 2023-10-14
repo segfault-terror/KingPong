@@ -14,7 +14,7 @@ export default function Modal({
     return createPortal(
         <>
             <div
-                className="absolute h-screen inset-0 bg-black/60 z-10"
+                className="fixed h-screen inset-0 bg-black/60 z-10"
                 onClick={onClose}
             />
             <div
