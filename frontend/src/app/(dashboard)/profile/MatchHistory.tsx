@@ -4,7 +4,6 @@ import PaddleAndBall from '../../../../public/images/paddle-and-ball.svg';
 import GameResult from './GameResult';
 import { ProfileModalContext } from './[username]/layout';
 import { Users, UsersMatchHistory, UsersStats } from './data/ProfileData';
-import { set } from 'react-hook-form';
 
 type MatchHistoryProps = {
     username: string;
