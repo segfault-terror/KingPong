@@ -4,6 +4,7 @@ import { createContext, useState } from 'react';
 import AchievementModal from '../AchievementModal';
 import { usePathname } from 'next/navigation';
 import path from 'path';
+import FriendListModal from '../FriendListModal';
 
 type ProfileLayoutProps = {
     children: React.ReactNode;
@@ -35,7 +36,8 @@ export default function ProfileLayout({ children }: ProfileLayoutProps) {
                     onClose={() => setAchievements(false)}
                     childrenClassName="bg-background p-6 border-2 border-white w-[90%]
                                         lg:w-2/3 max-w-[600px] max-h-[635px]
-                                        overflow-y-auto"
+                                        overflow-y-auto
+                                        scrollbar-thumb-secondary-200 scrollbar-thin"
                 >
                     <AchievementModal userName={path.basename(pathname)} />
                 </Modal>
@@ -44,9 +46,11 @@ export default function ProfileLayout({ children }: ProfileLayoutProps) {
                 <Modal
                     onClose={() => setFriends(false)}
                     childrenClassName="bg-background p-6 border-2 border-white w-[90%]
-                                        lg:w-2/3 max-w-[600px]"
+                                        lg:w-2/3 max-w-[400px] max-h-[635px]
+                                        overflow-y-auto
+                                        scrollbar-thumb-secondary-200 scrollbar-thin"
                 >
-                    <p>friends list modal</p>
+                    <FriendListModal userName={path.basename(pathname)} />
                 </Modal>
             )}
             {matches && (
