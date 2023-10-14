@@ -56,15 +56,16 @@ export default function FullFriendList({ username }: FullFriendListProps) {
                     );
                 })}
             </div>
-            <div
+            <button
                 className="flex items-center justify-center
                     text-sm text-white
                     bg-gradient-to-t from-[#881EDF] to-secondary-200
                     w-full h-8
                     rounded-b-2xl"
+                onClick={() => console.log('See all friends clicked!')}
             >
                 Full Friend List
-            </div>
+            </button>
         </div>
     );
 }

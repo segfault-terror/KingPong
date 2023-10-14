@@ -1,3 +1,4 @@
+'use client';
 import PaddleAndBall from '../../../../public/images/paddle-and-ball.svg';
 import GameResult from './GameResult';
 import { Users, UsersMatchHistory, UsersStats } from './data/ProfileData';
@@ -48,9 +49,8 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
                         );
                     });
                     return (
-                        <>
+                        <div key={idx}>
                             <GameResult
-                                key={idx}
                                 opponentUsername={gameResult.opponentUsername}
                                 playerAvatar={user!.avatarPath}
                                 opponentAvatar={opponent!.avatarPath}
@@ -62,19 +62,20 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
                             {idx < gameResults.length - 1 && (
                                 <hr className="border-1 border-secondary-200 rounded-full" />
                             )}
-                        </>
+                        </div>
                     );
                 })}
             </div>
-            <div
+            <button
                 className="flex items-center justify-center
                             text-sm text-white
                             bg-gradient-to-t from-[#881EDF] to-secondary-200
                             w-full h-8
                             rounded-b-2xl"
+                onClick={() => console.log('See all matches clicked!')}
             >
                 Full match history
-            </div>
+            </button>
         </div>
     );
 }
