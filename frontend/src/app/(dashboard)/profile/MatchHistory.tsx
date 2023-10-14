@@ -1,7 +1,10 @@
 'use client';
+import { useContext } from 'react';
 import PaddleAndBall from '../../../../public/images/paddle-and-ball.svg';
 import GameResult from './GameResult';
+import { ProfileModalContext } from './[username]/layout';
 import { Users, UsersMatchHistory, UsersStats } from './data/ProfileData';
+import { set } from 'react-hook-form';
 
 type MatchHistoryProps = {
     username: string;
@@ -16,6 +19,7 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
     const userStats = UsersStats.find(
         (userStat) => userStat.username === username,
     );
+    const { setMatches } = useContext(ProfileModalContext);
 
     if (gameResults.length === 0) {
         return (
@@ -74,7 +78,7 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
                             bg-gradient-to-t from-[#881EDF] to-secondary-200
                             w-full h-8
                             rounded-b-2xl"
-                    onClick={() => console.log('See all matches clicked!')}
+                    onClick={() => setMatches(true)}
                 >
                     Full match history
                 </button>

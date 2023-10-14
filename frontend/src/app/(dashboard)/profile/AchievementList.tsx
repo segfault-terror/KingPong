@@ -1,6 +1,8 @@
 'use client';
+import { useContext } from 'react';
 import EmptyAchievement from '../../../../public/images/empty-achievement.svg';
 import Achievement from './Achievement';
+import { ProfileModalContext } from './[username]/layout';
 import { UsersAchievements } from './data/ProfileData';
 
 type AchievementListProps = {
@@ -12,6 +14,7 @@ export default function AchievementList({ username }: AchievementListProps) {
         (achievement) => achievement.username === username,
     );
     const slicedAchievements = userAchievements.slice(0, 3);
+    const { setAchievements } = useContext(ProfileModalContext);
 
     if (userAchievements.length === 0) {
         return (
@@ -56,9 +59,7 @@ export default function AchievementList({ username }: AchievementListProps) {
                             bg-gradient-to-t from-[#881EDF] to-secondary-200
                             w-full h-8
                             rounded-b-2xl"
-                        onClick={() =>
-                            console.log('See all achievements clicked!')
-                        }
+                        onClick={() => setAchievements(true)}
                     >
                         See All Achievements
                     </button>
