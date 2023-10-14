@@ -29,13 +29,13 @@ export default function About() {
                             <div className="m-6">
                                 Lorem Ipsum is simply dummy text of the printing
                                 and typesetting industry. Lorem Ipsum has been
-                                the industry's standard dummy text ever since
-                                the 1500s, when an unknown printer took a galley
-                                of type and scrambled it to make a type specimen
-                                book. It has survived not only five centuries,
-                                but also the leap into electronic typesetting,
-                                remaining essentially unchanged. It was
-                                popularised in the 1960s with the release of
+                                the industry&apos;s standard dummy text ever
+                                since the 1500s, when an unknown printer took a
+                                galley of type and scrambled it to make a type
+                                specimen book. It has survived not only five
+                                centuries, but also the leap into electronic
+                                typesetting, remaining essentially unchanged. It
+                                was popularised in the 1960s with the release of
                                 Letraset sheets containing Lorem Ipsum passages
                             </div>
                         </div>
@@ -116,7 +116,10 @@ export default function About() {
             <div className="fixed bottom-0 left-0 -z-10 sm:w-48 lg:w-auto">
                 <img src="/images/lines-about.svg" alt="Lines" />
             </div>
-            <Link className="absolute top-10 left-10 z-30 lg:w-24 md:w-20 sm:w-16 hover:drop-shadow-[0px_0px_10px_#4F1754]" href="/">
+            <Link
+                className="absolute top-10 left-10 z-30 lg:w-24 md:w-20 sm:w-16 hover:drop-shadow-[0px_0px_10px_#4F1754]"
+                href="/"
+            >
                 <Lottie animationData={LightAbout} />
             </Link>
         </div>
