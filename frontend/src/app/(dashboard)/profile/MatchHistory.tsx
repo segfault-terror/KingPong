@@ -11,6 +11,7 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
     const gameResults = UsersMatchHistory.filter(
         (gameResult) => gameResult.username === username,
     );
+    const slicedGameResults = gameResults.slice(0, 3);
     const user = Users.find((user) => user.username === username);
     const userStats = UsersStats.find(
         (userStat) => userStat.username === username,
@@ -39,7 +40,7 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
                         border-2 border-secondary-200"
         >
             <div className="px-4 py-1">
-                {gameResults.map((gameResult, idx: number) => {
+                {slicedGameResults.map((gameResult, idx: number) => {
                     const opponent = Users.find(
                         (user) => user.username === gameResult.opponentUsername,
                     );
@@ -59,23 +60,25 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
                                 playerScore={gameResult.playerScore}
                                 opponentScore={gameResult.opponentScore}
                             />
-                            {idx < gameResults.length - 1 && (
+                            {idx < slicedGameResults.length - 1 && (
                                 <hr className="border-1 border-secondary-200 rounded-full" />
                             )}
                         </div>
                     );
                 })}
             </div>
-            <button
-                className="flex items-center justify-center
+            {gameResults.length > 3 && (
+                <button
+                    className="flex items-center justify-center
                             text-sm text-white
                             bg-gradient-to-t from-[#881EDF] to-secondary-200
                             w-full h-8
                             rounded-b-2xl"
-                onClick={() => console.log('See all matches clicked!')}
-            >
-                Full match history
-            </button>
+                    onClick={() => console.log('See all matches clicked!')}
+                >
+                    Full match history
+                </button>
+            )}
         </div>
     );
 }
