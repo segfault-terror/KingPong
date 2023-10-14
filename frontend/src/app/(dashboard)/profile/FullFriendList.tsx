@@ -4,6 +4,8 @@ import Ghost from '../../../../public/lottie/ghost.json';
 import UserCircleInfo from './UserCircleInfo';
 import { UsersFriends } from './data/ProfileData';
 import Link from 'next/link';
+import { useContext } from 'react';
+import { ProfileModalContext } from './[username]/layout';
 
 type FullFriendListProps = {
     username: string;
@@ -13,10 +15,8 @@ export default function FullFriendList({ username }: FullFriendListProps) {
     const userFriends = UsersFriends.find(
         (friend) => friend.username === username,
     )!.friendList;
-
-    if (userFriends!.length > 3) {
-        throw new Error('FullFriendList can only display 3 friends');
-    }
+    const slicedFriends = userFriends!.slice(0, 3);
+    const { setFriends } = useContext(ProfileModalContext);
 
     if (userFriends!.length === 0) {
         return (
@@ -48,7 +48,7 @@ export default function FullFriendList({ username }: FullFriendListProps) {
                 className="flex justify-evenly py-4
                             md:grid md:grid-cols-2 md:justify-items-center md:gap-4"
             >
-                {userFriends!.map((friendName, idx) => {
+                {slicedFriends.map((friendName, idx) => {
                     return (
                         <Link key={idx} href={`/profile/${friendName}`}>
                             <UserCircleInfo username={friendName} />
@@ -56,15 +56,19 @@ export default function FullFriendList({ username }: FullFriendListProps) {
                     );
                 })}
             </div>
-            <div
-                className="flex items-center justify-center
+
+            {userFriends!.length > 3 && (
+                <button
+                    className="flex items-center justify-center
                     text-sm text-white
                     bg-gradient-to-t from-[#881EDF] to-secondary-200
                     w-full h-8
                     rounded-b-2xl"
-            >
-                Full Friend List
-            </div>
+                    onClick={() => setFriends(true)}
+                >
+                    Full Friend List
+                </button>
+            )}
         </div>
     );
 }

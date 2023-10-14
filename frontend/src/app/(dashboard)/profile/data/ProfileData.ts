@@ -62,6 +62,18 @@ export const UsersAchievements = [
         title: 'First Win',
         description: 'Win your first game',
         image: '/images/bronze-achievement.svg',
+        username: 'Tommy',
+    },
+    {
+        title: 'First Win',
+        description: 'Win your first game',
+        image: '/images/bronze-achievement.svg',
+        username: 'Tommy',
+    },
+    {
+        title: 'First Win',
+        description: 'Win your first game',
+        image: '/images/bronze-achievement.svg',
         username: 'Archer',
     },
     {
@@ -98,7 +110,7 @@ export const UsersAchievements = [
 
 export const UsersFriends = [
     {
-        friendList: [],
+        friendList: ["Archer", "omarox", "Archer", "omarox"],
         username: 'Tommy',
     },
     {
@@ -117,6 +129,30 @@ export const UsersMatchHistory = [
         opponentScore: 11,
         playerScore: 9,
         username: 'Archer',
+    },
+    {
+        opponentUsername: 'Archer',
+        opponentScore: 11,
+        playerScore: 9,
+        username: 'Tommy',
+    },
+    {
+        opponentUsername: 'Archer',
+        opponentScore: 11,
+        playerScore: 9,
+        username: 'Tommy',
+    },
+    {
+        opponentUsername: 'Archer',
+        opponentScore: 11,
+        playerScore: 9,
+        username: 'Tommy',
+    },
+    {
+        opponentUsername: 'Archer',
+        opponentScore: 11,
+        playerScore: 9,
+        username: 'Tommy',
     },
     {
         opponentUsername: 'omarox',

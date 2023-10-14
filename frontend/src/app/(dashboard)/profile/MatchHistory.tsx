@@ -1,6 +1,10 @@
+'use client';
+import { useContext } from 'react';
 import PaddleAndBall from '../../../../public/images/paddle-and-ball.svg';
 import GameResult from './GameResult';
+import { ProfileModalContext } from './[username]/layout';
 import { Users, UsersMatchHistory, UsersStats } from './data/ProfileData';
+import { set } from 'react-hook-form';
 
 type MatchHistoryProps = {
     username: string;
@@ -10,10 +14,12 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
     const gameResults = UsersMatchHistory.filter(
         (gameResult) => gameResult.username === username,
     );
+    const slicedGameResults = gameResults.slice(0, 3);
     const user = Users.find((user) => user.username === username);
     const userStats = UsersStats.find(
         (userStat) => userStat.username === username,
     );
+    const { setMatches } = useContext(ProfileModalContext);
 
     if (gameResults.length === 0) {
         return (
@@ -38,7 +44,7 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
                         border-2 border-secondary-200"
         >
             <div className="px-4 py-1">
-                {gameResults.map((gameResult, idx: number) => {
+                {slicedGameResults.map((gameResult, idx: number) => {
                     const opponent = Users.find(
                         (user) => user.username === gameResult.opponentUsername,
                     );
@@ -48,9 +54,8 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
                         );
                     });
                     return (
-                        <>
+                        <div key={idx}>
                             <GameResult
-                                key={idx}
                                 opponentUsername={gameResult.opponentUsername}
                                 playerAvatar={user!.avatarPath}
                                 opponentAvatar={opponent!.avatarPath}
@@ -59,22 +64,25 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
                                 playerScore={gameResult.playerScore}
                                 opponentScore={gameResult.opponentScore}
                             />
-                            {idx < gameResults.length - 1 && (
+                            {idx < slicedGameResults.length - 1 && (
                                 <hr className="border-1 border-secondary-200 rounded-full" />
                             )}
-                        </>
+                        </div>
                     );
                 })}
             </div>
-            <div
-                className="flex items-center justify-center
+            {gameResults.length > 3 && (
+                <button
+                    className="flex items-center justify-center
                             text-sm text-white
                             bg-gradient-to-t from-[#881EDF] to-secondary-200
                             w-full h-8
                             rounded-b-2xl"
-            >
-                Full match history
-            </div>
+                    onClick={() => setMatches(true)}
+                >
+                    Full match history
+                </button>
+            )}
         </div>
     );
 }
