@@ -1,3 +1,6 @@
+'use client';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import Link from 'next/link';
 import { useState } from 'react';
 import { MdSearch } from 'react-icons/md';
@@ -45,6 +48,11 @@ function SearchResults({
         bg-primary w-full max-h-96 overflow-y-scroll
          scrollbar-thumb-secondary-500 scrollbar-track-transparent scrollbar-thin ${className}`}
         >
+            {results?.length === 0 && (
+                <p className="text-secondary-200 font-jost text-center py-2">
+                    No results found
+                </p>
+            )}
             {results?.map((result) => (
                 <SearchProfile
                     key={result.username}
@@ -57,36 +65,37 @@ function SearchResults({
     );
 }
 
-function getSearchResults(search: string) {
-    const profiles = [
-        {
-            avatar: '/images/1.jpeg',
-            fullname: 'Tommy Shelby',
-            username: 'Tommy',
-        },
-        {
-            avatar: '/images/2.jpeg',
-            fullname: 'Archer',
-            username: 'Archer-01',
-        },
-        {
-            avatar: '/images/4.jpeg',
-            fullname: 'Note',
-            username: 'note',
-        },
-    ];
-    if (!search) return undefined;
-    const result = profiles.filter((profile) => {
-        return (
-            profile.fullname.toLowerCase().includes(search.toLowerCase()) ||
-            profile.username.toLowerCase().includes(search.toLowerCase())
-        );
-    });
-    return result.length > 0 ? result : undefined;
-}
-
 export default function SearchBar({ className }: { className?: string }) {
     const [search, setSearch] = useState('');
+    const [results, setResults] = useState<SearchProfileProps[] | undefined>(
+        [],
+    );
+
+    const {} = useQuery({
+        queryKey: ['search', search],
+        queryFn: async () => {
+            if (!search) {
+                setResults(undefined);
+                return [];
+            }
+            const { data } = await axios.get(
+                'http://localhost:3000/user/search',
+                {
+                    withCredentials: true,
+                    params: { q: search },
+                },
+            );
+            const profiles: SearchProfileProps[] = data.map((profile: any) => {
+                return {
+                    fullname: profile.fullname,
+                    username: profile.username,
+                    avatar: profile.avatar,
+                } as SearchProfileProps;
+            });
+            setResults(profiles);
+            return profiles;
+        },
+    });
 
     return (
         <div className={`bg-primary w-full relative ${className}`}>
@@ -104,7 +113,7 @@ export default function SearchBar({ className }: { className?: string }) {
             />
             <SearchResults
                 className="border border-secondary-500"
-                results={getSearchResults(search)}
+                results={results}
             />
         </div>
     );
