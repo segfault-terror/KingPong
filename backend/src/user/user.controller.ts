@@ -10,6 +10,7 @@ import {
     Param,
     UseGuards,
     NotFoundException,
+    Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './utils/create.user.dto';
@@ -27,7 +28,7 @@ export class UserController {
         return user;
     }
 
-    @Get(':username')
+    @Get('get/:username')
     @UseGuards(AuthGard)
     async user(@Param('username') username: string) {
         const userByUsername = await this.userService.user({ username });
@@ -37,6 +38,12 @@ export class UserController {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...user } = userByUsername;
         return user;
+    }
+
+    @Get('search')
+    @UseGuards(AuthGard)
+    async search(@Query('q') q: string) {
+        return this.userService.searchUsers(q);
     }
 
     @Post('register')
