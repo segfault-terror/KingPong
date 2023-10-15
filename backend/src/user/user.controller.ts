@@ -16,6 +16,7 @@ export class UserController {
     constructor(private readonly userService: UserService) {}
 
     @Get('me')
+    @UseGuards(AuthGard)
     async me(@Req() req: any) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...user } = req.user;
