@@ -1,4 +1,4 @@
-import { MinLength, MaxLength, Matches } from 'class-validator';
+import { MinLength, MaxLength, Matches, IsOptional } from 'class-validator';
 
 export class CreateUserDto {
     @MinLength(3, { message: 'Fullname is too short' })
@@ -20,5 +20,6 @@ export class CreateUserDto {
     @MaxLength(32, { message: 'Password is too long' })
     password: string;
 
+    @IsOptional()
     avatar: string;
 }
