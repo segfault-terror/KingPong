@@ -7,9 +7,13 @@ import {
     ConflictException,
     UsePipes,
     ValidationPipe,
+    Param,
+    UseGuards,
+    NotFoundException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './utils/create.user.dto';
+import { AuthGard } from 'src/auth/auth.guard';
 
 @Controller('user')
 export class UserController {
@@ -20,6 +24,18 @@ export class UserController {
     async me(@Req() req: any) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...user } = req.user;
+        return user;
+    }
+
+    @Get(':username')
+    @UseGuards(AuthGard)
+    async user(@Param('username') username: string) {
+        const userByUsername = await this.userService.user({ username });
+        if (!userByUsername) {
+            throw new NotFoundException('User not found');
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, ...user } = userByUsername;
         return user;
     }
 
