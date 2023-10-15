@@ -105,7 +105,7 @@ function ChannelMessage(props: ChannelMessageProps) {
             className={`${defaultStyles}
                         ${props.isMe ? myStyles : othersStyles}`}
         >
-            <Link href="#">
+            <Link href={`/profile/${senderData?.name}`}>
                 <img
                     src={senderData?.img}
                     alt={`${senderData?.name}'s avatar`}
