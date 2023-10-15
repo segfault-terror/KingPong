@@ -1,19 +1,22 @@
-import { redirect } from 'next/navigation';
+'use client';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import Link from 'next/link';
 
-function checkUser() {
-    return true;
-}
-
-export default function page() {
-    if (!checkUser()) {
-        redirect('/signin');
-    }
+export default function Page() {
+    const { data } = useQuery({
+        queryKey: ['user'],
+        queryFn: async () => {
+            return await axios.get('http://localhost:3000/user/me', {
+                withCredentials: true,
+            });
+        },
+    });
     return (
         <main className="font-nicomoji text-5xl text-center py-10 text-secondary-200">
             <h3>Welcome Back</h3>
             <h2 className="font-jost text-opponent font-bold text-8xl my-6">
-                omarox
+                {data?.data.username}
             </h2>
             <h3>Select mode to start playing</h3>
             <div className="my-8 lg:my-12 text-2xl flex justify-center gap-6 lg:gap-32">
