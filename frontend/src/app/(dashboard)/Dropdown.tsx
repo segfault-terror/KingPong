@@ -66,7 +66,10 @@ export default function DropdownMenu() {
                 border border-secondary-500 p-2 z-50`}
             >
                 <ul className="flex flex-col gap-2">
-                    <DropdownItem icon={<MdPersonOutline />} href="/profile">
+                    <DropdownItem
+                        icon={<MdPersonOutline />}
+                        href={`/profile/${data?.data.username}`}
+                    >
                         Profile
                     </DropdownItem>
                     <hr className="border-inactive-500 lg:hidden" />
