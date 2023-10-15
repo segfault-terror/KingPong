@@ -19,8 +19,9 @@ function Member({
                 src={avatarPath}
                 alt={`${username}'s avatar`}
                 className="border-[1px] border-secondary-200
-														rounded-full object-cover
-														w-10 h-10"
+                        rounded-full object-cover
+                        w-10 h-10
+                        flex-shrink-0"
             />
             <p className="text-silver">{username}</p>
         </Link>
@@ -38,36 +39,37 @@ export default function ChannelSideBar({ channelName }: ChannelSideBarProps) {
     );
 
     return (
-            <div
-                className="bg-primary border-[1px] border-secondary-200 w-72 h-[80vh] mx-auto
+        <div
+            className="bg-primary border-[1px] border-secondary-200 mx-auto
 						rounded-2xl p-8
-						text-pink font-jost"
-            >
-                <div className="flex flex-col items-center gap-4">
-                    <h2 className="text-center">Owner</h2>
+						text-pink font-jost
+                        h-full overflow-y-auto scrollbar-none"
+        >
+            <div className="flex flex-col items-center gap-4">
+                <h2 className="text-center">Owner</h2>
+                <Member
+                    username={owner!.username}
+                    avatarPath={owner!.avatarPath}
+                />
+                <h2>Admins</h2>
+                {admins.map((admin) => (
                     <Member
-                        username={owner!.username}
-                        avatarPath={owner!.avatarPath}
+                        key={admin.username}
+                        username={admin.username}
+                        avatarPath={admin.avatarPath}
                     />
-                    <h2>Admins</h2>
-                    {admins.map((admin) => (
+                ))}
+                <div className="self-start flex flex-col gap-4 mt-6">
+                    <h2>Members</h2>
+                    {members.map((member) => (
                         <Member
-                            key={admin.username}
-                            username={admin.username}
-                            avatarPath={admin.avatarPath}
+                            key={member.username}
+                            username={member.username}
+                            avatarPath={member.avatarPath}
                         />
                     ))}
-                    <div className="self-start flex flex-col gap-4 mt-6">
-                        <h2>Members</h2>
-                        {members.map((member) => (
-                            <Member
-                                key={member.username}
-                                username={member.username}
-                                avatarPath={member.avatarPath}
-                            />
-                        ))}
-                    </div>
                 </div>
             </div>
+        </div>
     );
 }

@@ -18,7 +18,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
             props.channelName as keyof typeof ChannelConversations
         ];
     const { setDotsDropdown } = useContext(ModalContext);
-    const { setShowMembers } = useContext(ChannelModalContext);
+    const { showMembers, setShowMembers } = useContext(ChannelModalContext);
 
     return (
         <div
@@ -36,7 +36,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                     {props.channelName}
                 </h1>
                 <div className="flex gap-4 text-secondary-200">
-                    <button onClick={() => setShowMembers(true)}>
+                    <button onClick={() => setShowMembers(!showMembers)}>
                         <FaUserFriends className="w-8 h-8" />
                     </button>
                     <button

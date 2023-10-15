@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation';
 import path from 'path';
 import ChannelSideBar from '../ChannelSideBar';
 import Modal from '../Modal';
+import { AiFillCloseCircle } from 'react-icons/ai';
 
 type ChannelModalContextProps = {
     showMembers: boolean;
@@ -48,7 +49,18 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
                                 setToggle={setToggle}
                             />
                         </div>
-                        <div className="w-3/4">{children}</div>
+                        <ChannelModalContext.Provider
+                            value={{ showMembers, setShowMembers }}
+                        >
+                            <div className="w-3/4">{children}</div>
+                        </ChannelModalContext.Provider>
+                        {showMembers && (
+                            <div className="w-1/4 max-w-[250px]">
+                                <ChannelSideBar
+                                    channelName={path.basename(pathname)}
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
             </>
@@ -57,7 +69,16 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
     return (
         <>
             {showMembers && (
-                <Modal onClose={() => setShowMembers(false)}>
+                <Modal
+                    onClose={() => setShowMembers(false)}
+                    childrenClassName="h-[80vh] w-[70vw]"
+                >
+                    <button
+                        className="fixed -top-10 left-1/2"
+                        onClick={() => setShowMembers(false)}
+                    >
+                        <AiFillCloseCircle className="text-4xl text-red-400" />
+                    </button>
                     <ChannelSideBar channelName={path.basename(pathname)} />
                 </Modal>
             )}
