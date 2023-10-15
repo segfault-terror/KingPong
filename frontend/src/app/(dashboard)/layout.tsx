@@ -11,7 +11,7 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     const { error, data, isLoading } = useQuery({
-        queryKey: ['auth'],
+        queryKey: ['authDashboard'],
         queryFn: async () => {
             try {
                 return await axios.get('http://localhost:3000/auth/status', {
