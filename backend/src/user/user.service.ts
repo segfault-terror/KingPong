@@ -33,7 +33,12 @@ export class UserService {
 
     async createUser(data: Prisma.UserCreateInput): Promise<User> {
         return this.prisma.user.create({
-            data,
+            data: {
+                ...data,
+                stats: {
+                    create: {},
+                },
+            },
         });
     }
 
@@ -71,6 +76,17 @@ export class UserService {
                         },
                     },
                 ],
+            },
+        });
+    }
+
+    async userStats(username: string) {
+        return this.prisma.user.findUnique({
+            where: {
+                username,
+            },
+            include: {
+                stats: true,
             },
         });
     }

@@ -81,4 +81,15 @@ export class UserController {
 
     //     return this.userService.updateUser(body);
     // }
+
+    @Get('/get/:username/stats')
+    @UseGuards(AuthGard)
+    async getUserStats(@Param('username') username: string) {
+        const user = await this.userService.userStats(username);
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+        delete user.password;
+        return user;
+    }
 }

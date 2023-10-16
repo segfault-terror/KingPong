@@ -23,6 +23,12 @@ enum Status {
   BUSY
 }
 
+enum League {
+    BRONZE
+    SILVER
+    GOLD
+}
+
 model User {
   id        String   @id @default(cuid())
   username  String   @unique
@@ -31,5 +37,17 @@ model User {
   password  String?
   avatar    String
   status    Status   @default(OFFLINE)
+  stats     Stats?
   createdAt DateTime @default(now())
+}
+
+model Stats {
+    id String @id @default(cuid())
+    wins Int @default(0)
+    losses Int @default(0)
+    level Int @default(0)
+    league League @default(BRONZE)
+    user User @relation(fields: [userId], references: [id])
+    userId String @unique
+    createdAt DateTime @default(now())
 }
