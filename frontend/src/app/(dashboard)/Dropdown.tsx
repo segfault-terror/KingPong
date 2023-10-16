@@ -11,6 +11,7 @@ import {
 import ButtonImage from './ButtonImage';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import { redirect } from 'next/navigation';
 
 function DropdownItem({
     href,
@@ -48,9 +49,13 @@ export default function DropdownMenu() {
     const { data } = useQuery({
         queryKey: ['user'],
         queryFn: async () => {
-            return await axios.get('http://localhost:3000/user/me', {
-                withCredentials: true,
-            });
+            try {
+                return await axios.get('http://localhost:3000/user/me', {
+                    withCredentials: true,
+                });
+            } catch {
+                redirect('/signin');
+            }
         },
     });
 

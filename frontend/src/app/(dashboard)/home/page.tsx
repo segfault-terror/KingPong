@@ -2,14 +2,19 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 export default function Page() {
     const { data } = useQuery({
         queryKey: ['user'],
         queryFn: async () => {
-            return await axios.get('http://localhost:3000/user/me', {
-                withCredentials: true,
-            });
+            try {
+                return await axios.get('http://localhost:3000/user/me', {
+                    withCredentials: true,
+                });
+            } catch {
+                redirect('/signin');
+            }
         },
     });
     return (
