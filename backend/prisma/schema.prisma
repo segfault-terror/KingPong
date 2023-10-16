@@ -38,6 +38,7 @@ model User {
   avatar    String
   status    Status   @default(OFFLINE)
   stats     Stats?
+  achievements Achievement[]
   createdAt DateTime @default(now())
 }
 
@@ -49,5 +50,19 @@ model Stats {
     league League @default(BRONZE)
     user User @relation(fields: [userId], references: [id])
     userId String @unique
+    createdAt DateTime @default(now())
+}
+
+enum AchievementType {
+    BRONZE
+    SILVER
+    GOLD
+}
+model Achievement {
+    id String @id @default(cuid())
+    title String @unique
+    description String
+    type AchievementType
+    users User[]
     createdAt DateTime @default(now())
 }

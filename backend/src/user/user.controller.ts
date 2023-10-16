@@ -92,4 +92,15 @@ export class UserController {
         delete user.password;
         return user;
     }
+
+    @Get('/get/:username/achievements')
+    @UseGuards(AuthGard)
+    async getUserAchievements(@Param('username') username: string) {
+        const user = await this.userService.userAchievements(username);
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+        delete user.password;
+        return user;
+    }
 }

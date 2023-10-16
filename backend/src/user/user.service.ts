@@ -38,6 +38,9 @@ export class UserService {
                 stats: {
                     create: {},
                 },
+                achievements: {
+                    create: [],
+                },
             },
         });
     }
@@ -87,6 +90,17 @@ export class UserService {
             },
             include: {
                 stats: true,
+            },
+        });
+    }
+
+    async userAchievements(username: string) {
+        return this.prisma.user.findUnique({
+            where: {
+                username,
+            },
+            include: {
+                achievements: true,
             },
         });
     }
