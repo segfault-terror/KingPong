@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { Prisma, User } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -51,6 +52,20 @@ export class UserService {
             data,
             where,
         });
+    }
+
+    async validateUser(username: string, password: string): Promise<any> {
+        const user = await this.user({ username });
+
+        if (!user || !user.password) {
+            return null;
+        }
+
+        if (user && (await bcrypt.compare(password, user.password))) {
+            return user;
+        }
+
+        return null;
     }
 
     async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {

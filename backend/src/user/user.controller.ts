@@ -11,11 +11,18 @@ import {
     UseGuards,
     NotFoundException,
     Query,
+    UseInterceptors,
+    UploadedFile,
+    Header,
+    Res,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './utils/create.user.dto';
 import { AuthGard } from 'src/auth/auth.guard';
-// import { UpdateUserDto } from './utils/update.user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateUserDto } from './utils/update.user.dto';
+import { Prisma } from '@prisma/client';
+import * as fs from 'fs';
 
 @Controller('user')
 export class UserController {
@@ -81,6 +88,42 @@ export class UserController {
 
     //     return this.userService.updateUser(body);
     // }
+
+    @Post('update')
+    @UseGuards(AuthGard)
+    @UsePipes(new ValidationPipe())
+    @UseInterceptors(FileInterceptor('avatar'))
+    async update(
+        @Body() body: UpdateUserDto,
+        @UploadedFile() file: Express.Multer.File,
+        @Req() req: any,
+    ) {
+        let userUpdate = { avatar: '' };
+        if (file) {
+            await fs.unlink(
+                'uploads/' + req.user.avatar.split('/').pop(),
+                () => {},
+            );
+            userUpdate.avatar = `http://localhost:3000/user/images/${file.filename}`;
+        }
+        console.log(file);
+        console.log(body);
+        return this.userService.updateUser({
+            where: { username: req.user.username },
+            data: userUpdate,
+        });
+    }
+
+    @Get('images/:fileId')
+    @Header('Content-Type', 'image/jpeg')
+    async serveAvatar(@Param('fileId') fileId, @Res() res): Promise<any> {
+        await fs.access('uploads/' + fileId, fs.constants.F_OK, (err) => {
+            if (err) {
+                return res.status(404).send({ message: 'File not found' });
+            }
+            res.sendFile(fileId, { root: 'uploads' });
+        });
+    }
 
     @Get('/get/:username/stats')
     @UseGuards(AuthGard)
