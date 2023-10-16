@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function Page() {
     const { data } = useQuery({
-        queryKey: ['userHome'],
+        queryKey: ['user'],
         queryFn: async () => {
             return await axios.get('http://localhost:3000/user/me', {
                 withCredentials: true,

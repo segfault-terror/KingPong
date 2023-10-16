@@ -17,7 +17,7 @@ export default function AuthLayout({
     children: React.ReactNode;
 }): JSX.Element {
     const { error, data, isLoading } = useQuery({
-        queryKey: ['authSign'],
+        queryKey: ['auth'],
         queryFn: async () => {
             try {
                 return await axios.get('http://localhost:3000/auth/status', {

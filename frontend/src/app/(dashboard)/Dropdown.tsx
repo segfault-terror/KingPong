@@ -46,7 +46,7 @@ function DropdownItem({
 export default function DropdownMenu() {
     const [open, setOpen] = useState(false);
     const { data } = useQuery({
-        queryKey: ['userAvatar'],
+        queryKey: ['user'],
         queryFn: async () => {
             return await axios.get('http://localhost:3000/user/me', {
                 withCredentials: true,
