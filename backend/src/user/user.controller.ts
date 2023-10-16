@@ -15,6 +15,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './utils/create.user.dto';
 import { AuthGard } from 'src/auth/auth.guard';
+// import { UpdateUserDto } from './utils/update.user.dto';
 
 @Controller('user')
 export class UserController {
@@ -63,4 +64,21 @@ export class UserController {
 
         return this.userService.createUser(body);
     }
+
+    // @Post('update')
+    // @UsePipes(new ValidationPipe())
+    // async update(@Body() body: UpdateUserDto) {
+    //     const userByUsername = await this.userService.user({
+    //         username: body.username,
+    //     });
+    //     if (userByUsername) {
+    //         throw new ConflictException('Username already exists');
+    //     }
+    //     const userByEmail = await this.userService.user({ email: body.email });
+    //     if (userByEmail) {
+    //         throw new ConflictException('Email already exists');
+    //     }
+
+    //     return this.userService.updateUser(body);
+    // }
 }
