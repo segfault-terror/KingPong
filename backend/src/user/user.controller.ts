@@ -21,8 +21,8 @@ import { CreateUserDto } from './utils/create.user.dto';
 import { AuthGard } from 'src/auth/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateUserDto } from './utils/update.user.dto';
-import { Prisma } from '@prisma/client';
 import * as fs from 'fs';
+import { Response } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -98,16 +98,11 @@ export class UserController {
         @UploadedFile() file: Express.Multer.File,
         @Req() req: any,
     ) {
-        let userUpdate = { avatar: '' };
+        const userUpdate = { avatar: '' };
         if (file) {
-            await fs.unlink(
-                'uploads/' + req.user.avatar.split('/').pop(),
-                () => {},
-            );
+            fs.unlink('uploads/' + req.user.avatar.split('/').pop(), () => {});
             userUpdate.avatar = `http://localhost:3000/user/images/${file.filename}`;
         }
-        console.log(file);
-        console.log(body);
         return this.userService.updateUser({
             where: { username: req.user.username },
             data: userUpdate,
@@ -116,8 +111,11 @@ export class UserController {
 
     @Get('images/:fileId')
     @Header('Content-Type', 'image/jpeg')
-    async serveAvatar(@Param('fileId') fileId, @Res() res): Promise<any> {
-        await fs.access('uploads/' + fileId, fs.constants.F_OK, (err) => {
+    async serveAvatar(
+        @Param('fileId') fileId: string,
+        @Res() res: Response,
+    ): Promise<any> {
+        fs.access('uploads/' + fileId, fs.constants.F_OK, (err) => {
             if (err) {
                 return res.status(404).send({ message: 'File not found' });
             }
