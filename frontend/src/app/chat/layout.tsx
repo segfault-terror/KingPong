@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useState } from 'react';
+import { useState } from 'react';
 import CreateNewChannel from './CreateNewChannel';
 import JoinNewChannel, { Channel } from './JoinNewChannel';
 import WelcomeChannel from './WelcomeChannel';
@@ -7,28 +7,7 @@ import NewConversation from './NewConversation';
 import Modal from './Modal';
 import DropdownModal from './DropdownModal';
 import ChatMenu from './ChatMenu';
-
-type ToggleProps = {
-    toggle: boolean;
-    setToggle: (toggle: boolean) => void;
-};
-
-type ModalContextProps = {
-    createChannel: boolean;
-    joinChannel: boolean;
-    setCreateChannel: (val: boolean) => void;
-    setJoinChannel: (val: boolean) => void;
-    welcomeChannel: boolean;
-    setWelcomeChannel: (val: boolean) => void;
-    setChannel: (channel: Channel) => void;
-    newConversation: boolean;
-    setNewConversation: (val: boolean) => void;
-    dotsDropdown: boolean;
-    setDotsDropdown: (val: boolean) => void;
-};
-
-export const ModalContext = createContext({} as ModalContextProps);
-export const ToggleContext = createContext<ToggleProps>({} as ToggleProps);
+import { modalContext, toggleContext } from '@/contexts/contexts';
 
 type MainChatLayoutProps = {
     children: React.ReactNode;
@@ -44,8 +23,8 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
     const [dotsDropdown, setDotsDropdown] = useState(false);
 
     return (
-        <ToggleContext.Provider value={{ toggle, setToggle }}>
-            <ModalContext.Provider
+        <toggleContext.Provider value={{ toggle, setToggle }}>
+            <modalContext.Provider
                 value={{
                     createChannel,
                     setCreateChannel,
@@ -107,7 +86,7 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
                     </DropdownModal>
                 )}
                 {children}
-            </ModalContext.Provider>
-        </ToggleContext.Provider>
+            </modalContext.Provider>
+        </toggleContext.Provider>
     );
 }

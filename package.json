@@ -17,7 +17,8 @@
         "start": "npm install && npm run generate && concurrently 'npm:docker:db' 'npm:server:dev' 'npm:client:dev'",
         "storybook": "npm install && npm run storybook --workspace=frontend",
         "studio": "npm run studio --workspace=backend",
-        "migrate": "npm run migrate --workspace=backend"
+        "migrate": "npm run migrate --workspace=backend",
+        "seed": "npm run seed --workspace=backend"
     },
     "repository": {
         "type": "git",

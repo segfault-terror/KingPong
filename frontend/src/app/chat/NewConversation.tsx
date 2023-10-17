@@ -1,7 +1,7 @@
+import { modalContext } from '@/contexts/contexts';
+import Link from 'next/link';
 import { useContext, useState } from 'react';
 import { Friends } from './data/ChatData';
-import { ModalContext } from './layout';
-import Link from 'next/link';
 
 function filterUsers(query: string) {
     return Friends.filter((friend) => {
@@ -23,7 +23,7 @@ export type Friend = {
 
 export default function JoinNewChannel() {
     const [results, setResults] = useState<Friend[]>([]);
-    const { setNewConversation } = useContext(ModalContext);
+    const { setNewConversation } = useContext(modalContext);
 
     return (
         <form
@@ -70,9 +70,11 @@ export default function JoinNewChannel() {
                                     className="w-12 h-12 rounded-full object-cover
                                         border-[1px] border-secondary-200 font-jost"
                                 />
-                                <div className='flex flex-col'>
+                                <div className="flex flex-col">
                                     <p>{result.fullname}</p>
-                                    <p className='text-secondary-200 italic'>@{result.username}</p>
+                                    <p className="text-secondary-200 italic">
+                                        @{result.username}
+                                    </p>
                                 </div>
                             </li>
                         </Link>

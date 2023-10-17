@@ -7,10 +7,12 @@ import { prismaModuleOptions } from './modules.options';
 import { PassportModule } from '@nestjs/passport';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { AchievementsModule } from './achievements/achievements.module';
 
 @Module({
     imports: [
         UserModule,
+        AchievementsModule,
         ConfigModule.forRoot({ isGlobal: true }),
         PrismaModule.forRoot(prismaModuleOptions),
         PassportModule.register({ session: true }),

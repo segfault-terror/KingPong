@@ -1,12 +1,11 @@
 'use client';
-import { HiDotsVertical } from 'react-icons/hi';
-import { ChannelConversations } from './data/ChatData';
+import { channelModalContext, modalContext } from '@/contexts/contexts';
 import Link from 'next/link';
-import ChatInput from './ChatInput';
 import { useContext } from 'react';
-import { ModalContext } from './layout';
 import { FaUserFriends } from 'react-icons/fa';
-import { ChannelModalContext } from './channel/layout';
+import { HiDotsVertical } from 'react-icons/hi';
+import ChatInput from './ChatInput';
+import { ChannelConversations } from './data/ChatData';
 
 type ChannelConversationProps = {
     channelName: string;
@@ -17,8 +16,8 @@ export default function ChannelConversation(props: ChannelConversationProps) {
         ChannelConversations[
             props.channelName as keyof typeof ChannelConversations
         ];
-    const { setDotsDropdown } = useContext(ModalContext);
-    const { showMembers, setShowMembers } = useContext(ChannelModalContext);
+    const { setDotsDropdown } = useContext(modalContext);
+    const { showMembers, setShowMembers } = useContext(channelModalContext);
 
     return (
         <div

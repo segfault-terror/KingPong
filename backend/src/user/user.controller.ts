@@ -103,10 +103,13 @@ export class UserController {
             fs.unlink('uploads/' + req.user.avatar.split('/').pop(), () => {});
             userUpdate.avatar = `http://localhost:3000/user/images/${file.filename}`;
         }
-        return this.userService.updateUser({
+        const updatedUser = await this.userService.updateUser({
             where: { username: req.user.username },
             data: userUpdate,
         });
+
+        delete updatedUser.password;
+        return updatedUser;
     }
 
     @Get('images/:fileId')
