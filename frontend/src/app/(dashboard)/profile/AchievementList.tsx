@@ -1,22 +1,35 @@
 'use client';
-import { useContext } from 'react';
-import EmptyAchievement from '../../../../public/images/empty-achievement.svg';
-import Achievement from './Achievement';
-import { UsersAchievements } from './data/ProfileData';
 import { profileModalContext } from '@/contexts/contexts';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { useContext } from 'react';
+import Achievement from './Achievement';
+import Loading from '@/app/loading';
 
 type AchievementListProps = {
     username: string;
 };
 
 export default function AchievementList({ username }: AchievementListProps) {
-    const userAchievements = UsersAchievements.filter(
-        (achievement) => achievement.username === username,
-    );
-    const slicedAchievements = userAchievements.slice(0, 3);
     const { setAchievements } = useContext(profileModalContext);
+    const { data, isLoading } = useQuery({
+        queryKey: ['achievements', username],
+        queryFn: async () => {
+            const { data } = await axios.get(
+                `http://localhost:3000/user/get/${username}/achievements`,
+                {
+                    withCredentials: true,
+                },
+            );
+            return data;
+        },
+    });
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+    const slicedAchievements = data?.achievements.slice(0, 3);
 
-    if (userAchievements.length === 0) {
+    if (data?.achievements.length === 0) {
         return (
             <div
                 className="bg-primary rounded-2xl p-2 h-full
@@ -26,7 +39,7 @@ export default function AchievementList({ username }: AchievementListProps) {
                 <Achievement
                     title="No achievement yet"
                     description="Without failure there's no achievement"
-                    image={EmptyAchievement.src}
+                    type="empty"
                 />
             </div>
         );
@@ -40,7 +53,7 @@ export default function AchievementList({ username }: AchievementListProps) {
                             border-2 border-secondary-200"
             >
                 <div className="p-2 lg:flex lg:flex-col lg:gap-2">
-                    {slicedAchievements.map((achievement, idx) => {
+                    {slicedAchievements.map((achievement: any, idx: number) => {
                         return (
                             <div key={idx}>
                                 <Achievement {...achievement} />
@@ -52,7 +65,7 @@ export default function AchievementList({ username }: AchievementListProps) {
                     })}
                 </div>
 
-                {userAchievements.length > 3 && (
+                {data?.achievements.length > 3 && (
                     <button
                         className="flex items-center justify-center
                             text-sm text-white
