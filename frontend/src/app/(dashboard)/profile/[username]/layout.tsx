@@ -1,28 +1,16 @@
 'use client';
 import Modal from '@/app/chat/Modal';
-import { createContext, useState } from 'react';
-import AchievementModal from '../AchievementModal';
+import { profileModalContext } from '@/contexts/contexts';
 import { usePathname } from 'next/navigation';
 import path from 'path';
+import { useState } from 'react';
+import AchievementModal from '../AchievementModal';
 import FriendListModal from '../FriendListModal';
 import GameResultModal from '../MatchHistoryModal';
 
 type ProfileLayoutProps = {
     children: React.ReactNode;
 };
-
-type ProfileModalContextProps = {
-    achievements: boolean;
-    setAchievements: (value: boolean) => void;
-    friends: boolean;
-    setFriends: (value: boolean) => void;
-    matches: boolean;
-    setMatches: (value: boolean) => void;
-};
-
-export const ProfileModalContext = createContext(
-    {} as ProfileModalContextProps,
-);
 
 export default function ProfileLayout({ children }: ProfileLayoutProps) {
     const [achievements, setAchievements] = useState(false);
@@ -62,10 +50,10 @@ export default function ProfileLayout({ children }: ProfileLayoutProps) {
                                         overflow-y-auto
                                         scrollbar-thumb-secondary-200 scrollbar-thin"
                 >
-                    <GameResultModal userName={path.basename(pathname)}/>
+                    <GameResultModal userName={path.basename(pathname)} />
                 </Modal>
             )}
-            <ProfileModalContext.Provider
+            <profileModalContext.Provider
                 value={{
                     achievements,
                     setAchievements,
@@ -76,7 +64,7 @@ export default function ProfileLayout({ children }: ProfileLayoutProps) {
                 }}
             >
                 {children}
-            </ProfileModalContext.Provider>
+            </profileModalContext.Provider>
         </>
     );
 }

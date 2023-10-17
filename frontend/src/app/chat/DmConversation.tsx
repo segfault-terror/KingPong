@@ -1,11 +1,11 @@
 'use client';
+import { modalContext } from '@/contexts/contexts';
 import Link from 'next/link';
 import { useContext } from 'react';
 import { HiDotsVertical } from 'react-icons/hi';
 import ChatInput from './ChatInput';
 import { UserStatus, getStatusColor } from './DirectMessage';
 import { DMConversations } from './data/ChatData';
-import { ModalContext } from './layout';
 
 type Message = {
     isMe: boolean;
@@ -49,7 +49,7 @@ function getStatusMsg(status: UserStatus) {
 }
 
 function DmConversationHeader({ userName }: DmConversationProps) {
-    const { setDotsDropdown } = useContext(ModalContext);
+    const { setDotsDropdown } = useContext(modalContext);
 
     return (
         <>

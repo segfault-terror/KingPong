@@ -1,12 +1,11 @@
 'use client';
+import { modalContext } from '@/contexts/contexts';
+import { useContext } from 'react';
 import { BiMessageAdd } from 'react-icons/bi';
 import { MdOutlineExplore } from 'react-icons/md';
-import { useContext } from 'react';
-import { ModalContext } from './layout';
-import { set } from 'react-hook-form';
 
 function EmptyDM() {
-    const { setNewConversation } = useContext(ModalContext);
+    const { setNewConversation } = useContext(modalContext);
 
     return (
         <div
@@ -34,7 +33,7 @@ function EmptyDM() {
 }
 
 function EmptyChannels() {
-    const { setCreateChannel, setJoinChannel } = useContext(ModalContext);
+    const { setCreateChannel, setJoinChannel } = useContext(modalContext);
 
     return (
         <div

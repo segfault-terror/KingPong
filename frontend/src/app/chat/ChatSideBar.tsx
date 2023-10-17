@@ -1,12 +1,12 @@
+import { modalContext } from '@/contexts/contexts';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useContext } from 'react';
+import { AiOutlinePlusCircle } from 'react-icons/ai';
 import DirectMessage from './DirectMessage';
 import EmptyChat from './EmptyChat';
 import ToggleButton from './ToggleButton';
 import { Channels, DMList } from './data/ChatData';
-import { ModalContext } from './layout';
-import { AiOutlinePlusCircle } from 'react-icons/ai';
 
 type ChatSideBarProps = {
     toggle: boolean;
@@ -14,7 +14,7 @@ type ChatSideBarProps = {
 };
 
 function DmList({ toggle }: ChatSideBarProps) {
-    const { setNewConversation } = useContext(ModalContext);
+    const { setNewConversation } = useContext(modalContext);
     if (DMList.length === 0) {
         return (
             <div className="m-auto">
@@ -58,7 +58,7 @@ function DmList({ toggle }: ChatSideBarProps) {
 
 function ChannelList({ toggle }: ChatSideBarProps) {
     const pathname = usePathname();
-    const { setCreateChannel, setJoinChannel } = useContext(ModalContext);
+    const { setCreateChannel, setJoinChannel } = useContext(modalContext);
 
     if (Channels.length === 0) {
         return (

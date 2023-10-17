@@ -2,8 +2,8 @@
 import { useContext } from 'react';
 import PaddleAndBall from '../../../../public/images/paddle-and-ball.svg';
 import GameResult from './GameResult';
-import { ProfileModalContext } from './[username]/layout';
 import { Users, UsersMatchHistory, UsersStats } from './data/ProfileData';
+import { profileModalContext } from '@/contexts/contexts';
 
 type MatchHistoryProps = {
     username: string;
@@ -18,7 +18,7 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
     const userStats = UsersStats.find(
         (userStat) => userStat.username === username,
     );
-    const { setMatches } = useContext(ProfileModalContext);
+    const { setMatches } = useContext(profileModalContext);
 
     if (gameResults.length === 0) {
         return (

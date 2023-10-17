@@ -5,7 +5,7 @@ import UserCircleInfo from './UserCircleInfo';
 import { UsersFriends } from './data/ProfileData';
 import Link from 'next/link';
 import { useContext } from 'react';
-import { ProfileModalContext } from './[username]/layout';
+import { profileModalContext } from '@/contexts/contexts';
 
 type FullFriendListProps = {
     username: string;
@@ -16,7 +16,7 @@ export default function FullFriendList({ username }: FullFriendListProps) {
         (friend) => friend.username === username,
     )!.friendList;
     const slicedFriends = userFriends!.slice(0, 3);
-    const { setFriends } = useContext(ProfileModalContext);
+    const { setFriends } = useContext(profileModalContext);
 
     if (userFriends!.length === 0) {
         return (

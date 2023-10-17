@@ -1,6 +1,6 @@
+import { modalContext } from '@/contexts/contexts';
 import { useContext, useState } from 'react';
 import { Channels } from './data/ChatData';
-import { ModalContext } from './layout';
 
 function filterChannels(query: string) {
     return Channels.filter((channel) => {
@@ -18,7 +18,7 @@ export type Channel = {
 export default function JoinNewChannel() {
     const [results, setResults] = useState<Channel[]>([]);
     const { setJoinChannel, setWelcomeChannel, setChannel } =
-        useContext(ModalContext);
+        useContext(modalContext);
 
     return (
         <form

@@ -1,12 +1,12 @@
 'use client';
 import Header from '@/app/(dashboard)/Header';
 import ChatSideBar from '@/app/chat/ChatSideBar';
+import { toggleContext } from '@/contexts/contexts';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import React, { useContext, useEffect, useState } from 'react';
-import { ToggleContext } from '../layout';
 
 export default function DMLayout({ children }: { children: React.ReactNode }) {
-    const { toggle, setToggle } = useContext(ToggleContext);
+    const { toggle, setToggle } = useContext(toggleContext);
     const matches = useMediaQuery('(min-width: 1024px)');
     const [isRendred, setIsRendred] = useState<boolean>(false);
 
@@ -41,9 +41,7 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
                 className="flex py-8 px-4 h-[90vh]
                         mt-[110px]"
             >
-                <div className='flex-grow'>
-                    {children}
-                </div>
+                <div className="flex-grow">{children}</div>
             </div>
         </div>
     );

@@ -2,8 +2,8 @@
 import { useContext } from 'react';
 import EmptyAchievement from '../../../../public/images/empty-achievement.svg';
 import Achievement from './Achievement';
-import { ProfileModalContext } from './[username]/layout';
 import { UsersAchievements } from './data/ProfileData';
+import { profileModalContext } from '@/contexts/contexts';
 
 type AchievementListProps = {
     username: string;
@@ -14,7 +14,7 @@ export default function AchievementList({ username }: AchievementListProps) {
         (achievement) => achievement.username === username,
     );
     const slicedAchievements = userAchievements.slice(0, 3);
-    const { setAchievements } = useContext(ProfileModalContext);
+    const { setAchievements } = useContext(profileModalContext);
 
     if (userAchievements.length === 0) {
         return (
