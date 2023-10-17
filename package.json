@@ -18,7 +18,7 @@
         "storybook": "npm install && npm run storybook --workspace=frontend",
         "studio": "npm run studio --workspace=backend",
         "migrate": "npm run migrate --workspace=backend",
-        "seed": "npm run seed --workspace=backend",
+        "seed": "npm run seed --workspace=backend"
     },
     "repository": {
         "type": "git",
