@@ -1,16 +1,29 @@
+'use client';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import Link from 'next/link';
 import { AiFillTrophy, AiOutlineClose } from 'react-icons/ai';
 import { TbMessage2, TbUserPlus, TbUserX } from 'react-icons/tb';
 import UserCircleInfo from './UserCircleInfo';
-import { UsersStats } from './data/ProfileData';
 
 type ProfileCardProps = {
     username: string;
 };
 
 export default function ProfileCard({ username }: ProfileCardProps) {
-    const stats = UsersStats.find((stats) => stats.username === username);
-    const leagueImgPath = `/images/${stats!.league.toLowerCase()}-league.svg`;
+    const { data } = useQuery({
+        queryKey: ['profile', username],
+        queryFn: async () => {
+            const { data } = await axios.get(
+                `http://localhost:3000/user/get/${username}/stats`,
+                {
+                    withCredentials: true,
+                },
+            );
+            return data;
+        },
+    });
+    const leagueImgPath = `/images/${data?.stats.league.toLowerCase()}-league.svg`;
 
     return (
         <div
@@ -30,7 +43,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                     <img
                         src={leagueImgPath}
                         alt="League"
-                        title={`${stats!.league} League`}
+                        title={`${data?.stats.league.toLowerCase()} league`}
                         className="ml-2"
                     />
                 </div>
@@ -40,11 +53,11 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                 <div className="flex gap-1 items-center md:text-2xl">
                     <div className="flex items-center text-online">
                         <AiFillTrophy />
-                        <span>{stats!.wins}</span>
+                        <span>{data?.stats.wins}</span>
                     </div>
                     <div className="flex items-center text-red-600">
                         <AiOutlineClose />
-                        <span>{stats!.losses}</span>
+                        <span>{data?.stats.losses}</span>
                     </div>
                 </div>
 
