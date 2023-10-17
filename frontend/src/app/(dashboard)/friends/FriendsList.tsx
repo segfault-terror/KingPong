@@ -73,16 +73,22 @@ export default function FriendsList({ friends }: FriendState) {
             <div className="flex flex-col justify-center items-center bg-gradient-radial from-primary to-background rounded-xl border-secondary-500 border drop-shadow-[0px_0px_3px_#ffA21A] px-3 pt-1 m-auto relative">
                 {friends.length === 0
                     ? EmptyFriendsList()
-                    : friends.map(
-                          (friend) =>
-                              friend.status !== UserStatus.Offline && (
-                                <div key={friend.id} className='flex flex-col justify-center items-center w-full m-auto' >
-                                      <FriendCard {...friend} />
-                                      <div className=" w-5/6 h-1 rounded-xl bg-gray-500 z-20"></div>
-                                </div>
-                              ),
-                    )
-                    }
+                    : friends
+                          .filter((friend) => friend.status !== UserStatus.Offline)
+                          .map((friend) => (
+                              <div key={friend.id} className='flex flex-col justify-center items-center w-full m-auto' >
+                                  <FriendCard {...friend} />
+                                  <div className=" w-5/6 h-1 rounded-xl bg-gray-500 z-20"></div>
+                              </div>
+                          ))}
+                {friends
+                    .filter((friend) => friend.status === UserStatus.Offline)
+                    .map((friend) => (
+                        <div key={friend.id} className='flex flex-col justify-center items-center w-full m-auto opacity-40' >
+                            <FriendCard {...friend} />
+                            <div className=" w-5/6 h-1 rounded-xl bg-gray-500 z-20"></div>
+                        </div>
+                    ))}
             </div>
         </div>
     );
