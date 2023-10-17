@@ -16,21 +16,21 @@ async function bootstrap() {
     const configService = app.get(ConfigService);
     const secret = configService.get<string>('SESSION_SECRET');
 
-    app.use(
-        session({
-            secret,
-            resave: false,
-            saveUninitialized: false,
-            cookie: {
-                maxAge: 1000 * 60 * 60 * 24 * 15,
-            },
-            store: new PrismaSessionStore(new PrismaClient(), {
-                checkPeriod: 24 * 60 * 60 * 1000,
-                dbRecordIdIsSessionId: true,
-                dbRecordIdFunction: undefined,
-            }),
+    const sessionMiddleware = session({
+        secret,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 1000 * 60 * 60 * 24 * 15,
+        },
+        store: new PrismaSessionStore(new PrismaClient(), {
+            checkPeriod: 24 * 60 * 60 * 1000,
+            dbRecordIdIsSessionId: true,
+            dbRecordIdFunction: undefined,
         }),
-    );
+    });
+
+    app.use(sessionMiddleware);
 
     app.use(passport.initialize());
     app.use(passport.session());
