@@ -6,14 +6,16 @@ import { Server, ServerOptions } from 'socket.io';
 import * as passport from 'passport';
 
 export class SocketIOAdapter extends IoAdapter {
+    private session: RequestHandler;
     constructor(
         private app: INestApplicationContext,
         private sessionMiddleware: RequestHandler,
     ) {
         super(app);
+        this.session = sessionMiddleware;
     }
 
-    createIOServer(port: number, options?: ServerOptions) {
+    create(port: number, options?: ServerOptions) {
         const cors: CorsOptions = {
             origin: true,
             credentials: true,
@@ -27,9 +29,9 @@ export class SocketIOAdapter extends IoAdapter {
             cors,
         };
 
-        const server: Server = super.createIOServer(port, optionsWithCors);
+        const server: Server = super.create(port, optionsWithCors);
 
-        server.use(wrap(this.sessionMiddleware));
+        server.use(wrap(this.session));
         server.use(wrap(passport.initialize()));
         server.use(wrap(passport.session()));
 

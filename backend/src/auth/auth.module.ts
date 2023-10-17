@@ -5,6 +5,7 @@ import { IntraStrategy } from './utils/intra.strategy';
 import { SessionSerializer } from './utils/session.serializer';
 import { GoogleStrategy } from './utils/google.strategy';
 import { LocalStrategy } from './utils/local.strategy';
+import { AuthGateway } from './auth.gateway';
 
 @Module({
     imports: [],
@@ -15,6 +16,7 @@ import { LocalStrategy } from './utils/local.strategy';
         GoogleStrategy,
         LocalStrategy,
         SessionSerializer,
+        AuthGateway,
     ],
 })
 export class AuthModule {}
