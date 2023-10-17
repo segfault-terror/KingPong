@@ -1,6 +1,7 @@
 import Notification from './Notifications';
+import { NotificationProps, NotificationState } from './types';
 
-const NotificationState = {
+const Notifications = {
     notification: [
         {
             id: 1,
@@ -8,16 +9,16 @@ const NotificationState = {
             readed: false,
             sender: {
                 name: 'John Doe',
-                image: 'https://robohash.org/10',
+                avatar: 'https://robohash.org/10',
             },
         },
         {
             id: 2,
-            type: 'friend' as const,
+            type: 'Friend' as const,
             readed: false,
             sender: {
                 name: 'John Doe',
-                image: 'https://robohash.org/30',
+                avatar: 'https://robohash.org/30',
             },
         },
         {
@@ -26,16 +27,16 @@ const NotificationState = {
             readed: false,
             sender: {
                 name: 'John Doe',
-                image: 'https://robohash.org/20',
+                avatar: 'https://robohash.org/20',
             },
         },
         {
             id: 4,
-            type: 'friend' as const,
+            type: 'Friend' as const,
             readed: true,
             sender: {
                 name: 'John Doe',
-                image: 'https://robohash.org/40',
+                avatar: 'https://robohash.org/40',
             },
         },
         {
@@ -44,16 +45,16 @@ const NotificationState = {
             readed: true,
             sender: {
                 name: 'John Doe',
-                image: 'https://robohash.org/50',
+                avatar: 'https://robohash.org/50',
             },
         },
         {
             id: 6,
-            type: 'friend' as const,
+            type: 'Friend' as const,
             readed: false,
             sender: {
                 name: 'John Doe',
-                image: 'https://robohash.org/60',
+                avatar: 'https://robohash.org/60',
             },
         },
         {
@@ -62,16 +63,16 @@ const NotificationState = {
             readed: true,
             sender: {
                 name: 'John Doe',
-                image: 'https://robohash.org/70',
+                avatar: 'https://robohash.org/70',
             },
         },
         {
             id: 8,
-            type: 'friend' as const,
+            type: 'Friend' as const,
             readed: true,
             sender: {
                 name: 'John Doe',
-                image: 'https://robohash.org/80',
+                avatar: 'https://robohash.org/80',
             },
         },
         {
@@ -80,24 +81,27 @@ const NotificationState = {
             readed: true,
             sender: {
                 name: 'John Doe',
-                image: 'https://robohash.org/90',
+                avatar: 'https://robohash.org/90',
             },
         },
         {
             id: 10,
-            type: 'friend' as const,
+            type: 'Friend' as const,
             readed: true,
             sender: {
                 name: 'John Doe',
-                image: 'https://robohash.org/100',
+                avatar: 'https://robohash.org/100',
             },
-        }
+        },
     ],
-  };
+};
 
-  const Empty = []
+const Empty = [];
 
-
-export default function Page(){
-	return <Notification notification={NotificationState.notification} />
+export default function Page() {
+    return (
+        <div id="Notification">
+            <Notification notifications={Notifications.notification} />
+        </div>
+    );
 }
