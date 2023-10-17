@@ -6,6 +6,7 @@ import * as session from 'express-session';
 import * as passport from 'passport';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import { PrismaClient } from '@prisma/client';
+import { SocketIOAdapter } from './socket.io.adapter';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -39,6 +40,8 @@ async function bootstrap() {
         origin: true,
         credentials: true,
     });
+
+    app.useWebSocketAdapter(new SocketIOAdapter(app, sessionMiddleware));
 
     await app.listen(3000);
 }
