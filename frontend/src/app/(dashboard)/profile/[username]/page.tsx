@@ -2,7 +2,6 @@ import AchievementList from '../AchievementList';
 import FullFriendList from '../FullFriendList';
 import MatchHistory from '../MatchHistory';
 import ProfileCard from '../ProfileCard';
-import { Users } from '../data/ProfileData';
 
 type ProfilePageProps = {
     params: {
@@ -11,8 +10,6 @@ type ProfilePageProps = {
 };
 
 export default function ProfilePage({ params }: ProfilePageProps) {
-    const currentUser = Users.find((user) => user.username === params.username);
-
     return (
         <>
             <div
@@ -22,18 +19,18 @@ export default function ProfilePage({ params }: ProfilePageProps) {
                             lg:max-w-5xl lg:mx-auto lg:my-40"
             >
                 <div className="md:col-span-full">
-                    <ProfileCard username={currentUser!.username} />
+                    <ProfileCard username={params.username} />
                 </div>
 
                 <div className="md:col-span-2 lg:col-span-1">
-                    <AchievementList username={currentUser!.username} />
+                    <AchievementList username={params.username} />
                 </div>
 
                 <div className="md:col-span-2 lg:col-span-1">
-                    <FullFriendList username={currentUser!.username} />
+                    <FullFriendList username={params.username} />
                 </div>
                 <div className="md:col-start-2 md:col-end-4 lg:col-span-1">
-                    <MatchHistory username={currentUser!.username} />
+                    <MatchHistory username={params.username} />
                 </div>
             </div>
         </>
