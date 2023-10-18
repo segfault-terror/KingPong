@@ -1,4 +1,4 @@
-import { AchievementType, PrismaClient } from '@prisma/client';
+import { AchievementType, NotifType, PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -22,6 +22,25 @@ async function seed() {
             },
         ],
         skipDuplicates: true,
+    });
+
+    const user = await prisma.user.create({
+        data: {
+            username: 'aaggoujj',
+            email: '',
+            password: '',
+            avatar: '',
+            fullname: 'Full Name',
+        },
+    });
+    await prisma.notification.createMany({
+        data: [
+            {
+                readed: false,
+                type: NotifType.FRIEND,
+                userId: user.id,
+            },
+        ],
     });
 }
 
