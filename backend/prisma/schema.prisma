@@ -44,6 +44,8 @@ model User {
   friendOf User[] @relation("friends")
   sentFriendRequests FriendRequest[] @relation("sender")
   pendingFriendRequests FriendRequest[] @relation("receiver")
+  gamesAsPlayer1 Game[] @relation("player1")
+  gamesAsPlayer2 Game[] @relation("player2")
   createdAt DateTime @default(now())
 }
 
@@ -92,4 +94,12 @@ model FriendRequest {
     receiverId String @unique
     sender User @relation("sender", fields: [senderId], references: [id])
     receiver User @relation("receiver", fields: [receiverId], references: [id])
+}
+
+model Game {
+  id String @id @default(cuid())
+  player1 User @relation("player1", fields: [player1Id], references: [id])
+  player1Id String @unique
+  player2 User @relation("player2", fields: [player2Id], references: [id])
+  player2Id String @unique
 }
