@@ -39,6 +39,7 @@ model User {
   status    Status   @default(OFFLINE)
   stats     Stats?
   achievements Achievement[]
+  Notifications Notification[]
   createdAt DateTime @default(now())
 }
 
@@ -65,4 +66,18 @@ model Achievement {
     type AchievementType
     users User[]
     createdAt DateTime @default(now())
+}
+
+enum NotifType {
+  GAME
+  FRIEND
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  readed    Boolean  @default(false)
+  type      NotifType
+  userId    String @unique
+  user     User? @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
 }
