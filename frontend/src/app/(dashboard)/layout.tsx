@@ -22,6 +22,29 @@ export default function DashboardLayout({
             }
         },
     });
+
+    // const [isConnected, setIsConnected] = useState(false);
+
+    // useEffect(() => {
+    //     const socket = io('http://localhost:3000/auth', {
+    //         withCredentials: true,
+    //     });
+
+    //     socket.on('connect', () => {
+    //         setIsConnected(true);
+    //     });
+
+    //     socket.on('disconnect', () => {
+    //         setIsConnected(false);
+    //     });
+
+    //     return () => {
+    //         socket.off('connect');
+    //         socket.off('disconnect');
+    //         socket.disconnect();
+    //     };
+    // }, [isConnected]);
+
     if (isLoading) {
         return <Loading />;
     }
