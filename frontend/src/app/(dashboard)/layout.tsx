@@ -4,8 +4,6 @@ import Header from './Header';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
 import Loading from '../loading';
-import { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
 
 export default function DashboardLayout({
     children,
@@ -24,29 +22,6 @@ export default function DashboardLayout({
             }
         },
     });
-
-    const [isConnected, setIsConnected] = useState(false);
-
-    useEffect(() => {
-        const socket = io('http://localhost:3000/auth', {
-            withCredentials: true,
-        });
-
-        socket.on('connect', () => {
-            setIsConnected(true);
-        });
-
-        socket.on('disconnect', () => {
-            setIsConnected(false);
-        });
-
-        return () => {
-            socket.off('connect');
-            socket.off('disconnect');
-            socket.disconnect();
-        };
-    }, [isConnected]);
-
     if (isLoading) {
         return <Loading />;
     }
