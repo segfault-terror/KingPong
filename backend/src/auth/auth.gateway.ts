@@ -27,11 +27,12 @@ export class AuthGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     async handleConnection(client: any) {
         if (client.request.user) {
+            const roomName = client.request.user.id;
+            client.join(roomName);
             const user = await this.userService.user({
                 username: client.request.user.username,
             });
-
-            user.status = 'ONLINE';
+            if (user.status === 'OFFLINE') user.status = 'ONLINE';
 
             await this.userService.updateUser({
                 where: { username: user.username },
@@ -51,9 +52,11 @@ export class AuthGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         user.status = 'OFFLINE';
 
-        await this.userService.updateUser({
-            where: { username: user.username },
-            data: user,
-        });
+        if ((await this.io.in(user.id).fetchSockets()).length === 0) {
+            await this.userService.updateUser({
+                where: { username: user.username },
+                data: user,
+            });
+        }
     }
 }
