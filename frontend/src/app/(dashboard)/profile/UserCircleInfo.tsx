@@ -39,9 +39,9 @@ export default function UserCircleInfo({ username }: UserCircleInfoProps) {
                 </div>
             </div>
             <div
-                className={`${data?.status === UserStatus.Online && 'bg-online'}
-                ${data?.status === UserStatus.Offline && 'bg-inactive-200'}
-                ${data?.status === UserStatus.InGame && 'bg-ingame'}
+                className={`${data?.status === 'ONLINE' && 'bg-online'}
+                ${data?.status === 'OFFLINE' && 'bg-inactive-200'}
+                ${data?.status === 'INGAME' && 'bg-ingame'}
                         relative bottom-[25%] left-[80%]
                         w-3 h-3 md:w-4 md:h-4 rounded-full`}
             ></div>

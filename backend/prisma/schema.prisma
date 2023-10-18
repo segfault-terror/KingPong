@@ -20,7 +20,7 @@ model Session {
 enum Status {
   OFFLINE
   ONLINE
-  BUSY
+  INGAME
 }
 
 enum League {
