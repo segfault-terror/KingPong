@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { UserStatus } from '../../chat/DirectMessage';
 
 export type UserCircleInfoProps = {
     username: string;
@@ -22,7 +21,7 @@ export default function UserCircleInfo({ username }: UserCircleInfoProps) {
     });
 
     return (
-        <div className="rounded-full w-24 h-24 md:w-32 md:h-32">
+        <div className="rounded-full w-24 h-24 md:w-32 md:h-32 bg-background">
             <div className="rounded-full w-full h-full overflow-hidden">
                 <img
                     src={data?.avatar}
