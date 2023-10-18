@@ -11,7 +11,7 @@ type ProfileCardProps = {
 };
 
 export default function ProfileCard({ username }: ProfileCardProps) {
-    const { data } = useQuery({
+    const { data: visitedUser } = useQuery({
         queryKey: ['profile', username],
         queryFn: async () => {
             const { data } = await axios.get(
@@ -23,7 +23,18 @@ export default function ProfileCard({ username }: ProfileCardProps) {
             return data;
         },
     });
-    const leagueImgPath = `/images/${data?.stats.league.toLowerCase()}-league.svg`;
+
+    const { data: currentUser } = useQuery({
+        queryKey: ['profile', 'current'],
+        queryFn: async () => {
+            const { data } = await axios.get('http://localhost:3000/user/me', {
+                withCredentials: true,
+            });
+            return data;
+        },
+    });
+
+    const leagueImgPath = `/images/${visitedUser?.stats.league.toLowerCase()}-league.svg`;
 
     return (
         <div
@@ -43,8 +54,8 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                     <img
                         src={leagueImgPath}
                         alt="League"
-                        title={`${data?.stats.league.toLowerCase()} league`}
-                        className="ml-2"
+                        title={`${visitedUser?.stats.league.toLowerCase()} league`}
+                        className="ml-2 select-none"
                     />
                 </div>
             </div>
@@ -53,18 +64,20 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                 <div className="flex gap-1 items-center md:text-2xl">
                     <div className="flex items-center text-online">
                         <AiFillTrophy />
-                        <span>{data?.stats.wins}</span>
+                        <span>{visitedUser?.stats.wins}</span>
                     </div>
                     <div className="flex items-center text-red-600">
                         <AiOutlineClose />
-                        <span>{data?.stats.losses}</span>
+                        <span>{visitedUser?.stats.losses}</span>
                     </div>
                 </div>
 
                 <div className="flex gap-4 text-secondary-200 items-center md:text-2xl">
-                    <Link href={`/chat/dm/${username}`}>
-                        <TbMessage2 />
-                    </Link>
+                    {currentUser?.id !== visitedUser?.id && (
+                        <Link href={`/chat/dm/${username}`}>
+                            <TbMessage2 />
+                        </Link>
+                    )}
                     <TbUserPlus />
                     <TbUserX />
                 </div>
