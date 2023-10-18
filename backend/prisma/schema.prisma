@@ -40,6 +40,10 @@ model User {
   stats     Stats?
   achievements Achievement[]
   Notifications Notification[]
+  friends User[] @relation("friends")
+  friendOf User[] @relation("friends")
+  sentFriendRequests FriendRequest[] @relation("sender")
+  pendingFriendRequests FriendRequest[] @relation("receiver")
   createdAt DateTime @default(now())
 }
 
@@ -80,4 +84,12 @@ model Notification {
   userId    String @unique
   user     User? @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
+}
+
+model FriendRequest {
+    @@id([senderId, receiverId])
+    senderId String @unique
+    receiverId String @unique
+    sender User @relation("sender", fields: [senderId], references: [id])
+    receiver User @relation("receiver", fields: [receiverId], references: [id])
 }
