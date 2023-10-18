@@ -112,7 +112,7 @@ function ChannelMessage(props: ChannelMessageProps) {
                     className={`w-8 h-8
                             object-cover
                             border-[1px] border-secondary-200 rounded-full
-                            absolute ${
+                            absolute select-none ${
                                 props.isMe ? myImgStyles : otherImgStyles
                             }`}
                 />

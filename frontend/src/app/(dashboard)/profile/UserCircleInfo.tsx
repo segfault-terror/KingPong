@@ -26,7 +26,7 @@ export default function UserCircleInfo({ username }: UserCircleInfoProps) {
                 <img
                     src={data?.avatar}
                     alt={`${username}'s avatar`}
-                    className="rounded-full object-cover w-full h-full border-4 border-secondary-200"
+                    className="rounded-full object-cover w-full h-full border-4 border-secondary-200 select-none"
                 />
                 <div
                     className="text-primary bg-secondary-200

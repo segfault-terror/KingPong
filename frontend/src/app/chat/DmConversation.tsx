@@ -75,7 +75,7 @@ function UserDMInfo({ userName }: DmConversationProps) {
                 <img
                     src={user.userImg}
                     alt={`${userName}'s avatar`}
-                    className="w-12 h-12 object-cover border-[3px] border-secondary-200 rounded-full"
+                    className="w-12 h-12 object-cover border-[3px] border-secondary-200 rounded-full select-none"
                 />
             </Link>
 

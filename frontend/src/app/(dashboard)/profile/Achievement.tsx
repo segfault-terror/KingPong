@@ -16,7 +16,7 @@ export default function Achievement({
                 <h2 className="text-xl text-pink font-bold">{title}</h2>
                 <p className="text-xs text-gray-400">{description}</p>
             </div>
-            <img src={imagePath} alt={title} />
+            <img src={imagePath} alt={title} className="select-none" />
         </div>
     );
 }

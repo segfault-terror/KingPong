@@ -25,7 +25,7 @@ function DirectMessage({
                         title={`${userName}'a avatar`}
                         className="border-secondary-200 rounded-full border-4
                                 w-[64px] h-[64px]
-                                text-white object-cover"
+                                text-white object-cover select-none"
                     />
                     <div
                         className={`w-[12px] h-[12px]

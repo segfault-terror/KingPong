@@ -64,7 +64,7 @@ function UserCircle({ avatarPath, level }: UserCircleProps) {
                 <img
                     src={avatarPath}
                     alt="User Avatar"
-                    className="rounded-full object-cover w-full h-full border-4 border-secondary-200"
+                    className="rounded-full object-cover w-full h-full border-4 border-secondary-200 select-none"
                 />
                 <div
                     className="text-primary bg-secondary-200

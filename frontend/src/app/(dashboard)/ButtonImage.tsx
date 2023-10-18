@@ -8,7 +8,7 @@ export default function ButtonImage(props: Props) {
     const { children, ...rest } = props;
     const renderImage = () => {
         return React.cloneElement(children as React.ReactElement, {
-            className: 'w-9 h-9 object-cover',
+            className: 'w-9 h-9 object-cover select-none',
         });
     };
     return (

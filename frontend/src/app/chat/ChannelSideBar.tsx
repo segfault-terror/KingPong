@@ -21,7 +21,7 @@ function Member({
                 className="border-[1px] border-secondary-200
                         rounded-full object-cover
                         w-10 h-10
-                        flex-shrink-0"
+                        flex-shrink-0 select-none"
             />
             <p className="text-silver">{username}</p>
         </Link>

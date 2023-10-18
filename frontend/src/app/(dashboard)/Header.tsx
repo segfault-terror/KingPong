@@ -31,7 +31,7 @@ export default function Header() {
                 <Link href="/home" className="block w-56">
                     <img
                         src="/images/logo.svg"
-                        className="w-56 lg:w-56"
+                        className="w-56 lg:w-56 select-none"
                         alt="logo"
                     />
                 </Link>
