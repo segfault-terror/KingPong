@@ -119,4 +119,19 @@ export class UserService {
             },
         });
     }
+
+    async getFriends(username: string) {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                username,
+            },
+            include: {
+                friends: true,
+                friendOf: true,
+            },
+        });
+        user.friends = [...new Set([...user.friends, ...user.friendOf])];
+        delete user.friendOf;
+        return user;
+    }
 }

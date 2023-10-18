@@ -147,4 +147,15 @@ export class UserController {
         delete user.password;
         return user;
     }
+
+    @Get('/get/:username/friends')
+    @UseGuards(AuthGard)
+    async getUserFriends(@Param('username') username: string) {
+        const user = await this.userService.getFriends(username);
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+        delete user.password;
+        return user;
+    }
 }
