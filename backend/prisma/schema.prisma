@@ -82,7 +82,7 @@ model Notification {
   readed    Boolean  @default(false)
   type      NotifType
   userId    String @unique
-  user     User? @relation(fields: [userId], references: [id])
+  user     User @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
 
