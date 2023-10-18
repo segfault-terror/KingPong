@@ -13,7 +13,7 @@ import { NotificationProps, NotificationState } from './types';
 
 const Empty = () => {
     return (
-        <div className="relative flex justify-center items-center h-24 w-full my-1 bg-background rounded-2xl">
+        <div className="relative flex justify-center items-center h-3/5 w-full my-1 bg-background rounded-2xl">
             <div className=" absolute inset-0 flex flex-col justify-center items-center font-jost text-white">
                 No new notifications
             </div>
@@ -22,11 +22,11 @@ const Empty = () => {
     );
 };
 
-const Notife = ({ id, type, sender, readed }: NotificationProps, updateModal: Function, updateNotif: Function) => {
+const Notife = ({ id, type, username, avatar, readed }: NotificationProps, updateModal: Function, updateNotif: Function) => {
     const message =
         type == 'Game'
-            ? `${sender.name} has invited you to a game!`
-            : `${sender.name} has sent you a friend request!`;
+            ? `${username} has invited you to a game!`
+            : `${username} has sent you a friend request!`;
     const image =
         type == 'Game' ? '/images/fight.svg' : '/images/add-friend.svg';
     const color = readed == true ? 'bg-background' : 'bg-amber-500';
@@ -39,11 +39,11 @@ const Notife = ({ id, type, sender, readed }: NotificationProps, updateModal: Fu
                 className="flex justify-around items-center w-full h-full cursor-pointer"
                 onClick={() => {
                     updateModal(true);
-                    updateNotif({ id, type, sender, readed });
+                    updateNotif({ id, type, username, avatar, readed });
                 }}
             >
                 <img
-                    src={sender.avatar}
+                    src={avatar}
                     alt="image"
                     className="w-20 rounded-full border-white border m-2"
                 />
@@ -75,10 +75,8 @@ export default function Notification({ notifications }: NotificationState) {
             id: 0,
             type: 'Game',
             readed: false,
-            sender: {
-                name: '',
-                avatar: '',
-            },
+            username: '',
+            avatar: '',
     };
     const [notif, setNotif] = useState<NotificationProps>(
         empty,
@@ -114,7 +112,7 @@ export default function Notification({ notifications }: NotificationState) {
                                       }
                                       isOpen={modalIsOpen}
                                       onRequestClose={() => setIsOpen(false)}
-                                      className={`flex flex-col absolute inset-0 justify-center items-center w-5/6 h-48 md:w-1/2 md:h-1/2 lg:w-2/5 lg:h-1/4`}
+                                      className={`flex flex-col absolute inset-0 justify-center items-center w-5/6 h-48 md:w-1/2  lg:w-2/5 lg:h-1/4`}
                                       style={{
                                           overlay: {
                                               background: 'rgba(0,0,0,0.1)',

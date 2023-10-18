@@ -3,10 +3,8 @@ import { type } from "os";
 export type NotificationProps = {
 	id: number;
 	type: 'Game' | 'Friend';
-	sender: {
-		name: string;
-		avatar: string;
-	}
+	username: string;
+	avatar: string;
 	readed: boolean;
 }
 

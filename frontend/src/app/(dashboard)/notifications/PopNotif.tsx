@@ -7,18 +7,16 @@ const empty : NotificationProps = {
 	id: 0,
 	type: 'Game',
 	readed: false,
-	sender: {
-		name: '',
-		avatar: '',
-	},
+	username: '',
+	avatar: '',
 };
 
 
 export default function PopNotif ({ notif, updateModal, updateNotif }: { notif: NotificationProps, updateModal: Function, updateNotif: Function }): JSX.Element  {
 	const message =
 		notif.type == 'Game'
-			? `${notif.sender.name} has invited you to a game!`
-			: `${notif.sender.name} has sent you a friend request!`;
+			? `${notif.username} has invited you to a game!`
+			: `${notif.username} has sent you a friend request!`;
 	const bgImage = notif.type == 'Game' ? '/images/fight.svg' : '/images/add-friend.svg';
 	return (
 		<div
@@ -31,12 +29,12 @@ export default function PopNotif ({ notif, updateModal, updateNotif }: { notif: 
 			<div className="w-full h-full flex flex-col justify-between items-center bg-gradient-radial from-primary to-background rounded-lg border border-secondary-500">
 				<div className="flex flex-col justify-between items-center m-auto z-30">
 					<img
-						src={notif.sender.avatar}
+						src={notif.avatar}
 						alt=""
-						className=" w-2/6 border-white border rounded-full p-1 mr-2 bg-background "
+						className="w-24 md:w-32 lg:w-44 border-white border rounded-full mr-2 bg-background "
 					/>
-					<p className="flex justify-center items-center mx-2">
-						{notif.sender.name} {message}
+					<p className="flex justify-center items-center mx-2 text:md lg:text-2xl align-middle text-clip">
+						{message}
 					</p>
 				</div>
 				<div className="grid grid-cols-2 w-full z-30">
