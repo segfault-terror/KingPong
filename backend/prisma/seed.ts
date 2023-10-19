@@ -29,15 +29,23 @@ async function seed() {
             username: 'aaggoujj',
             email: '',
             password: '',
-            avatar: '',
+            avatar: 'https://cdn.intra.42.fr/users/90acb3217b4be8350fa9f9fc32dd2200/aaggoujj.jpg',
             fullname: 'Full Name',
+            stats:{
+                create: {
+                    wins: 0,
+                    losses: 0,
+                    rank: 1000,
+                    league: 'BRONZE'
+                }
+            }
         },
     });
     await prisma.notification.createMany({
         data: [
             {
                 readed: false,
-                type: NotifType.FRIEND,
+                type: NotifType.GAME,
                 userId: user.id,
             },
         ],
