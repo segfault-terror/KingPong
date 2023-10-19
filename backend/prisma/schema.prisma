@@ -97,9 +97,13 @@ model FriendRequest {
 }
 
 model Game {
-  id String @id @default(cuid())
-  player1 User @relation("player1", fields: [player1Id], references: [id])
-  player1Id String @unique
-  player2 User @relation("player2", fields: [player2Id], references: [id])
-  player2Id String @unique
+    id String @id @default(cuid())
+    player1 User @relation("player1", fields: [player1Id], references: [id])
+    player1Id String @unique
+    player2 User @relation("player2", fields: [player2Id], references: [id])
+    player2Id String @unique
+    player1_score Int @default(0)
+    player2_score Int @default(0)
+    ranked Boolean @default(false)
+    createdAt DateTime @default(now())
 }

@@ -134,4 +134,23 @@ export class UserService {
         delete user.friendOf;
         return user;
     }
+
+    async getMatchHistory(username: string) {
+        const user = await this.prisma.user.findUnique({
+            where: { username },
+            include: {
+                gamesAsPlayer1: true,
+                gamesAsPlayer2: true,
+            },
+        });
+        const result = {
+            ...user,
+            games: [
+                ...new Set([...user.gamesAsPlayer1, ...user.gamesAsPlayer2]),
+            ],
+        };
+        delete result.gamesAsPlayer1;
+        delete result.gamesAsPlayer2;
+        return result;
+    }
 }
