@@ -15,6 +15,20 @@ export class UserService {
         });
     }
 
+    async leaderboard(): Promise<User[]> {
+        return this.prisma.user.findMany({
+            orderBy: {
+                stats: {
+                    rank: 'desc',
+                },
+            },
+            include: {
+                stats: true,
+            },
+            
+        });
+    }
+
     async users(params: {
         skip?: number;
         take?: number;
@@ -29,6 +43,9 @@ export class UserService {
             cursor,
             where,
             orderBy,
+            include: {
+                stats: true,
+            },
         });
     }
 

@@ -25,6 +25,7 @@ import * as fs from 'fs';
 import { Response } from 'express';
 
 @Controller('user')
+// @Controller('users')
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
@@ -167,5 +168,11 @@ export class UserController {
             throw new NotFoundException('User not found');
         }
         return user;
+    }
+
+    @Get('users')
+    @UseGuards(AuthGard)
+    async users() {
+        return this.userService.users({});
     }
 }
