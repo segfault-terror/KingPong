@@ -1,11 +1,10 @@
 'use client';
+import { backendHost } from '@/app/globals';
 import { profileModalContext } from '@/contexts/contexts';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useContext } from 'react';
 import Achievement from './Achievement';
-import Loading from '@/app/loading';
-import { backendHost } from '@/app/globals';
 
 type AchievementListProps = {
     username: string;
