@@ -5,7 +5,7 @@ import Decline from '../../../../public/images/decline.svg';
 
 const empty : NotificationProps = {
 	id: 0,
-	type: 'Game',
+	type: 'GAME',
 	readed: false,
 	username: '',
 	avatar: '',
@@ -14,10 +14,10 @@ const empty : NotificationProps = {
 
 export default function PopNotif ({ notif, updateModal, updateNotif }: { notif: NotificationProps, updateModal: Function, updateNotif: Function }): JSX.Element  {
 	const message =
-		notif.type == 'Game'
+		notif.type == 'GAME'
 			? `${notif.username} has invited you to a game!`
 			: `${notif.username} has sent you a friend request!`;
-	const bgImage = notif.type == 'Game' ? '/images/fight.svg' : '/images/add-friend.svg';
+	const bgImage = notif.type == 'GAME' ? '/images/fight.svg' : '/images/add-friend.svg';
 	return (
 		<div
 			key={notif.id}

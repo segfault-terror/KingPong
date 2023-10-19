@@ -2,7 +2,7 @@ import { type } from "os";
 
 export type NotificationProps = {
 	id: number;
-	type: 'Game' | 'Friend';
+	type: 'GAME' | 'FRIEND';
 	username: string;
 	avatar: string;
 	readed: boolean;

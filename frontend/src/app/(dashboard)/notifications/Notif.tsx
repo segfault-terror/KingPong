@@ -3,13 +3,13 @@ import Image from 'next/image';
 import Decline from '../../../../public/images/decline.svg';
 import { NotificationProps } from './types';
 
-const Notife = ({ id, type, sender, readed }: NotificationProps, updateModal: Function, updateNotif: Function) => {
+const Notife = ({ id, type, username,avatar, readed }: NotificationProps, updateModal: Function, updateNotif: Function) => {
     const message =
-        type == 'Game'
-            ? `${sender.name} has invited you to a game!`
-            : `${sender.name} has sent you a friend request!`;
+        type == 'GAME'
+            ? `${username} has invited you to a game!`
+            : `${username} has sent you a friend request!`;
     const image =
-        type == 'Game' ? '/images/fight.svg' : '/images/add-friend.svg';
+        type == 'GAME' ? '/images/fight.svg' : '/images/add-friend.svg';
     const color = readed == true ? 'bg-background' : 'bg-amber-500';
     return (
         <div
@@ -20,11 +20,11 @@ const Notife = ({ id, type, sender, readed }: NotificationProps, updateModal: Fu
                 className="flex justify-around items-center w-full h-full cursor-pointer"
                 onClick={() => {
                     updateModal(true);
-                    updateNotif({ id, type, sender, readed });
+                    updateNotif({ id, type, username, avatar, readed });
                 }}
             >
                 <img
-                    src={sender.avatar}
+                    src={avatar}
                     alt="image"
                     className="w-20 rounded-full border-white border m-2"
                 />
