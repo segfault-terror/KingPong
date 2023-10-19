@@ -22,7 +22,7 @@ export class AuthController {
 
     @Get('intra/redirect')
     @UseGuards(IntraAuthGuard)
-    @Redirect('http://localhost:3000/')
+    @Redirect('/')
     async intraLoginRedirect() {
         // handles the redirect from 42 with the user token
         return '<script>window.opener.postMessage({ message: "done" }, "*");window.close();</script>';
@@ -36,7 +36,7 @@ export class AuthController {
 
     @Get('google/redirect')
     @UseGuards(GoogleAuthGuard)
-    @Redirect('http://localhost:3000/')
+    @Redirect('/')
     async googleLoginRedirect() {
         // handles the redirect from google with the user token
         return '<script>window.opener.postMessage({ message: "done" }, "*");window.close();</script>';
@@ -60,7 +60,7 @@ export class AuthController {
 
     @Get('logout')
     @UseGuards(AuthGard)
-    @Redirect('http://localhost:8080/signin')
+    @Redirect()
     async logout(@Req() req: any, @Headers('referer') referer: string) {
         // logs out the user
         req.session.destroy();

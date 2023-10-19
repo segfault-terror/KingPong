@@ -8,6 +8,7 @@ import { useContext } from 'react';
 import { profileModalContext } from '@/contexts/contexts';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { backendHost } from '@/app/globals';
 
 type FullFriendListProps = {
     username: string;
@@ -18,7 +19,7 @@ export default function FullFriendList({ username }: FullFriendListProps) {
         queryKey: ['userFriends', username],
         queryFn: async () => {
             const user = await axios.get(
-                `http://localhost:3000/user/get/${username}/friends`,
+                `${backendHost}/user/get/${username}/friends`,
                 { withCredentials: true },
             );
             return user.data;

@@ -158,4 +158,15 @@ export class UserController {
         delete user.password;
         return user;
     }
+
+    @Get('/get/:username/games')
+    @UseGuards(AuthGard)
+    async getUserGames(@Param('username') username: string) {
+        const user = await this.userService.getMatchHistory(username);
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+        delete user.password;
+        return user;
+    }
 }

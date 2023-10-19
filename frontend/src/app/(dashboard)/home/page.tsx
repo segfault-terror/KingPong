@@ -1,4 +1,5 @@
 'use client';
+import { backendHost } from '@/app/globals';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
@@ -9,7 +10,7 @@ export default function Page() {
         queryKey: ['user'],
         queryFn: async () => {
             try {
-                return await axios.get('http://localhost:3000/user/me', {
+                return await axios.get(`${backendHost}/user/me`, {
                     withCredentials: true,
                 });
             } catch {

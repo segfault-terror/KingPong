@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useContext } from 'react';
 import Achievement from './Achievement';
 import Loading from '@/app/loading';
+import { backendHost } from '@/app/globals';
 
 type AchievementListProps = {
     username: string;
@@ -16,7 +17,7 @@ export default function AchievementList({ username }: AchievementListProps) {
         queryKey: ['achievements', username],
         queryFn: async () => {
             const { data } = await axios.get(
-                `http://localhost:3000/user/get/${username}/achievements`,
+                `${backendHost}/user/get/${username}/achievements`,
                 {
                     withCredentials: true,
                 },
