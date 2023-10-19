@@ -1,46 +1,81 @@
+import { useQuery } from '@tanstack/react-query';
 import GameResult from './GameResult';
 import { Users, UsersMatchHistory, UsersStats } from './data/ProfileData';
+import axios from 'axios';
+import { backendHost } from '@/app/globals';
 
 type GameResultModalProps = {
     userName: string;
 };
 
 export default function MatchHistoryModal({ userName }: GameResultModalProps) {
-    const gameResults = UsersMatchHistory.filter(
-        (gameResult) => gameResult.username === userName,
-    );
+    const { data: gameResults, isLoading } = useQuery({
+        queryKey: ['matchHistory', userName],
+        queryFn: async () => {
+            const gameResults = await axios.get(
+                `${backendHost}/user/get/${userName}/games`,
+                { withCredentials: true },
+            );
+            return gameResults.data;
+        },
+    });
 
-    const user = Users.find((user) => user.username === userName);
-    const userStats = UsersStats.find(
-        (userStat) => userStat.username === userName,
-    );
+    const { data: me, isLoading: meIsLoading } = useQuery({
+        queryKey: ['user', 'me'],
+        queryFn: async () => {
+            const result = await axios.get(`${backendHost}/user/me`, {
+                withCredentials: true,
+            });
+            return result.data;
+        },
+    });
+
+    if (isLoading || meIsLoading) return <div>Loading...</div>;
 
     return (
         <div className="px-4 py-1">
-            {gameResults.map((gameResult, idx: number) => {
-                const opponent = Users.find(
-                    (user) => user.username === gameResult.opponentUsername,
-                );
-                const opponentStats = UsersStats.find((userStat) => {
-                    return userStat.username === gameResult.opponentUsername;
-                });
-                return (
-                    <div key={idx}>
-                        <GameResult
-                            opponentUsername={gameResult.opponentUsername}
-                            playerAvatar={user!.avatarPath}
-                            opponentAvatar={opponent!.avatarPath}
-                            playerLevel={userStats!.level}
-                            opponentLevel={opponentStats!.level}
-                            playerScore={gameResult.playerScore}
-                            opponentScore={gameResult.opponentScore}
-                        />
-                        {idx < gameResults.length - 1 && (
-                            <hr className="border-1 border-secondary-200 rounded-full" />
-                        )}
-                    </div>
-                );
-            })}
+            {gameResults.map(
+                (
+                    { id, player1, player2, player1_score, player2_score }: any,
+                    idx: number,
+                ) => {
+                    const isMe = player1.id === me?.id;
+
+                    return (
+                        <div key={id}>
+                            <GameResult
+                                playerUsername={
+                                    isMe ? player1.username : player2.username
+                                }
+                                opponentUsername={
+                                    isMe ? player2.username : player1.username
+                                }
+                                playerAvatar={
+                                    isMe ? player1.avatar : player2.avatar
+                                }
+                                opponentAvatar={
+                                    isMe ? player2?.avatar : player1.avatar
+                                }
+                                playerLevel={
+                                    isMe
+                                        ? player1?.stats.level
+                                        : player2.stats.level
+                                }
+                                opponentLevel={
+                                    isMe
+                                        ? player2?.stats.level
+                                        : player1.stats.level
+                                }
+                                playerScore={player1_score}
+                                opponentScore={player2_score}
+                            />
+                            {idx < gameResults.length - 1 && (
+                                <hr className="border-1 border-secondary-200 rounded-full" />
+                            )}
+                        </div>
+                    );
+                },
+            )}
         </div>
     );
 }

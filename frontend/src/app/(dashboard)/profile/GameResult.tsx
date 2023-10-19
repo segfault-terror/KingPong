@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 export type GameResultProps = {
+    playerUsername: string;
     opponentUsername: string;
     playerAvatar: string;
     opponentAvatar: string;
@@ -11,6 +12,7 @@ export type GameResultProps = {
 };
 
 export default function GameResult({
+    playerUsername,
     opponentUsername,
     playerAvatar,
     opponentAvatar,
@@ -29,7 +31,7 @@ export default function GameResult({
                     playerScore > opponentScore ? winnerShadow : loserShadow
                 }
             >
-                <UserCircle avatarPath={playerAvatar} level={playerLevel} />
+                <UserCircle avatarPath={playerAvatar} level={playerLevel} playerUsername={playerUsername} />
             </div>
 
             <p className="text-secondary-200 text-xl font-jost">
@@ -45,6 +47,7 @@ export default function GameResult({
                     <UserCircle
                         avatarPath={opponentAvatar}
                         level={opponentLevel}
+                        playerUsername={opponentUsername}
                     />
                 </Link>
             </div>
@@ -53,17 +56,19 @@ export default function GameResult({
 }
 
 type UserCircleProps = {
+    playerUsername: string;
     avatarPath: string;
     level: number;
 };
 
-function UserCircle({ avatarPath, level }: UserCircleProps) {
+function UserCircle({ playerUsername, avatarPath, level }: UserCircleProps) {
     return (
         <div className="rounded-full w-24 h-24">
             <div className="rounded-full w-full h-full overflow-hidden">
                 <img
                     src={avatarPath}
                     alt="User Avatar"
+                    title={`${playerUsername}`}
                     className="rounded-full object-cover w-full h-full border-4 border-secondary-200 select-none"
                 />
                 <div

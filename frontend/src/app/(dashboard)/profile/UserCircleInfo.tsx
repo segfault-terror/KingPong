@@ -16,7 +16,6 @@ export default function UserCircleInfo({ username }: UserCircleInfoProps) {
                     withCredentials: true,
                 },
             );
-            console.log(data);
             return data;
         },
     });
