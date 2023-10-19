@@ -11,10 +11,11 @@ export class IntraStrategy extends PassportStrategy(Strategy) {
         private readonly configService: ConfigService,
         private readonly authService: AuthService,
     ) {
+        const host = configService.get('HOST');
         super({
             clientID: configService.get('INTRA_CLIENT'),
             clientSecret: configService.get('INTRA_SECRET'),
-            callbackURL: 'http://localhost:3000/auth/intra/redirect',
+            callbackURL: `${host}/auth/intra/redirect`,
         });
     }
 

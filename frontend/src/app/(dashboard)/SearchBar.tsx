@@ -4,6 +4,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useState } from 'react';
 import { MdSearch } from 'react-icons/md';
+import { backendHost } from '../globals';
 
 type SearchProfileProps = {
     avatar: string;
@@ -79,7 +80,7 @@ export default function SearchBar({ className }: { className?: string }) {
                 return [];
             }
             const { data } = await axios.get(
-                'http://localhost:3000/user/search',
+                `${backendHost}/user/search`,
                 {
                     withCredentials: true,
                     params: { q: search },

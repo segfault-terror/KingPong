@@ -4,6 +4,7 @@ import Header from './Header';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
 import Loading from '../loading';
+import { backendHost } from '../globals';
 
 export default function DashboardLayout({
     children,
@@ -14,7 +15,7 @@ export default function DashboardLayout({
         queryKey: ['auth'],
         queryFn: async () => {
             try {
-                return await axios.get('http://localhost:3000/auth/status', {
+                return await axios.get(`${backendHost}/auth/status`, {
                     withCredentials: true,
                 });
             } catch {
@@ -26,7 +27,7 @@ export default function DashboardLayout({
     // const [isConnected, setIsConnected] = useState(false);
 
     // useEffect(() => {
-    //     const socket = io('http://localhost:3000/auth', {
+    //     const socket = io(`${backendHost}/auth`, {
     //         withCredentials: true,
     //     });
 
