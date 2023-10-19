@@ -25,12 +25,13 @@ export default function Page() {
         return <Loading />;
     }
     const notifications = data.map((notification: any) => ({
+        id: notification.id,
         username: notification.user.username,
         avatar: notification.user.avatar,
         readed: notification.readed,
         type: notification.type,
-    }));
-
+    }) as NotificationProps);
+    console.log(notifications);
     return (
         <div id="Notification">
             <Notification notifications={notifications} />

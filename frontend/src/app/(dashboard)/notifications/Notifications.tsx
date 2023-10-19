@@ -9,8 +9,6 @@ import Modal from 'react-modal';
 import PopNotif from './PopNotif';
 import { NotificationProps, NotificationState } from './types';
 
-
-
 const Empty = () => {
     return (
         <div className="relative flex justify-center items-center h-3/5 w-full my-1 bg-background rounded-2xl">
@@ -22,18 +20,22 @@ const Empty = () => {
     );
 };
 
-const Notife = ({ id, type, username, avatar, readed }: NotificationProps, updateModal: Function, updateNotif: Function) => {
+const Notife = (
+    { id, type, username, avatar, readed }: NotificationProps,
+    updateModal: Function,
+    updateNotif: Function,
+) => {
+    console.log(type);
     const message =
-        type == 'Game'
+        type == 'GAME'
             ? `${username} has invited you to a game!`
             : `${username} has sent you a friend request!`;
     const image =
-        type == 'Game' ? '/images/fight.svg' : '/images/add-friend.svg';
+        type == 'GAME' ? '/images/fight.svg' : '/images/add-friend.svg';
     const color = readed == true ? 'bg-background' : 'bg-amber-500';
     return (
         <div
             className={`flex justify-between items-center h-24 w-full my-1 ${color} rounded-2xl relative`}
-
         >
             <div
                 className="flex justify-around items-center w-full h-full cursor-pointer"
@@ -47,7 +49,9 @@ const Notife = ({ id, type, username, avatar, readed }: NotificationProps, updat
                     alt="image"
                     className="w-20 rounded-full border-white border m-2"
                 />
-                <div className="font-jost text-white text-md sm:text-lg md:text-xl">{message}</div>
+                <div className="font-jost text-white text-md sm:text-lg md:text-xl">
+                    {message}
+                </div>
             </div>
             <img src={image} alt="fight" className="w-12 px-1" />
             <button
@@ -62,31 +66,26 @@ const Notife = ({ id, type, username, avatar, readed }: NotificationProps, updat
     );
 };
 export default function Notification({ notifications }: NotificationState) {
-
-        useEffect(() => {
-            Modal.setAppElement('#Notification');
-        }, []);
+    useEffect(() => {
+        Modal.setAppElement('#Notification');
+    }, []);
 
     const [modalIsOpen, setIsOpen] = useState(false);
     const updateModal = (modal: boolean) => {
         setIsOpen(modal);
-    }
-    const empty : NotificationProps = {
-            id: 0,
-            type: 'Game',
-            readed: false,
-            username: '',
-            avatar: '',
     };
-    const [notif, setNotif] = useState<NotificationProps>(
-        empty,
-    );
+    const empty: NotificationProps = {
+        id: 0,
+        type: 'GAME',
+        readed: false,
+        username: '',
+        avatar: '',
+    };
+    const [notif, setNotif] = useState<NotificationProps>(empty);
 
     const updateNotif = (notif: NotificationProps) => {
         setNotif(notif);
-    }
-
-
+    };
 
     return (
         <div
@@ -123,7 +122,11 @@ export default function Notification({ notifications }: NotificationState) {
                                           },
                                       }}
                                   >
-                                      <PopNotif notif={notif} updateModal={updateModal} updateNotif={updateNotif}  />
+                                      <PopNotif
+                                          notif={notif}
+                                          updateModal={updateModal}
+                                          updateNotif={updateNotif}
+                                      />
                                   </Modal>
                               </div>
                           ))}
