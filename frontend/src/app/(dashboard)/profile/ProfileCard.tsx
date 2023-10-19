@@ -16,7 +16,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
         queryKey: ['profile', username],
         queryFn: async () => {
             const { data } = await axios.get(
-                `http://localhost:3000/user/get/${username}/stats`,
+                `${backendHost}/user/get/${username}/stats`,
                 {
                     withCredentials: true,
                 },

@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import Notification from './Notifications';
 import { NotificationProps, NotificationState } from './types';
@@ -6,18 +6,15 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '@/app/loading';
 import { useContext } from 'react';
-
+import { backendHost } from '@/app/globals';
 
 export default function Page() {
     const { data, isLoading } = useQuery({
         queryKey: ['notifications'],
         queryFn: async () => {
-            const { data } = await axios.get(
-                `http://localhost:3000/notifications`,
-                {
-                    withCredentials: true,
-                },
-            );
+            const { data } = await axios.get(`${backendHost}/notifications`, {
+                withCredentials: true,
+            });
             return data;
         },
     });

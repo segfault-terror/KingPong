@@ -3,6 +3,7 @@ import { Users, UsersFriends } from './data/ProfileData';
 import UserCircleInfo from './UserCircleInfo';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import { backendHost } from '@/app/globals';
 
 type FriendListModalProps = {
     userName: string;
@@ -13,7 +14,7 @@ export default function FriendListModal({ userName }: FriendListModalProps) {
         queryKey: ['userFriends', userName],
         queryFn: async () => {
             const user = await axios.get(
-                `http://localhost:3000/user/get/${userName}/friends`,
+                `${backendHost}/user/get/${userName}/friends`,
                 { withCredentials: true },
             );
             return user.data;
