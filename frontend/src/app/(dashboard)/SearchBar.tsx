@@ -5,16 +5,23 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { MdSearch } from 'react-icons/md';
 import { backendHost } from '../globals';
+import DropdownModal from '../chat/DropdownModal';
 
 type SearchProfileProps = {
     avatar: string;
     fullname: string;
     username: string;
+    closeModal: () => void;
 };
 
-function SearchProfile({ avatar, fullname, username }: SearchProfileProps) {
+function SearchProfile({
+    avatar,
+    fullname,
+    username,
+    closeModal,
+}: SearchProfileProps) {
     return (
-        <Link href={`/profile/${username}`}>
+        <Link href={`/profile/${username}`} onClick={closeModal}>
             <div className="flex items-center px-4 py-2 hover:bg-background">
                 <div className="w-12 h-12 rounded-full bg-secondary-200">
                     <img
@@ -39,14 +46,15 @@ function SearchProfile({ avatar, fullname, username }: SearchProfileProps) {
 function SearchResults({
     results,
     className,
+    closeModal,
 }: {
     results?: SearchProfileProps[];
     className?: string;
+    closeModal: () => void;
 }) {
     return (
         <div
-            className={`absolute top-11 ${results ? 'block' : 'hidden'}
-        bg-primary w-full max-h-96 overflow-y-scroll
+            className={`bg-primary w-full max-h-96 overflow-y-scroll
          scrollbar-thumb-secondary-500 scrollbar-track-transparent scrollbar-thin ${className}`}
         >
             {results?.length === 0 && (
@@ -60,6 +68,7 @@ function SearchResults({
                     avatar={result.avatar}
                     fullname={result.fullname}
                     username={result.username}
+                    closeModal={closeModal}
                 />
             ))}
         </div>
@@ -71,6 +80,7 @@ export default function SearchBar({ className }: { className?: string }) {
     const [results, setResults] = useState<SearchProfileProps[] | undefined>(
         [],
     );
+    const [showResults, setShowResults] = useState(false);
 
     const {} = useQuery({
         queryKey: ['search', search],
@@ -106,13 +116,32 @@ export default function SearchBar({ className }: { className?: string }) {
                             text-secondary-200 font-jost
                             outline-none"
                 type="text"
-                onChange={(e) => setSearch(e.target.value.trim())}
+                onChange={(e) => {
+                    const trimmed = e.target.value.trim();
+                    setSearch(trimmed);
+                    setShowResults(trimmed !== '');
+                }}
+                onFocus={(e) => {
+                    if (e.target.value.trim() === '') return;
+                    setShowResults(true);
+                }}
                 placeholder="Search Player"
             />
-            <SearchResults
-                className="border border-secondary-500"
-                results={results}
-            />
+            {showResults && (
+                <DropdownModal
+                    onClose={() => setShowResults(false)}
+                    childrenClassName="absolute top-[135px] w-full px-3
+                                        md:left-1/2 md:-translate-x-1/2 md:top-[75px] md:w-1/3 md:px-1"
+                >
+                    <div>
+                        <SearchResults
+                            className="border border-secondary-500"
+                            results={results}
+                            closeModal={() => setShowResults(false)}
+                        />
+                    </div>
+                </DropdownModal>
+            )}
         </div>
     );
 }

@@ -81,7 +81,10 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
                     </Modal>
                 )}
                 {dotsDropdown && (
-                    <DropdownModal onClose={() => setDotsDropdown(false)}>
+                    <DropdownModal
+                        onClose={() => setDotsDropdown(false)}
+                        childrenClassName="top-56 lg:top-52 right-12"
+                    >
                         <ChatMenu />
                     </DropdownModal>
                 )}
