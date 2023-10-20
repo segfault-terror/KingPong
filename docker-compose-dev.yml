@@ -1,0 +1,63 @@
+version: '3.8'
+
+name: kingpong-dev
+
+services:
+  backend:
+    container_name: backend-dev
+    build: 
+      context: ./backend
+      dockerfile: dev.dockerfile
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - 3030:3000
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - backend-network
+
+  frontend:
+    container_name: frontend-dev
+    build:
+      context: ./frontend
+      dockerfile: dev.dockerfile
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - 5050:3000
+    restart: always
+
+  nginx:
+    container_name: nginx-dev
+    build: 
+      context: ./nginx
+      dockerfile: dev.dockerfile
+    ports:
+      - 8080:80
+    depends_on:
+      - backend
+      - frontend
+    restart: always
+
+  db:
+    container_name: db-dev
+    image: postgres
+    restart: always
+    env_file:
+      - '.env'
+    ports:
+      - 5432:5432
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    networks:
+      - backend-network
+
+volumes:
+  dbdata:
+
+networks:
+  backend-network:

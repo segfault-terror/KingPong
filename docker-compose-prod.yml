@@ -1,0 +1,57 @@
+version: '3.8'
+
+name: kingpong-prod
+
+services:
+  backend:
+    container_name: backend-prod
+    build: 
+      context: ./backend
+      dockerfile: prod.dockerfile
+    ports:
+      - 3000:3000
+    restart: always
+    networks:
+      - backend-network
+    depends_on:
+      - db
+
+  frontend:
+    container_name: frontend-prod
+    build: 
+      context: ./frontend
+      dockerfile: prod.dockerfile
+    ports:
+      - 5000:3000
+    restart: always
+
+  nginx:
+    container_name: nginx-prod
+    build: 
+      context: ./nginx
+      dockerfile: prod.dockerfile
+    ports:
+      - 8000:80
+    depends_on:
+      - backend-prod
+      - frontend-prod
+    restart: always
+
+  db:
+    container_name: db-prod
+    image: postgres
+    restart: always
+    env_file:
+      - '.env'
+    ports:
+      - 5432:5432
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    networks:
+      - backend-network
+
+volumes:
+  dbdata:
+
+networks:
+  backend-network:
