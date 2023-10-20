@@ -5,6 +5,8 @@ import axios from 'axios';
 import { redirect } from 'next/navigation';
 import Loading from '../loading';
 import { backendHost } from '../globals';
+import { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
 
 export default function DashboardLayout({
     children,
@@ -24,27 +26,17 @@ export default function DashboardLayout({
         },
     });
 
-    // const [isConnected, setIsConnected] = useState(false);
+    useEffect(() => {
+        const socket = io(`${backendHost}/auth`, {
+            withCredentials: true,
+        });
 
-    // useEffect(() => {
-    //     const socket = io(`${backendHost}/auth`, {
-    //         withCredentials: true,
-    //     });
-
-    //     socket.on('connect', () => {
-    //         setIsConnected(true);
-    //     });
-
-    //     socket.on('disconnect', () => {
-    //         setIsConnected(false);
-    //     });
-
-    //     return () => {
-    //         socket.off('connect');
-    //         socket.off('disconnect');
-    //         socket.disconnect();
-    //     };
-    // }, [isConnected]);
+        return () => {
+            socket.off('connect');
+            socket.off('disconnect');
+            socket.disconnect();
+        };
+    });
 
     if (isLoading) {
         return <Loading />;

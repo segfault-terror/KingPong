@@ -36,7 +36,9 @@ export class AuthGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
             await this.userService.updateUser({
                 where: { username: user.username },
-                data: user,
+                data: {
+                    status: user.status,
+                },
             });
 
             client.emit('acccept-connection', 'connected');
@@ -55,7 +57,9 @@ export class AuthGateway implements OnGatewayConnection, OnGatewayDisconnect {
         if ((await this.io.in(user.id).fetchSockets()).length === 0) {
             await this.userService.updateUser({
                 where: { username: user.username },
-                data: user,
+                data: {
+                    status: user.status,
+                },
             });
         }
     }
