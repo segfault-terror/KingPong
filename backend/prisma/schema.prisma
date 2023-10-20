@@ -55,7 +55,7 @@ model Stats {
     losses Int @default(0)
     level Int @default(0)
     league League @default(BRONZE)
-    rank Int @default(100)
+    rank Int @default(1500)
     user User @relation(fields: [userId], references: [id])
     userId String @unique
     createdAt DateTime @default(now())
