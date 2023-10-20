@@ -14,7 +14,7 @@ type SearchProfileProps = {
 
 function SearchProfile({ avatar, fullname, username }: SearchProfileProps) {
     return (
-        <Link href="#">
+        <Link href={`/profile/${username}`}>
             <div className="flex items-center px-4 py-2 hover:bg-background">
                 <div className="w-12 h-12 rounded-full bg-secondary-200">
                     <img
@@ -79,13 +79,10 @@ export default function SearchBar({ className }: { className?: string }) {
                 setResults(undefined);
                 return [];
             }
-            const { data } = await axios.get(
-                `${backendHost}/user/search`,
-                {
-                    withCredentials: true,
-                    params: { q: search },
-                },
-            );
+            const { data } = await axios.get(`${backendHost}/user/search`, {
+                withCredentials: true,
+                params: { q: search },
+            });
             const profiles: SearchProfileProps[] = data.map((profile: any) => {
                 return {
                     fullname: profile.fullname,
