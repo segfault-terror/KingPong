@@ -12,6 +12,7 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
     const { httpAdapter } = app.get(HttpAdapterHost);
+    app.setGlobalPrefix('/api');
     app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
 
     const configService = app.get(ConfigService);

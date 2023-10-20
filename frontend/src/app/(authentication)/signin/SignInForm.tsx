@@ -25,7 +25,7 @@ type CustomError = AxiosError & {
 const loginUser = async (data: SignInInputs) => {
     try {
         const { data: response } = await axios.post(
-            `${backendHost}/auth/login`,
+            `/api/auth/login`,
             data,
             {
                 withCredentials: true,
@@ -40,7 +40,7 @@ const loginUser = async (data: SignInInputs) => {
 
 const onSignInWith42 = () => {
     window.open(
-        `${backendHost}/auth/intra/login`,
+        `/api/auth/intra/login`,
         'login42',
         'width=550,height=800,toolbar=0,status=0,',
     );
