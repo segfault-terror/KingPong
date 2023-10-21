@@ -27,7 +27,7 @@ export default function AchievementList({ username }: AchievementListProps) {
     if (isLoading) {
         return <div>Loading...</div>;
     }
-    const slicedAchievements = data?.achievements.slice(0, 3);
+    const slicedAchievements = data?.achievements.slice(0, 4);
 
     if (data?.achievements.length === 0) {
         return (
@@ -65,7 +65,7 @@ export default function AchievementList({ username }: AchievementListProps) {
                     })}
                 </div>
 
-                {data?.achievements.length > 3 && (
+                {data?.achievements.length > 4 && (
                     <button
                         className="flex items-center justify-center
                             text-sm text-white

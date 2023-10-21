@@ -26,29 +26,45 @@ export default function GameResult({
 
     return (
         <div className="flex justify-between items-center gap-2 w-full my-4">
-            <div
-                className={
-                    playerScore > opponentScore ? winnerShadow : loserShadow
-                }
-            >
-                <UserCircle avatarPath={playerAvatar} level={playerLevel} playerUsername={playerUsername} />
+            <div>
+                <UserCircle
+                    avatarPath={playerAvatar}
+                    level={playerLevel}
+                    playerUsername={playerUsername}
+                />
+                <p
+                    className={`font-jost font-bold
+                                text-center text-lg ${
+                                    playerScore > opponentScore
+                                        ? 'text-online'
+                                        : 'text-[red]'
+                                }`}
+                >
+                    {playerUsername}
+                </p>
             </div>
 
             <p className="text-secondary-200 text-xl font-jost">
                 {playerScore} - {opponentScore}
             </p>
 
-            <div
-                className={
-                    playerScore > opponentScore ? loserShadow : winnerShadow
-                }
-            >
+            <div>
                 <Link href={`/profile/${opponentUsername}`}>
                     <UserCircle
                         avatarPath={opponentAvatar}
                         level={opponentLevel}
                         playerUsername={opponentUsername}
                     />
+                    <p
+                        className={`font-jost font-bold
+                                    text-center text-lg ${
+                                        playerScore > opponentScore
+                                            ? 'text-[red]'
+                                            : 'text-online'
+                                    }`}
+                    >
+                        {opponentUsername}
+                    </p>
                 </Link>
             </div>
         </div>
@@ -69,7 +85,8 @@ function UserCircle({ playerUsername, avatarPath, level }: UserCircleProps) {
                     src={avatarPath}
                     alt="User Avatar"
                     title={`${playerUsername}`}
-                    className="rounded-full object-cover w-full h-full border-4 border-secondary-200 select-none"
+                    className="rounded-full object-cover w-full h-full border-4 border-secondary-200 select-none
+                            bg-background"
                 />
                 <div
                     className="text-primary bg-secondary-200
