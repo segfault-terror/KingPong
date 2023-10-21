@@ -23,8 +23,6 @@ export default function AchievementModal({ userName }: AchievementModalProps) {
 
     if (isLoading) return <div>Loading...</div>;
 
-    console.log(user);
-
     return (
         <div className="p-2 lg:flex lg:flex-col lg:gap-2">
             {user.achievements.map((achievement: any, idx: number) => {
