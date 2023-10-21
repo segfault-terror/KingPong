@@ -8,7 +8,7 @@ type AchievementModalProps = {
 };
 
 export default function AchievementModal({ userName }: AchievementModalProps) {
-    const { data: userAchievements, isLoading } = useQuery({
+    const { data: user, isLoading } = useQuery({
         queryKey: ['achievements', userName],
         queryFn: async () => {
             const { data } = await axios.get(
@@ -23,13 +23,15 @@ export default function AchievementModal({ userName }: AchievementModalProps) {
 
     if (isLoading) return <div>Loading...</div>;
 
+    console.log(user);
+
     return (
         <div className="p-2 lg:flex lg:flex-col lg:gap-2">
-            {userAchievements.map((achievement: any, idx: number) => {
+            {user.achievements.map((achievement: any, idx: number) => {
                 return (
                     <div key={achievement.id}>
                         <Achievement {...achievement} />
-                        {idx < userAchievements.length - 1 && (
+                        {idx < user.length - 1 && (
                             <hr className="border-1 border-secondary-200 rounded-full" />
                         )}
                     </div>
