@@ -1,5 +1,5 @@
 'use client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Header from './Header';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
@@ -26,9 +26,15 @@ export default function DashboardLayout({
         },
     });
 
+    const queryClient = useQueryClient();
+
     useEffect(() => {
         const socket = io(`${backendHost}/auth`, {
             withCredentials: true,
+        });
+
+        socket.on('connect', () => {
+            queryClient.invalidateQueries(['profile']);
         });
 
         return () => {
