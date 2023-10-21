@@ -1,4 +1,8 @@
+'use client';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import Link from 'next/link';
+import { ReactElement } from 'react';
 
 export type GameResultProps = {
     playerUsername: string;
@@ -11,6 +15,28 @@ export type GameResultProps = {
     opponentScore: number;
 };
 
+/*
+ * @brief This function is used to wrap some element with a wrapper if a condition is met.
+ *
+ * @param condition The condition to be met.
+ * @param wrapper A function that returns a ReactElement to be used as a wrapper.
+ * @param children The ReactElement to be wrapped.
+ */
+function conditionalWrapper({
+    condition,
+    wrapper,
+    children,
+}: {
+    condition: boolean;
+    wrapper: (children: ReactElement) => ReactElement;
+    children: ReactElement;
+}) {
+    if (condition) {
+        return wrapper(children);
+    }
+    return children;
+}
+
 export default function GameResult({
     playerUsername,
     opponentUsername,
@@ -21,17 +47,34 @@ export default function GameResult({
     playerScore,
     opponentScore,
 }: GameResultProps) {
-    const winnerShadow = 'drop-shadow-[0_0_10px_rgba(0,255,0,1)]';
-    const loserShadow = 'drop-shadow-[0_0_10px_rgba(255,0,0,1)]';
+    const { data: currentUser } = useQuery({
+        queryKey: ['user', 'me'],
+        queryFn: async () => {
+            const { data } = await axios.get(`/api/user/me`, {
+                withCredentials: true,
+            });
+            return data;
+        },
+    });
 
     return (
         <div className="flex justify-between items-center gap-2 w-full my-4">
             <div>
-                <UserCircle
-                    avatarPath={playerAvatar}
-                    level={playerLevel}
-                    playerUsername={playerUsername}
-                />
+                {conditionalWrapper({
+                    condition: currentUser.username !== playerUsername,
+                    wrapper: (children) => (
+                        <Link href={`/profile/${playerUsername}`}>
+                            {children}
+                        </Link>
+                    ),
+                    children: (
+                        <UserCircle
+                            avatarPath={playerAvatar}
+                            level={playerLevel}
+                            playerUsername={playerUsername}
+                        />
+                    ),
+                })}
                 <p
                     className={`font-jost font-bold
                                 text-center text-lg ${
