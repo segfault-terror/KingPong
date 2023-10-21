@@ -33,7 +33,7 @@ export default function GameResult({
                     playerUsername={playerUsername}
                 />
                 <p
-                    className={`font-jost
+                    className={`font-jost font-bold
                                 text-center text-lg ${
                                     playerScore > opponentScore
                                         ? 'text-online'
@@ -56,7 +56,7 @@ export default function GameResult({
                         playerUsername={opponentUsername}
                     />
                     <p
-                        className={`font-jost
+                        className={`font-jost font-bold
                                     text-center text-lg ${
                                         playerScore > opponentScore
                                             ? 'text-[red]'
