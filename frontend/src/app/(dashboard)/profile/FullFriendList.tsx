@@ -6,7 +6,7 @@ import { UsersFriends } from './data/ProfileData';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-
+import FriendListContent from './FriendListContent';
 
 type FullFriendListProps = {
     username: string;
@@ -24,7 +24,7 @@ export default function FullFriendList({ username }: FullFriendListProps) {
     });
 
     if (isLoading) return <div>Loading...</div>;
-    const slicedFriends = user?.friends.slice(0, 3);
+    const slicedFriends = user?.friends.slice(0, 4);
 
     if (user?.friends.length === 0) {
         return (
@@ -52,22 +52,26 @@ export default function FullFriendList({ username }: FullFriendListProps) {
                         rounded-2xl
                         border-2 border-secondary-200"
         >
-            <div
-                className="flex justify-evenly py-4
-                            md:grid md:grid-cols-2 md:justify-items-center md:gap-4"
-            >
+            <div className="flex flex-col items-center gap-4 py-4">
                 {slicedFriends.map((friend: any, idx: number) => {
                     return (
-                        <Link key={idx} href={`/profile/${friend?.username}`}>
-                            <UserCircleInfo username={friend?.username} />
-                        </Link>
+                        <div key={friend.id} className='w-[80%]'>
+                            <FriendListContent
+                                username={friend.username}
+                                status={friend.status}
+                                avatar={friend.avatar}
+                            />
+                            {idx < slicedFriends.length - 1 && (
+                                <hr className="border-1 border-secondary-200 rounded-full mt-4 w-full" />
+                            )}
+                        </div>
                     );
                 })}
             </div>
 
-            {user?.friends.length > 3 && (
+            {user?.friends.length > 4 && (
                 <Link
-                href={`/friends`}
+                    href={`/friends`}
                     className="flex items-center justify-center
                     text-sm text-white
                     bg-gradient-to-t from-[#881EDF] to-secondary-200
