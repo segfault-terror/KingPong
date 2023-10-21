@@ -6,7 +6,6 @@ import { AiFillTrophy, AiOutlineClose } from 'react-icons/ai';
 import { TbMessage2, TbUserPlus, TbUserX } from 'react-icons/tb';
 import UserCircleInfo from './UserCircleInfo';
 
-
 type ProfileCardProps = {
     username: string;
 };
@@ -75,12 +74,26 @@ export default function ProfileCard({ username }: ProfileCardProps) {
 
                 <div className="flex gap-4 text-secondary-200 items-center md:text-2xl">
                     {currentUser?.id !== visitedUser?.id && (
-                        <Link href={`/chat/dm/${username}`}>
-                            <TbMessage2 />
-                        </Link>
+                        <>
+                            <Link href={`/chat/dm/${username}`}>
+                                <TbMessage2 />
+                            </Link>
+                            <button
+                                onClick={() =>
+                                    console.log(
+                                        `Send a friend request to ${username}`,
+                                    )
+                                }
+                            >
+                                <TbUserPlus />
+                            </button>
+                            <button
+                                onClick={() => console.log(`Block ${username}`)}
+                            >
+                                <TbUserX />
+                            </button>
+                        </>
                     )}
-                    <TbUserPlus />
-                    <TbUserX />
                 </div>
             </div>
         </div>
