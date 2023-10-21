@@ -4,7 +4,7 @@ import Header from './Header';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
 import Loading from '../loading';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { io } from 'socket.io-client';
 
 export default function DashboardLayout({
@@ -12,8 +12,7 @@ export default function DashboardLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const { error, data, isLoading, isSuccess } = useQuery({
+    const { error, data, isLoading } = useQuery({
         queryKey: ['auth'],
         queryFn: async () => {
             try {
