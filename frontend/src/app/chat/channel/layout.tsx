@@ -32,8 +32,7 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
                 <div className="flex flex-col bg-background min-h-screen">
                     <Header />
                     <div
-                        className="flex gap-4 p-6 h-[90vh]
-                            mt-[110px]"
+                        className="flex gap-4 p-6 h-[90vh]"
                     >
                         <div className="w-1/4">
                             <ChatSideBar
@@ -66,6 +65,8 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
                     childrenClassName="h-[80vh] w-[70vw]"
                 >
                     <button
+                    title='Close'
+                    type='button'
                         className="fixed -top-10 left-1/2"
                         onClick={() => setShowMembers(false)}
                     >
@@ -77,8 +78,7 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
             <div className="flex flex-col bg-background min-h-screen">
                 <Header />
                 <div
-                    className="flex py-8 px-4 h-[90vh]
-                        mt-[110px]"
+                    className="flex py-8 px-4 h-[90vh]"
                 >
                     <channelModalContext.Provider
                         value={{ showMembers, setShowMembers }}

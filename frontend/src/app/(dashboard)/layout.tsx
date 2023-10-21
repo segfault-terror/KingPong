@@ -47,7 +47,7 @@ export default function DashboardLayout({
     return (
         <div className="flex flex-col min-h-screen">
             <Header />
-            <main className="mt-[120px] lg:mt-[110px]">{children}</main>
+            <main className="">{children}</main>
 
             {/* <Footer /> */}
         </div>

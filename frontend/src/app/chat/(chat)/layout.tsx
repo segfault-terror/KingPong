@@ -28,8 +28,7 @@ export default function ChatLayout({ children }: ChatLayoutProps) {
                 <div className="flex flex-col min-h-screen bg-background">
                     <Header />
                     <div
-                        className="flex items-center gap-4 p-6 h-[90vh]
-                            mt-[110px]"
+                        className="flex items-center gap-4 p-6 h-[90vh]"
                     >
                         <div className="h-full w-1/4">{children}</div>
                         <div className="flex-grow">
@@ -46,8 +45,7 @@ export default function ChatLayout({ children }: ChatLayoutProps) {
             <div className="flex flex-col min-h-screen bg-background">
                 <Header />
                 <div
-                    className="flex py-8 px-4 h-[85vh]
-                        mt-[120px]"
+                    className="flex py-8 px-4 h-[85vh]"
                 >
                     <div className="flex-grow">{children}</div>
                 </div>
