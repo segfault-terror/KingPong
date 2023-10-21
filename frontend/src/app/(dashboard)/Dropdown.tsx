@@ -13,6 +13,7 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { redirect } from 'next/navigation';
 import { backendHost } from '../globals';
+import DropdownModal from '../chat/DropdownModal';
 
 function DropdownItem({
     href,
@@ -62,70 +63,78 @@ export default function DropdownMenu() {
 
     return (
         <li className="relative">
-            <ButtonImage onClick={() => setOpen(!open)}>
+            <ButtonImage onClick={() => setOpen(true)}>
                 <img src={data?.data.avatar} alt="avatar" />
             </ButtonImage>
-            <div
-                className={`absolute ${
-                    open ? 'block' : 'hidden'
-                } right-0 top-12 bg-primary text-secondary-200 rounded-lg w-48
+            {open && (
+                <DropdownModal
+                    onClose={() => setOpen(false)}
+                    childrenClassName="top-20 right-8"
+                >
+                    <div
+                        className={`bg-primary text-secondary-200 rounded-lg w-48
                 border border-secondary-500 p-2 z-50`}
-            >
-                <ul className="flex flex-col gap-2">
-                    <DropdownItem
-                        icon={<MdPersonOutline />}
-                        href={`/profile/${data?.data.username}`}
                     >
-                        Profile
-                    </DropdownItem>
-                    <hr className="border-inactive-500 lg:hidden" />
-                    <DropdownItem
-                        href="/chat"
-                        hidden
-                        icon={<MdChatBubbleOutline />}
-                    >
-                        Chat
-                    </DropdownItem>
-                    <hr className="border-inactive-500 lg:hidden" />
-                    <DropdownItem
-                        hidden
-                        href="/notifications"
-                        icon={<MdOutlineNotificationsNone />}
-                    >
-                        Notifiations
-                    </DropdownItem>
-                    <hr className="border-inactive-500 lg:hidden" />
-                    <DropdownItem
-                        hidden
-                        href="/friends"
-                        icon={<MdOutlinePeopleAlt />}
-                    >
-                        Friends
-                    </DropdownItem>
-                    <hr className="border-inactive-500" />
-                    <DropdownItem href="/settings" icon={<MdOutlineSettings />}>
-                        Settings
-                    </DropdownItem>
-                    <hr className="border-inactive-500" />
-                    {/* <DropdownItem href="/logout" icon={<MdOutlineLogout />}>
+                        <ul className="flex flex-col gap-2">
+                            <DropdownItem
+                                icon={<MdPersonOutline />}
+                                href={`/profile/${data?.data.username}`}
+                            >
+                                Profile
+                            </DropdownItem>
+                            <hr className="border-inactive-500 lg:hidden" />
+                            <DropdownItem
+                                href="/chat"
+                                hidden
+                                icon={<MdChatBubbleOutline />}
+                            >
+                                Chat
+                            </DropdownItem>
+                            <hr className="border-inactive-500 lg:hidden" />
+                            <DropdownItem
+                                hidden
+                                href="/notifications"
+                                icon={<MdOutlineNotificationsNone />}
+                            >
+                                Notifiations
+                            </DropdownItem>
+                            <hr className="border-inactive-500 lg:hidden" />
+                            <DropdownItem
+                                hidden
+                                href="/friends"
+                                icon={<MdOutlinePeopleAlt />}
+                            >
+                                Friends
+                            </DropdownItem>
+                            <hr className="border-inactive-500" />
+                            <DropdownItem
+                                href="/settings"
+                                icon={<MdOutlineSettings />}
+                            >
+                                Settings
+                            </DropdownItem>
+                            <hr className="border-inactive-500" />
+                            {/* <DropdownItem href="/logout" icon={<MdOutlineLogout />}>
                         Logout
                     </DropdownItem> */}
-                    <li className={`hover:bg-background px-4 py-2`}>
-                        <button
-                            className="w-full h-full flex items-start gap-2"
-                            onClick={() => {
-                                window.open(
-                                    `${backendHost}/auth/logout`,
-                                    '_self',
-                                );
-                            }}
-                        >
-                            <MdOutlineLogout className="w-6 h-6" />
-                            Logout
-                        </button>
-                    </li>
-                </ul>
-            </div>
+                            <li className={`hover:bg-background px-4 py-2`}>
+                                <button
+                                    className="w-full h-full flex items-start gap-2"
+                                    onClick={() => {
+                                        window.open(
+                                            `${backendHost}/auth/logout`,
+                                            '_self',
+                                        );
+                                    }}
+                                >
+                                    <MdOutlineLogout className="w-6 h-6" />
+                                    Logout
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </DropdownModal>
+            )}
         </li>
     );
 }
