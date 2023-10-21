@@ -20,11 +20,13 @@ function DropdownItem({
     children,
     hidden,
     icon,
+    close,
 }: {
     href: string;
     children: React.ReactNode;
     hidden?: boolean;
     icon?: React.ReactNode;
+    close: () => void;
 }) {
     const renderIcon = () => {
         if (!icon) return null;
@@ -37,6 +39,7 @@ function DropdownItem({
             className={`hover:bg-background px-4 py-2 ${
                 hidden ? 'lg:hidden' : ''
             }`}
+            onClick={close}
         >
             <Link className="w-full h-full flex items-start gap-2" href={href}>
                 {renderIcon()}
@@ -79,6 +82,7 @@ export default function DropdownMenu() {
                             <DropdownItem
                                 icon={<MdPersonOutline />}
                                 href={`/profile/${data?.data.username}`}
+                                close={() => setOpen(false)}
                             >
                                 Profile
                             </DropdownItem>
@@ -87,6 +91,7 @@ export default function DropdownMenu() {
                                 href="/chat"
                                 hidden
                                 icon={<MdChatBubbleOutline />}
+                                close={() => setOpen(false)}
                             >
                                 Chat
                             </DropdownItem>
@@ -95,6 +100,7 @@ export default function DropdownMenu() {
                                 hidden
                                 href="/notifications"
                                 icon={<MdOutlineNotificationsNone />}
+                                close={() => setOpen(false)}
                             >
                                 Notifiations
                             </DropdownItem>
@@ -103,6 +109,7 @@ export default function DropdownMenu() {
                                 hidden
                                 href="/friends"
                                 icon={<MdOutlinePeopleAlt />}
+                                close={() => setOpen(false)}
                             >
                                 Friends
                             </DropdownItem>
@@ -110,6 +117,7 @@ export default function DropdownMenu() {
                             <DropdownItem
                                 href="/settings"
                                 icon={<MdOutlineSettings />}
+                                close={() => setOpen(false)}
                             >
                                 Settings
                             </DropdownItem>
