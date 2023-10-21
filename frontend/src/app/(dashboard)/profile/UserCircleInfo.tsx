@@ -1,4 +1,4 @@
-import { backendHost } from '@/app/globals';
+
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -11,7 +11,7 @@ export default function UserCircleInfo({ username }: UserCircleInfoProps) {
         queryKey: ['profile', username],
         queryFn: async () => {
             const { data } = await axios.get(
-                `${backendHost}/user/get/${username}/stats`,
+                `/api/user/get/${username}/stats`,
                 {
                     withCredentials: true,
                 },

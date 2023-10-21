@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import GameResult from './GameResult';
 import { Users, UsersMatchHistory, UsersStats } from './data/ProfileData';
 import axios from 'axios';
-import { backendHost } from '@/app/globals';
+
 
 type GameResultModalProps = {
     userName: string;
@@ -13,7 +13,7 @@ export default function MatchHistoryModal({ userName }: GameResultModalProps) {
         queryKey: ['matchHistory', userName],
         queryFn: async () => {
             const gameResults = await axios.get(
-                `${backendHost}/user/get/${userName}/games`,
+                `/api/user/get/${userName}/games`,
                 { withCredentials: true },
             );
             return gameResults.data;
@@ -23,7 +23,7 @@ export default function MatchHistoryModal({ userName }: GameResultModalProps) {
     const { data: me, isLoading: meIsLoading } = useQuery({
         queryKey: ['user', 'me'],
         queryFn: async () => {
-            const result = await axios.get(`${backendHost}/user/me`, {
+            const result = await axios.get(`/api/user/me`, {
                 withCredentials: true,
             });
             return result.data;

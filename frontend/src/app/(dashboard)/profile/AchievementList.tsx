@@ -1,5 +1,5 @@
 'use client';
-import { backendHost } from '@/app/globals';
+
 import { profileModalContext } from '@/contexts/contexts';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -16,7 +16,7 @@ export default function AchievementList({ username }: AchievementListProps) {
         queryKey: ['achievements', username],
         queryFn: async () => {
             const { data } = await axios.get(
-                `${backendHost}/user/get/${username}/achievements`,
+                `/api/user/get/${username}/achievements`,
                 {
                     withCredentials: true,
                 },

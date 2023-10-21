@@ -9,8 +9,10 @@ services:
       context: ./backend
       dockerfile: prod.dockerfile
     ports:
-      - 3000:3000
+      - 3000:3030
     restart: always
+    env_file:
+      - '.env'
     networks:
       - backend-network
     depends_on:
@@ -22,7 +24,7 @@ services:
       context: ./frontend
       dockerfile: prod.dockerfile
     ports:
-      - 5000:3000
+      - 5000:5050
     restart: always
 
   nginx:

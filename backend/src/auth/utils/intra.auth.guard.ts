@@ -11,10 +11,10 @@ export class IntraAuthGuard extends AuthGuard('42') {
             if (result) {
                 return true;
             }
-            request.res.redirect('/');
+            request.res.redirect('/api');
             return result;
         } catch {
-            request.res.redirect('/');
+            request.res.redirect('/api');
             return false;
         }
     }

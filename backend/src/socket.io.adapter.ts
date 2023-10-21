@@ -27,6 +27,7 @@ export class SocketIOAdapter extends IoAdapter {
         const optionsWithCors: ServerOptions = {
             ...options,
             cors,
+            path: '/api/socket',
         };
 
         const server: Server = super.create(port, optionsWithCors);

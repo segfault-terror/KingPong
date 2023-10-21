@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { AiFillTrophy, AiOutlineClose } from 'react-icons/ai';
 import { TbMessage2, TbUserPlus, TbUserX } from 'react-icons/tb';
 import UserCircleInfo from './UserCircleInfo';
-import { backendHost } from '@/app/globals';
+
 
 type ProfileCardProps = {
     username: string;
@@ -16,7 +16,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
         queryKey: ['profile', username],
         queryFn: async () => {
             const { data } = await axios.get(
-                `${backendHost}/user/get/${username}/stats`,
+                `/api/user/get/${username}/stats`,
                 {
                     withCredentials: true,
                 },
@@ -28,7 +28,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
     const { data: currentUser } = useQuery({
         queryKey: ['profile', 'current'],
         queryFn: async () => {
-            const { data } = await axios.get(`${backendHost}/user/me`, {
+            const { data } = await axios.get(`/api/user/me`, {
                 withCredentials: true,
             });
             return data;

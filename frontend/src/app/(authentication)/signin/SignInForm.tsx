@@ -7,7 +7,6 @@ import axios, { AxiosError } from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { redirect } from 'next/navigation';
-import { backendHost } from '@/app/globals';
 
 type SignInInputs = {
     username: string;
@@ -24,13 +23,9 @@ type CustomError = AxiosError & {
 
 const loginUser = async (data: SignInInputs) => {
     try {
-        const { data: response } = await axios.post(
-            `/api/auth/login`,
-            data,
-            {
-                withCredentials: true,
-            },
-        );
+        const { data: response } = await axios.post(`/api/auth/login`, data, {
+            withCredentials: true,
+        });
         return response;
     } catch (error) {
         const err = error as CustomError;
@@ -48,7 +43,7 @@ const onSignInWith42 = () => {
 
 const onSignInWithGoogle = () => {
     window.open(
-        `${backendHost}/auth/google/login`,
+        `/api/auth/google/login`,
         'loginGoogle',
         'width=550,height=800,toolbar=0,status=0,',
     );

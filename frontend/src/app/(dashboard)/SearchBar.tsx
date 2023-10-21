@@ -4,7 +4,6 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useState } from 'react';
 import { MdSearch } from 'react-icons/md';
-import { backendHost } from '../globals';
 import DropdownModal from '../chat/DropdownModal';
 
 type SearchProfileProps = {
@@ -89,7 +88,7 @@ export default function SearchBar({ className }: { className?: string }) {
                 setResults(undefined);
                 return [];
             }
-            const { data } = await axios.get(`${backendHost}/user/search`, {
+            const { data } = await axios.get(`/api/user/search`, {
                 withCredentials: true,
                 params: { q: search },
             });

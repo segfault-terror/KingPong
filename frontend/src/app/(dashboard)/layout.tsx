@@ -4,8 +4,7 @@ import Header from './Header';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
 import Loading from '../loading';
-import { backendHost } from '../globals';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { io } from 'socket.io-client';
 
 export default function DashboardLayout({
@@ -17,7 +16,7 @@ export default function DashboardLayout({
         queryKey: ['auth'],
         queryFn: async () => {
             try {
-                return await axios.get(`${backendHost}/auth/status`, {
+                return await axios.get(`/api/auth/status`, {
                     withCredentials: true,
                 });
             } catch {
@@ -29,8 +28,9 @@ export default function DashboardLayout({
     const queryClient = useQueryClient();
 
     useEffect(() => {
-        const socket = io(`${backendHost}/auth`, {
+        const socket = io(`/auth`, {
             withCredentials: true,
+            path: '/api/socket',
         });
 
         socket.on('connect', () => {

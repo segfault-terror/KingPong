@@ -12,7 +12,6 @@ import ButtonImage from './ButtonImage';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { redirect } from 'next/navigation';
-import { backendHost } from '../globals';
 import DropdownModal from '../chat/DropdownModal';
 
 function DropdownItem({
@@ -55,7 +54,7 @@ export default function DropdownMenu() {
         queryKey: ['user'],
         queryFn: async () => {
             try {
-                return await axios.get(`${backendHost}/user/me`, {
+                return await axios.get(`/api/user/me`, {
                     withCredentials: true,
                 });
             } catch {
@@ -130,7 +129,7 @@ export default function DropdownMenu() {
                                     className="w-full h-full flex items-start gap-2"
                                     onClick={() => {
                                         window.open(
-                                            `${backendHost}/auth/logout`,
+                                            `/api/auth/logout`,
                                             '_self',
                                         );
                                     }}

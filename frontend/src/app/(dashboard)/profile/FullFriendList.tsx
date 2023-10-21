@@ -6,7 +6,7 @@ import { UsersFriends } from './data/ProfileData';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { backendHost } from '@/app/globals';
+
 
 type FullFriendListProps = {
     username: string;
@@ -16,10 +16,9 @@ export default function FullFriendList({ username }: FullFriendListProps) {
     const { data: user, isLoading } = useQuery({
         queryKey: ['userFriends', username],
         queryFn: async () => {
-            const user = await axios.get(
-                `${backendHost}/user/get/${username}/friends`,
-                { withCredentials: true },
-            );
+            const user = await axios.get(`/api/user/get/${username}/friends`, {
+                withCredentials: true,
+            });
             return user.data;
         },
     });

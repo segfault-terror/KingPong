@@ -1,4 +1,4 @@
-import { backendHost } from '@/app/globals';
+
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Achievement from './Achievement';
@@ -12,7 +12,7 @@ export default function AchievementModal({ userName }: AchievementModalProps) {
         queryKey: ['achievements', userName],
         queryFn: async () => {
             const { data } = await axios.get(
-                `${backendHost}/user/get/${userName}/achievements`,
+                `/api/user/get/${userName}/achievements`,
                 {
                     withCredentials: true,
                 },

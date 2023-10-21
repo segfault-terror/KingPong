@@ -6,7 +6,6 @@ import axios, { AxiosError } from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { redirect } from 'next/navigation';
-import { backendHost } from '@/app/globals';
 
 type SignUpInputs = {
     fullname: string;
@@ -25,10 +24,7 @@ type CustomError = AxiosError & {
 
 const registerUser = async (data: SignUpInputs) => {
     try {
-        const { data: response } = await axios.post(
-            `${backendHost}/user/register`,
-            data,
-        );
+        const { data: response } = await axios.post(`/api/user/register`, data);
         return response;
     } catch (error) {
         const err = error as CustomError;
@@ -42,7 +38,7 @@ export default function SignUpForm() {
     const { mutate, isLoading, isError, error } = useMutation(registerUser, {
         onSuccess: async (data) => {
             const { data: res } = await axios.post(
-                `${backendHost}/auth/login`,
+                `/api/auth/login`,
                 {
                     username: data.username,
                     password: password,

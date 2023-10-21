@@ -10,7 +10,6 @@ import Loading from '../loading';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { redirect } from 'next/navigation';
-import { backendHost } from '../globals';
 
 export default function AuthLayout({
     children,
@@ -21,7 +20,7 @@ export default function AuthLayout({
         queryKey: ['auth'],
         queryFn: async () => {
             try {
-                return await axios.get(`${backendHost}/auth/status`, {
+                return await axios.get(`/api/auth/status`, {
                     withCredentials: true,
                 });
             } catch {
