@@ -4,7 +4,7 @@ import Header from './Header';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
 import Loading from '../loading';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
 export default function DashboardLayout({
@@ -12,7 +12,8 @@ export default function DashboardLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const { error, data, isLoading } = useQuery({
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const { error, data, isLoading, isSuccess } = useQuery({
         queryKey: ['auth'],
         queryFn: async () => {
             try {
@@ -27,15 +28,25 @@ export default function DashboardLayout({
 
     const queryClient = useQueryClient();
 
+    const delai = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
     useEffect(() => {
         const socket = io(`/auth`, {
             withCredentials: true,
             path: '/api/socket',
+            autoConnect: false,
         });
 
         socket.on('connect', () => {
             queryClient.invalidateQueries(['profile']);
         });
+
+        async function connect() {
+            await delai(1000);
+            socket.connect();
+        }
+
+        connect();
 
         return () => {
             socket.off('connect');
