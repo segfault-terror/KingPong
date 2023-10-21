@@ -4,8 +4,6 @@ import { createContext } from 'react';
 type ProfileModalContextProps = {
     achievements: boolean;
     setAchievements: (value: boolean) => void;
-    friends: boolean;
-    setFriends: (value: boolean) => void;
     matches: boolean;
     setMatches: (value: boolean) => void;
 };
