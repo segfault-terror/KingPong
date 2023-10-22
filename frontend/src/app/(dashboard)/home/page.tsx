@@ -16,6 +16,7 @@ export interface newData {
         rank: number;
         league: string;
     };
+    avatar: string;
 }
 
 function ColorLeague(league: string) {
@@ -72,7 +73,8 @@ export default function Page() {
                         username: entry.username,
                         rank: entry.stats?.rank,
                         league: entry.stats?.league,
-                    }) as { username: string; rank: number; league: string },
+                        avatar: entry.avatar,
+                    }) as { username: string; rank: number; league: string, avatar: string },
             );
         }, [leaderboardData]);
 

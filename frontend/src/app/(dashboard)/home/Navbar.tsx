@@ -23,7 +23,7 @@ export default function Navbar(myleague: string, leaderboard: any[]) {
             <hr className="border-t-2 border-gray-300 w-3/4 my-4" />
             <div className="flex justify-center items-center">
                 {leaderboard.length > 0 && (
-                    <table className="table-auto flex justify-center flex-col">
+                    <table className="table-auto flex justify-center items-center flex-col">
                         <thead>
                             <tr className="px-4 py-2  rounded-lg">
                                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -37,26 +37,33 @@ export default function Navbar(myleague: string, leaderboard: any[]) {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="w-full">
                             {leaderboard
                                 .slice(0, 20)
                                 .map((entry: newData, index) => (
-                                    <tr
+                                    <Link
+                                        href={`/profile/${entry.username}`}
                                         key={entry.username}
-                                        className={
-                                            'flex justify-between bg-primary text-gray-50'
-                                        }
+                                        className={`flex justify-start items-start bg-primary text-gray-50 w-full ${
+                                            index !== leaderboard.length - 1 &&
+                                            'border-b-2 border-gray-300 border-opacity-40'
+                                        }`}
                                     >
-                                        <td className="px-4 py-2">
+                                        <div className="w-4 h-full px-4 py-2 flex justify-center items-center">
                                             {index + 1}
-                                        </td>
-                                        <td className="px-4 py-2">
-                                            {entry.username}
-                                        </td>
-                                        <td className="px-4 py-2">
+                                        </div>
+                                        <div className="w-3/4 h-full px-4 flex justify-start items-center ">
+                                            <img
+                                                src={entry.avatar}
+                                                alt=""
+                                                className="rounded-full w-10 mr-2"
+                                            />
+                                            {entry.username.slice(0, 10)}
+                                        </div>
+                                        <div className="px-4 py-2">
                                             {entry.rank}
-                                        </td>
-                                    </tr>
+                                        </div>
+                                    </Link>
                                 ))}
                             {leaderboard.length > 20 && (
                                 <Link
