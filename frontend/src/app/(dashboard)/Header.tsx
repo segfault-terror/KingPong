@@ -9,6 +9,9 @@ import LinkIcon from './LinkIcon';
 import Link from 'next/link';
 import SearchBar from './SearchBar';
 import DropdownMenu from './Dropdown';
+import { use } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 function NavItem({
     href,
@@ -24,7 +27,17 @@ function NavItem({
     );
 }
 
+
 export default function Header() {
+    const { data: currentUser } = useQuery({
+        queryKey: ['profile', 'current'],
+        queryFn: async () => {
+            const { data } = await axios.get(`/api/user/me`, {
+                withCredentials: true,
+            });
+            return data;
+        },
+    });
     return (
         <header className="p-3 w-full">
             <div className="grid grid-cols-2 md:grid-cols-3 items-center">
@@ -38,7 +51,7 @@ export default function Header() {
                 <SearchBar className="order-last md:order-none col-span-2 md:col-span-1 border border-secondary-500" />
                 <nav className="">
                     <ul className="flex gap-4 pr-6 justify-end">
-                        <NavItem href="/friends">
+                        <NavItem href={`/${currentUser?.username}/friends`}>
                             <MdOutlinePeopleAlt />
                         </NavItem>
                         <NavItem href="/chat">
