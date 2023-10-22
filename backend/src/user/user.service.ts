@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
-import { Prisma, User } from '@prisma/client';
+import { Prisma, User, Status } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class UserService {
@@ -171,6 +172,19 @@ export class UserService {
 
         user.friends = [...friendsMap.values()];
         delete user.friendOf;
+
+        user.friends.sort((a, b) => {
+            if (a.status === b.status) {
+                return 0;
+            }
+            if (a.status === Status.ONLINE) {
+                return -1;
+            }
+            if (a.status === Status.INGAME) {
+                return b.status === Status.ONLINE ? 1 : -1;
+            }
+            return 1;
+        });
         return user;
     }
 

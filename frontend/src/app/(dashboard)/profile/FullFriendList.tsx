@@ -17,6 +17,10 @@ export default function FullFriendList({ username }: FullFriendListProps) {
             const user = await axios.get(`/api/user/get/${username}/friends`, {
                 withCredentials: true,
             });
+            const friends = user.data.friends.filter(
+                (friend: any) => friend.username !== username,
+            );
+            user.data.friends = friends;
             return user.data;
         },
     });
@@ -69,7 +73,7 @@ export default function FullFriendList({ username }: FullFriendListProps) {
 
             {user?.friends.length > 4 && (
                 <Link
-                    href={`/friends`}
+                    href={`/${username}/friends`}
                     className="flex items-center justify-center
                     text-sm text-white
                     bg-gradient-to-t from-[#881EDF] to-secondary-200
