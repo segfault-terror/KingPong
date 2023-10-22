@@ -1,3 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import Link from 'next/link';
 
 type FriendListContentProps = {
@@ -11,6 +13,18 @@ export default function FriendListContent({
     status,
     avatar,
 }: FriendListContentProps) {
+    const { data, isLoading } = useQuery({
+        queryKey: ['isFriend', username],
+        queryFn: async () => {
+            const res = await axios.get(`/api/user/isFriend/${username}`, {
+                withCredentials: true,
+            });
+            return res.data;
+        },
+    });
+
+    if (isLoading) return <div>Loading...</div>;
+
     let statusBg;
     let statusText;
 
@@ -51,14 +65,25 @@ export default function FriendListContent({
                     />
                     {status.toLowerCase()}
                 </p>
-                <Link
-                    href={`/chat/dm/${username}`}
-                    className="bg-background rounded-2xl px-4
+
+                {data.isFriend ? (
+                    <Link
+                        href={`/chat/dm/${username}`}
+                        className="bg-background rounded-2xl px-4
 						border border-white
 						text-secondary-200 font-jost"
-                >
-                    Message
-                </Link>
+                    >
+                        Message
+                    </Link>
+                ) : data.isMe ? null : (
+                    <button
+                        className="bg-background rounded-2xl px-4
+						border border-white
+						text-secondary-200 font-jost"
+                    >
+                        Invite
+                    </button>
+                )}
             </div>
         </div>
     );

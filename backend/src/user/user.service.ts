@@ -221,4 +221,28 @@ export class UserService {
             },
         });
     }
+
+    async isFriend(username: string, friendname: string) {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                username,
+            },
+            include: {
+                friends: {
+                    where: {
+                        username: friendname,
+                    },
+                },
+                friendOf: {
+                    where: {
+                        username: friendname,
+                    },
+                },
+            },
+        });
+        return {
+            isFriend: user.friends.length > 0 || user.friendOf.length > 0,
+            isMe: username === friendname,
+        };
+    }
 }

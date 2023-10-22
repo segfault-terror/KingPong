@@ -175,4 +175,10 @@ export class UserController {
     async users() {
         return this.userService.users({});
     }
+
+    @Get('isfriend/:username')
+    @UseGuards(AuthGard)
+    async isFriend(@Param('username') username: string, @Req() req: any) {
+        return this.userService.isFriend(req.user.username, username);
+    }
 }

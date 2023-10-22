@@ -1,11 +1,9 @@
 'use client';
-import Lottie from 'lottie-react';
-import Ghost from '../../../../public/lottie/ghost.json';
-import UserCircleInfo from './UserCircleInfo';
-import { UsersFriends } from './data/ProfileData';
-import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import Lottie from 'lottie-react';
+import Link from 'next/link';
+import Ghost from '../../../../public/lottie/ghost.json';
 import FriendListContent from './FriendListContent';
 
 type FullFriendListProps = {
@@ -55,7 +53,7 @@ export default function FullFriendList({ username }: FullFriendListProps) {
             <div className="flex flex-col items-center gap-4 py-4">
                 {slicedFriends.map((friend: any, idx: number) => {
                     return (
-                        <div key={friend.id} className='w-[80%]'>
+                        <div key={friend.id} className="w-[80%]">
                             <FriendListContent
                                 username={friend.username}
                                 status={friend.status}
