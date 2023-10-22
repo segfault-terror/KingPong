@@ -13,12 +13,12 @@ import { NotificationsModule } from './notifications/notifications.module';
 @Module({
     imports: [
         UserModule,
+        AuthModule,
         AchievementsModule,
         NotificationsModule,
         ConfigModule.forRoot({ isGlobal: true }),
         PrismaModule.forRoot(prismaModuleOptions),
         PassportModule.register({ session: true }),
-        AuthModule,
     ],
     controllers: [AppController],
     providers: [AppService],

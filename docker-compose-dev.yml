@@ -51,11 +51,19 @@ services:
       - 5432:5432
     volumes:
       - dbdata:/var/lib/postgresql/data
-    networks:
-      - backend-network
+  
+  minio:
+    container_name: minio-dev
+    image: bitnami/minio
+    restart: always
+    env_file:
+      - '.env'
+    ports:
+      - 9000:9000
+      - 9001:9001
+    volumes:
+      - minio-data:/bitnami/minio/data
 
 volumes:
   dbdata:
-
-networks:
-  backend-network:
+  minio-data:

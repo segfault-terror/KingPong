@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { MulterModule } from '@nestjs/platform-express';
 import { LeaderboardController } from './leaderboard.controller';
+import { MinioClientModule } from 'src/minio-client/minio-client.module';
 
 @Global()
 @Module({
@@ -10,6 +11,7 @@ import { LeaderboardController } from './leaderboard.controller';
         MulterModule.register({
             dest: './uploads',
         }),
+        MinioClientModule,
     ],
     controllers: [UserController, LeaderboardController],
     providers: [UserService],
