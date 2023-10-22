@@ -10,6 +10,7 @@ export type Friend = {
     fullname: string;
     avatar: string;
     status: UserStatus;
+    isYourFriend: boolean;
 };
 
 export type FriendState = {
