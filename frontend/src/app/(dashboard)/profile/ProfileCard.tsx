@@ -11,7 +11,7 @@ type ProfileCardProps = {
 };
 
 export default function ProfileCard({ username }: ProfileCardProps) {
-    const { data: visitedUser } = useQuery({
+    const { data: visitedUser, isLoading: visitedUserLoading } = useQuery({
         queryKey: ['profile', username],
         queryFn: async () => {
             const { data } = await axios.get(
@@ -24,7 +24,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
         },
     });
 
-    const { data: currentUser } = useQuery({
+    const { data: currentUser, isLoading: currentUserLoading } = useQuery({
         queryKey: ['profile', 'current'],
         queryFn: async () => {
             const { data } = await axios.get(`/api/user/me`, {
@@ -33,6 +33,19 @@ export default function ProfileCard({ username }: ProfileCardProps) {
             return data;
         },
     });
+
+    const { data: friendship, isLoading: friendshipLoading } = useQuery({
+        queryKey: ['isFriend', username],
+        queryFn: async () => {
+            const { data } = await axios.get(`/api/user/isFriend/${username}`, {
+                withCredentials: true,
+            });
+            return data;
+        },
+    });
+
+    if (visitedUserLoading || currentUserLoading || friendshipLoading)
+        return <div>Loading...</div>;
 
     const leagueImgPath = `/images/${visitedUser?.stats.league.toLowerCase()}-league.svg`;
 
@@ -73,26 +86,33 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                 </div>
 
                 <div className="flex gap-4 text-secondary-200 items-center md:text-2xl">
-                    {currentUser?.id !== visitedUser?.id && (
-                        <>
-                            <Link href={`/chat/dm/${username}`}>
-                                <TbMessage2 />
-                            </Link>
-                            <button
-                                onClick={() =>
-                                    console.log(
-                                        `Send a friend request to ${username}`,
-                                    )
-                                }
-                            >
-                                <TbUserPlus />
-                            </button>
-                            <button
-                                onClick={() => console.log(`Block ${username}`)}
-                            >
-                                <TbUserX />
-                            </button>
-                        </>
+                    {/* Not me and my friend */}
+                    {!friendship.isMe && friendship.isFriend && (
+                        <Link href={`/chat/dm/${username}`}>
+                            <TbMessage2 />
+                        </Link>
+                    )}
+
+                    {/* Not me and not my friend */}
+                    {!friendship.isMe && !friendship.isFriend && (
+                        <button
+                            onClick={() =>
+                                console.log(
+                                    `Send a friend request to ${username}`,
+                                )
+                            }
+                        >
+                            <TbUserPlus />
+                        </button>
+                    )}
+
+                    {/* Not me and my friend */}
+                    {!friendship.isMe && friendship.isFriend && (
+                        <button
+                            onClick={() => console.log(`Block ${username}`)}
+                        >
+                            <TbUserX />
+                        </button>
                     )}
                 </div>
             </div>
