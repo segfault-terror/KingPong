@@ -26,6 +26,7 @@ const FriendCard = ({
     status,
     id,
     isYourFriend,
+    isme,
 }: Friend) => {
     let colorStus =
         status === UserStatus.Online ? 'bg-green-500' : 'bg-red-500';
@@ -56,6 +57,7 @@ const FriendCard = ({
                 </div>
             </div>
             <div className="flex flex-col justify-between w-1/4 h-full">
+                {!isme && <>
                 {isYourFriend ? (
                     <>
                         <button
@@ -85,6 +87,7 @@ const FriendCard = ({
                         Invite
                     </button>
                 )}
+                </>}
             </div>
         </Link>
     );
@@ -122,12 +125,11 @@ export default function FriendsList({ friends }: FriendState) {
                           >
                               <FriendCard
                                   isYourFriend={
-                                    user.friends.find(
+                                    !!user.friends.find(
                                           (f: any) => f.id === friend.id,
                                       )
-                                          ? true
-                                          : false
                                   }
+                                  isme={friend.username === user.username}
                                   id={friend.id}
                                   username={friend.username}
                                   fullname={friend.fullname}

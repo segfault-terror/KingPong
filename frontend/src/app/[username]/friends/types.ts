@@ -11,6 +11,7 @@ export type Friend = {
     avatar: string;
     status: UserStatus;
     isYourFriend: boolean;
+    isme: boolean;
 };
 
 export type FriendState = {
