@@ -24,16 +24,6 @@ export default function ProfileCard({ username }: ProfileCardProps) {
         },
     });
 
-    const { data: currentUser, isLoading: currentUserLoading } = useQuery({
-        queryKey: ['profile', 'current'],
-        queryFn: async () => {
-            const { data } = await axios.get(`/api/user/me`, {
-                withCredentials: true,
-            });
-            return data;
-        },
-    });
-
     const { data: friendship, isLoading: friendshipLoading } = useQuery({
         queryKey: ['isFriend', username],
         queryFn: async () => {
@@ -44,8 +34,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
         },
     });
 
-    if (visitedUserLoading || currentUserLoading || friendshipLoading)
-        return <div>Loading...</div>;
+    if (visitedUserLoading || friendshipLoading) return <div>Loading...</div>;
 
     const leagueImgPath = `/images/${visitedUser?.stats.league.toLowerCase()}-league.svg`;
 
@@ -53,17 +42,22 @@ export default function ProfileCard({ username }: ProfileCardProps) {
         <div
             className="bg-primary
                         border-2 border-secondary-200 rounded-3xl
-                        h-28 md:h-32
+                        h-30 md:h-36
                         flex flex-col justify-between"
         >
             <div className="flex items-start relative">
                 <div className="absolute bottom-0 md:-bottom-2">
                     <UserCircleInfo username={username} />
                 </div>
-                <div className="flex items-center justify-between pt-2 pl-1 ml-24 md:ml-32">
-                    <h1 className="text-secondary-200 font-mulish font-bold text-xl md:text-2xl">
-                        {username}
-                    </h1>
+                <div className="flex items-center justify-between pt-2 pl-1 ml-24 md:ml-32 gap-4">
+                    <div>
+                        <h1 className="text-secondary-200 font-mulish font-bold text-xl md:text-2xl">
+                            {visitedUser.fullname}
+                        </h1>
+                        <h2 className="text-cube_palette-200 opacity-80 font-mulish text-lg">
+                            @{visitedUser.username}
+                        </h2>
+                    </div>
                     <img
                         src={leagueImgPath}
                         alt="League"

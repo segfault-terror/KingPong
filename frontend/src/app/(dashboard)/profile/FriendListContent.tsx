@@ -72,7 +72,7 @@ export default function FriendListContent({
                         href={`/chat/dm/${username}`}
                         className="bg-background rounded-2xl px-4
 						border border-white
-						text-secondary-200 font-jost"
+						text-secondary-200 font-jost hover:bg-secondary-200 hover:text-background"
                     >
                         Message
                     </Link>
@@ -80,7 +80,7 @@ export default function FriendListContent({
                     <button
                         className="bg-background rounded-2xl px-4
 						border border-white
-						text-secondary-200 font-jost"
+						text-secondary-200 font-jost hover:bg-secondary-200 hover:text-background"
                     >
                         Invite
                     </button>
