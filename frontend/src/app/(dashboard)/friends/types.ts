@@ -1,16 +1,17 @@
 export enum UserStatus {
-    Online = 'online',
-    Offline = 'offline',
-    InGame = 'in-game',
+    Online = 'ONLINE',
+    Offline = 'OFFLINE',
+    InGame = 'INGAME',
 }
 
 export type Friend = {
-	id: number;
-	name: string;
-	avatar: string;
-	status: UserStatus;
-}
+    id: number;
+    username: string;
+    fullname: string;
+    avatar: string;
+    status: UserStatus;
+};
 
 export type FriendState = {
-	friends: Friend[];
-}
+    friends: Friend[];
+};

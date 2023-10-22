@@ -25,7 +25,6 @@ export class UserService {
             include: {
                 stats: true,
             },
-            
         });
     }
 
@@ -143,11 +142,34 @@ export class UserService {
                 username,
             },
             include: {
-                friends: true,
-                friendOf: true,
+                friends: {
+                    orderBy: {
+                        status: 'asc',
+                    },
+                },
+                friendOf: {
+                    orderBy: {
+                        status: 'asc',
+                    },
+                },
             },
         });
-        user.friends = [...new Set([...user.friends, ...user.friendOf])];
+
+        const friendsMap = new Map();
+        user.friends.forEach((friend) => {
+            const key = JSON.stringify(friend);
+            if (!friendsMap.has(key)) {
+                friendsMap.set(key, friend);
+            }
+        });
+        user.friendOf.forEach((friend) => {
+            const key = JSON.stringify(friend);
+            if (!friendsMap.has(key)) {
+                friendsMap.set(key, friend);
+            }
+        });
+
+        user.friends = [...friendsMap.values()];
         delete user.friendOf;
         return user;
     }
