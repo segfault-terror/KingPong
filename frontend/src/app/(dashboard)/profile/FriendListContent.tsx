@@ -51,12 +51,13 @@ export default function FriendListContent({
                 />
             </Link>
             <div className="flex flex-col items-start gap-1">
-                <p
+                <Link
+                    href={`/profile/${username}`}
                     className="text-secondary-200 text-xl
 							font-jost font-bold"
                 >
                     {username}
-                </p>
+                </Link>
                 <p
                     className={`${statusText} flex items-center justify-center gap-1`}
                 >
