@@ -2,11 +2,10 @@ import React from 'react';
 import Link from 'next/link';
 import { newData } from './page';
 
-
 export default function Navbar(myleague: string, leaderboard: any[]) {
     return (
         <nav
-            className={`flex flex-col justify-normal items-center bg-background text-black p-4 lg:w-96 w-72 rounded-se-2xl flex-1 transition-all duration-500`}
+            className={`flex flex-col justify-normal items-center bg-background border-t-2 border-r-2 border-white drop-shadow-[2px_-2px_5px_#fffAAACC] text-black p-4 lg:w-96 w-72 rounded-se-2xl backdrop-blur-lg transition-all duration-500`}
         >
             <p className="text-3xl font-jost text-white">
                 <img

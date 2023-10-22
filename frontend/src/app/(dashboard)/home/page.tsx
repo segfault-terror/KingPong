@@ -60,11 +60,9 @@ export default function Page() {
         return <Loading />;
     }
 
-
     const myleague = leaderboardData?.find(
         (entry: newData) => entry.username === data?.data.username,
     )?.stats?.league;
-    console.log(myleague);
 
     function MyComponent() {
         const leaderboard = useMemo(() => {
@@ -84,21 +82,19 @@ export default function Page() {
             )?.stats?.league;
         }, [leaderboardData, data]);
 
-        console.log(leaderboard);
-
         const Transation = isMobile === false ? '' : 'flex-col';
 
         return (
             <div className={`flex ${Transation}`}>
                 {useMemo(() => {
                     return (
-                        <div className={`flex `}>
+                        <>
                             {isMobile ? (
                                 <Link
                                     href={'/leaderboard'}
                                     className="h-12 w-12  mt-4"
                                     title="Toggle leaderboard"
-                                    placeholder="Ranking"
+                                    placeholder="ranking"
                                 >
                                     <img
                                         src="/images/RankingStar.svg"
@@ -109,7 +105,7 @@ export default function Page() {
                             ) : (
                                 <>{Navbar(myleague, leaderboard)}</>
                             )}
-                        </div>
+                        </>
                     );
                 }, [leaderboard, myleague])}
                 <main
@@ -160,8 +156,18 @@ export default function Page() {
                         </div>
                     </div>
                     <div className="flex flex-col lg:flex-row lg:w-full justify-between items-stretch my-auto w-full">
-                       <SelectMode mode="Ranked" images="RankedGame" link="/game/Ranked" title="Ranked" />
-                        <SelectMode mode="Computer" images="Computer" link="/game/computer" title="computer" />
+                        <SelectMode
+                            mode="Ranked"
+                            images="RankedGame"
+                            link="/game/ranked"
+                            title="Ranked"
+                        />
+                        <SelectMode
+                            mode="Computer"
+                            images="Computer"
+                            link="/game/computer"
+                            title="computer"
+                        />
                     </div>
                 </main>
             </div>
