@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Stats" ADD COLUMN     "XP" INTEGER NOT NULL DEFAULT 0;

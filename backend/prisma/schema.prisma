@@ -54,6 +54,8 @@ model Stats {
     wins Int @default(0)
     losses Int @default(0)
     level Int @default(0)
+    XP Int @default(0)
+    NextLevelXP Int @default(100)
     league League @default(BRONZE)
     rank Int @default(1500)
     user User @relation(fields: [userId], references: [id])
