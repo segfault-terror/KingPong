@@ -17,7 +17,7 @@ export interface StoredFileMetadata {
     id: string;
     name: string;
     encoding: string;
-    mimetype: AppMimeType;
+    mimetype: string;
     size: number;
     updatedAt: Date;
     fileSrc?: string;

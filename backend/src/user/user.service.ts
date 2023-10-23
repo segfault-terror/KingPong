@@ -2,11 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { Prisma, User, Status } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-
+import { MinioClientService } from 'src/minio-client/minio-client.service';
+import { BufferedFile } from 'src/minio-client/file.model';
 
 @Injectable()
 export class UserService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        private minioClientService: MinioClientService,
+    ) {}
 
     async user(
         userWhereUniqueInput: Prisma.UserWhereUniqueInput,
@@ -113,6 +117,15 @@ export class UserService {
                 ],
             },
         });
+    }
+
+    async uploadImage(image: BufferedFile) {
+        const uploadedImage = await this.minioClientService.upload(image);
+
+        return {
+            image_url: uploadedImage.url,
+            message: 'Image uploaded successfully',
+        };
     }
 
     async userStats(username: string) {

@@ -9,7 +9,46 @@ export class MinioClientService {
     constructor(
         private readonly minioService: MinioService,
         private readonly configService: ConfigService,
-    ) {}
+    ) {
+        const policy = {
+            Version: '2012-10-17',
+            Statement: [
+                {
+                    Effect: 'Allow',
+                    Principal: {
+                        AWS: ['*'],
+                    },
+                    Action: [
+                        's3:ListBucketMultipartUploads',
+                        's3:GetBucketLocation',
+                        's3:ListBucket',
+                    ],
+                    Resource: ['arn:aws:s3:::user-profiles'],
+                },
+                {
+                    Effect: 'Allow',
+                    Principal: {
+                        AWS: ['*'],
+                    },
+                    Action: [
+                        's3:PutObject',
+                        's3:AbortMultipartUpload',
+                        's3:DeleteObject',
+                        's3:GetObject',
+                        's3:ListMultipartUploadParts',
+                    ],
+                    Resource: ['arn:aws:s3:::user-profiles/*'],
+                },
+            ],
+        };
+        this.minioService.client.setBucketPolicy(
+            'user-profiles',
+            JSON.stringify(policy),
+            function (err) {
+                if (err) throw err;
+            },
+        );
+    }
 
     private readonly bucketName = 'user-profiles';
 
@@ -18,9 +57,7 @@ export class MinioClientService {
     }
 
     async upload(file: BufferedFile, bucketName: string = this.bucketName) {
-        if (
-            !(file.mimetype.includes('jpeg') || file.mimetype.includes('png'))
-        ) {
+        if (!file.mimetype.includes('image')) {
             throw new BadRequestException('File type not supported');
         }
         const timestamp = Date.now().toString();
@@ -40,20 +77,22 @@ export class MinioClientService {
 
         const fileName = hashedFileName + extension;
 
-        this.client.putObject(
-            bucketName,
-            fileName,
-            file.buffer,
-            metaData,
-            function (err) {
-                if (err) {
-                    throw new BadRequestException('Error uploading file');
-                }
-            },
-        );
+        try {
+            const bucketExists = await this.client.bucketExists(bucketName);
+            if (!bucketExists) {
+                await this.client.makeBucket(bucketName);
+            }
+        } catch {
+            // Bucket already exists
+        }
+        try {
+            this.client.putObject(bucketName, fileName, file.buffer, metaData);
+        } catch {
+            throw new BadRequestException('Error uploading file');
+        }
 
         return {
-            url: `${this.configService.get(
+            url: `http://${this.configService.get(
                 'MINIO_ENDPOINT',
             )}:9000/${bucketName}/${fileName}`,
         };
