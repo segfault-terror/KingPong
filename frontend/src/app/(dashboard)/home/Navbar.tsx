@@ -37,7 +37,7 @@ export default function Navbar(myleague: string, leaderboard: any[]) {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="w-full">
+                        <tbody className="w-full flex flex-col bg-primary">
                             {leaderboard
                                 .slice(0, 20)
                                 .map((entry: newData, index) => (
@@ -46,7 +46,7 @@ export default function Navbar(myleague: string, leaderboard: any[]) {
                                         key={entry.username}
                                         className={`flex justify-start items-start bg-primary text-gray-50 w-full ${
                                             index !== leaderboard.length - 1 &&
-                                            'border-b-2 border-gray-300 border-opacity-40'
+                                            'border-b-2 border-gray-300 border-opacity-40 my-1'
                                         }`}
                                     >
                                         <div className="w-4 h-full px-4 py-2 flex justify-center items-center">
@@ -56,7 +56,7 @@ export default function Navbar(myleague: string, leaderboard: any[]) {
                                             <img
                                                 src={entry.avatar}
                                                 alt=""
-                                                className="rounded-full w-10 mr-2"
+                                                className="rounded-full w-8 h-8 mr-2"
                                             />
                                             {entry.username.slice(0, 10)}
                                         </div>

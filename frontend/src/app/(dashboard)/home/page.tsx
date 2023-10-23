@@ -35,35 +35,34 @@ function ColorLeague(league: string) {
 export default function Page() {
     const isMobile = useMediaQuery('(max-width: 768px)');
 
-    const { data } = useQuery({
-        queryKey: ['user'],
+    const { data, isLoading: myisLoading } = useQuery({
+        queryKey: ['userStats'],
         queryFn: async () => {
             try {
-                return await axios.get(`/api/user/me`, {
+                const me =  await axios.get(`/api/user/me`, {
                     withCredentials: true,
                 });
+                const stats = await axios.get(`/api/user/get/${me.data.username}/stats`, {withCredentials: true});
+                return stats.data
             } catch {
                 redirect('/signin');
             }
         },
     });
+    
+        const { data: leaderboardData, isLoading } = useQuery({
+            queryKey: ['leaderboard'],
+            queryFn: async () => {
+                const { data } = await axios.get(`/api/leaderboard`, {
+                    withCredentials: true,
+                });
+                return data;
+            },
+        });
 
-    const { data: leaderboardData, isLoading } = useQuery({
-        queryKey: ['leaderboard'],
-        queryFn: async () => {
-            const { data } = await axios.get(`/api/leaderboard`, {
-                withCredentials: true,
-            });
-            return data;
-        },
-    });
-    if (isLoading) {
+    if (isLoading || myisLoading) {
         return <Loading />;
     }
-
-    const myleague = leaderboardData?.find(
-        (entry: newData) => entry.username === data?.data.username,
-    )?.stats?.league;
 
     function MyComponent() {
         const leaderboard = useMemo(() => {
@@ -80,12 +79,25 @@ export default function Page() {
 
         const myleague: string = useMemo(() => {
             return leaderboardData?.find(
-                (entry: newData) => entry.username === data?.data.username,
+                (entry: newData) => entry.username === data?.username,
             )?.stats?.league;
         }, [leaderboardData, data]);
 
         const Transation = isMobile === false ? '' : 'flex-col';
 
+        const percent: number = useMemo(() => {
+            return (
+                (data?.stats.XP / data?.stats.NextLevelXP) * 100 || 1
+            );
+        }
+        , [data]);
+
+        const widthlevel = useMemo(() => {
+            return `w-[${percent}%]`;
+        }
+        , [percent]);
+
+        console.log(widthlevel);
         return (
             <div className={`flex ${Transation}`}>
                 {useMemo(() => {
@@ -116,24 +128,24 @@ export default function Page() {
                     <div className=" text-white font-nicomoji text-2xl flex justify-center items-center w-[90%] justify-items-center bg-gradient-to-r from-background via-[#4B086D]  to-[#ACC0FE] bg-cover rounded-full border border-white p-2 lg:mx-10  lg:w-[600px] xl:[1000px]">
                         <div className="flex-none relative w-20 h-20 mx-4 my-auto justify-self-start">
                             <img
-                                src={data?.data.avatar}
+                                src={data?.avatar}
                                 alt=""
-                                className="bg-primary rounded-full"
+                                className="bg-primary rounded-full w-20 h-20 m-auto"
                             />
                             <div className="absolute -bottom-2 -right-1 w-8 shrink ">
                                 <div className="relative w-full flex flex-col justify-center items-center">
                                     <img
                                         src={`/images/star.svg`}
                                         alt=""
-                                        className=""
+                                        className=" w-full"
                                     />
-                                    <p className="absolute justify-center items-center text-black m-auto text-sm">
+                                    <p className="absolute justify-center items-center text-black m-auto font-light text-[10px]">
                                         {
                                             leaderboardData?.find(
                                                 (entry: newData) =>
                                                     entry.username ===
-                                                    data?.data.username,
-                                            )?.stats?.level
+                                                    data?.username,
+                                            )?.stats.level
                                         }
                                     </p>
                                 </div>
@@ -141,7 +153,7 @@ export default function Page() {
                         </div>
                         <div className="col-span-2 grid grid-row-2 w-full">
                             <h1 className="font-jost text-2xl text-white font-bold justify-items-start">
-                                {data?.data.username}
+                                {data?.username}
                             </h1>
                             <p
                                 className={`font-bold text-xl ${ColorLeague(
@@ -150,10 +162,9 @@ export default function Page() {
                             >{`${myleague}`}</p>
                             <span className="w-[95%] rounded-full h-3 bg-white flex justify-start items-center relative group">
                                 <span className="lg:hidden absolute right-0 -top-5 h-4 px-1 rounded-full bg-slate-200 font-extralight text-[10px] text-center text-black group-hover:flex flex justify-center items-center">
-                                    500/1000
+                                    {data?.stats.XP}/{data?.stats.NextLevelXP}
                                 </span>
-                                <span className="w-[50%] rounded-full h-1 bg-blue-500 ml-1"></span>
-                                {/* for level  */}
+                                <span className={`${widthlevel} rounded-full h-1 bg-blue-500 ml-1`}></span>
                             </span>
                         </div>
                     </div>
