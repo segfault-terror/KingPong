@@ -23,6 +23,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateUserDto } from './utils/update.user.dto';
 import * as fs from 'fs';
 import { Response } from 'express';
+import { BufferedFile } from 'src/minio-client/file.model';
 
 @Controller('user')
 // @Controller('users')
@@ -105,19 +106,15 @@ export class UserController {
     @UseInterceptors(FileInterceptor('avatar'))
     async update(
         @Body() body: UpdateUserDto,
-        @UploadedFile() file: Express.Multer.File,
+        @UploadedFile() image: BufferedFile,
         @Req() req: any,
     ) {
-        const userUpdate = { avatar: '' };
-        if (file) {
-            fs.unlink('uploads/' + req.user.avatar.split('/').pop(), () => {});
-            userUpdate.avatar = `http://localhost:3000/user/images/${file.filename}`;
-        }
+        const uploadedImage = await this.userService.uploadImage(image);
+        body.avatar = uploadedImage.image_url;
         const updatedUser = await this.userService.updateUser({
             where: { username: req.user.username },
-            data: userUpdate,
+            data: body,
         });
-
         delete updatedUser.password;
         return updatedUser;
     }
