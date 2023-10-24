@@ -54,9 +54,10 @@ export default function DropdownMenu() {
         queryKey: ['user'],
         queryFn: async () => {
             try {
-                return await axios.get(`/api/user/me`, {
+                const res = await axios.get(`/api/user/me`, {
                     withCredentials: true,
                 });
+                return res;
             } catch {
                 redirect('/signin');
             }

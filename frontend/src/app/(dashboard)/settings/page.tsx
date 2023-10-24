@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { UseFormRegister, UseFormResetField, useForm } from 'react-hook-form';
 import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 const profile = {
     avatar: '',
@@ -116,15 +117,30 @@ export default function Settings() {
             return response;
         } catch (error) {
             const err = error as CustomError;
+            if (err.response?.status === 413) {
+                throw 'File too large max 1MB';
+            }
             throw err.response?.data?.message;
         }
     };
 
     const queryClient = useQueryClient();
+    const router = useRouter();
 
-    const { mutate, isLoading: isUpdating } = useMutation(updateUser, {
+    const {
+        mutate,
+        isLoading: isUpdating,
+        isError,
+        error,
+    } = useMutation(updateUser, {
         onSuccess: async (data) => {
-            queryClient.invalidateQueries(['userInfo', 'current', 'profile']);
+            queryClient.invalidateQueries([
+                'userInfo',
+                'current',
+                'profile',
+                'user',
+            ]);
+            router.push('/profile/' + data.username);
         },
         onError: async (error: string) => {},
     });
@@ -240,6 +256,11 @@ export default function Settings() {
                                 {errors.confirmPassword.message}
                             </p>
                         )}
+                        <div className=" my-4">
+                            {isError && (
+                                <span className=" text-red-500">{error}</span>
+                            )}
+                        </div>
                         <div className="flex justify-between">
                             <button
                                 type="button"
