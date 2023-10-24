@@ -57,7 +57,7 @@ model Stats {
     XP Int @default(0)
     NextLevelXP Int @default(100)
     league League @default(BRONZE)
-    rank Int @default(1500)
+    rank Int @default(500)
     user User @relation(fields: [userId], references: [id])
     userId String @unique
     createdAt DateTime @default(now())
