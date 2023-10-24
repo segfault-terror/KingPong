@@ -3,37 +3,95 @@
 import Image from 'next/image';
 import React from 'react';
 import UploadInput from './UploadInput';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { UseFormRegister, UseFormResetField, useForm } from 'react-hook-form';
 
 const profile = {
-    fullname: 'John Doe',
-    usernamr: 'johndoe',
-    avatar: '/images/4.jpeg',
+    avatar: '',
 };
 
-function UploadAvatar() {
+export type SettingInputs = {
+    fullname: string;
+    username: string;
+    password: string;
+    newPassword: string;
+    confirmPassword: string;
+    // avatar: HTMLInputElement['files'];
+    avatar: any;
+    avatarUrl: string;
+};
+
+function UploadAvatar({
+    register,
+    resetField,
+}: {
+    register: UseFormRegister<SettingInputs>;
+    resetField: UseFormResetField<SettingInputs>;
+}) {
     const [image, setImage] = React.useState(profile.avatar);
 
     return (
         <>
-            <Image
+            <img
                 src={image}
                 alt="avatar"
                 width={128}
                 height={128}
                 className="w-32 h-32 object-cover rounded-full border border-secondary-200"
             />
-            <UploadInput setImage={setImage} defaultImage={profile.avatar} />
+            <UploadInput
+                resetField={resetField}
+                register={register}
+                setImage={setImage}
+                defaultImage={profile.avatar}
+            />
         </>
     );
 }
 
 export default function Settings() {
-    const [fullname, setFullname] = React.useState(profile.fullname);
-    const [username, setUsername] = React.useState(profile.usernamr);
-    const [password, setPassword] = React.useState('');
-    const [newPassword, setNewPassword] = React.useState('');
-    const [confirmPassword, setConfirmPassword] = React.useState('');
+    // fetch data from backend
+    const { data, isLoading } = useQuery({
+        queryKey: ['userInfo'],
+        queryFn: async () => {
+            try {
+                const me = await axios.get(`/api/user/me`, {
+                    withCredentials: true,
+                });
+                setValue('fullname', me.data.fullname);
+                setValue('username', me.data.username);
+                return me.data;
+            } catch {
+                // redirect('/signin');
+            }
+        },
+    });
 
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        getValues,
+        resetField,
+        formState: { errors },
+    } = useForm<SettingInputs>({
+        defaultValues: {
+            fullname: '',
+            username: '',
+            password: '',
+            newPassword: '',
+            confirmPassword: '',
+            avatar: null,
+        },
+    });
+    profile.avatar = data?.avatar;
+
+    const updateUser = async (data: SettingInputs) => {
+        console.log(data);
+    };
+
+    if (isLoading) return <div>Loading...</div>;
     return (
         <main className="flex items-center justify-center my-9">
             <div
@@ -43,53 +101,88 @@ export default function Settings() {
                 <h2 className="font-jost text-4xl font-bold text-secondary-200">
                     Settings
                 </h2>
-                <div className="grid w-full gap-6 lg:grid-cols-2">
+                <form
+                    className="grid w-full gap-6 lg:grid-cols-2"
+                    onSubmit={handleSubmit(updateUser)}
+                >
                     <div className="flex flex-col items-center justify-center gap-4">
-                        <UploadAvatar />
+                        <UploadAvatar resetField={resetField} register={register} />
                     </div>
-                    <form className="lg:px-12 flex flex-col gap-6">
+                    <div className="lg:px-12 flex flex-col gap-6">
                         <input
-                            name="fullname"
+                            {...register('fullname', {
+                                required: true,
+                                minLength: {
+                                    value: 3,
+                                    message:
+                                        'Fullname must be at least 3 characters',
+                                },
+                            })}
                             type="text"
-                            value={fullname}
-                            onChange={(e) => setFullname(e.target.value)}
                             placeholder="Fullname"
                             className="w-full bg-background border border-secondary-200 rounded-3xl
                                         px-8 py-2 font-mulish text-lg outline-none"
                         />
                         <input
-                            name="username"
+                            {...register('username', {
+                                required: true,
+                                minLength: {
+                                    value: 3,
+                                    message:
+                                        'Username must be at least 3 characters',
+                                },
+                                maxLength: {
+                                    value: 15,
+                                    message:
+                                        'Username must be at most 15 characters',
+                                },
+                            })}
                             type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
                             placeholder="Username"
                             className="w-full bg-background border border-secondary-200 rounded-3xl
                                         px-8 py-2 font-mulish text-lg outline-none"
                         />
                         <input
-                            name="password"
+                            {...register('password')}
                             type="password"
-                            onChange={(e) => setPassword(e.target.value)}
                             placeholder="Current Password"
                             className="w-full bg-background border border-secondary-200 rounded-3xl
                                         px-8 py-2 font-mulish text-lg outline-none"
                         />
                         <input
-                            name="newPassword"
+                            {...register('newPassword', {
+                                validate: (value) => {
+                                    if (!value) return true;
+                                    if (value && value.length > 0 && value.length < 8) {
+                                        return 'Password must be at least 8 characters';
+                                    }
+                                    return (
+                                        value !== getValues('password') ||
+                                        'The new password must be different from the current password'
+                                    );
+                                }
+                            })}
                             type="password"
-                            onChange={(e) => setNewPassword(e.target.value)}
                             placeholder="New Password"
                             className="w-full bg-background border border-secondary-200 rounded-3xl
                                         px-8 py-2 font-mulish text-lg outline-none"
                         />
+                        {errors.newPassword && (<p className="text-red-500 text-sm\">{errors.newPassword.message}</p>)}
                         <input
-                            name="confirmPassword"
+                            {...register('confirmPassword', {
+                                validate: (value) => {
+                                    return (
+                                        value === getValues('newPassword') ||
+                                        'The passwords do not match'
+                                    );
+                                }
+                            })}
                             type="password"
-                            onChange={(e) => setConfirmPassword(e.target.value)}
                             placeholder="Confirm Password"
                             className="w-full bg-background border border-secondary-200 rounded-3xl
                                         px-8 py-2 font-mulish text-lg outline-none"
                         />
+                        {errors.confirmPassword && (<p className="text-red-500 text-sm\">{errors.confirmPassword.message}</p>)}
                         <div className="flex justify-between">
                             <button
                                 type="button"
@@ -106,8 +199,8 @@ export default function Settings() {
                                 Save Changes
                             </button>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </main>
     );
