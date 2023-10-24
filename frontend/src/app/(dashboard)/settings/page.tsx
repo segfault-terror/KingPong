@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import React from 'react';
 import UploadInput from './UploadInput';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { focusManager, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { UseFormRegister, UseFormResetField, useForm } from 'react-hook-form';
 import { redirect } from 'next/navigation';
@@ -140,6 +140,7 @@ export default function Settings() {
                 'profile',
                 'user',
             ]);
+            focusManager.setFocused(true);
             router.push('/profile/' + data.username);
         },
         onError: async (error: string) => {},
