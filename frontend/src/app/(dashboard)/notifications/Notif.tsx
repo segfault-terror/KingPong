@@ -26,7 +26,7 @@ const Notife = ({ id, type, username,avatar, readed }: NotificationProps, update
                 <img
                     src={avatar}
                     alt="image"
-                    className="w-20 rounded-full border-white border m-2"
+                    className="w-20 rounded-full border-white border m-2 object-cover"
                 />
                 <div className="font-jost text-white">{message}</div>
             </div>

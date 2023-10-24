@@ -130,7 +130,7 @@ export default function Page() {
                             <img
                                 src={data?.avatar}
                                 alt=""
-                                className="bg-primary rounded-full w-20 h-20 m-auto"
+                                className="bg-primary rounded-full w-20 h-20 m-auto object-cover"
                             />
                             <div className="absolute -bottom-2 -right-1 w-8 shrink ">
                                 <div className="relative w-full flex flex-col justify-center items-center">

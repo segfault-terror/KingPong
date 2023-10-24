@@ -45,7 +45,7 @@ const FriendCard = ({
                 <img
                     src={avatar}
                     alt="avatar"
-                    className="w-3/4 rounded-full bg-background border-white border-r-2 border-l-2"
+                    className="w-3/4 rounded-full bg-background border-white border-r-2 border-l-2 object-cover"
                 />
                 <div className="flex flex-col items-start justify-center ml-3">
                     <span className="text-lg font-medium">{fullname}</span>

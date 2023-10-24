@@ -57,7 +57,7 @@ export default function Navbar(myleague: string, leaderboard: any[]) {
                                             <img
                                                 src={entry.avatar}
                                                 alt=""
-                                                className="rounded-full w-8 h-8 mr-2 bg-background"
+                                                className="rounded-full w-8 h-8 mr-2 bg-background object-cover"
                                             />
                                             {entry.username.slice(0, 10)}
                                         </div>

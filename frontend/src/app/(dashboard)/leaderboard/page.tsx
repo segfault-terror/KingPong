@@ -116,7 +116,7 @@ export default function Leaderboard() {
                                 <img
                                     src={entry.avatar}
                                     alt=""
-                                    className="rounded-full w-8 h-8 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-20 xl:h-20 mr-2 bg-background"
+                                    className="rounded-full w-8 h-8 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-20 xl:h-20 mr-2 bg-background object-cover"
                                 />
                                 {entry.username.slice(0, 10)}
                             </Link>

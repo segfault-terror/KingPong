@@ -47,7 +47,7 @@ const Notife = (
                 <img
                     src={avatar}
                     alt="image"
-                    className="w-20 rounded-full border-white border m-2"
+                    className="w-20 rounded-full border-white border m-2 object-cover"
                 />
                 <div className="font-jost text-white text-md sm:text-lg md:text-xl">
                     {message}

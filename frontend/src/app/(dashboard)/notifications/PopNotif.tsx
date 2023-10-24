@@ -31,7 +31,7 @@ export default function PopNotif ({ notif, updateModal, updateNotif }: { notif: 
 					<img
 						src={notif.avatar}
 						alt=""
-						className="w-24 md:w-32 lg:w-44 border-white border rounded-full mr-2 bg-background "
+						className="w-24 md:w-32 lg:w-44 border-white border rounded-full mr-2 bg-background object-cover"
 					/>
 					<p className="flex justify-center items-center mx-2 text:md lg:text-2xl align-middle text-clip">
 						{message}
