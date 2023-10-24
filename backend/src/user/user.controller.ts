@@ -109,8 +109,13 @@ export class UserController {
         @UploadedFile() image: BufferedFile,
         @Req() req: any,
     ) {
-        const uploadedImage = await this.userService.uploadImage(image);
-        body.avatar = uploadedImage.image_url;
+        console.log(body);
+        delete body.confirmPassword;
+        delete body.newPassword;
+        if (image) {
+            const uploadedImage = await this.userService.uploadImage(image);
+            body.avatar = uploadedImage.image_url;
+        }
         const updatedUser = await this.userService.updateUser({
             where: { username: req.user.username },
             data: body,

@@ -3,9 +3,10 @@
 import Image from 'next/image';
 import React from 'react';
 import UploadInput from './UploadInput';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
 import { UseFormRegister, UseFormResetField, useForm } from 'react-hook-form';
+import { redirect } from 'next/navigation';
 
 const profile = {
     avatar: '',
@@ -17,9 +18,16 @@ export type SettingInputs = {
     password: string;
     newPassword: string;
     confirmPassword: string;
-    // avatar: HTMLInputElement['files'];
-    avatar: any;
+    avatar: HTMLInputElement['files'];
     avatarUrl: string;
+};
+
+type CustomError = AxiosError & {
+    response: {
+        data: {
+            message: string;
+        };
+    };
 };
 
 function UploadAvatar({
@@ -88,8 +96,42 @@ export default function Settings() {
     profile.avatar = data?.avatar;
 
     const updateUser = async (data: SettingInputs) => {
-        console.log(data);
+        const formData = new FormData();
+        data.fullname && formData.append('fullname', data.fullname);
+        data.username && formData.append('username', data.username);
+        data.password && formData.append('password', data.password);
+        data.newPassword && formData.append('newPassword', data.newPassword);
+        data.confirmPassword &&
+            formData.append('confirmPassword', data.confirmPassword);
+        data.avatar && formData.append('avatar', data.avatar?.[0]);
+
+        try {
+            const { data: response } = await axios.post(
+                `/api/user/update`,
+                formData,
+                {
+                    withCredentials: true,
+                },
+            );
+            return response;
+        } catch (error) {
+            const err = error as CustomError;
+            throw err.response?.data?.message;
+        }
     };
+
+    const queryClient = useQueryClient();
+
+    const { mutate, isLoading: isUpdating } = useMutation(updateUser, {
+        onSuccess: async (data) => {
+            queryClient.invalidateQueries(['userInfo', 'current', 'profile']);
+        },
+        onError: async (error: string) => {},
+    });
+
+    function onSubmit(data: SettingInputs) {
+        mutate(data);
+    }
 
     if (isLoading) return <div>Loading...</div>;
     return (
@@ -103,10 +145,13 @@ export default function Settings() {
                 </h2>
                 <form
                     className="grid w-full gap-6 lg:grid-cols-2"
-                    onSubmit={handleSubmit(updateUser)}
+                    onSubmit={handleSubmit(onSubmit)}
                 >
                     <div className="flex flex-col items-center justify-center gap-4">
-                        <UploadAvatar resetField={resetField} register={register} />
+                        <UploadAvatar
+                            resetField={resetField}
+                            register={register}
+                        />
                     </div>
                     <div className="lg:px-12 flex flex-col gap-6">
                         <input
@@ -153,21 +198,29 @@ export default function Settings() {
                             {...register('newPassword', {
                                 validate: (value) => {
                                     if (!value) return true;
-                                    if (value && value.length > 0 && value.length < 8) {
+                                    if (
+                                        value &&
+                                        value.length > 0 &&
+                                        value.length < 8
+                                    ) {
                                         return 'Password must be at least 8 characters';
                                     }
                                     return (
                                         value !== getValues('password') ||
                                         'The new password must be different from the current password'
                                     );
-                                }
+                                },
                             })}
                             type="password"
                             placeholder="New Password"
                             className="w-full bg-background border border-secondary-200 rounded-3xl
                                         px-8 py-2 font-mulish text-lg outline-none"
                         />
-                        {errors.newPassword && (<p className="text-red-500 text-sm\">{errors.newPassword.message}</p>)}
+                        {errors.newPassword && (
+                            <p className="text-red-500 text-sm\">
+                                {errors.newPassword.message}
+                            </p>
+                        )}
                         <input
                             {...register('confirmPassword', {
                                 validate: (value) => {
@@ -175,14 +228,18 @@ export default function Settings() {
                                         value === getValues('newPassword') ||
                                         'The passwords do not match'
                                     );
-                                }
+                                },
                             })}
                             type="password"
                             placeholder="Confirm Password"
                             className="w-full bg-background border border-secondary-200 rounded-3xl
                                         px-8 py-2 font-mulish text-lg outline-none"
                         />
-                        {errors.confirmPassword && (<p className="text-red-500 text-sm\">{errors.confirmPassword.message}</p>)}
+                        {errors.confirmPassword && (
+                            <p className="text-red-500 text-sm\">
+                                {errors.confirmPassword.message}
+                            </p>
+                        )}
                         <div className="flex justify-between">
                             <button
                                 type="button"
