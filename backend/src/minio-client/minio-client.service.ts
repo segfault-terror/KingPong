@@ -10,6 +10,27 @@ export class MinioClientService {
         private readonly minioService: MinioService,
         private readonly configService: ConfigService,
     ) {
+        this.createBucket().catch();
+    }
+
+    private readonly bucketName = 'user-profiles';
+
+    get client() {
+        return this.minioService.client;
+    }
+
+    async createBucket(bucketName: string = this.bucketName) {
+        try {
+            if (!(await this.client.bucketExists(bucketName))) {
+                await this.client.makeBucket(bucketName);
+                await this.setBucketPolicy();
+            }
+        } catch {
+            // Bucket already exists
+        }
+    }
+
+    async setBucketPolicy() {
         const policy = {
             Version: '2012-10-17',
             Statement: [
@@ -42,12 +63,6 @@ export class MinioClientService {
                 if (err) throw err;
             },
         );
-    }
-
-    private readonly bucketName = 'user-profiles';
-
-    get client() {
-        return this.minioService.client;
     }
 
     async upload(file: BufferedFile, bucketName: string = this.bucketName) {
