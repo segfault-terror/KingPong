@@ -87,9 +87,9 @@ export default function Loading() {
                     </MovingAnimation>
                 </div>
                 <div className="relative bg-gradient-radial from-[#4A4A4A] to-[#010101]  flex items-center justify-center w-full h-full text-sm rounded-2xl">
-                    <div className="h-4 w-[4px] lg:h-5 lg:w-[5px]  xl:h-7 xl:w-[6px] border-[1px] rounded-l-xl bg-red-200 mx-2 animate-LoadingPing absolute left-[1%] "></div>
-                    <div className="w-[4px] h-[4px] lg:w-2 lg:h-2 xl:w-2 xl:h-2 rounded-full absolute animate-LoadingBall bg-slate-300"></div>
-                    <div className="h-4 w-[4px] lg:h-5 lg:w-[5px] xl:h-7 xl:w-[6px] border-[1px] rounded-r-xl bg-neutral-200 mx-2 animate-LoadingPong absolute right-[1%]"></div>
+                    <div className="h-4 w-[4px] lg:h-5 lg:w-[5px]  xl:h-7 xl:w-[6px] border-[1px] rounded-l-xl bg-white mx-2 animate-LoadingPing absolute left-[1%] "></div>
+                    <div className="w-[4px] h-[4px] lg:w-2 lg:h-2 xl:w-2 xl:h-2 rounded-full absolute animate-LoadingBall bg-white"></div>
+                    <div className="h-4 w-[4px] lg:h-5 lg:w-[5px] xl:h-7 xl:w-[6px] border-[1px] rounded-r-xl bg-white mx-2 animate-LoadingPong absolute right-[1%]"></div>
                 </div>
             </div>
             <div>
