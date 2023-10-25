@@ -140,6 +140,7 @@ export default function Settings() {
                 'profile',
                 'user',
             ]);
+            focusManager.setFocused(false);
             focusManager.setFocused(true);
             router.push('/profile/' + data.username);
         },
