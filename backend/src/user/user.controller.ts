@@ -15,6 +15,7 @@ import {
     UploadedFile,
     Header,
     Res,
+    UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './utils/create.user.dto';
@@ -109,16 +110,91 @@ export class UserController {
         @UploadedFile() image: BufferedFile,
         @Req() req: any,
     ) {
-        console.log(body);
-        delete body.confirmPassword;
-        delete body.newPassword;
         if (image) {
             const uploadedImage = await this.userService.uploadImage(image);
             body.avatar = uploadedImage.image_url;
         }
+        const checkUsername = await this.userService.user({
+            username: body.username,
+        });
+        if (checkUsername && checkUsername.username !== req.user.username) {
+            throw new ConflictException('Username already exists');
+        }
+
+        // if (!body.currentPassword) {
+        //     const user = await this.userService.user({
+        //         username: req.user.username,
+        //     });
+        //     if (user.password) {
+        //         if (body.newPassword || body.confirmPassword) {
+        //             throw new UnauthorizedException(
+        //                 'Please enter your current password',
+        //             );
+        //         }
+        //     } else {
+        //         if ()
+        //     }
+        // } else {
+        //     if (!body.newPassword || !body.confirmPassword) {
+        //         throw new UnauthorizedException(
+        //             'Please enter your new password',
+        //         );
+        //     } else if (body.newPassword !== body.confirmPassword) {
+        //         throw new UnauthorizedException(
+        //             'Password confirmation does not match',
+        //         );
+        //     }
+        //     const validateUser = await this.userService.validateUser(
+        //         req.user.username,
+        //         body.currentPassword,
+        //     );
+        //     if (!validateUser) {
+        //         throw new UnauthorizedException('Invalid password');
+        //     }
+        // }
+
+        console.log(body);
+
+        if (body.password || body.newPassword || body.confirmPassword) {
+            if (!body.newPassword || !body.confirmPassword) {
+                throw new UnauthorizedException(
+                    'Please enter your new password',
+                );
+            } else if (body.newPassword !== body.confirmPassword) {
+                throw new UnauthorizedException(
+                    'Password confirmation does not match',
+                );
+            }
+            if (!body.password) {
+                body.password = '';
+            }
+            const user = await this.userService.user({
+                username: req.user.username,
+            });
+            if (user.password) {
+                if (!body.password) {
+                    throw new UnauthorizedException(
+                        'Please enter your current password',
+                    );
+                }
+                const validateUser = await this.userService.validateUser(
+                    req.user.username,
+                    body.password,
+                );
+                if (!validateUser) {
+                    throw new UnauthorizedException('Invalid current password');
+                }
+            }
+            body.password = body.newPassword;
+            delete body.newPassword;
+            delete body.confirmPassword;
+        }
+
         const updatedUser = await this.userService.updateUser({
             where: { username: req.user.username },
-            data: body,
+            data: {
+                ...body,
+            },
         });
         delete updatedUser.password;
         return updatedUser;
