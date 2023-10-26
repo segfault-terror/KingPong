@@ -22,6 +22,7 @@ export class AuthGateway implements OnGatewayConnection, OnGatewayDisconnect {
         console.log('client connected', client.request.user);
         console.log('args', args);
         client.emit('test', 'connected');
+        this.io.in(client.request.user.id).emit('test', 'connected');
         return { event: 'test', data: 'connected' };
     }
 
@@ -52,13 +53,11 @@ export class AuthGateway implements OnGatewayConnection, OnGatewayDisconnect {
             email: client.request.user.email,
         });
 
-        user.status = 'OFFLINE';
-
         if ((await this.io.in(user.id).fetchSockets()).length === 0) {
             await this.userService.updateUser({
                 where: { email: user.email },
                 data: {
-                    status: user.status,
+                    status: 'OFFLINE',
                 },
             });
         }
