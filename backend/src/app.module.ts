@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { AchievementsModule } from './achievements/achievements.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
     imports: [
@@ -19,6 +20,7 @@ import { NotificationsModule } from './notifications/notifications.module';
         ConfigModule.forRoot({ isGlobal: true }),
         PrismaModule.forRoot(prismaModuleOptions),
         PassportModule.register({ session: true }),
+        ChatModule,
     ],
     controllers: [AppController],
     providers: [AppService],

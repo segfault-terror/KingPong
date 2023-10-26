@@ -46,6 +46,8 @@ model User {
   pendingFriendRequests FriendRequest[] @relation("receiver")
   gamesAsPlayer1 Game[] @relation("player1")
   gamesAsPlayer2 Game[] @relation("player2")
+  sent_direct_messages DirectMessage[] @relation("sender")
+  received_direct_messages DirectMessage[] @relation("receiver")
   createdAt DateTime @default(now())
 }
 
@@ -108,5 +110,15 @@ model Game {
     player1_score Int @default(0)
     player2_score Int @default(0)
     ranked Boolean @default(false)
+    createdAt DateTime @default(now())
+}
+
+model DirectMessage {
+    id String @id @default(cuid())
+    sender User @relation("sender", fields: [sender_id], references: [id])
+    sender_id String
+    receiver User @relation("receiver", fields: [receiver_id], references: [id])
+    receiver_id String
+    message String
     createdAt DateTime @default(now())
 }
