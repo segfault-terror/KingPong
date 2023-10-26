@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
-import { Prisma, User, Status } from '@prisma/client';
+import { Prisma, User, Stats, Status } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { MinioClientService } from 'src/minio-client/minio-client.service';
 import { BufferedFile } from 'src/minio-client/file.model';
@@ -19,6 +19,8 @@ export class UserService {
             where: userWhereUniqueInput,
         });
     }
+
+    
 
     async leaderboard(): Promise<User[]> {
         return this.prisma.user.findMany({

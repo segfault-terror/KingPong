@@ -41,6 +41,8 @@ model User {
   achievements Achievement[]
   Notifications Notification[]
   friends User[] @relation("friends")
+  twoFactorSecret String @default("")
+  twoFactorEnabled Boolean @default(false)
   friendOf User[] @relation("friends")
   sentFriendRequests FriendRequest[] @relation("sender")
   pendingFriendRequests FriendRequest[] @relation("receiver")
