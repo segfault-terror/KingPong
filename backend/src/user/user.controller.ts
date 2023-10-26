@@ -84,23 +84,6 @@ export class UserController {
         return this.userService.createUser(body);
     }
 
-    // @Post('update')
-    // @UsePipes(new ValidationPipe())
-    // async update(@Body() body: UpdateUserDto) {
-    //     const userByUsername = await this.userService.user({
-    //         username: body.username,
-    //     });
-    //     if (userByUsername) {
-    //         throw new ConflictException('Username already exists');
-    //     }
-    //     const userByEmail = await this.userService.user({ email: body.email });
-    //     if (userByEmail) {
-    //         throw new ConflictException('Email already exists');
-    //     }
-
-    //     return this.userService.updateUser(body);
-    // }
-
     @Post('update')
     @UseGuards(AuthGard)
     @UsePipes(new ValidationPipe())
@@ -120,40 +103,6 @@ export class UserController {
         if (checkUsername && checkUsername.username !== req.user.username) {
             throw new ConflictException('Username already exists');
         }
-
-        // if (!body.currentPassword) {
-        //     const user = await this.userService.user({
-        //         username: req.user.username,
-        //     });
-        //     if (user.password) {
-        //         if (body.newPassword || body.confirmPassword) {
-        //             throw new UnauthorizedException(
-        //                 'Please enter your current password',
-        //             );
-        //         }
-        //     } else {
-        //         if ()
-        //     }
-        // } else {
-        //     if (!body.newPassword || !body.confirmPassword) {
-        //         throw new UnauthorizedException(
-        //             'Please enter your new password',
-        //         );
-        //     } else if (body.newPassword !== body.confirmPassword) {
-        //         throw new UnauthorizedException(
-        //             'Password confirmation does not match',
-        //         );
-        //     }
-        //     const validateUser = await this.userService.validateUser(
-        //         req.user.username,
-        //         body.currentPassword,
-        //     );
-        //     if (!validateUser) {
-        //         throw new UnauthorizedException('Invalid password');
-        //     }
-        // }
-
-        console.log(body);
 
         if (body.password || body.newPassword || body.confirmPassword) {
             if (!body.newPassword || !body.confirmPassword) {
