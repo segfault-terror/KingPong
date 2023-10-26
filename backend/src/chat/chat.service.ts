@@ -1,5 +1,6 @@
 import {
     BadRequestException,
+    ImATeapotException,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
@@ -31,15 +32,20 @@ export class ChatService {
         if (!user2) {
             throw new NotFoundException(`User ${username2} does not exist`);
         }
-        const { isFriend } = await this.userService.isFriend(
+
+        const { isFriend, isMe } = await this.userService.isFriend(
             username1,
             username2,
         );
+        if (isMe) {
+            throw new ImATeapotException('You cannot message yourself');
+        }
         if (!isFriend) {
             throw new BadRequestException(
                 `User ${username1} is not friend with ${username2}`,
             );
         }
+
         return await this.prisma.directMessage.findMany({
             where: {
                 OR: [

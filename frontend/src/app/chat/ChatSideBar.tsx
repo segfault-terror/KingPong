@@ -7,6 +7,7 @@ import DirectMessage from './DirectMessage';
 import EmptyChat from './EmptyChat';
 import ToggleButton from './ToggleButton';
 import { Channels, DMList } from './data/ChatData';
+import { useQuery } from '@tanstack/react-query';
 
 type ChatSideBarProps = {
     toggle: boolean;

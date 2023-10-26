@@ -1,7 +1,6 @@
 'use client';
 
-import DmConversation, { DmConversationProps } from '../../DmConversation';
-import { DMConversations } from '../../data/ChatData';
+import DmConversation from '../../DmConversation';
 
 type UsernameDMProps = {
     params: {

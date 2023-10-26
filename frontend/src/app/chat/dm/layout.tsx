@@ -3,6 +3,7 @@ import Header from '@/app/(dashboard)/Header';
 import ChatSideBar from '@/app/chat/ChatSideBar';
 import { toggleContext } from '@/contexts/contexts';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useQuery } from '@tanstack/react-query';
 import React, { useContext, useEffect, useState } from 'react';
 
 export default function DMLayout({ children }: { children: React.ReactNode }) {
