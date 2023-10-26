@@ -60,6 +60,7 @@ function UploadAvatar({
 }
 
 export default function Settings() {
+    const [isDataFetched, setIsDataFetched] = React.useState(false);
     // fetch data from backend
     const { data, isLoading } = useQuery({
         queryKey: ['userInfo'],
@@ -70,6 +71,7 @@ export default function Settings() {
                 });
                 setValue('fullname', me.data.fullname);
                 setValue('username', me.data.username);
+                setIsDataFetched(true);
                 return me.data;
             } catch {
                 // redirect('/signin');
