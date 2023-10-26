@@ -1,13 +1,19 @@
 'use client';
 
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect } from 'react';
 import UploadInput from './UploadInput';
-import { focusManager, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+    focusManager,
+    useMutation,
+    useQuery,
+    useQueryClient,
+} from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { UseFormRegister, UseFormResetField, useForm } from 'react-hook-form';
-import { redirect } from 'next/navigation';
 import { useRouter } from 'next/navigation';
+import { useContext } from 'react';
+import { ModalContext } from './layout';
 
 const profile = {
     avatar: '',
@@ -60,6 +66,7 @@ function UploadAvatar({
 }
 
 export default function Settings() {
+    const { toggle, setToggle } = useContext(ModalContext);
     const [isDataFetched, setIsDataFetched] = React.useState(false);
     // fetch data from backend
     const { data, isLoading } = useQuery({
@@ -74,7 +81,7 @@ export default function Settings() {
                 setIsDataFetched(true);
                 return me.data;
             } catch {
-                // redirect('/signin');
+                redirect('/signin');
             }
         },
     });
@@ -97,6 +104,7 @@ export default function Settings() {
         },
     });
     profile.avatar = data?.avatar;
+    const tfaEnabled = data?.twoFactorEnabled;
 
     const updateUser = async (data: SettingInputs) => {
         const formData = new FormData();
@@ -107,7 +115,6 @@ export default function Settings() {
         data.confirmPassword &&
             formData.append('confirmPassword', data.confirmPassword);
         data.avatar && formData.append('avatar', data.avatar?.[0]);
-
         try {
             const { data: response } = await axios.post(
                 `/api/user/update`,
@@ -151,6 +158,49 @@ export default function Settings() {
 
     function onSubmit(data: SettingInputs) {
         mutate(data);
+    }
+
+    const updateTfa = async (data: any) => {
+        try {
+            const { data: response } = await axios.post(
+                '/api/user/update/',
+                { ...data, twoFactorEnabled: !tfaEnabled },
+                {
+                    withCredentials: true,
+                },
+            );
+            return response;
+        } catch (error) {
+            const err = error as CustomError;
+            throw err.response?.data?.message;
+        }
+    };
+
+    const { mutate: updateTfaMutation } = useMutation(updateTfa, {
+        onSuccess: async (data) => {
+            console.log(tfaEnabled);
+            focusManager.setFocused(false);
+            focusManager.setFocused(true);
+        },
+        onError: async (error: string) => {},
+    });
+
+    useEffect(() => {
+        // This code will run whenever the `toggle` state changes
+        // You can add any logic here that you want to run when the toggle changes
+        // For example, you could re-fetch data from the server or update the UI
+        if (toggle) {
+            console.log('turn on', tfaEnabled);
+        }
+        else {
+            console.log('turn off', tfaEnabled);
+        }
+    }, [toggle, tfaEnabled]);
+
+    function onTurnOff() {
+        console.log('turn off' , tfaEnabled);
+        setToggle(false);
+        updateTfaMutation({ ...data, twoFactorEnabled: !tfaEnabled });
     }
 
     if (isLoading) return <div>Loading...</div>;
@@ -267,11 +317,18 @@ export default function Settings() {
                         </div>
                         <div className="flex justify-between">
                             <button
+                                onClick={() => {
+                                    if (tfaEnabled) {
+                                        onTurnOff();
+                                        console.log('here');
+                                    }
+                                    setToggle(true);
+                                }}
                                 type="button"
                                 className="font-jost font-bold text-sm text-secondary-200 border border-secondary-200 rounded-3xl
                                             px-4 py-2 bg-primary hover:bg-secondary-200 hover:text-background transition-all"
                             >
-                                Enable 2FA
+                                {tfaEnabled ? 'Disable 2FA' : 'Enable 2FA'}
                             </button>
                             <button
                                 type="submit"
