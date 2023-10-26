@@ -41,7 +41,7 @@ export default function DashboardLayout({
         });
 
         async function connect() {
-            await delai(1000);
+            await delai(1500);
             socket.connect();
         }
 

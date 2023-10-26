@@ -50,8 +50,6 @@ export class AuthController {
 
     @Get('status')
     async status(@Req() req: any) {
-        // checks if the user is authenticated
-        // console.log(req.user);
         if (req.isAuthenticated()) {
             return { message: 'You are authenticated.', status: true };
         }
@@ -60,9 +58,8 @@ export class AuthController {
 
     @Get('logout')
     @UseGuards(AuthGard)
-    @Redirect('/sighin')
+    @Redirect()
     async logout(@Req() req: any, @Headers('referer') referer: string) {
-        // logs out the user
         req.session.destroy();
         return { url: '/signin' };
     }
