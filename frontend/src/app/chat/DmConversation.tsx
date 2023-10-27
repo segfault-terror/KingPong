@@ -114,11 +114,10 @@ function DmMessageList({ userName }: DmConversationProps) {
             const { data: me } = await axios.get('/api/user/me', {
                 withCredentials: true,
             });
-            const { data: dms } = await axios.get(
-                `/api/chat/dm/${userName}/${me.username}`,
-                { withCredentials: true },
-            );
-            return { me, dms };
+            const { data: dm } = await axios.get(`/api/chat/dm/${userName}`, {
+                withCredentials: true,
+            });
+            return { me, dm };
         },
     });
 
@@ -129,6 +128,8 @@ function DmMessageList({ userName }: DmConversationProps) {
             </div>
         );
     }
+
+    console.log(data);
 
     if (isError) {
         switch ((error as any).response.data.statusCode) {
@@ -188,7 +189,7 @@ function DmMessageList({ userName }: DmConversationProps) {
         }
     }
 
-    if (!data?.dms || data?.dms.length === 0)
+    if (!data?.dm || data?.dm.messages.length === 0)
         return (
             <div className="text-cube_palette-200 font-jost font-light text-center">
                 Send a private message to {userName}
@@ -207,19 +208,19 @@ function DmMessageList({ userName }: DmConversationProps) {
                 className={`text-background font-mulish p-2 w-fit max-w-[80%] hyphens-auto
                             shadow-[5px_5px_0px_0px_rgba(37,10,59)]
                             ${
-                                msg.sender_id == data?.me.id
+                                msg.sender.id == data?.me.id
                                     ? myStyles
                                     : userStyles
                             }`}
             >
-                {msg.message}
+                {msg.content}
             </li>
         );
     }
 
     return (
         <ul className="flex flex-col gap-2">
-            {data?.dms.map((msg: any) => generateMessage(msg))}
+            {data?.dm.messages.map((msg: any) => generateMessage(msg))}
         </ul>
     );
 }

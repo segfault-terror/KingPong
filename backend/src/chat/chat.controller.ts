@@ -1,17 +1,25 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
-import { ChatService } from './chat.service';
+import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
 import { AuthGard } from 'src/auth/auth.guard';
+import { ChatService } from './chat.service';
 
 @Controller('chat')
 @UseGuards(AuthGard)
 export class ChatController {
     constructor(private readonly chatService: ChatService) {}
 
-    @Get('dm/:username1/:username2')
+    @Get('dm/:username')
     async getConversation(
-        @Param('username1') username1: string,
-        @Param('username2') username2: string,
+        @Req() request: any,
+        @Param('username') username: string,
     ) {
-        return await this.chatService.getConversation(username1, username2);
+        return await this.chatService.getConversation(
+            request.user.username,
+            username,
+        );
     }
+
+    // @Get('dms')
+    // async getAllDMs(@Req() request: any) {
+    //     return await this.chatService.getAllDMs(request.user.username);
+    // }
 }

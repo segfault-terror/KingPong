@@ -48,8 +48,9 @@ model User {
   pendingFriendRequests FriendRequest[] @relation("receiver")
   gamesAsPlayer1 Game[] @relation("player1")
   gamesAsPlayer2 Game[] @relation("player2")
-  sent_direct_messages DirectMessage[] @relation("sender")
-  received_direct_messages DirectMessage[] @relation("receiver")
+  dms1 DM[] @relation("user1")
+  dms2 DM[] @relation("user2")
+  sentMessages Message[] @relation("sender")
   createdAt DateTime @default(now())
 }
 
@@ -115,12 +116,30 @@ model Game {
     createdAt DateTime @default(now())
 }
 
-model DirectMessage {
+model DM {
     id String @id @default(cuid())
-    sender User @relation("sender", fields: [sender_id], references: [id])
-    sender_id String
-    receiver User @relation("receiver", fields: [receiver_id], references: [id])
-    receiver_id String
-    message String
+
+    user1 User @relation("user1", fields: [user1Id], references: [id])
+    user1Id String @unique
+
+    user2 User @relation("user2", fields: [user2Id], references: [id])
+    user2Id String @unique
+
+    messages Message[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Message {
+    id String @id @default(cuid())
+
+    dm DM @relation(fields: [dm_id], references: [id])
+    dm_id String
+
+    sender User @relation("sender", fields: [senderId], references: [id])
+    senderId String
+
+    content String
     createdAt DateTime @default(now())
 }

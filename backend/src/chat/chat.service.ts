@@ -46,22 +46,43 @@ export class ChatService {
             );
         }
 
-        return await this.prisma.directMessage.findMany({
+        const result = await this.prisma.dM.findMany({
             where: {
                 OR: [
                     {
-                        sender: { username: username1 },
-                        receiver: { username: username2 },
+                        AND: [
+                            { user1: { username: username1 } },
+                            { user2: { username: username2 } },
+                        ],
                     },
                     {
-                        sender: { username: username2 },
-                        receiver: { username: username1 },
+                        AND: [
+                            { user1: { username: username2 } },
+                            { user2: { username: username1 } },
+                        ],
                     },
                 ],
             },
-            orderBy: {
-                createdAt: 'asc',
+            select: {
+                messages: {
+                    select: {
+                        content: true,
+                        sender: {
+                            select: {
+                                id: true,
+                                username: true,
+                            },
+                        },
+                    },
+                    orderBy: {
+                        createdAt: 'asc',
+                    },
+                },
             },
         });
+        // HACK: there might be problems with this
+        if (result.length > 1)
+            throw new Error('There should be only one DM between two users');
+        return result[0];
     }
 }
