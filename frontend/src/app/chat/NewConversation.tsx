@@ -1,10 +1,13 @@
+'use client';
 import { modalContext } from '@/contexts/contexts';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import Link from 'next/link';
 import { useContext, useState } from 'react';
-import { Friends } from './data/ChatData';
+import Loading from '../loading';
 
-function filterUsers(query: string) {
-    return Friends.filter((friend) => {
+function filterUsers(friends: any[], query: string) {
+    return friends.filter((friend) => {
         const fullname = friend.fullname.toLowerCase();
         const username = friend.username.toLowerCase();
 
@@ -22,8 +25,26 @@ export type Friend = {
 };
 
 export default function JoinNewChannel() {
-    const [results, setResults] = useState<Friend[]>([]);
+    const { data, isLoading } = useQuery({
+        queryKey: ['friends'],
+        queryFn: async () => {
+            const { data: friends } = await axios.get(`/api/user/me/friends`, {
+                withCredentials: true,
+            });
+            return friends;
+        },
+    });
+
+    const [results, setResults] = useState<any[]>([]);
     const { setNewConversation } = useContext(modalContext);
+
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
 
     return (
         <form
@@ -37,13 +58,19 @@ export default function JoinNewChannel() {
             <input
                 type="text"
                 placeholder="Search"
+                onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                    }
+                }}
                 onChange={(event) => {
+                    event.preventDefault();
                     const query = event.target.value;
                     if (query === '') {
                         setResults([]);
                         return;
                     }
-                    const newResults = filterUsers(query);
+                    const newResults = filterUsers(data?.friends, query);
                     setResults(newResults);
                 }}
                 className="bg-background text-white accent-secondary-200
@@ -65,7 +92,7 @@ export default function JoinNewChannel() {
                         >
                             <li className="flex items-center gap-4">
                                 <img
-                                    src={result.img}
+                                    src={result.avatar}
                                     alt={`${result.username}'s profile picture`}
                                     className="w-12 h-12 rounded-full object-cover
                                         border-[1px] border-secondary-200 font-jost"
