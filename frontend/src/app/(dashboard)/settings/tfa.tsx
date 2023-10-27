@@ -8,7 +8,7 @@ interface TfaProps {
     code: string;
 }
 
-export default function TFA({toggle,  useToggle }: {toggle: boolean, useToggle: Function }) {
+export default function TFA({toggle,  useToggle, setTfa }: {toggle: boolean, useToggle: Function, setTfa: Function }) {
 
 
     const {
@@ -62,18 +62,13 @@ export default function TFA({toggle,  useToggle }: {toggle: boolean, useToggle: 
         cacheTime: 5 * 60 * 1000,
     });
 
-    useEffect(() => {
-        if (data?.me?.twoFactorEnabled) {
-            useToggle(false);
-        }
-    }
-    , [data?.me?.twoFactorEnabled]);
     
 
     const { mutate: verify, isLoading: isLoadingVerify } = useMutation(
         updateTfa,
         {
             onSuccess: () => {
+                setTfa(true);
                 useToggle(!toggle);
             },
             onError: (error) => {

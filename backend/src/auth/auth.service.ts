@@ -59,16 +59,16 @@ export class AuthService {
         user: Prisma.UserWhereUniqueInput,
     ): Promise<boolean> {
         console.log(user);
-        const twoFactorSecret = await this.prisma.user.findUnique({
+        const me = await this.prisma.user.findUnique({
             where: user,
             select: {
                 twoFactorSecret: true,
             },
         });
-        console.log(twoFactorSecret.twoFactorSecret);
+        console.log(me.twoFactorSecret);
         return authenticator.verify({
             token: twoFactorAuthenticationCode,
-            secret: twoFactorSecret.twoFactorSecret,
+            secret: me.twoFactorSecret,
         });
     }
 
@@ -118,7 +118,6 @@ export class AuthService {
         const otpauth = authenticator.keyuri(user.email, 'KingPong', secret);
 
         await this.set2FA(secret, user);
-        // console.log(secret, otpauth);
         return {
             secret,
             otpauth,
