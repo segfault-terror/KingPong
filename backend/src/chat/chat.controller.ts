@@ -18,8 +18,8 @@ export class ChatController {
         );
     }
 
-    // @Get('dms')
-    // async getAllDMs(@Req() request: any) {
-    //     return await this.chatService.getAllDMs(request.user.username);
-    // }
+    @Get('dms')
+    async getAllDMs(@Req() request: any) {
+        return await this.chatService.getBriefDMs(request.user.username);
+    }
 }

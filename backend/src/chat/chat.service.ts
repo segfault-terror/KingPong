@@ -85,4 +85,61 @@ export class ChatService {
             throw new Error('There should be only one DM between two users');
         return result[0];
     }
+
+    async getBriefDMs(username: string) {
+        const count = await this.prisma.user.count({
+            where: {
+                username,
+            },
+        });
+        if (count == 0) {
+            throw new NotFoundException(`User ${username} does not exist`);
+        }
+
+        const result = await this.prisma.dM.findMany({
+            where: {
+                OR: [
+                    {
+                        user1: { username },
+                    },
+                    {
+                        user2: { username },
+                    },
+                ],
+            },
+            select: {
+                id: true,
+                user1: {
+                    select: {
+                        username: true,
+                        avatar: true,
+                        status: true,
+                    },
+                },
+                user2: {
+                    select: {
+                        username: true,
+                        avatar: true,
+                        status: true,
+                    },
+                },
+                messages: {
+                    select: {
+                        content: true,
+                        sender: {
+                            select: {
+                                id: true,
+                                username: true,
+                            },
+                        },
+                    },
+                    orderBy: {
+                        createdAt: 'desc',
+                    },
+                    take: 1,
+                },
+            },
+        });
+        return result;
+    }
 }

@@ -4,8 +4,8 @@ import { usePathname } from 'next/navigation';
 export default DirectMessage;
 
 function DirectMessage({
-    userName,
-    imagePath,
+    username,
+    avatar,
     lastMessage,
     status,
 }: DirectMessageProps) {
@@ -14,18 +14,19 @@ function DirectMessage({
 
     return (
         <Link
-            href={`/chat/dm/${userName}`}
+            href={`/chat/dm/${username}`}
             replace={pathname.startsWith('/chat/dm')}
         >
             <div className="flex items-center gap-4 hover:bg-background/80 hover:rounded-full">
                 <div className="relative flex-shrink-0">
                     <img
-                        src={imagePath}
-                        alt={`${userName}'a avatar`}
-                        title={`${userName}'a avatar`}
+                        src={avatar}
+                        alt={`${username}'a avatar`}
+                        title={`${username}'a avatar`}
                         className="border-secondary-200 rounded-full border-4
                                 w-[64px] h-[64px]
-                                text-white object-cover select-none"
+                                text-white object-cover select-none
+                                bg-background"
                     />
                     <div
                         className={`w-[12px] h-[12px]
@@ -35,12 +36,14 @@ function DirectMessage({
                     ></div>
                 </div>
                 <div className="flex flex-col min-w-0">
-                    <p className="font-jost font-bold text-white">{userName}</p>
+                    <p className="font-jost font-bold text-white">{username}</p>
                     <p
                         className="font-jost font-light text-gray-400
                                 whitespace-nowrap overflow-hidden text-ellipsis max-w-[calc(100vw-200px)]"
                     >
-                        {`You: ${lastMessage}`}
+                        {lastMessage.sender.username === username
+                            ? `${username}: ${lastMessage.content}`
+                            : `You: ${lastMessage.content}`}
                     </p>
                 </div>
             </div>
@@ -66,8 +69,8 @@ export function getStatusColor(status: string) {
 }
 
 export type DirectMessageProps = {
-    userName: string;
-    imagePath: string;
-    lastMessage: string;
+    username: string;
+    avatar: string;
+    lastMessage: any;
     status: UserStatus;
 };

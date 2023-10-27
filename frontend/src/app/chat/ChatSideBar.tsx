@@ -1,13 +1,15 @@
 import { modalContext } from '@/contexts/contexts';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useContext } from 'react';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
+import Loading from '../loading';
 import DirectMessage from './DirectMessage';
 import EmptyChat from './EmptyChat';
 import ToggleButton from './ToggleButton';
 import { Channels, DMList } from './data/ChatData';
-import { useQuery } from '@tanstack/react-query';
 
 type ChatSideBarProps = {
     toggle: boolean;
@@ -16,7 +18,29 @@ type ChatSideBarProps = {
 
 function DmList({ toggle }: ChatSideBarProps) {
     const { setNewConversation } = useContext(modalContext);
-    if (DMList.length === 0) {
+
+    const { data, isLoading } = useQuery({
+        queryKey: ['dms', 'brief'],
+        queryFn: async () => {
+            const { data: me } = await axios.get(`/api/user/me`, {
+                withCredentials: true,
+            });
+            const { data: dms } = await axios.get(`/api/chat/dms`, {
+                withCredentials: true,
+            });
+            return { me, dms };
+        },
+    });
+
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
+
+    if (data?.dms.length === 0) {
         return (
             <div className="m-auto">
                 <EmptyChat toggle={toggle} />
@@ -27,10 +51,30 @@ function DmList({ toggle }: ChatSideBarProps) {
     return (
         <>
             <div className="flex-grow">
-                {DMList.map((message, idx) => {
+                {data?.dms.map((dm: any, idx: number) => {
+                    let username;
+                    let avatar;
+                    let status;
+
+                    if (data?.me.username === dm.user1.username) {
+                        username = dm.user2.username;
+                        avatar = dm.user2.avatar;
+                        status = dm.user2.status;
+                    } else {
+                        username = dm.user1.username;
+                        avatar = dm.user1.avatar;
+                        status = dm.user1.status;
+                    }
+
                     return (
                         <>
-                            <DirectMessage key={idx} {...message} />
+                            <DirectMessage
+                                key={dm.id}
+                                username={username}
+                                avatar={avatar}
+                                status={status}
+                                lastMessage={dm.messages[0]}
+                            />
                             {idx < DMList.length - 1 && (
                                 <div className="mt-4"></div>
                             )}

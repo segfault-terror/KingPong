@@ -3,7 +3,7 @@ import { modalContext } from '@/contexts/contexts';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
-import { useContext } from 'react';
+import { useContext, ReactNode } from 'react';
 import { HiDotsVertical } from 'react-icons/hi';
 import Loading from '../loading';
 import ChatInput from './ChatInput';
@@ -106,6 +106,28 @@ function UserDMInfo({ userName }: DmConversationProps) {
     );
 }
 
+function InvalidDm(props: { children: ReactNode }) {
+    return (
+        <Modal onClose={() => {}}>
+            <div
+                className="bg-background w-[400px] border-secondary-200
+                            border-2 p-4 text-center rounded-2xl font-jost
+                            flex flex-col gap-4"
+            >
+                <h1 className="text-2xl text-red-500">Error</h1>
+                <p className="text-xl">{props.children}</p>
+
+                <Link
+                    href="/chat"
+                    className="bg-secondary-200 text-primary p-2 rounded-2xl"
+                >
+                    Go back
+                </Link>
+            </div>
+        </Modal>
+    );
+}
+
 function DmMessageList({ userName }: DmConversationProps) {
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['dm', userName],
@@ -129,60 +151,22 @@ function DmMessageList({ userName }: DmConversationProps) {
         );
     }
 
-    console.log(data);
-
     if (isError) {
         switch ((error as any).response.data.statusCode) {
             case 400:
                 return (
-                    <Modal onClose={() => {}}>
-                        <div
-                            className="bg-background w-[400px] border-secondary-200
-                                    border-2 p-4 text-center rounded-2xl font-jost
-                                    flex flex-col gap-4"
+                    <InvalidDm>
+                        <Link
+                            href={`/profile/${userName}`}
+                            className="text-secondary-200 hover:underline"
                         >
-                            <h1 className="text-2xl text-red-500">Error</h1>
-                            <p className="text-xl">
-                                <Link
-                                    href={`/profile/${userName}`}
-                                    className="text-secondary-200 hover:underline"
-                                >
-                                    @{userName}
-                                </Link>{' '}
-                                is not your friend
-                            </p>
-
-                            <Link
-                                href="/chat"
-                                className="bg-secondary-200 text-primary p-2 rounded-2xl"
-                            >
-                                Go back
-                            </Link>
-                        </div>
-                    </Modal>
+                            @{userName}
+                        </Link>{' '}
+                        is not your friend
+                    </InvalidDm>
                 );
             case 418:
-                return (
-                    <Modal onClose={() => {}}>
-                        <div
-                            className="bg-background w-[400px] border-secondary-200
-                                    border-2 p-4 text-center rounded-2xl font-jost
-                                    flex flex-col gap-4"
-                        >
-                            <h1 className="text-2xl text-red-500">Error</h1>
-                            <p className="text-xl">
-                                You cannot message yourself
-                            </p>
-
-                            <Link
-                                href="/chat"
-                                className="bg-secondary-200 text-primary p-2 rounded-2xl"
-                            >
-                                Go back
-                            </Link>
-                        </div>
-                    </Modal>
-                );
+                return <InvalidDm>You cannot message yourself</InvalidDm>;
 
             default:
                 break;
