@@ -142,4 +142,55 @@ export class ChatService {
         });
         return result;
     }
+
+    async createMessage(
+        content: string,
+        senderUsername: string,
+        receiverUsername: string,
+    ) {
+        const sender = await this.prisma.user.findFirst({
+            where: { username: senderUsername },
+            select: { id: true },
+        });
+
+        const receiver = await this.prisma.user.findFirst({
+            where: { username: receiverUsername },
+            select: { id: true },
+        });
+
+        let dm = await this.prisma.dM.findFirst({
+            where: {
+                OR: [
+                    {
+                        user1Id: sender.id,
+                        user2Id: receiver.id,
+                    },
+                    {
+                        user1Id: receiver.id,
+                        user2Id: sender.id,
+                    },
+                ],
+            },
+            select: { id: true },
+        });
+
+        if (dm == null) {
+            console.log('creating new dm');
+            dm = await this.prisma.dM.create({
+                data: {
+                    user1: { connect: { id: sender.id } },
+                    user2: { connect: { id: receiver.id } },
+                },
+            });
+            console.log('created dm');
+        }
+
+        await this.prisma.message.create({
+            data: {
+                content,
+                sender: { connect: { id: sender.id } },
+                dm: { connect: { id: dm.id } },
+            },
+        });
+    }
 }

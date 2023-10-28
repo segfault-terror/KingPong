@@ -1,9 +1,9 @@
 'use client';
 import { modalContext } from '@/contexts/contexts';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
-import { useContext, ReactNode } from 'react';
+import { useContext, ReactNode, useEffect } from 'react';
 import { HiDotsVertical } from 'react-icons/hi';
 import Loading from '../loading';
 import ChatInput from './ChatInput';
@@ -15,6 +15,38 @@ export type DmConversationProps = {
 };
 
 export default function DmConversation({ userName }: DmConversationProps) {
+    const queryClient = useQueryClient();
+
+    const { mutate } = useMutation({
+        mutationFn: async (content: string) => {
+            return await axios.post('/api/chat/dm/message', {
+                withCredentials: true,
+                content,
+                sender: me.username,
+                receiver: userName,
+            });
+        },
+        onSuccess: () => queryClient.invalidateQueries(['dm', userName]),
+    });
+
+    const { data: me, isLoading } = useQuery({
+        queryKey: ['dm', 'me'],
+        queryFn: async () => {
+            const { data: me } = await axios.get('/api/user/me', {
+                withCredentials: true,
+            });
+            return me;
+        },
+    });
+
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
+
     return (
         <div
             className="flex flex-col gap-8 h-full
@@ -28,7 +60,7 @@ export default function DmConversation({ userName }: DmConversationProps) {
                 <DmMessageList userName={userName} />
             </div>
 
-            <ChatInput />
+            <ChatInput sendMessage={mutate} />
         </div>
     );
 }
@@ -131,7 +163,10 @@ function InvalidDm(props: { children: ReactNode }) {
 function DmMessageList({ userName }: DmConversationProps) {
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['dm', userName],
-        refetchOnWindowFocus: false,
+        refetchOnWindowFocus: () => {
+            if (isError) return false;
+            return true;
+        },
         queryFn: async () => {
             const { data: me } = await axios.get('/api/user/me', {
                 withCredentials: true,

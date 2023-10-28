@@ -120,10 +120,10 @@ model DM {
     id String @id @default(cuid())
 
     user1 User @relation("user1", fields: [user1Id], references: [id])
-    user1Id String @unique
+    user1Id String
 
     user2 User @relation("user2", fields: [user2Id], references: [id])
-    user2Id String @unique
+    user2Id String
 
     messages Message[]
 

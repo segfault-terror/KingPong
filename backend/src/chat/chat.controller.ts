@@ -1,6 +1,15 @@
-import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    Post,
+    Req,
+    UseGuards,
+} from '@nestjs/common';
 import { AuthGard } from 'src/auth/auth.guard';
 import { ChatService } from './chat.service';
+import { CreateMessageDto } from './dto/create.message.dto';
 
 @Controller('chat')
 @UseGuards(AuthGard)
@@ -21,5 +30,14 @@ export class ChatController {
     @Get('dms')
     async getAllDMs(@Req() request: any) {
         return await this.chatService.getBriefDMs(request.user.username);
+    }
+
+    @Post('dm/message')
+    async sendMessage(@Body() body: CreateMessageDto) {
+        return await this.chatService.createMessage(
+            body.content,
+            body.sender,
+            body.receiver,
+        );
     }
 }
