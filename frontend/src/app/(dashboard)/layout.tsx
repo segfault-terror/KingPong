@@ -54,12 +54,33 @@ export default function DashboardLayout({
         };
     });
 
-    if (isLoading) {
+    const { data: me, isLoading: myisLoading } = useQuery({
+        queryKey: ['me'],
+        queryFn: async () => {
+            try {
+                return await axios.get(`/api/user/me/`, {
+                    withCredentials: true,
+                });
+            } catch {
+                redirect('/signin');
+            }
+        },
+    });
+
+    useEffect(() => {
+        if (me?.data.needOtp === true && me?.data.twoFactorEnabled === true) {
+            redirect('/twofa');
+        }
+    }, [me]);
+
+    if (isLoading || myisLoading) {
         return <Loading />;
     }
     if (error || data?.data.status === false) {
         redirect('/signin');
     }
+
+
     return (
         <div className="flex flex-col min-h-screen">
             <Header />
