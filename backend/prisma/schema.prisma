@@ -43,6 +43,7 @@ model User {
   friends User[] @relation("friends")
   twoFactorSecret String @default("")
   twoFactorEnabled Boolean @default(false)
+  needOtp Boolean @default(true)
   friendOf User[] @relation("friends")
   sentFriendRequests FriendRequest[] @relation("sender")
   pendingFriendRequests FriendRequest[] @relation("receiver")
