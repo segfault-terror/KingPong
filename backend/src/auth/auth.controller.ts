@@ -7,6 +7,7 @@ import {
     Post,
     Redirect,
     Req,
+    Res,
     UseGuards,
     UsePipes,
     ValidationPipe,
@@ -17,10 +18,12 @@ import { GoogleAuthGuard } from './utils/google.auth.guard';
 import { LocalGuard } from './utils/local.guard';
 import { AuthService } from './auth.service';
 import { TfaDto } from './utils/tfa.dto';
+import { Prisma } from '@prisma/client';
+import { UserService } from 'src/user/user.service';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService, private userService: UserService) {}
     @Get('intra/login')
     @UseGuards(IntraAuthGuard)
     async intraLogin() {
@@ -45,7 +48,6 @@ export class AuthController {
     @UseGuards(GoogleAuthGuard)
     @Redirect('/api')
     async googleLoginRedirect() {
-        // handles the redirect from google with the user token
         return '<script>window.opener.postMessage({ message: "done" }, "*");window.close();</script>';
     }
 
@@ -58,15 +60,27 @@ export class AuthController {
     @Get('status')
     async status(@Req() req: any) {
         if (req.isAuthenticated()) {
-            return { message: 'You are authenticated.', status: true };
+            const {needOtp, twoFactorEnabled} = req.user;
+            if (twoFactorEnabled && needOtp) {
+                return {
+                    message: 'You are authenticated.',
+                    status: true,
+                    needOtp,
+                };
+            }
+            return { message: 'You are authenticated.', status: true, needOtp: false };
         }
-        return { message: 'You are not authenticated.', status: false };
+        return { message: 'You are not authenticated.', status: false, needOtp: false };
     }
 
     @Get('logout')
     @UseGuards(AuthGard)
     @Redirect()
     async logout(@Req() req: any, @Headers('referer') referer: string) {
+        const user = req.user;
+        if (user && user.twoFactorEnabled) {
+            await this.authService.turnOffOtp(user);
+        }
         req.session.destroy();
         return { url: '/signin' };
     }
@@ -89,12 +103,10 @@ export class AuthController {
     @UseGuards(AuthGard)
     @UsePipes(new ValidationPipe())
     async authenticate2FA(@Req() req: any, @Body() body: TfaDto) {
-        console.log(body);
         const is2FAEnabled = await this.authService.is2FAEnabled(
             body.twoFactorAuthenticationCode,
             req.user,
         );
-        console.log(body.twoFactorAuthenticationCode);
         if (!is2FAEnabled) {
             return { message: 'Invalid code.', status: false };
         }
@@ -120,4 +132,3 @@ type authopt = {
     otpauth: string;
     secret: string;
 };
-

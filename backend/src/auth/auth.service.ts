@@ -58,14 +58,12 @@ export class AuthService {
         twoFactorAuthenticationCode: string,
         user: Prisma.UserWhereUniqueInput,
     ): Promise<boolean> {
-        console.log(user);
         const me = await this.prisma.user.findUnique({
             where: user,
             select: {
                 twoFactorSecret: true,
             },
         });
-        console.log(me.twoFactorSecret);
         return authenticator.verify({
             token: twoFactorAuthenticationCode,
             secret: me.twoFactorSecret,
@@ -77,6 +75,7 @@ export class AuthService {
             where: user,
             data: {
                 twoFactorEnabled: true,
+                needOtp: false,
             },
         });
     }
@@ -102,7 +101,6 @@ export class AuthService {
                 twoFactorSecret: true,
             },
         });
-        console.log(!!(await mysecret).twoFactorSecret);
         if (!!(await mysecret).twoFactorSecret) {
             return {
                 otpauth: authenticator.keyuri(
@@ -137,6 +135,24 @@ export class AuthService {
             where: user,
             data: {
                 twoFactorEnabled: true,
+            },
+        });
+    }
+
+    async turnOnOtp(user: Prisma.UserWhereUniqueInput): Promise<void> {
+        await this.userService.updateUser({
+            where: user,
+            data: {
+                needOtp: false,
+            },
+        });
+    }
+
+    async turnOffOtp(user: Prisma.UserWhereUniqueInput): Promise<void> {
+        await this.userService.updateUser({
+            where: user,
+            data: {
+                needOtp: true,
             },
         });
     }
