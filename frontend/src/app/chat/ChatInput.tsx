@@ -25,6 +25,7 @@ export default function ChatInput({ sendMessage }: ChatInputProps) {
 
                         sendMessage(event.currentTarget.value);
                         event.currentTarget.value = '';
+                        event.currentTarget.focus();
                     }
                 }}
             />
@@ -36,6 +37,7 @@ export default function ChatInput({ sendMessage }: ChatInputProps) {
 
                     sendMessage(inputRef.current.value);
                     inputRef.current.value = '';
+                    inputRef.current.focus();
                 }}
             >
                 <BiSolidSend className="text-secondary-200 text-3xl" />
