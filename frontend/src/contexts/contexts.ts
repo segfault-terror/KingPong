@@ -40,3 +40,12 @@ export const toggleContext = createContext<ToggleProps>({} as ToggleProps);
 export const channelModalContext = createContext(
     {} as ChannelModalContextProps,
 );
+
+export const ModalContext = createContext(
+    {} as {
+        toggle: boolean;
+        setToggle: (toggle: boolean) => void;
+        tfa: boolean;
+        setTfa: (tfa: boolean) => void;
+    },
+);

@@ -18,7 +18,7 @@ export default function Navbar(myleague: string, leaderboard: any[]) {
                 />
                 &nbsp; Leaderboard &nbsp;
                 <img
-                    src={`/images/${myleague}-league.svg`}
+                    src={`/images/${myleague.toLocaleLowerCase()}-league.svg`}
                     alt=""
                     className="inline-block"
                 />

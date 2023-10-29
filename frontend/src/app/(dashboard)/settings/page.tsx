@@ -1,7 +1,6 @@
 'use client';
 
-import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import UploadInput from './UploadInput';
 import {
     focusManager,
@@ -13,7 +12,9 @@ import axios, { AxiosError } from 'axios';
 import { UseFormRegister, UseFormResetField, useForm } from 'react-hook-form';
 import { redirect, useRouter } from 'next/navigation';
 import { useContext } from 'react';
-import { ModalContext } from './layout';
+import { ModalContext } from '@/contexts/contexts';
+
+
 
 const profile = {
     avatar: '',

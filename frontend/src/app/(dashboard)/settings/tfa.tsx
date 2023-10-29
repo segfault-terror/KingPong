@@ -8,8 +8,7 @@ interface TfaProps {
     code: string;
 }
 
-export default function TFA({toggle,  useToggle, setTfa }: {toggle: boolean, useToggle: Function, setTfa: Function }) {
-
+function TFA({toggle,  onToggle, setTfa }: {toggle: boolean, onToggle: Function, setTfa: Function }) {
 
     const {
         register,
@@ -69,7 +68,7 @@ export default function TFA({toggle,  useToggle, setTfa }: {toggle: boolean, use
         {
             onSuccess: () => {
                 setTfa(true);
-                useToggle(!toggle);
+                onToggle(!toggle);
             },
             onError: (error) => {
                 console.log(error);
@@ -85,11 +84,13 @@ export default function TFA({toggle,  useToggle, setTfa }: {toggle: boolean, use
     let message = 'verify';
     if (isLoading || isLoadingVerify) message = 'loading...';
 
+
     return (
         <>
             <Modal
                 onClose={() => {
-                    useToggle(false);
+                    onToggle(false);
+                    resetField('code');
                 }}
             >
                 <div className="w-96 flex justify-center items-center text-2xl font-jost">
@@ -156,3 +157,5 @@ export default function TFA({toggle,  useToggle, setTfa }: {toggle: boolean, use
         </>
     );
 }
+
+export default TFA;
