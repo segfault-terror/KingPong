@@ -7,7 +7,6 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { stat } from 'fs';
 
-
 const EmptyFriendsList = () => {
     return (
         <div className="relative flex justify-center items-center h-24 w-full my-1 bg-background rounded-2xl z-10">
@@ -32,7 +31,8 @@ const FriendCard = ({
         status === UserStatus.Online ? 'bg-green-500' : 'bg-red-500';
     colorStus = status === UserStatus.InGame ? 'bg-yellow-500' : colorStus;
 
-    const bgStatus = status === UserStatus.Offline ? 'bg-inactive-500 opacity-50' : '';
+    const bgStatus =
+        status === UserStatus.Offline ? 'bg-inactive-500 opacity-50' : '';
     const SendGameReq = status === UserStatus.Online ? true : false;
 
     return (
@@ -57,37 +57,39 @@ const FriendCard = ({
                 </div>
             </div>
             <div className="flex flex-col justify-between w-1/4 h-full">
-                {!isme && <>
-                {isYourFriend ? (
+                {!isme && (
                     <>
-                        <button
-                            className="bg-background text-white rounded-full text-center px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black my-2"
-                            type="submit"
-                            onSubmit={() => {
-                                redirect(`/chat/${fullname}`);
-                            }}
-                        >
-                            Message
-                        </button>
-                        {SendGameReq && (
+                        {isYourFriend ? (
+                            <>
+                                <button
+                                    className="bg-background text-white rounded-full text-center px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black my-2"
+                                    type="submit"
+                                    onSubmit={() => {
+                                        redirect(`/chat/${fullname}`);
+                                    }}
+                                >
+                                    Message
+                                </button>
+                                {SendGameReq && (
+                                    <button
+                                        className="bg-background text-white rounded-full px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black"
+                                        type="button"
+                                    >
+                                        Challenge
+                                    </button>
+                                )}
+                            </>
+                        ) : (
+                            //button invite friend
                             <button
                                 className="bg-background text-white rounded-full px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black"
                                 type="button"
                             >
-                                Challenge
+                                Invite
                             </button>
                         )}
                     </>
-                ) : (
-                    //button invite friend
-                    <button
-                        className="bg-background text-white rounded-full px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black"
-                        type="button"
-                    >
-                        Invite
-                    </button>
                 )}
-                </>}
             </div>
         </Link>
     );
@@ -102,7 +104,7 @@ export default function FriendsList({ friends }: FriendState) {
     } = useQuery({
         queryKey: ['friends', 'me'],
         queryFn: async () => {
-            const { data } = await axios.get(`/api/user/me/friends`, {
+            const { data } = await axios.get(`/api/user/get/me/friends`, {
                 withCredentials: true,
             });
             return data;
@@ -125,7 +127,7 @@ export default function FriendsList({ friends }: FriendState) {
                           >
                               <FriendCard
                                   isYourFriend={
-                                    !!user.friends.find(
+                                      !!user.friends.find(
                                           (f: any) => f.id === friend.id,
                                       )
                                   }
