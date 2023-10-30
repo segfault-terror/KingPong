@@ -1,9 +1,9 @@
 'use client';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
 import { AiFillTrophy, AiOutlineClose } from 'react-icons/ai';
-import { TbMessage2, TbUserPlus, TbUserX } from 'react-icons/tb';
+import { TbMessage2, TbUserCancel, TbUserPlus, TbUserX } from 'react-icons/tb';
 import UserCircleInfo from './UserCircleInfo';
 import Loading from '@/app/loading';
 
@@ -12,18 +12,17 @@ type ProfileCardProps = {
 };
 
 export default function ProfileCard({ username }: ProfileCardProps) {
-
     const { data: me } = useQuery({
         queryKey: ['mydata'],
         queryFn: async () => {
             const { data } = await axios.get(`/api/user/me`, {
                 withCredentials: true,
             });
-            console.log("data: ", data);
+            console.log('data: ', data);
             return data;
         },
     });
-    console.log(me);
+
     const { mutate: createNotification } = useMutation({
         mutationFn: async (data: any) => {
             return await axios.post('/api/notifications/create', {
@@ -34,6 +33,21 @@ export default function ProfileCard({ username }: ProfileCardProps) {
             });
         },
         onSuccess: () => {},
+    });
+
+    const queryClient = useQueryClient();
+
+    const { mutate: removeFriend } = useMutation({
+        mutationFn: async (_: any) => {
+            return await axios.delete(`/api/friends/remove/${username}`, {
+                withCredentials: true,
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['isFriend', username], {
+                exact: true,
+            });
+        },
     });
 
     const { data: visitedUser, isLoading: visitedUserLoading } = useQuery({
@@ -48,8 +62,6 @@ export default function ProfileCard({ username }: ProfileCardProps) {
             return data;
         },
     });
-
-    
 
     const { data: friendship, isLoading: friendshipLoading } = useQuery({
         queryKey: ['isFriend', username],
@@ -113,14 +125,21 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                 </div>
 
                 <div className="flex gap-4 text-secondary-200 items-center md:text-2xl">
-                    {/* Not me and my friend */}
+                    {/* Not me and my friend - Message */}
                     {!friendship.isMe && friendship.isFriend && (
                         <Link href={`/chat/dm/${username}`}>
                             <TbMessage2 />
                         </Link>
                     )}
 
-                    {/* Not me and not my friend */}
+                    {/* Not me and my friend - Remove friend */}
+                    {!friendship.isMe && friendship.isFriend && (
+                        <button onClick={removeFriend} title="Remove friend">
+                            <TbUserX />
+                        </button>
+                    )}
+
+                    {/* Not me and not my friend - Add friend */}
                     {!friendship.isMe && !friendship.isFriend && (
                         <button
                             type="button"
@@ -133,14 +152,14 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                         </button>
                     )}
 
-                    {/* Not me and my friend */}
+                    {/* Not me and my friend - Block */}
                     {!friendship.isMe && friendship.isFriend && (
                         <button
                             type="button"
                             title="Block user"
                             onClick={() => console.log(`Block ${username}`)}
                         >
-                            <TbUserX />
+                            <TbUserCancel />
                         </button>
                     )}
                 </div>
