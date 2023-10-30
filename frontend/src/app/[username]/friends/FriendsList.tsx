@@ -37,16 +37,16 @@ const FriendCard = ({
     const SendGameReq = status === UserStatus.Online ? true : false;
 
     return (
-        <Link
-            className={`flex flex-row items-center justify-between w-full p-3 md:p-6 z-10 rounded-xl my-[1px] ${bgStatus}  hover:bg-background hover:border-r hover:border-l border-secondary-200 delay-75 duration-75 transition`}
-            href={`/profile/${username}`}
+        <div
+            className={`flex items-center justify-center w-full h-full p-3 z-10 rounded-xl ${bgStatus}  hover:bg-background hover:border-r hover:border-l delay-75 duration-75 transition border`}
             key={id}
         >
-            <div className="flex flex-row items-center justify-start w-36 h-full">
+            <Link className="flex items-center justify-start w-3/4 h-full "
+            href={`/profile/${username}`}>
                 <img
                     src={avatar}
                     alt="avatar"
-                    className="w-3/4 rounded-full bg-background border-white border-r-2 border-l-2 object-cover"
+                    className="w-28 h-28 rounded-full bg-background border-white border-2 object-cover"
                 />
                 <div className="flex flex-col items-start justify-center ml-3">
                     <span className="text-lg font-medium">{fullname}</span>
@@ -56,24 +56,22 @@ const FriendCard = ({
                         {status}
                     </span>
                 </div>
-            </div>
-            <div className="flex flex-col justify-between w-1/4 h-full">
+            </Link>
+            <div className="flex flex-col justify-between w-1/4 h-full  z-30">
                 {!isme && (
                     <>
                         {isYourFriend ? (
                             <>
-                                <button
-                                    className="bg-background text-white rounded-full text-center px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black my-2"
+                                <Link
+                                    className="bg-background z-20 text-white rounded-full text-center px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black my-2"
                                     type="submit"
-                                    onSubmit={() => {
-                                        redirect(`/chat/${fullname}`);
-                                    }}
+                                    href={`/chat/dm/${username}`}
                                 >
                                     Message
-                                </button>
+                                </Link>
                                 {SendGameReq && (
                                     <button
-                                        className="bg-background text-white rounded-full px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black"
+                                        className="bg-background text-white z-20 rounded-full px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black"
                                         type="button"
                                     >
                                         Challenge
@@ -83,7 +81,7 @@ const FriendCard = ({
                         ) : (
                             //button invite friend
                             <button
-                                className="bg-background text-white rounded-full px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black"
+                                className="bg-background z-20 text-white rounded-full px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black"
                                 type="button"
                             >
                                 Invite
@@ -92,7 +90,7 @@ const FriendCard = ({
                     </>
                 )}
             </div>
-        </Link>
+        </div>
     );
 };
 
@@ -130,7 +128,7 @@ export default function FriendsList({ friends }: FriendState) {
                     : friends.map((friend) => (
                           <div
                               key={friend.id}
-                              className="flex flex-col justify-center items-center w-full m-auto"
+                              className="flex flex-col justify-center items-center w-full m-auto h-full"
                           >
                               <FriendCard
                                   isYourFriend={
