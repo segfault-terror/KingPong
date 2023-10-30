@@ -10,9 +10,35 @@ export class NotificationsService {
             {
                 include: {
                     user: true,
-                    
                 }
             }
         );
     }
+
+    async update(id: string, data: any) {
+        return this.prisma.notification.update({
+            where: { id },
+            data,
+        });
+    }
+
+    async delete(id: string) {
+        return this.prisma.notification.delete({
+            where: { id },
+        });
+    }
+
+    async create(data: any) {
+        return this.prisma.notification.create({
+            data: {
+                type: data.type,
+                user: {
+                    connect: {
+                        id: data.userId
+                    }
+                },
+            }
+        });
+    }
+
 }
