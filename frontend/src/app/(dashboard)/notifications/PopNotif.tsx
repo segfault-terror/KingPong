@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Decline from '../../../../public/images/decline.svg';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import Loading from '@/app/loading';
 
 const empty: NotificationProps = {
     id: 0,
@@ -11,6 +12,7 @@ const empty: NotificationProps = {
     readed: false,
     username: '',
     avatar: '',
+    senderId: '',
 };
 
 export default function PopNotif({
@@ -45,6 +47,22 @@ export default function PopNotif({
         },
     });
 
+    const { mutate: acceptFriend, isLoading: acceptLoading } = useMutation({
+        mutationFn: async (data: any) => {
+            return await axios.post(`/api/friends/add`, data, {
+                withCredentials: true,
+            });
+        },
+		onSuccess: () => {
+			console.log('added');
+			queryClient.invalidateQueries(['notifications'], {
+				exact: true,
+			});
+		},
+    });
+
+	if (deleteLoading || acceptLoading) return <Loading />;
+
     return (
         <div
             key={notif.id}
@@ -71,7 +89,10 @@ export default function PopNotif({
                         name="Accept"
                         title="Accept"
                         onClick={() => {
-                            //Add to friends
+                            if (notif.type == 'FRIEND') {
+                                acceptFriend({senderId: notif.senderId});
+                            }
+                            deleteNotif({ id: notif.id });
                             updateModal(false);
                             updateNotif(empty);
                         }}

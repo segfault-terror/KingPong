@@ -28,6 +28,7 @@ const Notife = ({
     username,
     avatar,
     readed,
+    senderId,
     setIsOpen,
     setNotif,
 }: NotificationProps & {
@@ -82,7 +83,7 @@ const Notife = ({
                 onClick={() => {
                     if (readed == false) update({ id, type, readed: true });
                     setIsOpen(true);
-                    setNotif({ id, type, username, avatar, readed });
+                    setNotif({ id, type, username, avatar, readed, senderId });
                 }}
             >
                 <img
@@ -117,6 +118,7 @@ export default function Notification({ notifications }: NotificationState) {
         readed: false,
         username: '',
         avatar: '',
+        senderId: ""
     });
 
     return (
@@ -141,6 +143,7 @@ export default function Notification({ notifications }: NotificationState) {
                                       type={notifs.type}
                                       setIsOpen={setIsOpen}
                                       setNotif={setNotif}
+                                      senderId={notifs.senderId}
                                   />
                                   {isOpen && (
                                       <Modal
