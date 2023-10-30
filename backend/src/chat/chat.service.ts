@@ -46,7 +46,7 @@ export class ChatService {
             );
         }
 
-        const result = await this.prisma.dM.findMany({
+        const result = await this.prisma.dM.findFirst({
             where: {
                 OR: [
                     {
@@ -64,6 +64,7 @@ export class ChatService {
                 ],
             },
             select: {
+                id: true,
                 messages: {
                     select: {
                         id: true,
@@ -81,10 +82,7 @@ export class ChatService {
                 },
             },
         });
-        // HACK: there might be problems with this
-        if (result.length > 1)
-            throw new Error('There should be only one DM between two users');
-        return result[0];
+        return result;
     }
 
     async getBriefDMs(username: string) {
@@ -191,6 +189,19 @@ export class ChatService {
                 content,
                 sender: { connect: { id: sender.id } },
                 dm: { connect: { id: dm.id } },
+            },
+        });
+    }
+
+    async deleteDM(dmId: string) {
+        await this.prisma.message.deleteMany({
+            where: {
+                dm_id: dmId,
+            },
+        });
+        await this.prisma.dM.delete({
+            where: {
+                id: dmId,
             },
         });
     }

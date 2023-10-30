@@ -8,7 +8,7 @@ import { HiDotsVertical } from 'react-icons/hi';
 import Loading from '../loading';
 import ChatInput from './ChatInput';
 import { getStatusColor } from './DirectMessage';
-import Modal from './Modal';
+import Modal from '@/components/Modal';
 
 export type DmConversationProps = {
     userName: string;

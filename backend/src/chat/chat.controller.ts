@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Param,
     Post,
@@ -39,5 +40,10 @@ export class ChatController {
             body.sender,
             body.receiver,
         );
+    }
+
+    @Delete('dm/:id')
+    async deleteMessage(@Param('id') id: string) {
+        return await this.chatService.deleteDM(id);
     }
 }
