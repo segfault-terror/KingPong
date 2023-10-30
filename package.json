@@ -42,6 +42,7 @@
     },
     "homepage": "https://github.com/Archer-01/KingPong#readme",
     "devDependencies": {
+        "@types/minio": "^7.1.1",
         "concurrently": "^8.2.1",
         "prettier": "^3.0.3",
         "wait-on": "^7.0.1"
