@@ -1,8 +1,8 @@
 'use client';
-import{ useState } from 'react';
+import { useState } from 'react';
 import Page from './page';
 import Tfa from '@/app/(dashboard)/settings/tfa';
-import { ModalContext } from '@/contexts/contexts';
+import { TfaContext } from '@/contexts/contexts';
 
 export default function Layout() {
     const [toggle, setToggle] = useState(false);
@@ -13,7 +13,7 @@ export default function Layout() {
             {toggle && (
                 <Tfa toggle={toggle} onToggle={setToggle} setTfa={setTfa} />
             )}
-            <ModalContext.Provider
+            <TfaContext.Provider
                 value={{
                     toggle,
                     setToggle,
@@ -22,7 +22,7 @@ export default function Layout() {
                 }}
             >
                 {<Page />}
-            </ModalContext.Provider>
+            </TfaContext.Provider>
         </>
     );
 }
