@@ -6,6 +6,7 @@ export type NotificationProps = {
 	username: string;
 	avatar: string;
 	readed: boolean;
+	senderId: string;
 }
 
 export type NotificationState = {

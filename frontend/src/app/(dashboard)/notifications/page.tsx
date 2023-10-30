@@ -27,6 +27,7 @@ export default function Page() {
                 avatar: notification.user.avatar,
                 readed: notification.readed,
                 type: notification.type,
+                senderId: notification.senderId,
             }) as NotificationProps,
     );
     return (
