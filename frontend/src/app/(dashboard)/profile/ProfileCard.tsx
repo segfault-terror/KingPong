@@ -50,6 +50,9 @@ export default function ProfileCard({ username }: ProfileCardProps) {
             queryClient.invalidateQueries(['isFriend', username], {
                 exact: true,
             });
+            queryClient.invalidateQueries(['userFriends', username], {
+                exact: true,
+            });
         },
     });
 
@@ -103,15 +106,15 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                         Remove friend{' '}
                         <span className="text-secondary-200">@{username}</span>?
                     </h1>
-                    <div className='w-full flex justify-center gap-4 pt-4'>
+                    <div className="w-full flex justify-center gap-4 pt-4">
                         <button
                             className="bg-background rounded-2xl px-4
                                     border border-white text-secondary-200
                                     font-jost hover:bg-secondary-200
                                     hover:text-background"
                             onClick={() => {
-                                removeFriend()
-                                setShowModal(false)
+                                removeFriend();
+                                setShowModal(false);
                             }}
                         >
                             OK
