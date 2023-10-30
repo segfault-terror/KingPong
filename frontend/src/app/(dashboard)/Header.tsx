@@ -10,7 +10,7 @@ import Link from 'next/link';
 import SearchBar from './SearchBar';
 import DropdownMenu from './Dropdown';
 import { use } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
 function NavItem({
@@ -21,18 +21,27 @@ function NavItem({
     children: React.ReactNode;
 }) {
     return (
-        <li className="hidden lg:block">
+        <li className="hidden lg:block ">
             <LinkIcon href={href}>{children}</LinkIcon>
         </li>
     );
 }
-
 
 export default function Header() {
     const { data: currentUser } = useQuery({
         queryKey: ['profile', 'current'],
         queryFn: async () => {
             const { data } = await axios.get(`/api/user/me`, {
+                withCredentials: true,
+            });
+            return data;
+        },
+    });
+
+    const { data: notreadedNotif } = useQuery({
+        queryKey: ['notifications', 'notreaded'],
+        queryFn: async () => {
+            const { data } = await axios.get(`/api/notifications/notreaded`, {
                 withCredentials: true,
             });
             return data;
@@ -58,7 +67,16 @@ export default function Header() {
                             <MdChatBubbleOutline />
                         </NavItem>
                         <NavItem href="/notifications">
-                            <MdOutlineNotificationsNone />
+                            <div className="w-full h-full relative">
+                                {notreadedNotif && (
+                                    <div className="absolute bottom-0 right-0 p-[5px] rounded-full bg-red-500"></div>
+                                )}
+                                <img
+                                    src="/images/notification.svg"
+                                    alt=""
+                                    className="w-full h-full"
+                                />
+                            </div>
                         </NavItem>
                         <DropdownMenu />
                     </ul>
