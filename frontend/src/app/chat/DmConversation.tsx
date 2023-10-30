@@ -3,13 +3,12 @@ import { modalContext } from '@/contexts/contexts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
-import { useContext, ReactNode, useEffect, use, useState } from 'react';
+import { ReactNode, useContext, useEffect, useRef } from 'react';
 import { HiDotsVertical } from 'react-icons/hi';
 import Loading from '../loading';
 import ChatInput from './ChatInput';
 import { getStatusColor } from './DirectMessage';
 import Modal from './Modal';
-import { useRef } from 'react';
 
 export type DmConversationProps = {
     userName: string;
@@ -27,7 +26,10 @@ export default function DmConversation({ userName }: DmConversationProps) {
                 receiver: userName,
             });
         },
-        onSuccess: () => queryClient.invalidateQueries(['dm', userName]),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['dm', userName], { exact: true });
+            queryClient.invalidateQueries(['dms', 'brief'], { exact: true });
+        },
     });
 
     const { data: me, isLoading } = useQuery({
@@ -182,7 +184,7 @@ function DmMessageList({ userName }: DmConversationProps) {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }
+    };
 
     useEffect(() => {
         scrollToBottom();
