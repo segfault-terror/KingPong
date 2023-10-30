@@ -11,6 +11,7 @@ import { AchievementsModule } from './achievements/achievements.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ChatModule } from './chat/chat.module';
 import { UpdateModule } from './update/updateStats.module';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
     imports: [
@@ -18,6 +19,7 @@ import { UpdateModule } from './update/updateStats.module';
         AuthModule,
         AchievementsModule,
         NotificationsModule,
+        FriendsModule,
         UpdateModule,
         ConfigModule.forRoot({ isGlobal: true }),
         PrismaModule.forRoot(prismaModuleOptions),
