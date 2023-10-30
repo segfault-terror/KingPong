@@ -54,7 +54,7 @@ export default function FriendListContent({
                     alt={`${username}`}
                     className="w-24 h-24
 						bg-background border-2 border-background
-						rounded-full select-none"
+						rounded-full select-none object-cover"
                 />
             </Link>
             <div className="flex flex-col items-start gap-1">
