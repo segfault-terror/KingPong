@@ -6,6 +6,7 @@ import { Friend, FriendState, UserStatus } from './types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { stat } from 'fs';
+import Loading from '@/app/loading';
 
 const EmptyFriendsList = () => {
     return (
@@ -111,7 +112,13 @@ export default function FriendsList({ friends }: FriendState) {
         },
     });
 
-    if (myloading) return <div>Loading...</div>;
+    if (myloading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
 
     console.log(user.friends);
 

@@ -1,3 +1,4 @@
+import Loading from '@/app/loading';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
@@ -23,7 +24,13 @@ export default function FriendListContent({
         },
     });
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
 
     let statusBg;
     let statusText;

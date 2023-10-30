@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useContext } from 'react';
 import Achievement from './Achievement';
+import Loading from '@/app/loading';
 
 type AchievementListProps = {
     username: string;
@@ -24,8 +25,13 @@ export default function AchievementList({ username }: AchievementListProps) {
             return data;
         },
     });
+
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
     }
     const slicedAchievements = data?.achievements.slice(0, 4);
 

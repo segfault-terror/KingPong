@@ -2,6 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Achievement from './Achievement';
+import Loading from '@/app/loading';
 
 type AchievementModalProps = {
     userName: string;
@@ -21,7 +22,13 @@ export default function AchievementModal({ userName }: AchievementModalProps) {
         },
     });
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
 
     return (
         <div className="p-2 lg:flex lg:flex-col lg:gap-2">

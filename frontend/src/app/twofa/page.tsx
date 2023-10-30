@@ -6,6 +6,7 @@ import { SubmitHandler, set, useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
+import Loading from '../loading';
 
 interface TwoFAFormData {
     pincode: string;
@@ -122,7 +123,13 @@ const Page: React.FC = () => {
         },
     });
 
-    if (isLoadingVerify || myisLoading) return <div>Loading...</div>;
+    if (isLoadingVerify || myisLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
 
     if (tfa || me?.data === false) {
         console.log('redirecting home');

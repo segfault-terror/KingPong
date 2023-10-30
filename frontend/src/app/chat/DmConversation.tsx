@@ -107,7 +107,13 @@ function UserDMInfo({ userName }: DmConversationProps) {
         },
     });
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
 
     const statusColor = getStatusColor(user.status);
     const statusMsg = getStatusMsg(user.status);

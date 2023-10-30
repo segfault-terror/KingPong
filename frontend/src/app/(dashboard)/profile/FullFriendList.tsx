@@ -5,6 +5,7 @@ import Lottie from 'lottie-react';
 import Link from 'next/link';
 import Ghost from '../../../../public/lottie/ghost.json';
 import FriendListContent from './FriendListContent';
+import Loading from '@/app/loading';
 
 type FullFriendListProps = {
     username: string;
@@ -25,7 +26,13 @@ export default function FullFriendList({ username }: FullFriendListProps) {
         },
     });
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
     const slicedFriends = user?.friends.slice(0, 4);
 
     if (user?.friends.length === 0) {

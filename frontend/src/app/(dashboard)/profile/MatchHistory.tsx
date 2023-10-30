@@ -5,6 +5,7 @@ import GameResult from './GameResult';
 import { profileModalContext } from '@/contexts/contexts';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import Loading from '@/app/loading';
 
 
 type MatchHistoryProps = {
@@ -35,7 +36,13 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
 
     const { setMatches } = useContext(profileModalContext);
 
-    if (isLoading || meIsLoading) return <div>Loading...</div>;
+    if (isLoading || meIsLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
     const slicedGameResults = gameResults.slice(0, 3);
 
     if (gameResults.length === 0) {

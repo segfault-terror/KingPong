@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import GameResult from './GameResult';
 import { Users, UsersMatchHistory, UsersStats } from './data/ProfileData';
 import axios from 'axios';
+import Loading from '@/app/loading';
 
 
 type GameResultModalProps = {
@@ -30,7 +31,13 @@ export default function MatchHistoryModal({ userName }: GameResultModalProps) {
         },
     });
 
-    if (isLoading || meIsLoading) return <div>Loading...</div>;
+    if (isLoading || meIsLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
 
     return (
         <div className="px-4 py-1">

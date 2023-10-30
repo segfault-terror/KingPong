@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { AiFillTrophy, AiOutlineClose } from 'react-icons/ai';
 import { TbMessage2, TbUserPlus, TbUserX } from 'react-icons/tb';
 import UserCircleInfo from './UserCircleInfo';
+import Loading from '@/app/loading';
 
 type ProfileCardProps = {
     username: string;
@@ -34,7 +35,13 @@ export default function ProfileCard({ username }: ProfileCardProps) {
         },
     });
 
-    if (visitedUserLoading || friendshipLoading) return <div>Loading...</div>;
+    if (visitedUserLoading || friendshipLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
 
     const leagueImgPath = `/images/${visitedUser?.stats.league.toLowerCase()}-league.svg`;
 

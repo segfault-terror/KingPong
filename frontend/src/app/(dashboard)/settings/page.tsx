@@ -13,6 +13,7 @@ import { UseFormRegister, UseFormResetField, useForm } from 'react-hook-form';
 import { redirect, useRouter } from 'next/navigation';
 import { useContext } from 'react';
 import { ModalContext } from '@/contexts/contexts';
+import Loading from '@/app/loading';
 
 
 
@@ -196,7 +197,13 @@ export default function Settings() {
         updateTfaMutation({ ...data });
     }
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
     return (
         <main className="flex items-center justify-center my-9">
             <div

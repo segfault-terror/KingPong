@@ -3,9 +3,13 @@ import { useQuery } from '@tanstack/react-query';
 import FriendsList from './FriendsList';
 import axios from 'axios';
 import Headers from '@/app/(dashboard)/Header';
+import Loading from '@/app/loading';
 
-
-export default function FriendsPage({params}: { params: {username: string} }) {
+export default function FriendsPage({
+    params,
+}: {
+    params: { username: string };
+}) {
     const { data: friends, isLoading: friendsLoading } = useQuery({
         queryKey: ['friends'],
         queryFn: async () => {
@@ -20,12 +24,16 @@ export default function FriendsPage({params}: { params: {username: string} }) {
             return data;
         },
     });
-    if (friendsLoading) return <div>Loading...</div>;
-
-    
+    if (friendsLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
 
     return (
-        <main className='flex flex-col'>
+        <main className="flex flex-col">
             <Headers />
             <FriendsList friends={friends.friends} />
         </main>
