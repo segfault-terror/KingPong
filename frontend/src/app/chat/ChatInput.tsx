@@ -9,7 +9,8 @@ export default function ChatInput({ sendMessage }: ChatInputProps) {
     const inputRef = useRef<HTMLInputElement>(null);
 
     return (
-        <div className="flex justify-between items-center relative">
+        <div className="flex justify-between items-center relative
+                bg-background rounded-full pr-2">
             <input
                 ref={inputRef}
                 type="text"
@@ -31,7 +32,6 @@ export default function ChatInput({ sendMessage }: ChatInputProps) {
                 }}
             />
             <button
-                className="absolute right-2"
                 onClick={() => {
                     if (inputRef.current == null) return;
                     if (inputRef.current.value.trim() === '') return;
