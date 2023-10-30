@@ -28,9 +28,10 @@ export default function JoinNewChannel() {
     const { data, isLoading } = useQuery({
         queryKey: ['friends'],
         queryFn: async () => {
-            const { data: friends } = await axios.get(`/api/user/me/friends`, {
-                withCredentials: true,
-            });
+            const { data: friends } = await axios.get(
+                `/api/user/get/me/friends`,
+                { withCredentials: true },
+            );
             return friends;
         },
     });
