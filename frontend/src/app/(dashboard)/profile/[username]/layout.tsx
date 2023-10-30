@@ -1,5 +1,5 @@
 'use client';
-import Modal from '@/app/chat/Modal';
+import Modal from '@/components/Modal';
 import { profileModalContext } from '@/contexts/contexts';
 import { usePathname } from 'next/navigation';
 import path from 'path';

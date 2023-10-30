@@ -4,7 +4,7 @@ import CreateNewChannel from './CreateNewChannel';
 import JoinNewChannel, { Channel } from './JoinNewChannel';
 import WelcomeChannel from './WelcomeChannel';
 import NewConversation from './NewConversation';
-import Modal from './Modal';
+import Modal from '../../components/Modal';
 import DropdownModal from './DropdownModal';
 import ChatMenu from './ChatMenu';
 import { modalContext, toggleContext } from '@/contexts/contexts';

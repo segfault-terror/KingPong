@@ -8,7 +8,7 @@ import path from 'path';
 import React, { useContext, useEffect, useState } from 'react';
 import { AiFillCloseCircle } from 'react-icons/ai';
 import ChannelSideBar from '../ChannelSideBar';
-import Modal from '../Modal';
+import Modal from '../../../components/Modal';
 import { channelModalContext } from '@/contexts/contexts';
 
 export default function DMLayout({ children }: { children: React.ReactNode }) {
@@ -31,9 +31,7 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
             <>
                 <div className="flex flex-col bg-background min-h-screen">
                     <Header />
-                    <div
-                        className="flex gap-4 p-6 h-[90vh]"
-                    >
+                    <div className="flex gap-4 p-6 h-[90vh]">
                         <div className="w-1/4">
                             <ChatSideBar
                                 toggle={toggle}
@@ -65,8 +63,8 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
                     childrenClassName="h-[80vh] w-[70vw]"
                 >
                     <button
-                    title='Close'
-                    type='button'
+                        title="Close"
+                        type="button"
                         className="fixed -top-10 left-1/2"
                         onClick={() => setShowMembers(false)}
                     >
@@ -77,9 +75,7 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
             )}
             <div className="flex flex-col bg-background min-h-screen">
                 <Header />
-                <div
-                    className="flex py-8 px-4 h-[90vh]"
-                >
+                <div className="flex py-8 px-4 h-[90vh]">
                     <channelModalContext.Provider
                         value={{ showMembers, setShowMembers }}
                     >

@@ -12,8 +12,8 @@ import axios, { AxiosError } from 'axios';
 import { UseFormRegister, UseFormResetField, useForm } from 'react-hook-form';
 import { redirect, useRouter } from 'next/navigation';
 import { useContext } from 'react';
-import { ModalContext } from '@/contexts/contexts';
 import Loading from '@/app/loading';
+import { TfaContext } from '@/contexts/contexts';
 
 
 
@@ -68,7 +68,7 @@ function UploadAvatar({
 }
 
 export default function Settings() {
-    const { toggle, setToggle, tfa, setTfa } = useContext(ModalContext);
+    const { toggle, setToggle, tfa, setTfa } = useContext(TfaContext);
     const [isDataFetched, setIsDataFetched] = React.useState(false);
     // fetch data from backend
     const { data, isLoading } = useQuery({

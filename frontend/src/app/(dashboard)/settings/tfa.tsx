@@ -1,4 +1,4 @@
-import Modal from '@/app/chat/Modal';
+import Modal from '@/components/Modal';
 import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useEffect } from 'react';
@@ -8,8 +8,15 @@ interface TfaProps {
     code: string;
 }
 
-function TFA({toggle,  onToggle, setTfa }: {toggle: boolean, onToggle: Function, setTfa: Function }) {
-
+function TFA({
+    toggle,
+    onToggle,
+    setTfa,
+}: {
+    toggle: boolean;
+    onToggle: Function;
+    setTfa: Function;
+}) {
     const {
         register,
         handleSubmit,
@@ -28,7 +35,7 @@ function TFA({toggle,  onToggle, setTfa }: {toggle: boolean, onToggle: Function,
     };
 
     const updateTfa = async (data: any) => {
-        console.log("data: ", data.data.code)
+        console.log('data: ', data.data.code);
         try {
             const { data: response } = await axios.post(
                 '/api/auth/2fa/authenticate',
@@ -56,12 +63,10 @@ function TFA({toggle,  onToggle, setTfa }: {toggle: boolean, onToggle: Function,
             const me = await axios.get(`/api/user/me`, {
                 withCredentials: true,
             });
-            return {qrCode: data.qrCode, me: me.data};
+            return { qrCode: data.qrCode, me: me.data };
         },
         cacheTime: 5 * 60 * 1000,
     });
-
-    
 
     const { mutate: verify, isLoading: isLoadingVerify } = useMutation(
         updateTfa,
@@ -78,12 +83,11 @@ function TFA({toggle,  onToggle, setTfa }: {toggle: boolean, onToggle: Function,
 
     const onSubmit: SubmitHandler<TfaProps> = (data) => {
         console.log(data.code);
-        verify({data});
-      };
+        verify({ data });
+    };
 
     let message = 'verify';
     if (isLoading || isLoadingVerify) message = 'loading...';
-
 
     return (
         <>
@@ -138,8 +142,8 @@ function TFA({toggle,  onToggle, setTfa }: {toggle: boolean, onToggle: Function,
                                     })}
                                 />
                                 {errors.code && (
-                                    <div className='flex justify-center items-center'>
-                                    {errors.code.message}
+                                    <div className="flex justify-center items-center">
+                                        {errors.code.message}
                                     </div>
                                 )}
                                 <button
