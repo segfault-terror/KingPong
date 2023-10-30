@@ -5,7 +5,6 @@ import { NotificationProps, NotificationState } from './types';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '@/app/loading';
-import { useContext } from 'react';
 
 export default function Page() {
     const { data, isLoading } = useQuery({
@@ -30,7 +29,6 @@ export default function Page() {
                 type: notification.type,
             }) as NotificationProps,
     );
-    console.log(notifications);
     return (
         <div id="Notification">
             <Notification notifications={notifications} />

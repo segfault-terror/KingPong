@@ -2,12 +2,14 @@
 
 import Image from 'next/image';
 import Ghost from '../../../components/Ghost';
-import React, { useEffect, useState } from 'react';
-
+import React, { useCallback, useEffect, useState } from 'react';
 import Decline from '@/../public/images/decline.svg';
-import Modal from 'react-modal';
+import Modal from '@/components/Modal';
 import PopNotif from './PopNotif';
 import { NotificationProps, NotificationState } from './types';
+import axios from 'axios';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import Loading from '@/app/loading';
 
 const Empty = () => {
     return (
@@ -20,12 +22,50 @@ const Empty = () => {
     );
 };
 
-const Notife = (
-    { id, type, username, avatar, readed }: NotificationProps,
-    updateModal: Function,
-    updateNotif: Function,
-) => {
-    console.log(type);
+const Notife = ({
+    id,
+    type,
+    username,
+    avatar,
+    readed,
+    setIsOpen,
+    setNotif,
+}: NotificationProps & {
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setNotif: React.Dispatch<React.SetStateAction<NotificationProps>>;
+}) => {
+    const queryClient = useQueryClient();
+    const { mutate: update, isLoading: updateLoading } = useMutation({
+        mutationFn: async (data: any) => {
+            return await axios.post(`/api/notifications/update`, data, {
+                withCredentials: true,
+            });
+        },
+        onSuccess: () => {
+            console.log('updated');
+            queryClient.invalidateQueries(['notifications'], {
+                exact: true,
+            });
+        },
+    });
+
+    const { mutate: deleteNotif, isLoading: deleteLoading } = useMutation({
+        mutationFn: async (data: any) => {
+            return await axios.delete(`/api/notifications/delete`, {
+                data,
+                withCredentials: true,
+            });
+        },
+        onSuccess: () => {
+            console.log('deleted');
+            queryClient.invalidateQueries(['notifications'], {
+                exact: true,
+            });
+        },
+    });
+
+    if (deleteLoading || updateLoading) return <Loading />;
+
     const message =
         type == 'GAME'
             ? `${username} has invited you to a game!`
@@ -38,18 +78,19 @@ const Notife = (
             className={`flex justify-between items-center h-24 w-full my-1 ${color} rounded-2xl relative`}
         >
             <div
-                className="flex justify-around items-center w-full h-full cursor-pointer"
+                className="flex justify-stretch items-center w-full h-full cursor-pointer"
                 onClick={() => {
-                    updateModal(true);
-                    updateNotif({ id, type, username, avatar, readed });
+                    if (readed == false) update({ id, type, readed: true });
+                    setIsOpen(true);
+                    setNotif({ id, type, username, avatar, readed });
                 }}
             >
                 <img
                     src={avatar}
                     alt="image"
-                    className="w-20 rounded-full border-white border m-2 object-cover"
+                    className="w-20 rounded-full border-white border m-2 object-cover self-start"
                 />
-                <div className="font-jost text-white text-md sm:text-lg md:text-xl">
+                <div className="font-jost text-white text-md sm:text-lg md:text-xl m-auto">
                     {message}
                 </div>
             </div>
@@ -59,6 +100,9 @@ const Notife = (
                 type="button"
                 name="Decline"
                 title="Decline"
+                onClick={() => {
+                    deleteNotif({ id });
+                }}
             >
                 <Image src={Decline} alt="Decline"></Image>
             </button>
@@ -66,30 +110,18 @@ const Notife = (
     );
 };
 export default function Notification({ notifications }: NotificationState) {
-    useEffect(() => {
-        Modal.setAppElement('#Notification');
-    }, []);
-
-    const [modalIsOpen, setIsOpen] = useState(false);
-    const updateModal = (modal: boolean) => {
-        setIsOpen(modal);
-    };
-    const empty: NotificationProps = {
+    const [isOpen, setIsOpen] = useState(false);
+    const [notif, setNotif] = useState<NotificationProps>({
         id: 0,
         type: 'GAME',
         readed: false,
         username: '',
         avatar: '',
-    };
-    const [notif, setNotif] = useState<NotificationProps>(empty);
-
-    const updateNotif = (notif: NotificationProps) => {
-        setNotif(notif);
-    };
+    });
 
     return (
         <div
-            id="Notification"
+            id="Notifications"
             className="felx flex-col justify-center items-center w-full p-3 md:p-6 z-0 mt-3 md:mt-0 "
         >
             <div className="flex justify-center items-center w-ful lg:max-w-3xl lg:mx-auto pl-4 py-2 px-3 bg-primary border rounded-lg border-secondary-500 drop-shadow-neon-orange">
@@ -101,33 +133,29 @@ export default function Notification({ notifications }: NotificationState) {
                                   className="w-full flex justify-between items-center my-1 rounded-xl"
                                   key={notifs.id}
                               >
-                                  {Notife(notifs, updateModal, updateNotif)}
-                                  <Modal
-                                      key={notifs.id}
-                                      appElement={
-                                          typeof document !== 'undefined'
-                                              ? document.body
-                                              : undefined
-                                      }
-                                      isOpen={modalIsOpen}
-                                      onRequestClose={() => setIsOpen(false)}
-                                      className={`flex flex-col absolute inset-0 justify-center items-center w-5/6 h-48 md:w-1/2  lg:w-2/5 lg:h-1/4`}
-                                      style={{
-                                          overlay: {
-                                              background: 'rgba(0,0,0,0.1)',
-                                              backgroundBlendMode: 'lighten',
-                                          },
-                                          content: {
-                                              margin: 'auto',
-                                          },
-                                      }}
-                                  >
-                                      <PopNotif
-                                          notif={notif}
-                                          updateModal={updateModal}
-                                          updateNotif={updateNotif}
-                                      />
-                                  </Modal>
+                                  <Notife
+                                      id={notifs.id}
+                                      username={notifs.username}
+                                      avatar={notifs.avatar}
+                                      readed={notifs.readed}
+                                      type={notifs.type}
+                                      setIsOpen={setIsOpen}
+                                      setNotif={setNotif}
+                                  />
+                                  {isOpen && (
+                                      <Modal
+                                          childrenClassName="flex flex-col justify-center items-center w-72 h-56 md:w-1/2  lg:w-2/5 lg:h-1/4"
+                                          onClose={() => {
+                                              setIsOpen(false);
+                                          }}
+                                      >
+                                          <PopNotif
+                                              notif={notif}
+                                              updateModal={setIsOpen}
+                                              updateNotif={setNotif}
+                                          />
+                                      </Modal>
+                                  )}
                               </div>
                           ))}
                 </div>

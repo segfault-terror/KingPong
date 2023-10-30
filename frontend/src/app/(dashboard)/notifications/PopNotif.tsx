@@ -2,6 +2,8 @@ import React from 'react';
 import { NotificationProps } from './types';
 import Image from 'next/image';
 import Decline from '../../../../public/images/decline.svg';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 
 const empty : NotificationProps = {
 	id: 0,
@@ -12,12 +14,29 @@ const empty : NotificationProps = {
 };
 
 
-export default function PopNotif ({ notif, updateModal, updateNotif }: { notif: NotificationProps, updateModal: Function, updateNotif: Function }): JSX.Element  {
+export default function PopNotif ({ notif, updateModal, updateNotif }: { notif: NotificationProps, updateModal: Function, updateNotif: Function}): JSX.Element  {
 	const message =
 		notif.type == 'GAME'
 			? `${notif.username} has invited you to a game!`
 			: `${notif.username} has sent you a friend request!`;
 	const bgImage = notif.type == 'GAME' ? '/images/fight.svg' : '/images/add-friend.svg';
+
+	const queryClient = useQueryClient();
+	const { mutate: deleteNotif, isLoading: deleteLoading } = useMutation({
+        mutationFn: async (data: any) => {
+            return await axios.delete(`/api/notifications/delete`, {
+                data,
+                withCredentials: true,
+            });
+        },
+        onSuccess: () => {
+            console.log('deleted');
+            queryClient.invalidateQueries(['notifications'], {
+                exact: true,
+            });
+        },
+    });
+
 	return (
 		<div
 			key={notif.id}
@@ -58,6 +77,7 @@ export default function PopNotif ({ notif, updateModal, updateNotif }: { notif: 
 						title="Decline"
 						onClick={() => {
 							//Decline
+							deleteNotif({ id: notif.id });
 							updateModal(false);
 							updateNotif(empty);
 						}}
