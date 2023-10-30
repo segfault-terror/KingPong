@@ -6,19 +6,22 @@ import { AiFillTrophy, AiOutlineClose } from 'react-icons/ai';
 import { TbMessage2, TbUserCancel, TbUserPlus, TbUserX } from 'react-icons/tb';
 import UserCircleInfo from './UserCircleInfo';
 import Loading from '@/app/loading';
+import { useState } from 'react';
+import Modal from '@/components/Modal';
 
 type ProfileCardProps = {
     username: string;
 };
 
 export default function ProfileCard({ username }: ProfileCardProps) {
+    const [showModal, setShowModal] = useState(false);
+
     const { data: me } = useQuery({
         queryKey: ['mydata'],
         queryFn: async () => {
             const { data } = await axios.get(`/api/user/me`, {
                 withCredentials: true,
             });
-            console.log('data: ', data);
             return data;
         },
     });
@@ -38,13 +41,16 @@ export default function ProfileCard({ username }: ProfileCardProps) {
     const queryClient = useQueryClient();
 
     const { mutate: removeFriend } = useMutation({
-        mutationFn: async (_: any) => {
+        mutationFn: async () => {
             return await axios.delete(`/api/friends/remove/${username}`, {
                 withCredentials: true,
             });
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['isFriend', username], {
+                exact: true,
+            });
+            queryClient.invalidateQueries(['userFriends', username], {
                 exact: true,
             });
         },
@@ -86,10 +92,45 @@ export default function ProfileCard({ username }: ProfileCardProps) {
     return (
         <div
             className="bg-primary
-                        border-2 border-secondary-200 rounded-3xl
-                        h-30 md:h-36
-                        flex flex-col justify-between"
+        border-2 border-secondary-200 rounded-3xl
+        h-30 md:h-36
+        flex flex-col justify-between"
         >
+            {showModal && (
+                <Modal
+                    onClose={() => setShowModal(false)}
+                    childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%]
+                    max-w-[400px]"
+                >
+                    <h1 className="text-center text-xl font-jost">
+                        Remove friend{' '}
+                        <span className="text-secondary-200">@{username}</span>?
+                    </h1>
+                    <div className="w-full flex justify-center gap-4 pt-4">
+                        <button
+                            className="bg-background rounded-2xl px-4
+                                    border border-white text-secondary-200
+                                    font-jost hover:bg-secondary-200
+                                    hover:text-background"
+                            onClick={() => {
+                                removeFriend();
+                                setShowModal(false);
+                            }}
+                        >
+                            OK
+                        </button>
+                        <button
+                            className="bg-background rounded-2xl px-4
+                                    border border-white text-red-400
+                                    font-jost hover:bg-red-400
+                                    hover:text-background"
+                            onClick={() => setShowModal(false)}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </Modal>
+            )}
             <div className="flex items-start relative">
                 <div className="absolute bottom-0 md:-bottom-2">
                     <UserCircleInfo username={username} />
@@ -134,7 +175,10 @@ export default function ProfileCard({ username }: ProfileCardProps) {
 
                     {/* Not me and my friend - Remove friend */}
                     {!friendship.isMe && friendship.isFriend && (
-                        <button onClick={removeFriend} title="Remove friend">
+                        <button
+                            onClick={() => setShowModal(true)}
+                            title="Remove friend"
+                        >
                             <TbUserX />
                         </button>
                     )}

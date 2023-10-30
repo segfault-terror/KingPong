@@ -5,6 +5,8 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useContext, useState } from 'react';
 import Loading from '../loading';
+import Lottie from 'lottie-react';
+import Ghost from '../../../public/lottie/ghost.json';
 
 function filterUsers(friends: any[], query: string) {
     return friends.filter((friend) => {
@@ -24,7 +26,7 @@ export type Friend = {
     img: string;
 };
 
-export default function JoinNewChannel() {
+export default function NewConversation() {
     const { data, isLoading } = useQuery({
         queryKey: ['friends'],
         queryFn: async () => {
@@ -108,6 +110,14 @@ export default function JoinNewChannel() {
                         </Link>
                     ))}
                 </ul>
+            )}
+            {data.friends.length === 0 && (
+                <>
+                    <div className="w-[20%] mx-auto">
+                        <Lottie animationData={Ghost} loop={true} />
+                    </div>
+                    <p className='text-center text-lg font-jost'>You have no friends</p>
+                </>
             )}
         </form>
     );
