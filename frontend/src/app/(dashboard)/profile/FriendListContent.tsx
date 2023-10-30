@@ -68,8 +68,8 @@ export default function FriendListContent({
                 <p
                     className={`${statusText} flex items-center justify-center gap-1`}
                 >
-                    <div
-                        className={`w-[12px] h-[12px] ${statusBg} rounded-full`}
+                    <span
+                        className={`block w-[12px] h-[12px] ${statusBg} rounded-full`}
                     />
                     {status.toLowerCase()}
                 </p>

@@ -233,7 +233,7 @@ function DmMessageList({ userName }: DmConversationProps) {
             </div>
         );
 
-    function generateMessage(msg: any) {
+    function Message(props: { msg: any }) {
         const userStyles =
             'rounded-bl-xl rounded-br-xl rounded-tr-xl bg-white self-start';
         const myStyles =
@@ -241,23 +241,24 @@ function DmMessageList({ userName }: DmConversationProps) {
 
         return (
             <li
-                key={msg.id}
                 className={`text-background font-mulish p-2 w-fit max-w-[80%] hyphens-auto
                             shadow-[5px_5px_0px_0px_rgba(37,10,59)]
                             ${
-                                msg.sender.id == data?.me.id
+                                props.msg.sender.id == data?.me.id
                                     ? myStyles
                                     : userStyles
                             }`}
             >
-                {msg.content}
+                {props.msg.content}
             </li>
         );
     }
 
     return (
         <ul className="flex flex-col gap-2">
-            {data?.dm.messages.map((msg: any) => generateMessage(msg))}
+            {data?.dm.messages.map((msg: any, index: number) => (
+                <Message msg={msg} key={msg.id} />
+            ))}
             <div ref={messagesEndRef} />
         </ul>
     );

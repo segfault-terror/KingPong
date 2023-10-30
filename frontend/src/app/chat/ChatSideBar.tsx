@@ -67,9 +67,8 @@ function DmList({ toggle }: ChatSideBarProps) {
                     }
 
                     return (
-                        <>
+                        <div key={dm.id}>
                             <DirectMessage
-                                key={dm.id}
                                 username={username}
                                 avatar={avatar}
                                 status={status}
@@ -78,7 +77,7 @@ function DmList({ toggle }: ChatSideBarProps) {
                             {idx < DMList.length - 1 && (
                                 <div className="mt-4"></div>
                             )}
-                        </>
+                        </div>
                     );
                 })}
             </div>
@@ -116,9 +115,9 @@ function ChannelList({ toggle }: ChatSideBarProps) {
     return (
         <>
             <div className="text-lg font-jost text-gray-300 flex-grow">
-                {Channels.map((channel) => {
+                {Channels.map((channel, idx) => {
                     return (
-                        <>
+                        <div key={idx}>
                             <Link
                                 href={`/chat/channel/${channel.name}`}
                                 className="block w-full text-left overflow-hidden whitespace-nowrap overflow-ellipsis
@@ -126,7 +125,7 @@ function ChannelList({ toggle }: ChatSideBarProps) {
                                 replace={pathname.startsWith('/chat/channel')}
                             >{`# ${channel.name}`}</Link>
                             <div className="mt-1"></div>
-                        </>
+                        </div>
                     );
                 })}
             </div>

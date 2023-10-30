@@ -66,6 +66,7 @@ export class ChatService {
             select: {
                 messages: {
                     select: {
+                        id: true,
                         content: true,
                         sender: {
                             select: {
