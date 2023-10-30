@@ -58,7 +58,7 @@ export default function DashboardLayout({
         queryKey: ['me'],
         queryFn: async () => {
             try {
-                return await axios.get(`/api/user/me/`, {
+                return await axios.get(`/api/user/me`, {
                     withCredentials: true,
                 });
             } catch {

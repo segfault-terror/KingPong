@@ -1,5 +1,5 @@
 'use client';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
 import { AiFillTrophy, AiOutlineClose } from 'react-icons/ai';
@@ -12,6 +12,30 @@ type ProfileCardProps = {
 };
 
 export default function ProfileCard({ username }: ProfileCardProps) {
+
+    const { data: me } = useQuery({
+        queryKey: ['mydata'],
+        queryFn: async () => {
+            const { data } = await axios.get(`/api/user/me`, {
+                withCredentials: true,
+            });
+            console.log("data: ", data);
+            return data;
+        },
+    });
+    console.log(me);
+    const { mutate: createNotification } = useMutation({
+        mutationFn: async (data: any) => {
+            return await axios.post('/api/notifications/create', {
+                userId: data.id,
+                senderId: me.id,
+                type: 'FRIEND',
+                withCredentials: true,
+            });
+        },
+        onSuccess: () => {},
+    });
+
     const { data: visitedUser, isLoading: visitedUserLoading } = useQuery({
         queryKey: ['profile', username],
         queryFn: async () => {
@@ -24,6 +48,8 @@ export default function ProfileCard({ username }: ProfileCardProps) {
             return data;
         },
     });
+
+    
 
     const { data: friendship, isLoading: friendshipLoading } = useQuery({
         queryKey: ['isFriend', username],
@@ -97,11 +123,11 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                     {/* Not me and not my friend */}
                     {!friendship.isMe && !friendship.isFriend && (
                         <button
-                            onClick={() =>
-                                console.log(
-                                    `Send a friend request to ${username}`,
-                                )
-                            }
+                            type="button"
+                            title="Send a friend request"
+                            onClick={() => {
+                                createNotification(me);
+                            }}
                         >
                             <TbUserPlus />
                         </button>
@@ -110,6 +136,8 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                     {/* Not me and my friend */}
                     {!friendship.isMe && friendship.isFriend && (
                         <button
+                            type="button"
+                            title="Block user"
                             onClick={() => console.log(`Block ${username}`)}
                         >
                             <TbUserX />

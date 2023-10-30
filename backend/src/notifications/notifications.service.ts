@@ -29,8 +29,21 @@ export class NotificationsService {
     }
 
     async create(data: any) {
+
+        const notification = await this.prisma.notification.findMany({
+            where: {
+                senderId: data.senderId,
+                userId: data.userId,
+            }
+        });
+
+        if (!!notification.find((n)=> {
+            return n.type === data.type && n.senderId === data.senderId && n.userId === data.userId;
+        }))
+        return notification;
         return this.prisma.notification.create({
             data: {
+                senderId: data.senderId,
                 type: data.type,
                 user: {
                     connect: {
