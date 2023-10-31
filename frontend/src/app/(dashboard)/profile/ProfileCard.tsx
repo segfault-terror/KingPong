@@ -35,8 +35,8 @@ export default function ProfileCard({ username }: ProfileCardProps) {
     const { mutate: createNotification } = useMutation({
         mutationFn: async (data: any) => {
             return await axios.post('/api/notifications/create', {
-                userId: data.id,
-                senderId: me.id,
+                userId: me.id,
+                sendToId: data.id,
                 type: 'FRIEND',
                 withCredentials: true,
             });
@@ -227,6 +227,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                                     () => setShowNotification(false),
                                     2000,
                                 );
+                                createNotification(visitedUser);
                             }}
                         >
                             <TbUserPlus />

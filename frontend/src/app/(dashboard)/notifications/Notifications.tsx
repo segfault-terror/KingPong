@@ -28,7 +28,7 @@ const Notife = ({
     username,
     avatar,
     readed,
-    senderId,
+    sendToId,
     setIsOpen,
     setNotif,
 }: NotificationProps & {
@@ -83,7 +83,7 @@ const Notife = ({
                 onClick={() => {
                     if (readed == false) update({ id, type, readed: true });
                     setIsOpen(true);
-                    setNotif({ id, type, username, avatar, readed, senderId });
+                    setNotif({ id, type, username, avatar, readed, sendToId });
                 }}
             >
                 <img
@@ -118,7 +118,7 @@ export default function Notification({ notifications }: NotificationState) {
         readed: false,
         username: '',
         avatar: '',
-        senderId: ""
+        sendToId: '',
     });
 
     return (
@@ -126,7 +126,22 @@ export default function Notification({ notifications }: NotificationState) {
             id="Notifications"
             className="felx flex-col justify-center items-center w-full p-3 md:p-6 z-0 mt-3 md:mt-0 "
         >
-            <div className="flex justify-center items-center w-ful lg:max-w-3xl lg:mx-auto pl-4 py-2 px-3 bg-primary border rounded-lg border-secondary-500 drop-shadow-neon-orange">
+            <div className="flex flex-col justify-center items-center w-ful lg:max-w-3xl lg:mx-auto pl-4 py-2 px-3 bg-primary border rounded-lg border-secondary-500 drop-shadow-neon-orange">
+                {
+                    notifications.length > 0 &&
+                    <button
+                    type="button"
+                    title="clear"
+                    className="w-20 h-6 border text-center bg-background border-secondary-500 rounded-lg self-end mr-3"
+                    onClick={() => {
+                        axios.delete(`/api/notifications/delete/all`, {
+                            withCredentials: true,
+                        });
+                    }}
+                    >
+                Clear
+            </button>
+            }
                 <div className="flex flex-col justify-between items-center w-full lg:px-3 overflow-auto">
                     {notifications.length == 0
                         ? Empty()
@@ -143,7 +158,7 @@ export default function Notification({ notifications }: NotificationState) {
                                       type={notifs.type}
                                       setIsOpen={setIsOpen}
                                       setNotif={setNotif}
-                                      senderId={notifs.senderId}
+                                      sendToId={notifs.sendToId}
                                   />
                                   {isOpen && (
                                       <Modal

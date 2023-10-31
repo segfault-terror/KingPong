@@ -10,7 +10,7 @@ export default function Page() {
     const { data, isLoading } = useQuery({
         queryKey: ['notifications'],
         queryFn: async () => {
-            const { data } = await axios.get(`/api/notifications`, {
+            const { data } = await axios.get(`/api/notifications/me`, {
                 withCredentials: true,
             });
             return data;
@@ -27,7 +27,7 @@ export default function Page() {
                 avatar: notification.user.avatar,
                 readed: notification.readed,
                 type: notification.type,
-                senderId: notification.senderId,
+                sendToId: notification.sendToId,
             }) as NotificationProps,
     );
     return (
