@@ -40,6 +40,7 @@ export class NotificationsController {
 
     @Get('notreaded')
     async notreaded(@Req() data: any) {
-        return this.NotificationsService.notificationNotRead(data.user.id);
+        const readed =  await this.NotificationsService.notificationNotRead(data.user.id);
+        return readed.length > 0;
     }
 }
