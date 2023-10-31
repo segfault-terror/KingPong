@@ -221,7 +221,6 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                             onClick={() => {
                                 if (showNotification) return;
 
-                                createNotification(me);
                                 setShowNotification(true);
                                 setTimeout(
                                     () => setShowNotification(false),

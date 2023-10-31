@@ -15,7 +15,6 @@ export class NotificationsService {
     }
 
     async getmyAll(id: string) {
-        console.log("id: ",id);
         return  await this.prisma.notification.findMany({
             where: {
                 sendToId: id,
@@ -34,7 +33,6 @@ export class NotificationsService {
     }
 
     async delete(id: string) {
-        console.log(id);
         return this.prisma.notification.delete({
             where: {
                 id,
