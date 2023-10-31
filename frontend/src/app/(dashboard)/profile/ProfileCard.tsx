@@ -143,7 +143,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                 <motion.div
                     className="absolute
                                 top-44 md:top-32 lg:top-52
-                                right-4 lg:right-52
+                                right-4
                                 bg-green-400 text-primary
                                 text-center font-jost
                                 px-4 py-2 rounded-xl
