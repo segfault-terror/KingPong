@@ -1,13 +1,18 @@
 'use client';
+import Loading from '@/app/loading';
+import Modal from '@/components/Modal';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { AiFillTrophy, AiOutlineClose } from 'react-icons/ai';
+import { useState } from 'react';
+import {
+    AiFillTrophy,
+    AiOutlineCheckCircle,
+    AiOutlineClose,
+} from 'react-icons/ai';
 import { TbMessage2, TbUserCancel, TbUserPlus, TbUserX } from 'react-icons/tb';
 import UserCircleInfo from './UserCircleInfo';
-import Loading from '@/app/loading';
-import { useState } from 'react';
-import Modal from '@/components/Modal';
 
 type ProfileCardProps = {
     username: string;
@@ -15,6 +20,7 @@ type ProfileCardProps = {
 
 export default function ProfileCard({ username }: ProfileCardProps) {
     const [showModal, setShowModal] = useState(false);
+    const [showNotification, setShowNotification] = useState(false);
 
     const { data: me } = useQuery({
         queryKey: ['mydata'],
@@ -131,6 +137,30 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                     </div>
                 </Modal>
             )}
+
+            {/* Notification modal */}
+            {showNotification && (
+                <motion.div
+                    className="absolute
+                                top-44 md:top-32 lg:top-52
+                                right-4 lg:right-52
+                                bg-green-400 text-primary
+                                text-center font-jost
+                                px-4 py-2 rounded-xl
+                                flex gap-2 items-center"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{
+                        duration: 0.5,
+                        delay: 0,
+                        ease: [0, 0.71, 0.2, 1.01],
+                    }}
+                >
+                    <AiOutlineCheckCircle className="text-xl font-bold" />
+                    <p>Friend request send successfully</p>
+                </motion.div>
+            )}
+
             <div className="flex items-start relative">
                 <div className="absolute bottom-0 md:-bottom-2">
                     <UserCircleInfo username={username} />
@@ -189,7 +219,14 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                             type="button"
                             title="Send a friend request"
                             onClick={() => {
+                                if (showNotification) return;
+
                                 createNotification(me);
+                                setShowNotification(true);
+                                setTimeout(
+                                    () => setShowNotification(false),
+                                    2000,
+                                );
                             }}
                         >
                             <TbUserPlus />
