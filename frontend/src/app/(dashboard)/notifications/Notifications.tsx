@@ -28,7 +28,7 @@ const Notife = ({
     username,
     avatar,
     readed,
-    senderId,
+    sendToId,
     setIsOpen,
     setNotif,
 }: NotificationProps & {
@@ -83,7 +83,7 @@ const Notife = ({
                 onClick={() => {
                     if (readed == false) update({ id, type, readed: true });
                     setIsOpen(true);
-                    setNotif({ id, type, username, avatar, readed, senderId });
+                    setNotif({ id, type, username, avatar, readed, sendToId });
                 }}
             >
                 <img
@@ -118,51 +118,117 @@ export default function Notification({ notifications }: NotificationState) {
         readed: false,
         username: '',
         avatar: '',
-        senderId: ""
+        sendToId: '',
+    });
+    const [deleteAll, setDeleteAll] = useState(false);
+    const { mutate, isLoading } = useMutation({
+        mutationFn: async () => {
+            return await axios.delete(`/api/notifications/deleteAll`, {
+                withCredentials: true,
+            });
+        },
+        onSuccess: () => {
+            console.log('deleted all');
+        },
     });
 
+    if (isLoading) return <Loading />;
+
+    const modal = () => {
+        return (
+            <Modal
+                childrenClassName="flex flex-col justify-center items-center w-64 h-40"
+                onClose={() => {
+                    setDeleteAll(false);
+                }}
+            >
+                <div className="w-64 h-40 bg-background rounded-2xl flex flex-col justify-start items-center">
+                    <div className="text-center p-7 font-jost">
+                        <p>
+                            Are sure you want remove all
+                        </p>
+                        <p className="text-red-500">&nbsp; notifications</p>
+                    </div>
+                    <button
+                        type="button"
+                        title="clear"
+                        className="w-20 h-6 border text-center bg-red-500 border-secondary-500 rounded-lg self-center"
+                        onClick={() => mutate()}
+                    >
+                        Clear
+                    </button>
+                    <button
+                    className='absolute top-2 right-2 w-5 h-5'
+                    type='button'
+                    title='close'
+                    onClick={() => {
+                        setDeleteAll(false);
+                    }}
+                    >
+                        <Image src={Decline} alt="Decline"></Image>
+                    </button>
+                </div>
+            </Modal>
+        );
+    };
+
     return (
-        <div
-            id="Notifications"
-            className="felx flex-col justify-center items-center w-full p-3 md:p-6 z-0 mt-3 md:mt-0 "
-        >
-            <div className="flex justify-center items-center w-ful lg:max-w-3xl lg:mx-auto pl-4 py-2 px-3 bg-primary border rounded-lg border-secondary-500 drop-shadow-neon-orange">
-                <div className="flex flex-col justify-between items-center w-full lg:px-3 overflow-auto">
-                    {notifications.length == 0
-                        ? Empty()
-                        : notifications.map((notifs) => (
-                              <div
-                                  className="w-full flex justify-between items-center my-1 rounded-xl"
-                                  key={notifs.id}
-                              >
-                                  <Notife
-                                      id={notifs.id}
-                                      username={notifs.username}
-                                      avatar={notifs.avatar}
-                                      readed={notifs.readed}
-                                      type={notifs.type}
-                                      setIsOpen={setIsOpen}
-                                      setNotif={setNotif}
-                                      senderId={notifs.senderId}
-                                  />
-                                  {isOpen && (
-                                      <Modal
-                                          childrenClassName="flex flex-col justify-center items-center w-72 h-56 md:w-1/2  lg:w-2/5 lg:h-1/4"
-                                          onClose={() => {
-                                              setIsOpen(false);
-                                          }}
-                                      >
-                                          <PopNotif
-                                              notif={notif}
-                                              updateModal={setIsOpen}
-                                              updateNotif={setNotif}
-                                          />
-                                      </Modal>
-                                  )}
-                              </div>
-                          ))}
+        <>
+            {deleteAll === true ? modal() : null}
+            <div
+                id="Notifications"
+                className="felx flex-col justify-center items-center w-full p-3 md:p-6 z-0 mt-3 md:mt-0 "
+            >
+                <div className="flex flex-col justify-center items-center w-ful lg:max-w-3xl lg:mx-auto pl-4 py-2 px-3 bg-primary border rounded-lg border-secondary-500 drop-shadow-neon-orange">
+                    {notifications.length > 0 && (
+                        <button
+                            type="button"
+                            title="clear"
+                            className="w-20 h-6 border text-center bg-background border-secondary-500 rounded-lg self-end mr-3"
+                            onClick={() => {
+                                setDeleteAll(true);
+                            }}
+                        >
+                            Clear
+                        </button>
+                    )}
+                    <div className="flex flex-col justify-between items-center w-full lg:px-3 overflow-auto">
+                        {notifications.length == 0
+                            ? Empty()
+                            : notifications.map((notifs) => (
+                                  <div
+                                      className="w-full flex justify-between items-center my-1 rounded-xl"
+                                      key={notifs.id}
+                                  >
+                                      <Notife
+                                          id={notifs.id}
+                                          username={notifs.username}
+                                          avatar={notifs.avatar}
+                                          readed={notifs.readed}
+                                          type={notifs.type}
+                                          setIsOpen={setIsOpen}
+                                          setNotif={setNotif}
+                                          sendToId={notifs.sendToId}
+                                      />
+                                      {isOpen && (
+                                          <Modal
+                                              childrenClassName="flex flex-col justify-center items-center w-72 h-56 md:w-1/2  lg:w-2/5 lg:h-1/4"
+                                              onClose={() => {
+                                                  setIsOpen(false);
+                                              }}
+                                          >
+                                              <PopNotif
+                                                  notif={notif}
+                                                  updateModal={setIsOpen}
+                                                  updateNotif={setNotif}
+                                              />
+                                          </Modal>
+                                      )}
+                                  </div>
+                              ))}
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }

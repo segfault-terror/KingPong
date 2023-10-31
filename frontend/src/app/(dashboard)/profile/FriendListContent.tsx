@@ -1,4 +1,5 @@
 import Loading from '@/app/loading';
+import useInvite from '@/hooks/useInvite';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
@@ -20,9 +21,21 @@ export default function FriendListContent({
             const res = await axios.get(`/api/user/isFriend/${username}`, {
                 withCredentials: true,
             });
-            return res.data;
+
+            const visitedUser = await axios.get(
+                `/api/user/get/${username}/stats`,
+                {
+                    withCredentials: true,
+                }
+            );
+            return {
+                data: res.data,
+                vis: visitedUser.data,
+            };
         },
     });
+
+    const {mutate: InviteFriend} = useInvite();
 
     if (isLoading) {
         return (
@@ -74,7 +87,7 @@ export default function FriendListContent({
                     {status.toLowerCase()}
                 </p>
 
-                {data.isFriend ? (
+                {data?.data.isFriend ? (
                     <Link
                         href={`/chat/dm/${username}`}
                         className="bg-background rounded-2xl px-4
@@ -83,11 +96,19 @@ export default function FriendListContent({
                     >
                         Message
                     </Link>
-                ) : data.isMe ? null : (
+                ) : data?.data.isMe ? null : (
                     <button
                         className="bg-background rounded-2xl px-4
 						border border-white
 						text-secondary-200 font-jost hover:bg-secondary-200 hover:text-background"
+                        onClick={() => {
+                            // console.log(data)
+                            InviteFriend({
+                                userId: data?.data.id,
+                                id: data?.vis.id,
+                                type: 'FRIEND',
+                            });
+                        }}
                     >
                         Invite
                     </button>

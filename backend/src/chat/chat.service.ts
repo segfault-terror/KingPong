@@ -65,6 +65,14 @@ export class ChatService {
             },
             select: {
                 id: true,
+                user1_first_message: true,
+                user2_first_message: true,
+                user1: {
+                    select: { username: true },
+                },
+                user2: {
+                    select: { username: true },
+                },
                 messages: {
                     select: {
                         id: true,
@@ -82,6 +90,13 @@ export class ChatService {
                 },
             },
         });
+
+        const firstMessage =
+            username1 === result.user1.username
+                ? result.user1_first_message
+                : result.user2_first_message;
+
+        result.messages = result.messages.slice(firstMessage);
         return result;
     }
 
@@ -108,6 +123,8 @@ export class ChatService {
             },
             select: {
                 id: true,
+                user1_first_message: true,
+                user2_first_message: true,
                 user1: {
                     select: {
                         username: true,
@@ -135,11 +152,22 @@ export class ChatService {
                     orderBy: {
                         createdAt: 'desc',
                     },
-                    take: 1,
                 },
             },
         });
-        return result;
+
+        const filteredResult = result.filter((result) => {
+            const firstMessage =
+                username === result.user1.username
+                    ? result.user1_first_message
+                    : result.user2_first_message;
+
+            const slicedMessages = result.messages.slice(firstMessage);
+            console.log(result);
+            return slicedMessages.length > 0;
+        });
+
+        return filteredResult;
     }
 
     async createMessage(
@@ -193,16 +221,50 @@ export class ChatService {
         });
     }
 
-    async deleteDM(dmId: string) {
-        await this.prisma.message.deleteMany({
+    async deleteDM(dmId: string, userId: string) {
+        const count = await this.prisma.message.count({
             where: {
                 dm_id: dmId,
             },
         });
-        await this.prisma.dM.delete({
+
+        const dm = await this.prisma.dM.findUnique({
             where: {
                 id: dmId,
             },
+            select: {
+                user1Id: true,
+                user2Id: true,
+                user1_first_message: true,
+                user2_first_message: true,
+            },
         });
+
+        if (userId === dm.user1Id) {
+            dm.user1_first_message = count;
+        } else {
+            dm.user2_first_message = count;
+        }
+
+        await this.prisma.dM.update({
+            where: {
+                id: dmId,
+            },
+            data: {
+                user1_first_message: dm.user1_first_message,
+                user2_first_message: dm.user2_first_message,
+            },
+        });
+
+        // await this.prisma.message.deleteMany({
+        //     where: {
+        //         dm_id: dmId,
+        //     },
+        // });
+        // await this.prisma.dM.delete({
+        //     where: {
+        //         id: dmId,
+        //     },
+        // });
     }
 }

@@ -12,7 +12,7 @@ const empty: NotificationProps = {
     readed: false,
     username: '',
     avatar: '',
-    senderId: '',
+    sendToId: '',
 };
 
 export default function PopNotif({
@@ -53,15 +53,15 @@ export default function PopNotif({
                 withCredentials: true,
             });
         },
-		onSuccess: () => {
-			console.log('added');
-			queryClient.invalidateQueries(['notifications'], {
-				exact: true,
-			});
-		},
+        onSuccess: () => {
+            console.log('added');
+            queryClient.invalidateQueries(['notifications'], {
+                exact: true,
+            });
+        },
     });
 
-	if (deleteLoading || acceptLoading) return <Loading />;
+    if (deleteLoading || acceptLoading) return <Loading />;
 
     return (
         <div
@@ -90,7 +90,7 @@ export default function PopNotif({
                         title="Accept"
                         onClick={() => {
                             if (notif.type == 'FRIEND') {
-                                acceptFriend({senderId: notif.senderId});
+                                acceptFriend({ username: notif.username });
                             }
                             deleteNotif({ id: notif.id });
                             updateModal(false);

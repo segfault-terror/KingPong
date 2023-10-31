@@ -11,12 +11,12 @@ import {
 } from '@nestjs/common';
 import { AuthGard } from '../auth/auth.guard';
 import { FriendsService } from './friends.service';
+import { UserService } from 'src/user/user.service';
 
 @Controller('friends')
 @UseGuards(AuthGard)
 export class FriendsController {
-    userService: any;
-    constructor(private readonly friendsService: FriendsService) {}
+    constructor(private readonly friendsService: FriendsService, private readonly userService: UserService) {}
 
     @Get('/get/:username/friends')
     async getUserFriends(@Param('username') username: string) {
@@ -30,7 +30,11 @@ export class FriendsController {
 
     @Post('/add')
     async addFriend(@Body() data: any, @Req() req: any) {
-        return this.friendsService.addFriend(req.user.id, data.senderId);
+
+        const friend = await this.userService.user({ username: data.username });
+
+
+        return this.friendsService.addFriend(req.user.id, friend.id);
     }
 
     @Delete('/remove/:username')
