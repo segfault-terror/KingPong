@@ -5,7 +5,7 @@ import { newData } from './page';
 export default function Navbar(myleague: string, leaderboard: any[]) {
     return (
         <nav
-            className={`flex flex-col justify-normal items-center bg-background border-t-2 border-r-2 border-white drop-shadow-[2px_-2px_5px_#fffAAACC] text-black p-4 lg:w-96 w-72 rounded-se-2xl backdrop-blur-lg transition-all duration-500`}
+            className={`flex flex-col justify-normal items-center bg-background border-t-2 border-r-2 border-[#a24acf] drop-shadow-[2px_-2px_5px_#a24acfCC] text-black p-4 lg:w-96 w-72 rounded-se-2xl backdrop-blur-lg transition-all duration-500`}
         >
             <Link
                 href={'/leaderboard'}
@@ -24,9 +24,9 @@ export default function Navbar(myleague: string, leaderboard: any[]) {
                 />
             </Link>
             <hr className="border-t-2 border-gray-300 w-3/4 my-4" />
-            <div className="flex justify-center items-center w-10/12">
+            <div className="flex justify-center items-center w-full">
                 {leaderboard.length > 0 && (
-                    <div className="w-full m-auto mt-4 rounded-3xl bg-gradient-to-r from-primary to-purple-950 p-2">
+                    <div className="w-full m-auto rounded-3xl bg-gradient-to-r from-primary to-purple-950">
                         <div className="flex justify-around items-center">
                                 <div className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Rank

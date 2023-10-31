@@ -14,7 +14,7 @@ export default function SelectMode({
     title,
 }: SelectModeProps) {
     return (
-        <div className="w-full h-72 md:h-96  flex flex-col justify-around items-center group">
+        <div className="w-full h-72 md:h-96  flex flex-col justify-center items-center group">
             <Link
                 href={link}
                 className="w-full rounded-xl flex justify-center items-center opacity-80 group-hover:opacity-100 hover:drop-shadow-neon-white"
