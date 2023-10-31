@@ -13,6 +13,17 @@ export class Ball {
         World.add(world, this.body);
     }
 
+    isOffScreen(p5: p5Types) {
+        const pos = this.body.position;
+        return (pos.y > p5.height + 100 || pos.y < -100);
+    }
+
+    resetPosition(p5: p5Types) {
+        const pos = this.body.position;
+        Body.setPosition(this.body, { x: p5.width / 2, y: p5.height / 2 });
+        Body.setSpeed(this.body, this.body.speed * 0.9);
+    }
+
     show(p5: p5Types) {
         const pos = this.body.position;
         const angle = this.body.angle;

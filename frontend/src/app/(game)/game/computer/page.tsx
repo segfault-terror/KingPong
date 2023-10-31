@@ -11,7 +11,7 @@ const Sketch = dynamic(() => import('react-p5').then((mod) => mod.default), {
 export default function Page() {
     return (
         <div className="flex justify-center items-center h-screen">
-            <Sketch setup={setup} draw={draw} mousePressed={mousePressed} />
+            <Sketch className={'border border-red-700 rounded-3xl overflow-hidden'} setup={setup} draw={draw} mousePressed={mousePressed} />
         </div>
     );
 }

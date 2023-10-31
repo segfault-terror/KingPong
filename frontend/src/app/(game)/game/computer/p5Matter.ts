@@ -8,7 +8,6 @@ let engine: Engine;
 export let world: World;
 let balls: Ball[] = [];
 let pongTable: PongTable;
-let ground;
 
 export function setup(p5: p5Types, canvasParentRef: Element) {
     p5.createCanvas(500, 800).parent(canvasParentRef);
@@ -23,8 +22,11 @@ export function draw(p5: p5Types) {
     p5.background(51);
     for (let i = 0; i < balls.length; i++) {
         balls[i].show(p5);
+        if (balls[i].isOffScreen(p5)) {
+            balls[i].resetPosition(p5);
+        }
     }
-    pongTable.show(p5);
+    // pongTable.show(p5);
 }
 
 export function mousePressed(p5: p5Types) {
