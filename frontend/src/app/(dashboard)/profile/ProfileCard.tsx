@@ -13,6 +13,7 @@ import {
 } from 'react-icons/ai';
 import { TbMessage2, TbUserCancel, TbUserPlus, TbUserX } from 'react-icons/tb';
 import UserCircleInfo from './UserCircleInfo';
+import useInvite from '@/hooks/useInvite';
 
 type ProfileCardProps = {
     username: string;
@@ -22,27 +23,8 @@ export default function ProfileCard({ username }: ProfileCardProps) {
     const [showModal, setShowModal] = useState(false);
     const [showNotification, setShowNotification] = useState(false);
 
-    const { data: me } = useQuery({
-        queryKey: ['mydata'],
-        queryFn: async () => {
-            const { data } = await axios.get(`/api/user/me`, {
-                withCredentials: true,
-            });
-            return data;
-        },
-    });
 
-    const { mutate: createNotification } = useMutation({
-        mutationFn: async (data: any) => {
-            return await axios.post('/api/notifications/create', {
-                userId: me.id,
-                sendToId: data.id,
-                type: 'FRIEND',
-                withCredentials: true,
-            });
-        },
-        onSuccess: () => {},
-    });
+    const { mutate: createNotification } = useInvite();
 
     const queryClient = useQueryClient();
 
@@ -226,7 +208,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                                     () => setShowNotification(false),
                                     2000,
                                 );
-                                createNotification(visitedUser);
+                                createNotification({...visitedUser, type: 'FRIEND'});
                             }}
                         >
                             <TbUserPlus />
