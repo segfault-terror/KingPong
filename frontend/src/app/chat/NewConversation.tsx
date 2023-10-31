@@ -60,6 +60,7 @@ export default function NewConversation() {
 
             <input
                 type="text"
+                autoFocus
                 placeholder="Search"
                 onKeyDown={(event) => {
                     if (event.key === 'Enter') {
@@ -116,7 +117,9 @@ export default function NewConversation() {
                     <div className="w-[20%] mx-auto">
                         <Lottie animationData={Ghost} loop={true} />
                     </div>
-                    <p className='text-center text-lg font-jost'>You have no friends</p>
+                    <p className="text-center text-lg font-jost">
+                        You have no friends
+                    </p>
                 </>
             )}
         </form>
