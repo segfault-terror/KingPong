@@ -43,7 +43,7 @@ export class ChatController {
     }
 
     @Delete('dm/:id')
-    async deleteMessage(@Param('id') id: string) {
-        return await this.chatService.deleteDM(id);
+    async deleteMessage(@Param('id') id: string, @Req() request: any) {
+        return await this.chatService.deleteDM(id, request.user.id);
     }
 }

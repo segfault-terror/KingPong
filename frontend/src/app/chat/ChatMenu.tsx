@@ -74,7 +74,6 @@ function DmMenu(props: { username: string }) {
             </div>
         );
     }
-    console.log(dm.me);
 
     return (
         <>
@@ -95,7 +94,7 @@ function DmMenu(props: { username: string }) {
                         router.replace('/chat');
                     }}
                 >
-                    Delete Chat
+                    Clear Chat
                 </button>
             </ChatMenuItem>
         </>
