@@ -1,7 +1,13 @@
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
 import AchievementList from '../AchievementList';
 import FullFriendList from '../FullFriendList';
 import MatchHistory from '../MatchHistory';
 import ProfileCard from '../ProfileCard';
+import axios from 'axios';
+import Loading from '@/app/loading';
+import { redirect } from 'next/navigation';
 
 type ProfilePageProps = {
     params: {
@@ -10,6 +16,31 @@ type ProfilePageProps = {
 };
 
 export default function ProfilePage({ params }: ProfilePageProps) {
+    const { data, isLoading } = useQuery({
+        queryKey: ['user', params.username],
+        queryFn: async () => {
+            const { data } = await axios.get(
+                `/api/user/get/${params.username}`,
+                {
+                    withCredentials: true,
+                },
+            );
+            return data;
+        },
+    });
+
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
+
+    if (!data) {
+        redirect('/not-found');
+    }
+
     return (
         <>
             <div
