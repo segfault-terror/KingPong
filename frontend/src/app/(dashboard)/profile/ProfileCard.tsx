@@ -208,7 +208,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                                     2000,
                                 );
                                 createNotification({
-                                    ...visitedUser,
+                                    id: visitedUser.id,
                                     type: 'FRIEND',
                                 });
                             }}

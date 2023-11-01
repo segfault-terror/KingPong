@@ -55,7 +55,7 @@ export default function DashboardLayout({
     });
 
     const { data: me, isLoading: myisLoading } = useQuery({
-        queryKey: ['me'],
+        queryKey: ['mydata'],
         queryFn: async () => {
             try {
                 return await axios.get(`/api/user/me`, {
@@ -79,7 +79,6 @@ export default function DashboardLayout({
     if (error || data?.data.status === false) {
         redirect('/signin');
     }
-
 
     return (
         <div className="flex flex-col min-h-screen">

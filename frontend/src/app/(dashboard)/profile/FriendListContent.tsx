@@ -120,8 +120,7 @@ export default function FriendListContent({
                             onClick={() => {
                                 // console.log(data)
                                 InviteFriend({
-                                    userId: data.id,
-                                    id: data.id,
+                                    id: data.friendId,
                                     type: 'FRIEND',
                                 });
                                 setShowNotification(true);
