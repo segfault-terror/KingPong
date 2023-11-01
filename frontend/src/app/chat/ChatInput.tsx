@@ -1,16 +1,53 @@
-import { useRef } from 'react';
+import { useSocket } from '@/contexts/SocketContext';
+import { useEffect, useRef } from 'react';
 import { BiSolidSend } from 'react-icons/bi';
 
 type ChatInputProps = {
     sendMessage: Function;
+    username: string;
+    isTyping: boolean;
+    setIsTyping: Function;
 };
 
-export default function ChatInput({ sendMessage }: ChatInputProps) {
+export default function ChatInput({
+    sendMessage,
+    username,
+    isTyping,
+    setIsTyping,
+}: ChatInputProps) {
     const inputRef = useRef<HTMLInputElement>(null);
+    const { socket } = useSocket();
+
+    useEffect(() => {
+        socket?.on('typing', (data) => {
+            setIsTyping(data.isTyping);
+        });
+        return () => {
+            socket?.off('typing');
+        };
+    });
+
+    let typingTimeout: NodeJS.Timeout | null;
+    const typingDelay = 1000;
+
+    function onUserTyping() {
+        if (typingTimeout) clearTimeout(typingTimeout);
+
+        if (!typingTimeout) {
+            socket?.emit('typing', { username, isTyping: true });
+        }
+
+        typingTimeout = setTimeout(() => {
+            socket?.emit('typing', { username, isTyping: false });
+            typingTimeout = null;
+        }, typingDelay);
+    }
 
     return (
-        <div className="flex justify-between items-center relative
-                bg-background rounded-full pr-2">
+        <div
+            className="flex justify-between items-center relative
+                bg-background rounded-full pr-2"
+        >
             <input
                 ref={inputRef}
                 type="text"
@@ -22,6 +59,7 @@ export default function ChatInput({ sendMessage }: ChatInputProps) {
                     flex-grow
                     outline-none"
                 onKeyDown={(event) => {
+                    onUserTyping();
                     if (event.key === 'Enter') {
                         if (event.currentTarget.value.trim() === '') return;
 

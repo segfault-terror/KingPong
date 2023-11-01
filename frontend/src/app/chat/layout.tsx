@@ -23,22 +23,6 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
     const [newConversation, setNewConversation] = useState(false);
     const [dotsDropdown, setDotsDropdown] = useState(false);
 
-    useEffect(() => {
-        const socket = io('/chat', {
-            withCredentials: true,
-            path: '/api/socket',
-        });
-
-        socket.emit('chat-test', `I'm new here, nice to meet you!`);
-        socket.on('chat-test', (data) => {
-            window.alert(`server: ${data}`);
-        });
-
-        return () => {
-            socket.off('chat-test');
-            socket.disconnect();
-        };
-    });
 
     return (
         <toggleContext.Provider value={{ toggle, setToggle }}>

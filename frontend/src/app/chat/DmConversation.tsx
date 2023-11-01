@@ -3,7 +3,7 @@ import { modalContext } from '@/contexts/contexts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
-import { ReactNode, useContext, useEffect, useRef } from 'react';
+import { ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { HiDotsVertical } from 'react-icons/hi';
 import Loading from '../loading';
 import ChatInput from './ChatInput';
@@ -14,8 +14,13 @@ export type DmConversationProps = {
     userName: string;
 };
 
+type DmConversationHeaderProps = DmConversationProps & { isTyping: boolean };
+
+type UserDMInfoProps = DmConversationHeaderProps;
+
 export default function DmConversation({ userName }: DmConversationProps) {
     const queryClient = useQueryClient();
+    const [isTyping, setIsTyping] = useState(false);
 
     const { mutate } = useMutation({
         mutationFn: async (content: string) => {
@@ -58,12 +63,17 @@ export default function DmConversation({ userName }: DmConversationProps) {
                 px-4 py-3
                 border-secondary-200 border-[1px]"
         >
-            <DmConversationHeader userName={userName} />
+            <DmConversationHeader userName={userName} isTyping={isTyping} />
             <div className="flex-grow overflow-y-scroll scrollbar-none pb-2">
                 <DmMessageList userName={userName} />
             </div>
 
-            <ChatInput sendMessage={mutate} />
+            <ChatInput
+                sendMessage={mutate}
+                username={userName}
+                isTyping={isTyping}
+                setIsTyping={setIsTyping}
+            />
         </div>
     );
 }
@@ -81,13 +91,16 @@ function getStatusMsg(status: string) {
     }
 }
 
-function DmConversationHeader({ userName }: DmConversationProps) {
+function DmConversationHeader({
+    userName,
+    isTyping,
+}: DmConversationHeaderProps) {
     const { setDotsDropdown } = useContext(modalContext);
 
     return (
         <>
             <div className="flex justify-between items-center">
-                <UserDMInfo userName={userName} />
+                <UserDMInfo userName={userName} isTyping={isTyping} />
                 <button onClick={() => setDotsDropdown(true)}>
                     <HiDotsVertical className="text-secondary-200 h-8 w-8" />
                 </button>
@@ -96,7 +109,7 @@ function DmConversationHeader({ userName }: DmConversationProps) {
     );
 }
 
-function UserDMInfo({ userName }: DmConversationProps) {
+function UserDMInfo({ userName, isTyping }: UserDMInfoProps) {
     const { data: user, isLoading } = useQuery({
         queryKey: ['user', userName],
         queryFn: async () => {
@@ -135,12 +148,20 @@ function UserDMInfo({ userName }: DmConversationProps) {
                     <h1 className="text-white text-lg font-bold">{userName}</h1>
                 </Link>
                 <div className="flex items-center gap-1">
-                    <div
-                        className={`w-3 h-3 rounded-full ${statusColor}`}
-                    ></div>
-                    <p className="text-white text-xs select-none">
-                        {statusMsg}
-                    </p>
+                    {isTyping ? (
+                        <p className="text-secondary-500 text-xs select-none">
+                            Typing...
+                        </p>
+                    ) : (
+                        <>
+                            <div
+                                className={`w-3 h-3 rounded-full ${statusColor}`}
+                            ></div>
+                            <p className="text-white text-xs select-none">
+                                {statusMsg}
+                            </p>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
