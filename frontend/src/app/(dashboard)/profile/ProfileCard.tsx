@@ -23,7 +23,6 @@ export default function ProfileCard({ username }: ProfileCardProps) {
     const [showModal, setShowModal] = useState(false);
     const [showNotification, setShowNotification] = useState(false);
 
-
     const { mutate: createNotification } = useInvite();
 
     const queryClient = useQueryClient();
@@ -139,7 +138,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                     }}
                 >
                     <AiOutlineCheckCircle className="text-xl font-bold" />
-                    <p>Friend request send successfully</p>
+                    <p>Friend request sent successfully</p>
                 </motion.div>
             )}
 
@@ -208,7 +207,10 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                                     () => setShowNotification(false),
                                     2000,
                                 );
-                                createNotification({...visitedUser, type: 'FRIEND'});
+                                createNotification({
+                                    ...visitedUser,
+                                    type: 'FRIEND',
+                                });
                             }}
                         >
                             <TbUserPlus />

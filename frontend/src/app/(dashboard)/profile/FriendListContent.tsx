@@ -2,7 +2,10 @@ import Loading from '@/app/loading';
 import useInvite from '@/hooks/useInvite';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useState } from 'react';
+import { AiOutlineCheckCircle } from 'react-icons/ai';
 
 type FriendListContentProps = {
     username: string;
@@ -24,6 +27,7 @@ export default function FriendListContent({
             return res.data;
         },
     });
+    const [showNotification, setShowNotification] = useState(false);
 
     const { mutate: InviteFriend } = useInvite();
 
@@ -50,60 +54,88 @@ export default function FriendListContent({
     }
 
     return (
-        <div className="flex items-center gap-8">
-            <Link href={`/profile/${username}`} className="flex-shrink-0">
-                <img
-                    src={avatar}
-                    alt={`${username}`}
-                    className="w-24 h-24
+        <>
+            {showNotification && (
+                <motion.div
+                    className="absolute
+                                top-44 md:top-32 lg:top-52
+                                right-4
+                                bg-green-400 text-primary
+                                text-center font-jost
+                                px-4 py-2 rounded-xl
+                                flex gap-2 items-center"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{
+                        duration: 0.5,
+                        delay: 0,
+                        ease: [0, 0.71, 0.2, 1.01],
+                    }}
+                >
+                    <AiOutlineCheckCircle className="text-xl font-bold" />
+                    <p>Friend request sent successfully</p>
+                </motion.div>
+            )}
+            <div className="flex items-center gap-8">
+                <Link href={`/profile/${username}`} className="flex-shrink-0">
+                    <img
+                        src={avatar}
+                        alt={`${username}`}
+                        className="w-24 h-24
 						bg-background border-2 border-background
 						rounded-full select-none object-cover"
-                />
-            </Link>
-            <div className="flex flex-col items-start gap-1">
-                <Link
-                    href={`/profile/${username}`}
-                    className="text-secondary-200 text-xl
-							font-jost font-bold"
-                >
-                    {username}
-                </Link>
-                <p
-                    className={`${statusText} flex items-center justify-center gap-1`}
-                >
-                    <span
-                        className={`block w-[12px] h-[12px] ${statusBg} rounded-full`}
                     />
-                    {status.toLowerCase()}
-                </p>
-
-                {data.isFriend ? (
+                </Link>
+                <div className="flex flex-col items-start gap-1">
                     <Link
-                        href={`/chat/dm/${username}`}
-                        className="bg-background rounded-2xl px-4
-						border border-white
-						text-secondary-200 font-jost hover:bg-secondary-200 hover:text-background"
+                        href={`/profile/${username}`}
+                        className="text-secondary-200 text-xl
+							font-jost font-bold"
                     >
-                        Message
+                        {username}
                     </Link>
-                ) : data.isMe ? null : (
-                    <button
-                        className="bg-background rounded-2xl px-4
+                    <p
+                        className={`${statusText} flex items-center justify-center gap-1`}
+                    >
+                        <span
+                            className={`block w-[12px] h-[12px] ${statusBg} rounded-full`}
+                        />
+                        {status.toLowerCase()}
+                    </p>
+
+                    {data.isFriend ? (
+                        <Link
+                            href={`/chat/dm/${username}`}
+                            className="bg-background rounded-2xl px-4
 						border border-white
 						text-secondary-200 font-jost hover:bg-secondary-200 hover:text-background"
-                        onClick={() => {
-                            // console.log(data)
-                            InviteFriend({
-                                userId: data?.data.id,
-                                id: data?.vis.id,
-                                type: 'FRIEND',
-                            });
-                        }}
-                    >
-                        Invite
-                    </button>
-                )}
+                        >
+                            Message
+                        </Link>
+                    ) : data.isMe ? null : (
+                        <button
+                            className="bg-background rounded-2xl px-4
+						border border-white
+						text-secondary-200 font-jost hover:bg-secondary-200 hover:text-background"
+                            onClick={() => {
+                                // console.log(data)
+                                InviteFriend({
+                                    userId: data.id,
+                                    id: data.id,
+                                    type: 'FRIEND',
+                                });
+                                setShowNotification(true);
+                                setTimeout(
+                                    () => setShowNotification(false),
+                                    2000,
+                                );
+                            }}
+                        >
+                            Invite
+                        </button>
+                    )}
+                </div>
             </div>
-        </div>
+        </>
     );
 }

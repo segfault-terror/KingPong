@@ -163,7 +163,6 @@ export class ChatService {
                     : result.user2_first_message;
 
             const slicedMessages = result.messages.slice(firstMessage);
-            console.log(result);
             return slicedMessages.length > 0;
         });
 
