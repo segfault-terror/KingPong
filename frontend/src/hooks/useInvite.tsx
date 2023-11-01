@@ -1,10 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 
 export default function useInvite() {
-	const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
 
-    const {data: me} = useQuery({
+    const { data: me } = useQuery({
         queryKey: ['me'],
         queryFn: async () => {
             const { data } = await axios.get(`/api/user/me`, {
@@ -25,12 +25,11 @@ export default function useInvite() {
             });
         },
         onSuccess: () => {
-            queryClient.invalidateQueries(['notifications'], {
+            queryClient.invalidateQueries(['notifications', 'notreaded'], {
                 exact: true,
             });
         },
     });
 
-
-	return {mutate};
+    return { mutate };
 }

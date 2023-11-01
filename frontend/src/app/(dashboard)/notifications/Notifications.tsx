@@ -8,8 +8,13 @@ import Modal from '@/components/Modal';
 import PopNotif from './PopNotif';
 import { NotificationProps, NotificationState } from './types';
 import axios from 'axios';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+    QueryClient,
+    useMutation,
+    useQueryClient,
+} from '@tanstack/react-query';
 import Loading from '@/app/loading';
+import { set } from 'react-hook-form';
 
 const Empty = () => {
     return (
@@ -44,7 +49,7 @@ const Notife = ({
         },
         onSuccess: () => {
             console.log('updated');
-            queryClient.invalidateQueries(['notifications'], {
+            queryClient.invalidateQueries(['notifications', 'notreaded'], {
                 exact: true,
             });
         },
@@ -59,7 +64,7 @@ const Notife = ({
         },
         onSuccess: () => {
             console.log('deleted');
-            queryClient.invalidateQueries(['notifications'], {
+            queryClient.invalidateQueries(['notifications', 'notreaded'], {
                 exact: true,
             });
         },
@@ -111,6 +116,20 @@ const Notife = ({
     );
 };
 export default function Notification({ notifications }: NotificationState) {
+    const queryClient = useQueryClient();
+    const { mutate: clear, isLoading } = useMutation({
+        mutationFn: async () => {
+            return await axios.delete(`/api/notifications/delete/all`, {
+                withCredentials: true,
+            });
+        },
+        onSuccess: () => {
+            console.log('had deleted all');
+            queryClient.invalidateQueries(['notifications', 'notreaded'], {
+                exact: true,
+            });
+        },
+    });
     const [isOpen, setIsOpen] = useState(false);
     const [notif, setNotif] = useState<NotificationProps>({
         id: 0,
@@ -121,16 +140,7 @@ export default function Notification({ notifications }: NotificationState) {
         sendToId: '',
     });
     const [deleteAll, setDeleteAll] = useState(false);
-    const { mutate, isLoading } = useMutation({
-        mutationFn: async () => {
-            return await axios.delete(`/api/notifications/deleteAll`, {
-                withCredentials: true,
-            });
-        },
-        onSuccess: () => {
-            console.log('deleted all');
-        },
-    });
+    const [loading, setLoading] = useState(true);
 
     if (isLoading) return <Loading />;
 
@@ -144,26 +154,27 @@ export default function Notification({ notifications }: NotificationState) {
             >
                 <div className="w-64 h-40 bg-background rounded-2xl flex flex-col justify-start items-center">
                     <div className="text-center p-7 font-jost">
-                        <p>
-                            Are sure you want remove all
-                        </p>
+                        <p>Are sure you want remove all</p>
                         <p className="text-red-500">&nbsp; notifications</p>
                     </div>
                     <button
                         type="button"
                         title="clear"
                         className="w-20 h-6 border text-center bg-red-500 border-secondary-500 rounded-lg self-center"
-                        onClick={() => mutate()}
+                        onClick={() => {
+                            setDeleteAll(false);
+                            clear();
+                        }}
                     >
                         Clear
                     </button>
                     <button
-                    className='absolute top-2 right-2 w-5 h-5'
-                    type='button'
-                    title='close'
-                    onClick={() => {
-                        setDeleteAll(false);
-                    }}
+                        className="absolute top-2 right-2 w-5 h-5"
+                        type="button"
+                        title="close"
+                        onClick={() => {
+                            setDeleteAll(false);
+                        }}
                     >
                         <Image src={Decline} alt="Decline"></Image>
                     </button>
@@ -177,7 +188,7 @@ export default function Notification({ notifications }: NotificationState) {
             {deleteAll === true ? modal() : null}
             <div
                 id="Notifications"
-                className="felx flex-col justify-center items-center w-full p-3 md:p-6 z-0 mt-3 md:mt-0 "
+                className="felx flex-col justify-center items-center w-full p-3 md:p-6 z-0 mt-3 md:mt-0 overflow-x-hidden"
             >
                 <div className="flex flex-col justify-center items-center w-ful lg:max-w-3xl lg:mx-auto pl-4 py-2 px-3 bg-primary border rounded-lg border-secondary-500 drop-shadow-neon-orange">
                     {notifications.length > 0 && (
@@ -192,12 +203,12 @@ export default function Notification({ notifications }: NotificationState) {
                             Clear
                         </button>
                     )}
-                    <div className="flex flex-col justify-between items-center w-full lg:px-3 overflow-auto">
+                    <div className="flex flex-col justify-between items-center w-full lg:px-3 overflow-hidden">
                         {notifications.length == 0
                             ? Empty()
                             : notifications.map((notifs) => (
                                   <div
-                                      className="w-full flex justify-between items-center my-1 rounded-xl"
+                                      className={`w-full flex justify-between items-center my-1 rounded-xl overflow-x-hidden`}
                                       key={notifs.id}
                                   >
                                       <Notife
@@ -212,7 +223,7 @@ export default function Notification({ notifications }: NotificationState) {
                                       />
                                       {isOpen && (
                                           <Modal
-                                              childrenClassName="flex flex-col justify-center items-center w-72 h-56 md:w-1/2  lg:w-2/5 lg:h-1/4"
+                                              childrenClassName="flex flex-col justify-center items-center w-72 h-56 md:w-[400px]  lg:w-[500px] lg:h-96"
                                               onClose={() => {
                                                   setIsOpen(false);
                                               }}

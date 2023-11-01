@@ -41,7 +41,7 @@ export default function PopNotif({
         },
         onSuccess: () => {
             console.log('deleted');
-            queryClient.invalidateQueries(['notifications'], {
+            queryClient.invalidateQueries(['notifications', 'notreaded'], {
                 exact: true,
             });
         },
@@ -55,7 +55,7 @@ export default function PopNotif({
         },
         onSuccess: () => {
             console.log('added');
-            queryClient.invalidateQueries(['notifications'], {
+            queryClient.invalidateQueries(['notifications', 'notreaded'], {
                 exact: true,
             });
         },
