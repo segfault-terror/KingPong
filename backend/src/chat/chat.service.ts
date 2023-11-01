@@ -91,6 +91,39 @@ export class ChatService {
             },
         });
 
+        if (!result) {
+            const newDM = await this.prisma.dM.create({
+                data: {
+                    user1: { connect: { username: username1 } },
+                    user2: { connect: { username: username2 } },
+                },
+                select: {
+                    user1: {
+                        select: { username: true },
+                    },
+                    user2: {
+                        select: { username: true },
+                    },
+                    messages: {
+                        select: {
+                            id: true,
+                            content: true,
+                            sender: {
+                                select: {
+                                    id: true,
+                                    username: true,
+                                },
+                            },
+                        },
+                        orderBy: {
+                            createdAt: 'asc',
+                        },
+                    },
+                },
+            });
+            return newDM;
+        }
+
         const firstMessage =
             username1 === result.user1.username
                 ? result.user1_first_message
