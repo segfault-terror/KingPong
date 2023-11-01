@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'nestjs-prisma';
-import { Prisma, User, Stats, Status } from '@prisma/client';
+import { Prisma, Status, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { MinioClientService } from 'src/minio-client/minio-client.service';
+import { PrismaService } from 'nestjs-prisma';
 import { BufferedFile } from 'src/minio-client/file.model';
+import { MinioClientService } from 'src/minio-client/minio-client.service';
 
 @Injectable()
 export class UserService {
@@ -19,8 +19,6 @@ export class UserService {
             where: userWhereUniqueInput,
         });
     }
-
-    
 
     async leaderboard(): Promise<User[]> {
         return this.prisma.user.findMany({
@@ -269,7 +267,13 @@ export class UserService {
                 },
             },
         });
+
+        const friend = await this.prisma.user.findFirst({
+            where: { username: friendname },
+        });
+
         return {
+            friendId: friend.id,
             isFriend: user.friends.length > 0 || user.friendOf.length > 0,
             isMe: username === friendname,
         };

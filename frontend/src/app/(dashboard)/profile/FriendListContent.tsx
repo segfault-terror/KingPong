@@ -21,21 +21,11 @@ export default function FriendListContent({
             const res = await axios.get(`/api/user/isFriend/${username}`, {
                 withCredentials: true,
             });
-
-            const visitedUser = await axios.get(
-                `/api/user/get/${username}/stats`,
-                {
-                    withCredentials: true,
-                }
-            );
-            return {
-                data: res.data,
-                vis: visitedUser.data,
-            };
+            return res.data;
         },
     });
 
-    const {mutate: InviteFriend} = useInvite();
+    const { mutate: InviteFriend } = useInvite();
 
     if (isLoading) {
         return (
@@ -87,7 +77,7 @@ export default function FriendListContent({
                     {status.toLowerCase()}
                 </p>
 
-                {data?.data.isFriend ? (
+                {data.isFriend ? (
                     <Link
                         href={`/chat/dm/${username}`}
                         className="bg-background rounded-2xl px-4
@@ -96,7 +86,7 @@ export default function FriendListContent({
                     >
                         Message
                     </Link>
-                ) : data?.data.isMe ? null : (
+                ) : data.isMe ? null : (
                     <button
                         className="bg-background rounded-2xl px-4
 						border border-white
