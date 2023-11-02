@@ -2,19 +2,14 @@
 
 import Image from 'next/image';
 import Ghost from '../../../components/Ghost';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Decline from '@/../public/images/decline.svg';
 import Modal from '@/components/Modal';
 import PopNotif from './PopNotif';
 import { NotificationProps, NotificationState } from './types';
 import axios from 'axios';
-import {
-    QueryClient,
-    useMutation,
-    useQueryClient,
-} from '@tanstack/react-query';
-import Loading from '@/app/loading';
-import { set } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import LoadingEmpty from './EmptyLoading';
 
 const Empty = () => {
     return (
@@ -49,9 +44,8 @@ const Notife = ({
         },
         onSuccess: () => {
             console.log('updated');
-            queryClient.invalidateQueries(['notifications', 'notreaded'], {
-                exact: true,
-            });
+            queryClient.invalidateQueries(['notreaded']);
+            queryClient.invalidateQueries(['notifications']);
         },
     });
 
@@ -64,13 +58,11 @@ const Notife = ({
         },
         onSuccess: () => {
             console.log('deleted');
-            queryClient.invalidateQueries(['notifications', 'notreaded'], {
-                exact: true,
-            });
+            queryClient.invalidateQueries(['notifications']);
         },
     });
 
-    if (deleteLoading || updateLoading) return <Loading />;
+    if (deleteLoading || updateLoading) return <LoadingEmpty />;
 
     const message =
         type == 'GAME'
@@ -117,17 +109,19 @@ const Notife = ({
 };
 export default function Notification({ notifications }: NotificationState) {
     const queryClient = useQueryClient();
-    const { mutate: clear, isLoading } = useMutation({
+    const {
+        mutate: clear,
+        isLoading,
+        isSuccess,
+    } = useMutation({
         mutationFn: async () => {
             return await axios.delete(`/api/notifications/delete/all`, {
                 withCredentials: true,
             });
         },
         onSuccess: () => {
-            console.log('had deleted all');
-            queryClient.invalidateQueries(['notifications', 'notreaded'], {
-                exact: true,
-            });
+            queryClient.invalidateQueries(['notifications']);
+            // setLoading(false);
         },
     });
     const [isOpen, setIsOpen] = useState(false);
@@ -140,9 +134,7 @@ export default function Notification({ notifications }: NotificationState) {
         sendToId: '',
     });
     const [deleteAll, setDeleteAll] = useState(false);
-    const [loading, setLoading] = useState(true);
-
-    if (isLoading) return <Loading />;
+    const [loading, setLoading] = useState(false);
 
     const modal = () => {
         return (
@@ -182,6 +174,11 @@ export default function Notification({ notifications }: NotificationState) {
             </Modal>
         );
     };
+
+    if (isLoading) {
+        // setLoading(true);
+        return <LoadingEmpty />;
+    }
 
     return (
         <>

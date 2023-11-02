@@ -1,10 +1,8 @@
 import React from 'react';
 import { NotificationProps } from './types';
-import Image from 'next/image';
-import Decline from '../../../../public/images/decline.svg';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import Loading from '@/app/loading';
+import LoadingEmpty from './EmptyLoading';
 
 const empty: NotificationProps = {
     id: 0,
@@ -41,7 +39,7 @@ export default function PopNotif({
         },
         onSuccess: () => {
             console.log('deleted');
-            queryClient.invalidateQueries(['notifications', 'notreaded'], {
+            queryClient.invalidateQueries(['notifications'], {
                 exact: true,
             });
         },
@@ -55,13 +53,13 @@ export default function PopNotif({
         },
         onSuccess: () => {
             console.log('added');
-            queryClient.invalidateQueries(['notifications', 'notreaded'], {
+            queryClient.invalidateQueries(['notifications'], {
                 exact: true,
             });
         },
     });
 
-    if (deleteLoading || acceptLoading) return <Loading />;
+    if (deleteLoading || acceptLoading) return <LoadingEmpty />;
 
     return (
         <div

@@ -9,7 +9,6 @@ import LinkIcon from './LinkIcon';
 import Link from 'next/link';
 import SearchBar from './SearchBar';
 import DropdownMenu from './Dropdown';
-import { use } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -47,6 +46,7 @@ export default function Header() {
             return data;
         },
     });
+
     return (
         <header className="p-3 w-full">
             <div className="grid grid-cols-2 md:grid-cols-3 items-center">

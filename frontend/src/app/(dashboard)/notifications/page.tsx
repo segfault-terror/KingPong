@@ -1,7 +1,7 @@
 'use client';
 
 import Notification from './Notifications';
-import { NotificationProps, NotificationState } from './types';
+import { NotificationProps } from './types';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '@/app/loading';
@@ -35,7 +35,7 @@ export default function Page() {
             }) as NotificationProps,
     );
     return (
-        <div id="Notification" className='overflow-hidden'>
+        <div id="Notification" className="overflow-hidden">
             <Notification notifications={notifications} />
         </div>
     );
