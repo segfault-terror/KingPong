@@ -15,10 +15,15 @@ type IsTypingData = {
     isTyping: boolean;
 };
 
+type ConnectedUser = {
+    username: string;
+    socketsId: string[];
+};
+
 @WebSocketGateway({ namespace: 'chat' })
 @UseGuards(WsAuthGuard)
 export class ChatGateway implements OnGatewayDisconnect {
-    connectedUsers = [];
+    connectedUsers: ConnectedUser[] = [];
     counter = 0;
     @WebSocketServer() server: Namespace;
 
@@ -27,19 +32,43 @@ export class ChatGateway implements OnGatewayDisconnect {
         @MessageBody() username: string,
         @ConnectedSocket() socket: Socket,
     ) {
-        if (this.connectedUsers.find((user) => user.username === username))
-            return;
-        this.connectedUsers.push({ username, socketId: socket.id });
-        console.log(`Registered ${username}`);
-    }
-    async handleDisconnect(socket: Socket) {
         const user = this.connectedUsers.find(
-            (user) => user.socketId === socket.id,
+            (user) => user.username === username,
         );
-        this.connectedUsers = this.connectedUsers.filter(
-            (user) => user.socketId !== socket.id,
+        if (user) {
+            user.socketsId.push(socket.id);
+            console.log(`[chat] Registered ${username} in another tab`);
+            return;
+        }
+        this.connectedUsers.push({ username, socketsId: [socket.id] });
+        console.log(`[chat] Registered ${username} for the first time`);
+    }
+
+    async handleDisconnect(socket: Socket) {
+        const user = this.connectedUsers.find((user) =>
+            user.socketsId.includes(socket.id),
         );
-        console.log(`Unregistered ${user.username}`);
+
+        if (!user) {
+            console.log(
+                `[chat] Couldn't find user with socket id ${socket.id}`,
+            );
+            return;
+        }
+
+        user.socketsId = user.socketsId.filter(
+            (socketId: string) => socketId !== socket.id,
+        );
+        console.log(
+            `[chat] Disconnected ${user.username} from ${socket.id} - user has ${user.socketsId.length} sockets left`,
+        );
+
+        if (user.socketsId.length === 0) {
+            console.log(`[chat] Completely unregistered ${user.username}`);
+            this.connectedUsers = this.connectedUsers.filter(
+                (user) => user.socketsId.length !== 0,
+            );
+        }
     }
 
     @SubscribeMessage('typing')
@@ -49,8 +78,12 @@ export class ChatGateway implements OnGatewayDisconnect {
         );
 
         if (!result) return;
-        this.server.to(result.socketId).emit('typing', data);
-        console.log(`#${this.counter} - Typing to ${data.username}`);
+
+        result.socketsId.forEach((socketId: string) => {
+            this.server.to(socketId).emit('typing', data);
+            console.log(`[chat] #${this.counter} - Typing to ${data.username}`);
+        });
+
         ++this.counter;
     }
 }
