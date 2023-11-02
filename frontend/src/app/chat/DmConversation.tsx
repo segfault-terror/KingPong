@@ -38,7 +38,7 @@ export default function DmConversation({ userName }: DmConversationProps) {
     });
 
     const { data: me, isLoading } = useQuery({
-        queryKey: ['dm', 'me'],
+        queryKey: ['user', 'me'],
         queryFn: async () => {
             const { data: me } = await axios.get('/api/user/me', {
                 withCredentials: true,
@@ -54,6 +54,8 @@ export default function DmConversation({ userName }: DmConversationProps) {
             </div>
         );
     }
+
+    console.log(`userName = ${userName}`);
 
     return (
         <div

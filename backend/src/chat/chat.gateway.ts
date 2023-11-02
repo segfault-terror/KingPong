@@ -86,4 +86,25 @@ export class ChatGateway implements OnGatewayDisconnect {
 
         ++this.counter;
     }
+
+    @SubscribeMessage('new-message')
+    handleNewMessage(@MessageBody() username: string) {
+        console.log(`[chat] New message to ${username}`);
+
+        const user = this.connectedUsers.find(
+            (user) => user.username === username,
+        );
+
+        if (!user) {
+            console.log(
+                `[chat] Couldn't find user ${username} in connectedUsers`,
+            );
+            return;
+        }
+
+        console.log(`[chat] Sending message to user ${username}`);
+        user.socketsId.forEach((socketId: string) => {
+            this.server.to(socketId).emit('new-message', username);
+        });
+    }
 }

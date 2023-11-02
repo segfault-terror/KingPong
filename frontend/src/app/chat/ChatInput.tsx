@@ -1,4 +1,5 @@
 import { useSocket } from '@/contexts/SocketContext';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { BiSolidSend } from 'react-icons/bi';
 
@@ -12,18 +13,23 @@ type ChatInputProps = {
 export default function ChatInput({
     sendMessage,
     username,
-    isTyping,
     setIsTyping,
 }: ChatInputProps) {
     const inputRef = useRef<HTMLInputElement>(null);
     const { socket } = useSocket();
+    const queryClient = useQueryClient();
 
     useEffect(() => {
-        socket?.on('typing', (data) => {
-            setIsTyping(data.isTyping);
+        socket?.on('typing', (data) => setIsTyping(data.isTyping));
+
+        socket?.on('new-message', () => {
+            console.log(`Invalidating query [dm, ${username}]`);
+            queryClient.invalidateQueries(['dm', username], { exact: true });
+            queryClient.invalidateQueries(['dms', 'brief'], { exact: true });
         });
         return () => {
             socket?.off('typing');
+            socket?.off('new-message');
         };
     });
 
@@ -64,6 +70,7 @@ export default function ChatInput({
                         if (event.currentTarget.value.trim() === '') return;
 
                         sendMessage(event.currentTarget.value);
+                        socket?.emit('new-message', username);
                         event.currentTarget.value = '';
                         event.currentTarget.focus();
                     }

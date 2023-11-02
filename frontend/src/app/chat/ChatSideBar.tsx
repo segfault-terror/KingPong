@@ -1,15 +1,16 @@
 import { modalContext } from '@/contexts/contexts';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import Loading from '../loading';
 import DirectMessage from './DirectMessage';
 import EmptyChat from './EmptyChat';
 import ToggleButton from './ToggleButton';
 import { Channels, DMList } from './data/ChatData';
+import { useSocket } from '@/contexts/SocketContext';
 
 type ChatSideBarProps = {
     toggle: boolean;
@@ -18,6 +19,14 @@ type ChatSideBarProps = {
 
 function DmList({ toggle }: ChatSideBarProps) {
     const { setNewConversation } = useContext(modalContext);
+    const { socket } = useSocket();
+    const queryClient = useQueryClient();
+
+    useEffect(() => {
+        socket?.on('new-message', () => {
+            queryClient.invalidateQueries(['dms', 'brief']);
+        });
+    });
 
     const { data, isLoading } = useQuery({
         queryKey: ['dms', 'brief'],
