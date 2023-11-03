@@ -65,7 +65,6 @@ export default function ChatInput({
                     flex-grow
                     outline-none"
                 onKeyDown={(event) => {
-                    onUserTyping();
                     if (event.key === 'Enter') {
                         if (event.currentTarget.value.trim() === '') return;
 
@@ -73,6 +72,8 @@ export default function ChatInput({
                         socket?.emit('new-message', username);
                         event.currentTarget.value = '';
                         event.currentTarget.focus();
+                    } else {
+                        onUserTyping();
                     }
                 }}
             />
