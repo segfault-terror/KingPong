@@ -27,6 +27,7 @@ const config: Config = {
                 default: 'url("/images/bg-new.svg")',
                 borderLinear:
                     'linear-gradient(var(--gradient-angle)), var(--tw-gradient-from-position),var(--tw-gradient-to-position),var(--tw-gradient-to))',
+                chatBg: 'url("/images/chat-background.svg")',
             },
             colors: {
                 primary: '#4F1754',

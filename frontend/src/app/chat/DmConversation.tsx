@@ -59,23 +59,26 @@ export default function DmConversation({ userName }: DmConversationProps) {
 
     return (
         <div
-            className="flex flex-col gap-8 h-full
+            className="flex flex-col h-full
                 bg-primary
                 rounded-2xl
                 px-4 py-3
-                border-secondary-200 border-[1px]"
+                border-secondary-200 border-[1px]
+                relative
+                "
         >
-            <DmConversationHeader userName={userName} isTyping={isTyping} />
-            <div className="flex-grow overflow-y-scroll scrollbar-none pb-2">
-                <DmMessageList userName={userName} />
-            </div>
+            <div className="absolute inset-0 bg-chatBg rounded-2xl opacity-5 z-0" />
+                <DmConversationHeader userName={userName} isTyping={isTyping} />
+                <div className="flex-grow overflow-y-scroll scrollbar-none pb-2 pt-2 px-2 z-20">
+                    <DmMessageList userName={userName} />
+                </div>
 
-            <ChatInput
-                sendMessage={mutate}
-                username={userName}
-                isTyping={isTyping}
-                setIsTyping={setIsTyping}
-            />
+                <ChatInput
+                    sendMessage={mutate}
+                    username={userName}
+                    isTyping={isTyping}
+                    setIsTyping={setIsTyping}
+                />
         </div>
     );
 }
@@ -101,7 +104,11 @@ function DmConversationHeader({
 
     return (
         <>
-            <div className="flex justify-between items-center">
+            <div
+                className="flex justify-between items-center
+                        bg-gradient-to-b from-background/60 to-[#330E51]/60
+                        p-4 rounded-lg z-20"
+            >
                 <UserDMInfo userName={userName} isTyping={isTyping} />
                 <button onClick={() => setDotsDropdown(true)}>
                     <HiDotsVertical className="text-secondary-200 h-8 w-8" />
