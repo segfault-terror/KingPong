@@ -345,4 +345,36 @@ export class ChatService {
         }
         return channel;
     }
+
+    async getChannelMembers(channelName: string) {
+        return this.prisma.channel.findFirst({
+            where: { name: channelName },
+            select: {
+                owner: {
+                    select: {
+                        id: true,
+                        username: true,
+                        avatar: true,
+                        status: true,
+                    },
+                },
+                admins: {
+                    select: {
+                        id: true,
+                        username: true,
+                        avatar: true,
+                        status: true,
+                    },
+                },
+                members: {
+                    select: {
+                        id: true,
+                        username: true,
+                        avatar: true,
+                        status: true,
+                    },
+                },
+            },
+        });
+    }
 }

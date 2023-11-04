@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import { Users } from '../(dashboard)/profile/data/ProfileData';
 import { Channels } from './data/ChatData';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import Loading from '../loading';
 
 type ChannelSideBarProps = {
     channelName: string;
@@ -9,34 +12,58 @@ type ChannelSideBarProps = {
 function Member({
     username,
     avatarPath,
+    status,
 }: {
     username: string;
     avatarPath: string;
+    status: string;
 }) {
+    const statusStyle =
+        status === 'ONLINE'
+            ? 'bg-online'
+            : status === 'OFFLINE'
+            ? 'bg-inactive-200'
+            : 'bg-ingame';
+
     return (
         <Link href={`/profile/${username}`} className="flex items-center gap-2">
-            <img
-                src={avatarPath}
-                alt={`${username}'s avatar`}
-                className="border-[1px] border-secondary-200
+            <div className="relative">
+                <img
+                    src={avatarPath}
+                    alt={`${username}'s avatar`}
+                    className="border-[1px] border-secondary-200
                         rounded-full object-cover
                         w-10 h-10
                         flex-shrink-0 select-none"
-            />
+                />
+                <div
+                    className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ${statusStyle}`}
+                />
+            </div>
             <p className="text-silver">{username}</p>
         </Link>
     );
 }
 
 export default function ChannelSideBar({ channelName }: ChannelSideBarProps) {
-    const channel = Channels.find((channel) => channel.name === channelName);
-    const owner = Users.find((user) => user.username === channel!.owner);
-    const admins = Users.filter((user) =>
-        channel!.admins.includes(user.username),
-    );
-    const members = Users.filter((user) =>
-        channel!.members.includes(user.username),
-    );
+    const { data: members, isLoading } = useQuery({
+        queryKey: ['channel', channelName, 'members'],
+        queryFn: async () => {
+            const { data } = await axios.get(
+                `/api/chat/channel/${channelName}/members`,
+                { withCredentials: true },
+            );
+            return data;
+        },
+    });
+
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
 
     return (
         <div
@@ -48,27 +75,32 @@ export default function ChannelSideBar({ channelName }: ChannelSideBarProps) {
             <div className="flex flex-col items-center gap-4">
                 <h2 className="text-center">Owner</h2>
                 <Member
-                    username={owner!.username}
-                    avatarPath={owner!.avatarPath}
+                    status={members?.owner.status}
+                    username={members?.owner.username}
+                    avatarPath={members?.owner.avatar}
                 />
-                <h2>Admins</h2>
-                {admins.map((admin) => (
+                {members?.admins.length > 0 && <h2>Admins</h2>}
+                {members?.admins.map((admin: any) => (
                     <Member
-                        key={admin.username}
+                        key={admin.id}
+                        status={admin.status}
                         username={admin.username}
-                        avatarPath={admin.avatarPath}
+                        avatarPath={admin.avatar}
                     />
                 ))}
-                <div className="self-start flex flex-col gap-4 mt-6">
-                    <h2>Members</h2>
-                    {members.map((member) => (
-                        <Member
-                            key={member.username}
-                            username={member.username}
-                            avatarPath={member.avatarPath}
-                        />
-                    ))}
-                </div>
+                {members?.members.length > 0 && (
+                    <div className="self-start flex flex-col gap-4 mt-6">
+                        <h2>Members</h2>
+                        {members?.members.map((member: any) => (
+                            <Member
+                                key={member.id}
+                                status={member.status}
+                                username={member.username}
+                                avatarPath={member.avatar}
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );
