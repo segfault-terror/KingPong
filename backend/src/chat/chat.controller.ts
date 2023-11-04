@@ -3,6 +3,7 @@ import {
     Controller,
     Delete,
     Get,
+    NotFoundException,
     Param,
     Post,
     Req,
@@ -11,11 +12,15 @@ import {
 import { AuthGard } from 'src/auth/auth.guard';
 import { ChatService } from './chat.service';
 import { CreateMessageDto } from './dto/create.message.dto';
+import { PrismaService } from 'nestjs-prisma';
 
 @Controller('chat')
 @UseGuards(AuthGard)
 export class ChatController {
-    constructor(private readonly chatService: ChatService) {}
+    constructor(
+        private readonly chatService: ChatService,
+        private readonly prismaService: PrismaService,
+    ) {}
 
     @Get('dm/:username')
     async getConversation(
@@ -45,5 +50,23 @@ export class ChatController {
     @Delete('dm/:id')
     async deleteMessage(@Param('id') id: string, @Req() request: any) {
         return await this.chatService.deleteDM(id, request.user.id);
+    }
+
+    @Get('channels/:username')
+    async getUserChannels(@Param('username') username: string) {
+        const user = await this.prismaService.user.findFirst({
+            where: { username },
+        });
+
+        if (!user) {
+            throw new NotFoundException(`User ${username} does not exist`);
+        }
+        return this.chatService.getUserChannels(username);
+    }
+
+    @Get('channel/:channel_name')
+    async getChannel(@Param('channel_name') channelName: string) {
+        console.log('channelName', channelName);
+        return this.chatService.getChannel(channelName);
     }
 }

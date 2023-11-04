@@ -299,4 +299,49 @@ export class ChatService {
         //     },
         // });
     }
+
+    async getUserChannels(username: string) {
+        return this.prisma.channel.findMany({
+            where: {
+                OR: [
+                    {
+                        owner: { username },
+                    },
+                    {
+                        admins: {
+                            some: { username },
+                        },
+                    },
+                    {
+                        members: {
+                            some: { username },
+                        },
+                    },
+                ],
+            },
+        });
+    }
+
+    async getChannel(channelName: string) {
+        const channel = await this.prisma.channel.findFirst({
+            where: { name: channelName },
+            select: {
+                name: true,
+                messages: {
+                    select: {
+                        content: true,
+                        sender: {
+                            select: { avatar: true },
+                        },
+                    },
+                    orderBy: { createdAt: 'asc' },
+                },
+            },
+        });
+
+        if (!channel) {
+            throw new NotFoundException(`Channel ${channelName} not found`);
+        }
+        return channel;
+    }
 }

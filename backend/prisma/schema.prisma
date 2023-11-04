@@ -30,29 +30,35 @@ enum League {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  username  String   @unique
-  email     String   @unique
-  fullname  String
-  password  String?
-  avatar    String
-  status    Status   @default(OFFLINE)
-  stats     Stats?
-  achievements Achievement[]
-  Notifications Notification[]
-  friends User[] @relation("friends")
-  twoFactorSecret String @default("")
-  twoFactorEnabled Boolean @default(false)
-  needOtp Boolean @default(true)
-  friendOf User[] @relation("friends")
-  sentFriendRequests FriendRequest[] @relation("sender")
-  pendingFriendRequests FriendRequest[] @relation("receiver")
-  gamesAsPlayer1 Game[] @relation("player1")
-  gamesAsPlayer2 Game[] @relation("player2")
-  dms1 DM[] @relation("user1")
-  dms2 DM[] @relation("user2")
-  sentMessages Message[] @relation("sender")
-  createdAt DateTime @default(now())
+    id        String   @id @default(cuid())
+    username  String   @unique
+    email     String   @unique
+    fullname  String
+    password  String?
+    avatar    String
+    status    Status   @default(OFFLINE)
+    stats     Stats?
+    achievements Achievement[]
+    Notifications Notification[]
+    friends User[] @relation("friends")
+    twoFactorSecret String @default("")
+    twoFactorEnabled Boolean @default(false)
+    needOtp Boolean @default(true)
+    friendOf User[] @relation("friends")
+    sentFriendRequests FriendRequest[] @relation("sender")
+    pendingFriendRequests FriendRequest[] @relation("receiver")
+    gamesAsPlayer1 Game[] @relation("player1")
+    gamesAsPlayer2 Game[] @relation("player2")
+    dms1 DM[] @relation("user1")
+    dms2 DM[] @relation("user2")
+    sentMessages Message[] @relation("sender")
+    ownedChannels Channel[] @relation("owner")
+    adminChannels Channel[] @relation("admin")
+    joinedChannels Channel[] @relation("member")
+    bannedChannels Channel[] @relation("banned")
+    mutes Mute[]
+    sentChannelMessages ChannelMessage[] @relation("channel-messages")
+    createdAt DateTime @default(now())
 }
 
 model Stats {
@@ -145,6 +151,47 @@ model Message {
     sender User @relation("sender", fields: [senderId], references: [id])
     senderId String
 
+    content String
+    createdAt DateTime @default(now())
+}
+
+enum ChannelType {
+    PUBLIC
+    PRIVATE
+    PROTECTED
+}
+
+model Channel {
+    id String @id @default(cuid())
+    name String @unique
+    type ChannelType
+    password String?
+    owner User @relation("owner", fields: [ownerId], references: [id])
+    ownerId String
+    admins User[] @relation("admin")
+    members User[] @relation("member")
+    mutes Mute[]
+    bannedUsers User[] @relation("banned")
+    messages ChannelMessage[]
+    createdAt DateTime @default(now())
+}
+
+model Mute {
+    id String @id @default(cuid())
+    user User @relation(fields: [userId], references: [id])
+    userId String
+    channel Channel @relation(fields: [channelId], references: [id])
+    channelId String
+    expiresAt DateTime
+    createdAt DateTime @default(now())
+}
+
+model ChannelMessage {
+    id String @id @default(cuid())
+    channel Channel @relation(fields: [channelId], references: [id])
+    channelId String
+    sender User @relation("channel-messages", fields: [senderId], references: [id])
+    senderId String
     content String
     createdAt DateTime @default(now())
 }
