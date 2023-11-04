@@ -5,19 +5,54 @@ import { useContext } from 'react';
 import { FaUserFriends } from 'react-icons/fa';
 import { HiDotsVertical } from 'react-icons/hi';
 import ChatInput from './ChatInput';
-import { ChannelConversations } from './data/ChatData';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import Loading from '../loading';
+import { redirect } from 'next/navigation';
 
 type ChannelConversationProps = {
     channelName: string;
 };
 
 export default function ChannelConversation(props: ChannelConversationProps) {
-    const channelConversation =
-        ChannelConversations[
-            props.channelName as keyof typeof ChannelConversations
-        ];
+
     const { setDotsDropdown } = useContext(modalContext);
     const { showMembers, setShowMembers } = useContext(channelModalContext);
+
+    const {
+        data,
+        isLoading,
+        isError,
+    } = useQuery({
+        queryKey: ['channel', props.channelName],
+        queryFn: async () => {
+            const { data: channel } = await axios.get(
+                `/api/chat/channel/${props.channelName}`,
+                { withCredentials: true },
+            );
+            return channel;
+        },
+    });
+
+    const { data: me, isLoading: isLoadingMe } = useQuery({
+        queryKey: ['user', 'me'],
+        queryFn: async () => {
+            const { data: me } = await axios.get('/api/user/me', { withCredentials: true });
+            return me;
+        },
+    });
+
+    if (isLoading || isLoadingMe) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
+
+    if (isError) {
+        redirect('/not-found');
+    }
 
     return (
         <div
@@ -34,7 +69,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                             bg-gradient-to-b from-background/60 to-[#330E51]/60"
             >
                 <h1 className="text-cube_palette-200 text-2xl">
-                    {props.channelName}
+                    {data?.name}
                 </h1>
                 <div className="flex gap-4 text-secondary-200">
                     <button onClick={() => setShowMembers(!showMembers)}>
@@ -51,20 +86,20 @@ export default function ChannelConversation(props: ChannelConversationProps) {
 
             <div className="flex-grow overflow-scroll scrollbar-none pb-2">
                 <ul className="flex flex-col gap-8 p-6 bg-primary">
-                    {channelConversation.messages.length === 0 && (
+                    {data?.messages.length === 0 && (
                         <div className="text-cube_palette-200 font-jost font-light text-center">
                             Send a message to start a conversation
                         </div>
                     )}
 
-                    {channelConversation.messages.length !== 0 &&
-                        channelConversation.messages.map((message, idx) => (
+                    {data?.messages.length !== 0 &&
+                        data?.messages.map((message: any, idx: number) => (
                             <ChannelMessage
-                                key={idx}
-                                channelName={props.channelName}
-                                text={message.text}
-                                isMe={message.isMe}
-                                senderName={message.sender.name}
+                                avatar={message.sender.avatar}
+                                key={message.id}
+                                text={message.content}
+                                isMe={message.sender.username === me?.username}
+                                senderName={message.sender.username}
                             />
                         ))}
                 </ul>
@@ -76,7 +111,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
 }
 
 type ChannelMessageProps = {
-    channelName: string;
+    avatar: string;
     text: string;
     isMe: boolean;
     senderName: string;
@@ -93,24 +128,16 @@ function ChannelMessage(props: ChannelMessageProps) {
     const myImgStyles = '-top-5 -right-5';
     const otherImgStyles = '-top-5 -left-5';
 
-    const channelData =
-        ChannelConversations[
-            props.channelName as keyof typeof ChannelConversations
-        ];
-    const senderData = channelData.members.find(
-        (member) => member.name === props.senderName,
-    );
-
     return (
         <li
             className={`${defaultStyles}
                         ${props.isMe ? myStyles : othersStyles}`}
         >
-            <Link href={`/profile/${senderData?.name}`}>
+            <Link href={`/profile/${props.senderName}`}>
                 <img
-                    src={senderData?.img}
-                    alt={`${senderData?.name}'s avatar`}
-                    title={`${senderData?.name}'s avatar`}
+                    src={props.avatar}
+                    alt={`${props.senderName}'s avatar`}
+                    title={`${props.senderName}'s avatar`}
                     className={`w-8 h-8
                             object-cover
                             border-[1px] border-secondary-200 rounded-full

@@ -329,9 +329,10 @@ export class ChatService {
                 name: true,
                 messages: {
                     select: {
+                        id: true,
                         content: true,
                         sender: {
-                            select: { avatar: true },
+                            select: { avatar: true, username: true },
                         },
                     },
                     orderBy: { createdAt: 'asc' },
