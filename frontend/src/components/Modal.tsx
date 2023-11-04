@@ -14,11 +14,11 @@ export default function Modal({
     return createPortal(
         <>
             <div
-                className="fixed h-screen inset-0 bg-black/60 z-10"
+                className="fixed h-screen inset-0 bg-black/60 z-40"
                 onClick={onClose}
             />
             <div
-                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 ${childrenClassName}`}
+                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 ${childrenClassName}`}
             >
                 {children}
             </div>
