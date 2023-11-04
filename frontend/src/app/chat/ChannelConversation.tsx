@@ -25,11 +25,13 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                 bg-primary
                 rounded-2xl
                 px-4 py-3
-                border-secondary-200 border-[1px]"
+                border-secondary-200 border-[1px] relative"
         >
+            <div className="absolute inset-0 bg-chatBg rounded-2xl opacity-5 z-0" />
             <div
                 className="flex justify-between items-center
-                            mt-4"
+                            p-4 rounded-lg z-20
+                            bg-gradient-to-b from-background/60 to-[#330E51]/60"
             >
                 <h1 className="text-cube_palette-200 text-2xl">
                     {props.channelName}
