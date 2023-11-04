@@ -113,7 +113,28 @@ function ChannelList({ toggle }: ChatSideBarProps) {
     const pathname = usePathname();
     const { setCreateChannel, setJoinChannel } = useContext(modalContext);
 
-    if (Channels.length === 0) {
+    const { data: channels, isLoading } = useQuery({
+        queryKey: ['channels', 'brief'],
+        queryFn: async () => {
+            const { data: me } = await axios.get(`/api/user/me`, {
+                withCredentials: true,
+            });
+            const { data: channels } = await axios.get(`/api/chat/channels/${me.username}`, {
+                withCredentials: true,
+            });
+            return channels;
+        },
+    });
+
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
+
+    if (channels?.length === 0) {
         return (
             <div className="m-auto">
                 <EmptyChat toggle={toggle} />
@@ -124,9 +145,9 @@ function ChannelList({ toggle }: ChatSideBarProps) {
     return (
         <>
             <div className="text-lg font-jost text-gray-300 flex-grow">
-                {Channels.map((channel, idx) => {
+                {channels?.map((channel: any) => {
                     return (
-                        <div key={idx}>
+                        <div key={channel.id}>
                             <Link
                                 href={`/chat/channel/${channel.name}`}
                                 className="block w-full text-left overflow-hidden whitespace-nowrap overflow-ellipsis
