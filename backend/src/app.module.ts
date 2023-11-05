@@ -12,6 +12,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { ChatModule } from './chat/chat.module';
 import { UpdateModule } from './update/updateStats.module';
 import { FriendsModule } from './friends/friends.module';
+import { GlobalGateway } from './global.gateway';
 
 @Module({
     imports: [
@@ -27,6 +28,6 @@ import { FriendsModule } from './friends/friends.module';
         ChatModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [AppService, GlobalGateway],
 })
 export class AppModule {}
