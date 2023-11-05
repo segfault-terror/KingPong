@@ -9,10 +9,11 @@ import {
     Req,
     UseGuards,
 } from '@nestjs/common';
+import { PrismaService } from 'nestjs-prisma';
 import { AuthGard } from 'src/auth/auth.guard';
 import { ChatService } from './chat.service';
 import { CreateMessageDto } from './dto/create.message.dto';
-import { PrismaService } from 'nestjs-prisma';
+import { JoinChannelDto } from './dto/join.channel.dto';
 
 @Controller('chat')
 @UseGuards(AuthGard)
@@ -85,11 +86,13 @@ export class ChatController {
         return this.chatService.exploreChannels(request.user.username);
     }
 
-    @Get('channel/join/:channel_name')
-    async joinChannel(
-        @Param('channel_name') channelName: string,
-        @Req() request: any,
-    ) {
-        return this.chatService.joinChannel(channelName, request.user.username);
+    @Post('channel/join')
+    async joinChannel(@Body() data: JoinChannelDto, @Req() request: any) {
+        console.log(`data: ${JSON.stringify(data)}`);
+        return this.chatService.joinChannel(
+            data.channelName,
+            request.user.username,
+            data.password,
+        );
     }
 }

@@ -2,7 +2,9 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { BsArrowLeftShort } from 'react-icons/bs';
+import Loading from '../loading';
 
 type WelcomeChannelProps = {
     channelName: string;
@@ -11,25 +13,76 @@ type WelcomeChannelProps = {
     setJoinChannel: (val: boolean) => void;
 };
 
-type ChannelContentProps = Pick<WelcomeChannelProps, 'channelName'>;
+type ChannelContentProps = Pick<WelcomeChannelProps, 'channelName'> & {
+    mutate: Function;
+};
 
-function PublicChannelContent({ channelName }: ChannelContentProps) {
+function PublicChannelContent({ channelName, mutate }: ChannelContentProps) {
     return (
-        <p className="text-left text-silver font-light font-jost w-1/2">
-            Welcome to {channelName}, you can click continue to proceed.
-        </p>
+        <>
+            <p className="text-left text-silver font-light font-jost w-1/2">
+                Welcome to {channelName}, you can click continue to proceed.
+            </p>
+            <button
+                onClick={() => {
+                    mutate({ channelName });
+                }}
+                className="bg-secondary-200
+                            text-background
+                            font-bold
+                            block w-40 py-1
+                            rounded-2xl mx-auto mt-8"
+            >
+                Continue
+            </button>
+        </>
     );
 }
 
-// TODO: Consider using a ref on the input to read its value
-function ProtectedChannelContent() {
+function ProtectedChannelContent(props: {
+    channelName: string;
+    mutate: Function;
+    setRedirectChannel: Function;
+    wrongPassword: boolean;
+    setWrongPassword: Function;
+}) {
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm({
+        defaultValues: { password: '' },
+    });
+
     return (
-        <>
+        <form
+            onSubmit={handleSubmit(() => {
+                console.log(`[onSubmit] Joining `);
+                props.mutate({
+                    channelName: props.channelName,
+                    password: watch('password'),
+                });
+                props.setWrongPassword(false);
+            })}
+            className="flex flex-col items-center justify-center gap-4"
+        >
             <p className="text-center text-silver font-light font-jost">
                 This channel is protected by a password, please enter it to
                 continue.
             </p>
             <input
+                {...register('password', {
+                    required: 'Password is required',
+                    minLength: {
+                        value: 8,
+                        message: 'Password must be at least 8 characters',
+                    },
+                    maxLength: {
+                        value: 32,
+                        message: 'Password must be at most 32 characters',
+                    },
+                })}
                 type="password"
                 placeholder="Password"
                 className="bg-background text-white accent-secondary-200
@@ -39,7 +92,21 @@ function ProtectedChannelContent() {
                         w-[60%]
                         text-sm"
             />
-        </>
+            {props.wrongPassword && !errors.password?.message && (
+                <p className="text-red-400">Wrong password</p>
+            )}
+            <p className="text-red-400">{errors.password?.message}</p>
+            <button
+                type="submit"
+                className="bg-secondary-200
+                            text-background
+                            font-bold
+                            block w-40 py-1
+                            rounded-2xl mx-auto"
+            >
+                Continue
+            </button>
+        </form>
     );
 }
 
@@ -49,27 +116,36 @@ export default function WelcomeChannel({
     setWelcomeChannel,
     setJoinChannel,
 }: WelcomeChannelProps) {
-    const [redirectChannel, setRedirectChannel] = useState<boolean>(false);
+    const [redirectChannel, setRedirectChannel] = useState(false);
+    const [wrongPassword, setWrongPassword] = useState(false);
 
     useEffect(() => {
         if (!redirectChannel) return;
-
-        if (channelVisibility === 'public')
-            redirect(`/chat/channel/${channelName}`);
-        else alert('TODO: Redirect to password protected channel');
+        redirect(`/chat/channel/${channelName}`);
     }, [redirectChannel, channelName, channelVisibility]);
 
-    const { mutate } = useMutation({
-        mutationFn: async () => {
-            const { data: channel } = await axios.get(
-                `/api/chat/channel/join/${channelName}`,
-                {
-                    withCredentials: true,
-                },
-            );
-            return channel;
+    const { mutate, isLoading } = useMutation({
+        mutationFn: async (args: any) => {
+            try {
+                const { data: channel } = await axios.post(
+                    `/api/chat/channel/join`,
+                    { withCredentials: true, ...args },
+                );
+                setRedirectChannel(true);
+                return channel;
+            } catch (e) {
+                setWrongPassword(true);
+            }
         },
-    })
+    });
+
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
 
     return (
         <div>
@@ -90,24 +166,20 @@ export default function WelcomeChannel({
             </div>
             <div className="flex flex-col items-center justify-center gap-4">
                 {channelVisibility === 'public' && (
-                    <PublicChannelContent channelName={channelName} />
+                    <PublicChannelContent
+                        channelName={channelName}
+                        mutate={mutate}
+                    />
                 )}
                 {channelVisibility === 'protected' && (
-                    <ProtectedChannelContent />
+                    <ProtectedChannelContent
+                        channelName={channelName}
+                        mutate={mutate}
+                        setRedirectChannel={setRedirectChannel}
+                        wrongPassword={wrongPassword}
+                        setWrongPassword={setWrongPassword}
+                    />
                 )}
-                <button
-                    onClick={() => {
-                        mutate();
-                        setRedirectChannel(true);
-                    }}
-                    className="bg-secondary-200
-                            text-background
-                            font-bold
-                            block w-40 py-1
-                            rounded-2xl mx-auto mt-8"
-                >
-                    Continue
-                </button>
             </div>
         </div>
     );

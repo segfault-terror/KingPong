@@ -3,6 +3,7 @@ import {
     ImATeapotException,
     Injectable,
     NotFoundException,
+    UnauthorizedException,
 } from '@nestjs/common';
 import { ChannelType } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
@@ -387,13 +388,59 @@ export class ChatService {
         });
     }
 
-    async joinChannel(channelName: string, username: string) {
+    async joinChannel(
+        channelName: string,
+        username: string,
+        password?: string,
+    ) {
+        console.log(
+            `channelName: ${channelName}, username: ${username}, password: ${password}`,
+        );
+
+        const channel = await this.prisma.channel.findFirst({
+            where: {
+                name: channelName,
+                members: {
+                    none: { username },
+                },
+            },
+            select: {
+                password: true,
+                type: true,
+                members: true,
+            },
+        });
+
+        if (!channel) {
+            throw new NotFoundException(
+                `Channel ${channelName} not found or you are already in it`,
+            );
+        }
+
+        if (channel.type === ChannelType.PROTECTED) {
+            if (!password) {
+                throw new BadRequestException(
+                    `Channel ${channelName} is protected, you must provide a password`,
+                );
+            }
+
+            // TODO: Hash password using bcrypt
+            if (password !== channel.password) {
+                throw new UnauthorizedException('Invalid password');
+            }
+
+            console.log(
+                `[chat] Joining ${channelName} with password ${password}`,
+            );
+        }
+
         const user = await this.prisma.user.findFirst({
             where: { username },
             select: {
                 id: true,
             },
         });
+
         await this.prisma.channel.update({
             where: { name: channelName },
             data: {
