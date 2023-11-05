@@ -158,6 +158,7 @@ export default function Notification({ notifications }: NotificationState) {
     
     const [isOpen, setIsOpen] = useState(false);
     const [deleteNotif, setDeleteNotif] = useState(false);
+    const [acceptNewFriend, setAcceptNewFriend] = useState(false);
     const [notif, setNotif] = useState<NotificationProps>({
         id: 0,
         type: 'GAME',
@@ -169,8 +170,15 @@ export default function Notification({ notifications }: NotificationState) {
     const [deleteAll, setDeleteAll] = useState(false);
 
     useEffect(() => {
+        console.log('useEffect');
         if (!isloadingMe) socket?.emit('notifications', meData.username);
-    }, [isSuccess, deleteNotif]);
+        if (!isloadingMe && acceptNewFriend)
+        {
+            console.log('acceptNewFriend: ', meData.username);
+            socket?.emit('friends', meData.username);
+            setAcceptNewFriend(false);
+        }
+    }, [isSuccess, deleteNotif, acceptNewFriend]);
 
     const modal = () => {
         return (
@@ -266,6 +274,7 @@ export default function Notification({ notifications }: NotificationState) {
                                                   updateModal={setIsOpen}
                                                   updateNotif={setNotif}
                                                   declineNotif={setDeleteNotif}
+                                                  acceptNewFriend={setAcceptNewFriend}
                                               />
                                           </Modal>
                                       )}

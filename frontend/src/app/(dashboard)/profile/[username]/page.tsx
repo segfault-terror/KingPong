@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import AchievementList from '../AchievementList';
 import FullFriendList from '../FullFriendList';
 import MatchHistory from '../MatchHistory';
@@ -8,6 +8,8 @@ import ProfileCard from '../ProfileCard';
 import axios from 'axios';
 import Loading from '@/app/loading';
 import { redirect } from 'next/navigation';
+import { useEffect } from 'react';
+import { useSocket } from '@/contexts/SocketContext';
 
 type ProfilePageProps = {
     params: {
@@ -28,6 +30,27 @@ export default function ProfilePage({ params }: ProfilePageProps) {
             return data;
         },
     });
+
+    const {socket } = useSocket();
+    const queryClient = useQueryClient();
+    useEffect(() => {
+        socket?.on('profile', () => {
+            console.log('profile on');
+            queryClient.invalidateQueries(['profile', params.username], {
+                exact: true,
+            });
+            queryClient.invalidateQueries(['isFriend', params.username], {
+                exact: true,
+            });
+            queryClient.invalidateQueries(['userFriends', params.username], {
+                exact: true,
+            });
+        });
+
+        return () => {
+            socket?.off('profile');
+        };
+    }, [socket]);
 
     if (isLoading) {
         return (

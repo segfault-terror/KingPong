@@ -1,4 +1,5 @@
 import Loading from '@/app/loading';
+import { useSocket } from '@/contexts/SocketContext';
 import useInvite from '@/hooks/useInvite';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -52,6 +53,8 @@ export default function FriendListContent({
         statusBg = 'bg-ingame';
         statusText = 'text-ingame';
     }
+
+    const { socket } = useSocket();
 
     return (
         <>
@@ -123,6 +126,10 @@ export default function FriendListContent({
                                     id: data.friendId,
                                     type: 'FRIEND',
                                 });
+                                socket?.emit(
+                                    'notifications',
+                                    username,
+                                );
                                 setShowNotification(true);
                                 setTimeout(
                                     () => setShowNotification(false),

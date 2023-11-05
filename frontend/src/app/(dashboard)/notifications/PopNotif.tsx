@@ -20,11 +20,13 @@ export default function PopNotif({
     updateModal,
     updateNotif,
     declineNotif,
+    acceptNewFriend,
 }: {
     notif: NotificationProps;
     updateModal: Function;
     updateNotif: Function;
     declineNotif: Function;
+    acceptNewFriend: Function;
 }): JSX.Element {
     const message =
         notif.type == 'GAME'
@@ -56,13 +58,14 @@ export default function PopNotif({
         },
         onSuccess: () => {
             console.log('accepted');
+            acceptNewFriend(true);
             queryClient.invalidateQueries(['notifications'], {
                 exact: true,
             });
             queryClient.invalidateQueries(['friends']);
         },
     });
-
+    const {socket} = useSocket();
 
     if (deleteLoading || acceptLoading) return <LoadingEmpty />;
 
@@ -93,6 +96,7 @@ export default function PopNotif({
                         title="Accept"
                         onClick={() => {
                             if (notif.type == 'FRIEND') {
+                                socket?.emit('profile', notif.username);
                                 acceptFriend({ username: notif.username });
                             }
                             deleteNotif({ id: notif.id });
@@ -109,8 +113,8 @@ export default function PopNotif({
                         title="Decline"
                         onClick={() => {
                             //Decline
-                            deleteNotif({ id: notif.id });
                             declineNotif(true);
+                            deleteNotif({ id: notif.id });
                             updateModal(false);
                             updateNotif(empty);
                         }}

@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     AiFillTrophy,
     AiOutlineCheckCircle,
@@ -15,6 +15,7 @@ import { TbMessage2, TbUserCancel, TbUserPlus, TbUserX } from 'react-icons/tb';
 import UserCircleInfo from './UserCircleInfo';
 import useInvite from '@/hooks/useInvite';
 import { useSocket } from '@/contexts/SocketContext';
+import { set } from 'react-hook-form';
 
 type ProfileCardProps = {
     username: string;
@@ -97,12 +98,15 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                     </h1>
                     <div className="w-full flex justify-center gap-4 pt-4">
                         <button
+                            type="button"
+                            title="Remove friend"
                             className="bg-background rounded-2xl px-4
                                     border border-white text-secondary-200
                                     font-jost hover:bg-secondary-200
                                     hover:text-background"
                             onClick={() => {
                                 removeFriend();
+                                socket?.emit('profile', username);
                                 setShowModal(false);
                             }}
                         >
@@ -189,8 +193,12 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                     {/* Not me and my friend - Remove friend */}
                     {!friendship.isMe && friendship.isFriend && (
                         <button
-                            onClick={() => setShowModal(true)}
+                            type="button"
                             title="Remove friend"
+                            onClick={() => {
+                                setShowModal(true);
+                                socket?.emit('profile', username);
+                            }}
                         >
                             <TbUserX />
                         </button>

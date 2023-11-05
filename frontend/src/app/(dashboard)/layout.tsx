@@ -83,11 +83,10 @@ export default function DashboardLayout({
     }
 
     return (
-        <SocketProvider username={me?.data.username} namespace="notifications">
+        <SocketProvider username={me?.data.username} namespace="Global">
             <div className="flex flex-col min-h-screen">
                 <Header />
                 <main className="">{children}</main>
-
                 {/* <Footer /> */}
             </div>
         </SocketProvider>
