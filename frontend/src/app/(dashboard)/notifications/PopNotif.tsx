@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NotificationProps } from './types';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import LoadingEmpty from './EmptyLoading';
+import { useSocket } from '@/contexts/SocketContext';
+import { set } from 'react-hook-form';
 
 const empty: NotificationProps = {
     id: 0,
@@ -28,7 +30,6 @@ export default function PopNotif({
             : `${notif.username} has sent you a friend request!`;
     const bgImage =
         notif.type == 'GAME' ? '/images/fight.svg' : '/images/add-friend.svg';
-
     const queryClient = useQueryClient();
     const { mutate: deleteNotif, isLoading: deleteLoading } = useMutation({
         mutationFn: async (data: any) => {
@@ -45,19 +46,36 @@ export default function PopNotif({
         },
     });
 
-    const { mutate: acceptFriend, isLoading: acceptLoading } = useMutation({
+    const { mutate: acceptFriend, isLoading: acceptLoading, isSuccess } = useMutation({
         mutationFn: async (data: any) => {
             return await axios.post(`/api/friends/add`, data, {
                 withCredentials: true,
             });
         },
         onSuccess: () => {
-            console.log('added');
+            console.log('accepted');
             queryClient.invalidateQueries(['notifications'], {
                 exact: true,
             });
+            queryClient.invalidateQueries(['friends']);
         },
     });
+
+    // queryClient.invalidateQueries(['friends']);
+    // const { socket } = useSocket();
+    // useEffect(() => {
+    //     console.log("emit friends and notifications")
+    //     if (accept)
+    //     {
+    //         console.log("emit friends notif")
+    //         socket?.emit('friends', meData.username);
+    //     }
+    //     if (isDeleted) {
+    //         console.log("emit notif")
+    //         socket?.emit('notifications', meData.username);
+    //     }
+    // }, [isDeleted, accept]);
+
 
     if (deleteLoading || acceptLoading) return <LoadingEmpty />;
 

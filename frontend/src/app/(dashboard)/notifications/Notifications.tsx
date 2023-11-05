@@ -2,14 +2,15 @@
 
 import Image from 'next/image';
 import Ghost from '../../../components/Ghost';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Decline from '@/../public/images/decline.svg';
 import Modal from '@/components/Modal';
 import PopNotif from './PopNotif';
 import { NotificationProps, NotificationState } from './types';
 import axios from 'axios';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import LoadingEmpty from './EmptyLoading';
+import { useSocket } from '@/contexts/SocketContext';
 
 const Empty = () => {
     return (
@@ -36,7 +37,16 @@ const Notife = ({
     setNotif: React.Dispatch<React.SetStateAction<NotificationProps>>;
 }) => {
     const queryClient = useQueryClient();
-    const { mutate: update, isLoading: updateLoading } = useMutation({
+    const { data: meData, isLoading: isloadingMe } = useQuery(
+        ['me'],
+        async () => {
+            const { data } = await axios.get(`/api/user/me`, {
+                withCredentials: true,
+            });
+            return data;
+        },
+    );
+    const { mutate: update, isLoading: updateLoading, isSuccess: SuccessUpdate } = useMutation({
         mutationFn: async (data: any) => {
             return await axios.post(`/api/notifications/update`, data, {
                 withCredentials: true,
@@ -44,12 +54,12 @@ const Notife = ({
         },
         onSuccess: () => {
             console.log('updated');
+
             queryClient.invalidateQueries(['notreaded']);
             queryClient.invalidateQueries(['notifications']);
         },
     });
-
-    const { mutate: deleteNotif, isLoading: deleteLoading } = useMutation({
+    const { mutate: deleteNotif, isLoading: deleteLoading, isSuccess: SuccessDelete } = useMutation({
         mutationFn: async (data: any) => {
             return await axios.delete(`/api/notifications/delete`, {
                 data,
@@ -61,6 +71,11 @@ const Notife = ({
             queryClient.invalidateQueries(['notifications']);
         },
     });
+    const { socket } = useSocket();
+    useEffect(() => {
+        if (!isloadingMe)
+        socket?.emit('notifications', meData.username);
+    }, [SuccessDelete, SuccessUpdate]);
 
     if (deleteLoading || updateLoading) return <LoadingEmpty />;
 
@@ -108,6 +123,15 @@ const Notife = ({
     );
 };
 export default function Notification({ notifications }: NotificationState) {
+    const { data: meData, isLoading: isloadingMe } = useQuery(
+        ['me'],
+        async () => {
+            const { data } = await axios.get(`/api/user/me`, {
+                withCredentials: true,
+            });
+            return data;
+        },
+    );
     const queryClient = useQueryClient();
     const {
         mutate: clear,
@@ -121,9 +145,13 @@ export default function Notification({ notifications }: NotificationState) {
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['notifications']);
-            // setLoading(false);
         },
     });
+    const { socket } = useSocket();
+    useEffect(() => {
+        if (!isloadingMe) socket?.emit('notifications', meData.username);
+    }, [isSuccess]);
+
     const [isOpen, setIsOpen] = useState(false);
     const [notif, setNotif] = useState<NotificationProps>({
         id: 0,
@@ -134,7 +162,6 @@ export default function Notification({ notifications }: NotificationState) {
         sendToId: '',
     });
     const [deleteAll, setDeleteAll] = useState(false);
-    const [loading, setLoading] = useState(false);
 
     const modal = () => {
         return (

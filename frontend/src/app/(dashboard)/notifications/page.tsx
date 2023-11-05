@@ -3,11 +3,29 @@
 import Notification from './Notifications';
 import { NotificationProps } from './types';
 import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Loading from '@/app/loading';
 import { redirect } from 'next/navigation';
+import { SocketProvider, useSocket } from '@/contexts/SocketContext';
+import { useEffect } from 'react';
 
 export default function Page() {
+    const queryClient = useQueryClient();
+
+    const { socket } = useSocket();
+    useEffect(() => {
+        socket?.on('notifications', () => {
+            console.log('connect');
+            setTimeout(() => {
+                queryClient.invalidateQueries(['notifications']);
+            }, 100);
+        });
+        return () => {
+            socket?.off('notifications');
+            console.log('disconnect');
+        };
+    }, [socket]);
+
     const { data, isLoading, isError } = useQuery({
         queryKey: ['notifications'],
         queryFn: async () => {
@@ -17,6 +35,7 @@ export default function Page() {
             return data;
         },
     });
+
     if (isError) {
         redirect('/signin');
     }

@@ -14,6 +14,7 @@ import {
 import { TbMessage2, TbUserCancel, TbUserPlus, TbUserX } from 'react-icons/tb';
 import UserCircleInfo from './UserCircleInfo';
 import useInvite from '@/hooks/useInvite';
+import { useSocket } from '@/contexts/SocketContext';
 
 type ProfileCardProps = {
     username: string;
@@ -22,6 +23,7 @@ type ProfileCardProps = {
 export default function ProfileCard({ username }: ProfileCardProps) {
     const [showModal, setShowModal] = useState(false);
     const [showNotification, setShowNotification] = useState(false);
+    const { socket } = useSocket();
 
     const { mutate: createNotification } = useInvite();
 
@@ -200,17 +202,26 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                             type="button"
                             title="Send a friend request"
                             onClick={() => {
-                                if (showNotification) return;
-
-                                setShowNotification(true);
-                                setTimeout(
-                                    () => setShowNotification(false),
-                                    2000,
+                                console.log(
+                                    'emited notification to ',
+                                    visitedUser.username,
                                 );
+
+                                if (!showNotification) {
+                                    setShowNotification(true);
+                                    setTimeout(
+                                        () => setShowNotification(false),
+                                        2000,
+                                    );
+                                }
                                 createNotification({
                                     id: visitedUser.id,
                                     type: 'FRIEND',
                                 });
+                                socket?.emit(
+                                    'notifications',
+                                    visitedUser.username,
+                                );
                             }}
                         >
                             <TbUserPlus />

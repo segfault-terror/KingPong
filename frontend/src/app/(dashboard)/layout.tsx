@@ -6,6 +6,8 @@ import { redirect } from 'next/navigation';
 import Loading from '../loading';
 import { useEffect } from 'react';
 import { io } from 'socket.io-client';
+import { Socket } from 'dgram';
+import { SocketProvider } from '@/contexts/SocketContext';
 
 export default function DashboardLayout({
     children,
@@ -81,11 +83,13 @@ export default function DashboardLayout({
     }
 
     return (
-        <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="">{children}</main>
+        <SocketProvider username={me?.data.username} namespace="notifications">
+            <div className="flex flex-col min-h-screen">
+                <Header />
+                <main className="">{children}</main>
 
-            {/* <Footer /> */}
-        </div>
+                {/* <Footer /> */}
+            </div>
+        </SocketProvider>
     );
 }

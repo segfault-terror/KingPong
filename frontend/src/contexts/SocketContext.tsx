@@ -16,18 +16,19 @@ export function useSocket() {
 export function SocketProvider(props: {
     children: ReactNode;
     username: string;
+    namespace: string;
 }) {
     const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
-        const newSocket = io('/chat', {
+        const newSocket = io(`/${props.namespace}`, {
             withCredentials: true,
             path: '/api/socket',
             autoConnect: false,
         });
 
         async function connect() {
-            await new Promise((resolve) => setTimeout(resolve, 0));
+            await new Promise((resolve) => setTimeout(resolve, 500));
             newSocket.connect();
         }
 
