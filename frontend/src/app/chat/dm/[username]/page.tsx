@@ -31,7 +31,7 @@ export default function UsernameDM({ params }: UsernameDMProps) {
         );
     }
     return (
-        <SocketProvider username={me.username}>
+        <SocketProvider username={me.username} namespace='chat'>
             <DmConversation userName={params.username} />
         </SocketProvider>
     );

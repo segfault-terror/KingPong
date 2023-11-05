@@ -11,6 +11,9 @@ import SearchBar from './SearchBar';
 import DropdownMenu from './Dropdown';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { useEffect } from 'react';
+import { useSocket } from '@/contexts/SocketContext';
+import Loading from '../loading';
 
 function NavItem({
     href,
@@ -27,7 +30,7 @@ function NavItem({
 }
 
 export default function Header() {
-    const { data: currentUser } = useQuery({
+    const { data: currentUser, isLoading: isLoadingme } = useQuery({
         queryKey: ['profile', 'current'],
         queryFn: async () => {
             const { data } = await axios.get(`/api/user/me`, {
@@ -37,15 +40,18 @@ export default function Header() {
         },
     });
 
-    const { data: notreadedNotif } = useQuery({
+    const { data: notreadedNotif, isLoading } = useQuery({
         queryKey: ['notifications', 'notreaded'],
         queryFn: async () => {
             const { data } = await axios.get(`/api/notifications/notreaded`, {
                 withCredentials: true,
             });
+            console.log('fetching not readed: ', data);
             return data;
         },
     });
+
+    if (isLoadingme || isLoading) return <Loading />;
 
     return (
         <header className="p-3 w-full">

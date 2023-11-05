@@ -13,6 +13,7 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { redirect } from 'next/navigation';
 import DropdownModal from '../chat/DropdownModal';
+import Loading from '../loading';
 
 function DropdownItem({
     href,
@@ -50,7 +51,7 @@ function DropdownItem({
 
 export default function DropdownMenu() {
     const [open, setOpen] = useState(false);
-    const { data } = useQuery({
+    const { data, isLoading } = useQuery({
         queryKey: ['user'],
         queryFn: async () => {
             try {
@@ -63,6 +64,8 @@ export default function DropdownMenu() {
             }
         },
     });
+
+    if (isLoading) return <Loading />;
 
     return (
         <li className="relative">
@@ -107,7 +110,7 @@ export default function DropdownMenu() {
                             <hr className="border-inactive-500 lg:hidden" />
                             <DropdownItem
                                 hidden
-                                href="/friends"
+                                href={`/${data?.data.username}/friends`}
                                 icon={<MdOutlinePeopleAlt />}
                                 close={() => setOpen(false)}
                             >
