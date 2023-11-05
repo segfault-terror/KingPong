@@ -46,7 +46,11 @@ const Notife = ({
             return data;
         },
     );
-    const { mutate: update, isLoading: updateLoading, isSuccess: SuccessUpdate } = useMutation({
+    const {
+        mutate: update,
+        isLoading: updateLoading,
+        isSuccess: SuccessUpdate,
+    } = useMutation({
         mutationFn: async (data: any) => {
             return await axios.post(`/api/notifications/update`, data, {
                 withCredentials: true,
@@ -59,7 +63,11 @@ const Notife = ({
             queryClient.invalidateQueries(['notifications']);
         },
     });
-    const { mutate: deleteNotif, isLoading: deleteLoading, isSuccess: SuccessDelete } = useMutation({
+    const {
+        mutate: deleteNotif,
+        isLoading: deleteLoading,
+        isSuccess: SuccessDelete,
+    } = useMutation({
         mutationFn: async (data: any) => {
             return await axios.delete(`/api/notifications/delete`, {
                 data,
@@ -73,8 +81,7 @@ const Notife = ({
     });
     const { socket } = useSocket();
     useEffect(() => {
-        if (!isloadingMe)
-        socket?.emit('notifications', meData.username);
+        if (!isloadingMe) socket?.emit('notifications', meData.username);
     }, [SuccessDelete, SuccessUpdate]);
 
     if (deleteLoading || updateLoading) return <LoadingEmpty />;
@@ -148,11 +155,9 @@ export default function Notification({ notifications }: NotificationState) {
         },
     });
     const { socket } = useSocket();
-    useEffect(() => {
-        if (!isloadingMe) socket?.emit('notifications', meData.username);
-    }, [isSuccess]);
-
+    
     const [isOpen, setIsOpen] = useState(false);
+    const [deleteNotif, setDeleteNotif] = useState(false);
     const [notif, setNotif] = useState<NotificationProps>({
         id: 0,
         type: 'GAME',
@@ -162,6 +167,10 @@ export default function Notification({ notifications }: NotificationState) {
         sendToId: '',
     });
     const [deleteAll, setDeleteAll] = useState(false);
+
+    useEffect(() => {
+        if (!isloadingMe) socket?.emit('notifications', meData.username);
+    }, [isSuccess, deleteNotif]);
 
     const modal = () => {
         return (
@@ -256,6 +265,7 @@ export default function Notification({ notifications }: NotificationState) {
                                                   notif={notif}
                                                   updateModal={setIsOpen}
                                                   updateNotif={setNotif}
+                                                  declineNotif={setDeleteNotif}
                                               />
                                           </Modal>
                                       )}
