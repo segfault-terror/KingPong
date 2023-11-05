@@ -15,7 +15,7 @@ export class NotificationsService {
     }
 
     async getmyAll(id: string) {
-        return  await this.prisma.notification.findMany({
+        return this.prisma.notification.findMany({
             where: {
                 sendToId: id,
             },
@@ -41,7 +41,7 @@ export class NotificationsService {
     }
 
     async deleteAll(id: string) {
-        return await this.prisma.notification.deleteMany({
+        return  this.prisma.notification.deleteMany({
             where: {
                 sendToId: id,
             },
@@ -49,7 +49,7 @@ export class NotificationsService {
     }
 
     async create(data: any) {
-        const me = await this.prisma.user.findUnique({
+        const me =  await this.prisma.user.findUnique({
             where: {
                 id: data.userId,
             },
@@ -66,7 +66,7 @@ export class NotificationsService {
         if (me.Notifications.some((notification) => notification.sendToId === data.sendToId && notification.type === data.type)) {
             throw new NotFoundException('Notification already exists');
         }
-        const newNotif = await this.prisma.notification.create({
+        return this.prisma.notification.create({
             data: {
                 sendToId: data.sendToId,
                 type: data.type,
@@ -77,13 +77,10 @@ export class NotificationsService {
                 },
             },
         });
-
-        newNotif.userId = data.userId;
-        return newNotif;
     }
 
     async notificationNotRead(id: string) {
-        return await this.prisma.notification.findMany({
+        return this.prisma.notification.findMany({
             where: {
                 sendToId: id,
                 readed: false,
