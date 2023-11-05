@@ -1,3 +1,7 @@
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
+import { redirect } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { BsArrowLeftShort } from 'react-icons/bs';
 
 type WelcomeChannelProps = {
@@ -45,6 +49,28 @@ export default function WelcomeChannel({
     setWelcomeChannel,
     setJoinChannel,
 }: WelcomeChannelProps) {
+    const [redirectChannel, setRedirectChannel] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (!redirectChannel) return;
+
+        if (channelVisibility === 'public')
+            redirect(`/chat/channel/${channelName}`);
+        else alert('TODO: Redirect to password protected channel');
+    }, [redirectChannel, channelName, channelVisibility]);
+
+    const { mutate } = useMutation({
+        mutationFn: async () => {
+            const { data: channel } = await axios.get(
+                `/api/chat/channel/join/${channelName}`,
+                {
+                    withCredentials: true,
+                },
+            );
+            return channel;
+        },
+    })
+
     return (
         <div>
             <div className="flex flex-row items-center mb-8">
@@ -70,6 +96,10 @@ export default function WelcomeChannel({
                     <ProtectedChannelContent />
                 )}
                 <button
+                    onClick={() => {
+                        mutate();
+                        setRedirectChannel(true);
+                    }}
                     className="bg-secondary-200
                             text-background
                             font-bold

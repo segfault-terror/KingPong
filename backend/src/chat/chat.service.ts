@@ -4,6 +4,7 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
+import { ChannelType } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 import { UserService } from 'src/user/user.service';
 
@@ -287,17 +288,6 @@ export class ChatService {
                 user2_first_message: dm.user2_first_message,
             },
         });
-
-        // await this.prisma.message.deleteMany({
-        //     where: {
-        //         dm_id: dmId,
-        //     },
-        // });
-        // await this.prisma.dM.delete({
-        //     where: {
-        //         id: dmId,
-        //     },
-        // });
     }
 
     async getUserChannels(username: string) {
@@ -374,6 +364,40 @@ export class ChatService {
                         status: true,
                     },
                 },
+            },
+        });
+    }
+
+    async exploreChannels(username: string) {
+        return this.prisma.channel.findMany({
+            where: {
+                AND: [
+                    {
+                        NOT: {
+                            OR: [
+                                { owner: { username } },
+                                { admins: { some: { username } } },
+                                { members: { some: { username } } },
+                            ],
+                        },
+                    },
+                    { NOT: { type: ChannelType.PRIVATE } },
+                ],
+            },
+        });
+    }
+
+    async joinChannel(channelName: string, username: string) {
+        const user = await this.prisma.user.findFirst({
+            where: { username },
+            select: {
+                id: true,
+            },
+        });
+        await this.prisma.channel.update({
+            where: { name: channelName },
+            data: {
+                members: { connect: { id: user.id } },
             },
         });
     }

@@ -79,4 +79,17 @@ export class ChatController {
     async getChannelMembers(@Param('channel_name') channelName: string) {
         return this.chatService.getChannelMembers(channelName);
     }
+
+    @Get('channels/join/explore')
+    async exploreChannels(@Req() request: any) {
+        return this.chatService.exploreChannels(request.user.username);
+    }
+
+    @Get('channel/join/:channel_name')
+    async joinChannel(
+        @Param('channel_name') channelName: string,
+        @Req() request: any,
+    ) {
+        return this.chatService.joinChannel(channelName, request.user.username);
+    }
 }
