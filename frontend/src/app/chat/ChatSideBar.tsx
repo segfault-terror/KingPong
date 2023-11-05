@@ -1,3 +1,4 @@
+import { useSocket } from '@/contexts/SocketContext';
 import { modalContext } from '@/contexts/contexts';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -9,8 +10,7 @@ import Loading from '../loading';
 import DirectMessage from './DirectMessage';
 import EmptyChat from './EmptyChat';
 import ToggleButton from './ToggleButton';
-import { Channels, DMList } from './data/ChatData';
-import { useSocket } from '@/contexts/SocketContext';
+import { DMList } from './data/ChatData';
 
 type ChatSideBarProps = {
     toggle: boolean;
@@ -109,9 +109,13 @@ function DmList({ toggle }: ChatSideBarProps) {
     );
 }
 
-function ChannelList({ toggle }: ChatSideBarProps) {
+function ChannelList({ toggle, setToggle }: ChatSideBarProps) {
     const pathname = usePathname();
     const { setCreateChannel, setJoinChannel } = useContext(modalContext);
+
+    useEffect(() => {
+        setToggle(true);
+    });
 
     const { data: channels, isLoading } = useQuery({
         queryKey: ['channels', 'brief'],
@@ -119,9 +123,12 @@ function ChannelList({ toggle }: ChatSideBarProps) {
             const { data: me } = await axios.get(`/api/user/me`, {
                 withCredentials: true,
             });
-            const { data: channels } = await axios.get(`/api/chat/channels/${me.username}`, {
-                withCredentials: true,
-            });
+            const { data: channels } = await axios.get(
+                `/api/chat/channels/${me.username}`,
+                {
+                    withCredentials: true,
+                },
+            );
             return channels;
         },
     });
@@ -151,7 +158,7 @@ function ChannelList({ toggle }: ChatSideBarProps) {
                             <Link
                                 href={`/chat/channel/${channel.name}`}
                                 className="block w-full text-left overflow-hidden whitespace-nowrap overflow-ellipsis
-                                            hover:bg-background hover:bg-opacity-80 hover:rounded-xl"
+                                            hover:bg-background hover:bg-opacity-80 hover:rounded-xl py-1"
                                 replace={pathname.startsWith('/chat/channel')}
                             >{`# ${channel.name}`}</Link>
                             <div className="mt-1"></div>

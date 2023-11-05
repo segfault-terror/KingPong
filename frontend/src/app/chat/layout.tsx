@@ -1,14 +1,13 @@
 'use client';
-import { useEffect, useState } from 'react';
-import CreateNewChannel from './CreateNewChannel';
-import JoinNewChannel, { Channel } from './JoinNewChannel';
-import WelcomeChannel from './WelcomeChannel';
-import NewConversation from './NewConversation';
-import Modal from '../../components/Modal';
-import DropdownModal from './DropdownModal';
-import ChatMenu from './ChatMenu';
 import { modalContext, toggleContext } from '@/contexts/contexts';
-import { io } from 'socket.io-client';
+import { useState } from 'react';
+import Modal from '../../components/Modal';
+import ChatMenu from './ChatMenu';
+import CreateNewChannel from './CreateNewChannel';
+import DropdownModal from './DropdownModal';
+import JoinNewChannel from './JoinNewChannel';
+import NewConversation from './NewConversation';
+import WelcomeChannel from './WelcomeChannel';
 
 type MainChatLayoutProps = {
     children: React.ReactNode;
@@ -22,7 +21,6 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
     const [channel, setChannel] = useState<Channel>({} as Channel);
     const [newConversation, setNewConversation] = useState(false);
     const [dotsDropdown, setDotsDropdown] = useState(false);
-
 
     return (
         <toggleContext.Provider value={{ toggle, setToggle }}>

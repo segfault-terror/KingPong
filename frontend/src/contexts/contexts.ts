@@ -1,4 +1,3 @@
-import { Channel } from '@/app/chat/JoinNewChannel';
 import { createContext } from 'react';
 
 type ProfileModalContextProps = {
@@ -20,7 +19,6 @@ type ModalContextProps = {
     setJoinChannel: (val: boolean) => void;
     welcomeChannel: boolean;
     setWelcomeChannel: (val: boolean) => void;
-    setChannel: (channel: Channel) => void;
     newConversation: boolean;
     setNewConversation: (val: boolean) => void;
     dotsDropdown: boolean;
