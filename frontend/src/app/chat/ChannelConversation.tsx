@@ -1,11 +1,11 @@
 'use client';
 import { channelModalContext, modalContext } from '@/contexts/contexts';
 import Link from 'next/link';
-import { useContext } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { FaUserFriends } from 'react-icons/fa';
 import { HiDotsVertical } from 'react-icons/hi';
 import ChatInput from './ChatInput';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Loading from '../loading';
 import { redirect } from 'next/navigation';
@@ -15,15 +15,10 @@ type ChannelConversationProps = {
 };
 
 export default function ChannelConversation(props: ChannelConversationProps) {
-
     const { setDotsDropdown } = useContext(modalContext);
     const { showMembers, setShowMembers } = useContext(channelModalContext);
 
-    const {
-        data,
-        isLoading,
-        isError,
-    } = useQuery({
+    const { data, isLoading, isError } = useQuery({
         queryKey: ['channel', props.channelName],
         queryFn: async () => {
             const { data: channel } = await axios.get(
@@ -37,10 +32,41 @@ export default function ChannelConversation(props: ChannelConversationProps) {
     const { data: me, isLoading: isLoadingMe } = useQuery({
         queryKey: ['user', 'me'],
         queryFn: async () => {
-            const { data: me } = await axios.get('/api/user/me', { withCredentials: true });
+            const { data: me } = await axios.get('/api/user/me', {
+                withCredentials: true,
+            });
             return me;
         },
     });
+
+    const queryClient = useQueryClient();
+    const { mutate: sendMessage } = useMutation({
+        mutationFn: async (content: string) => {
+            return await axios.post('/api/chat/channel/message', {
+                withCredentials: true,
+                channelName: props.channelName,
+                sender: me?.username,
+                content,
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['channel', props.channelName], {
+                exact: true,
+            });
+            queryClient.invalidateQueries(['channels', 'brief'], {
+                exact: true,
+            });
+        },
+    });
+
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [data]);
 
     if (isLoading || isLoadingMe) {
         return (
@@ -68,9 +94,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                             p-4 rounded-lg z-20
                             bg-gradient-to-b from-background/60 to-[#330E51]/60"
             >
-                <h1 className="text-cube_palette-200 text-2xl">
-                    {data?.name}
-                </h1>
+                <h1 className="text-cube_palette-200 text-2xl">{data?.name}</h1>
                 <div className="flex gap-4 text-secondary-200">
                     <button onClick={() => setShowMembers(!showMembers)}>
                         <FaUserFriends className="w-8 h-8" />
@@ -84,8 +108,8 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                 </div>
             </div>
 
-            <div className="flex-grow overflow-scroll scrollbar-none pb-2">
-                <ul className="flex flex-col gap-8 p-6 bg-primary">
+            <div className="flex-grow overflow-y-scroll scrollbar-none pb-2 z-20">
+                <ul className="flex flex-col gap-8 p-6">
                     {data?.messages.length === 0 && (
                         <div className="text-cube_palette-200 font-jost font-light text-center">
                             Send a message to start a conversation
@@ -93,7 +117,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                     )}
 
                     {data?.messages.length !== 0 &&
-                        data?.messages.map((message: any, idx: number) => (
+                        data?.messages.map((message: any) => (
                             <ChannelMessage
                                 avatar={message.sender.avatar}
                                 key={message.id}
@@ -102,10 +126,16 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                                 senderName={message.sender.username}
                             />
                         ))}
+                    <div ref={messagesEndRef} />
                 </ul>
             </div>
 
-            <ChatInput />
+            <ChatInput
+                sendMessage={sendMessage}
+                channelName={props.channelName}
+                isTyping={false}
+                setIsTyping={() => {}}
+            />
         </div>
     );
 }
@@ -119,7 +149,7 @@ type ChannelMessageProps = {
 
 function ChannelMessage(props: ChannelMessageProps) {
     const defaultStyles =
-        'text-background font-mulish p-2 w-fit max-w-[80%] hyphens-auto shadow-[5px_5px_0px_0px_rgba(37,10,59)] relative';
+        'text-background font-mulish px-4 py-2 w-fit max-w-[80%] hyphens-auto shadow-[5px_5px_0px_0px_rgba(37,10,59)] relative';
     const myStyles =
         'rounded-tl-xl rounded-br-xl rounded-bl-xl bg-secondary-200 self-end';
     const othersStyles =

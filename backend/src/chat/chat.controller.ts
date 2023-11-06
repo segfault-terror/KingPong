@@ -106,4 +106,13 @@ export class ChatController {
             data.password,
         );
     }
+
+    @Post('/channel/message')
+    async sendMessageToChannel(@Body() data: any, @Req() request: any) {
+        return this.chatService.sendMessageToChannel(
+            data.channelName,
+            request.user.username,
+            data.content,
+        );
+    }
 }

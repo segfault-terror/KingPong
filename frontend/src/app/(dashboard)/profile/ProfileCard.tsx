@@ -1,11 +1,13 @@
 'use client';
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
+import { useSocket } from '@/contexts/SocketContext';
+import useInvite from '@/hooks/useInvite';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
     AiFillTrophy,
     AiOutlineCheckCircle,
@@ -13,9 +15,6 @@ import {
 } from 'react-icons/ai';
 import { TbMessage2, TbUserCancel, TbUserPlus, TbUserX } from 'react-icons/tb';
 import UserCircleInfo from './UserCircleInfo';
-import useInvite from '@/hooks/useInvite';
-import { useSocket } from '@/contexts/SocketContext';
-import { set } from 'react-hook-form';
 
 type ProfileCardProps = {
     username: string;
@@ -240,8 +239,8 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                         </button>
                     )}
 
-                    {/* Not me and my friend - Block */}
-                    {!friendship.isMe && friendship.isFriend && (
+                    {/* Not me - Block */}
+                    {!friendship.isMe && (
                         <button
                             type="button"
                             title="Block user"
