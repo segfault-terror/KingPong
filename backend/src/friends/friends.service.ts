@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
+import { BlockList } from 'net';
 
 @Injectable()
 export class FriendsService {
@@ -29,7 +30,7 @@ export class FriendsService {
             throw new NotFoundException('User not found');
         }
 
-        await this.prisma.user.update({
+       return await this.prisma.user.update({
             where: { id: userId },
             data: {
                 friends: {
@@ -40,5 +41,108 @@ export class FriendsService {
                 },
             },
         });
+    }
+
+    async getBlockList(userId: string) {
+        const BlockList = await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: {
+                blockedUsers: true,
+            },
+        });
+
+        const me = await this.prisma.user.findUnique({
+            where: { id: userId },
+        });
+
+        if (!me) {
+            throw new NotFoundException('User not found');
+        }
+
+        const blockedUsers = BlockList.blockedUsers.filter((user) => user.id !== me.id);
+
+        return { blockedUsers };
+    }
+    async blockUser(userId: string, username: string) {
+        const user = await this.prisma.user.findUnique({
+            where: { username },
+        });
+        const me = await this.prisma.user.findUnique({
+            where: { id: userId },
+        });
+
+
+        if (me.id === user.id) {
+            throw new ForbiddenException('You cannot block yourself');
+        }
+
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        return await this.prisma.user.update({
+            where: { id: userId },
+            data: {
+                blockedUsers: {
+                    connect: { id: user.id, username: user.username },
+                },
+            },
+        });
+    }
+
+    async unblockUser(userId: string, username: string) {
+        const user = await this.prisma.user.findUnique({
+            where: { username },
+        });
+
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        return await this.prisma.user.update({
+            where: { id: userId },
+            data: {
+                blockedUsers: {
+                    disconnect: { id: user.id },
+                },
+                blockedBy: {
+                    disconnect: { id: user.id },
+                },
+            },
+        });
+    }
+
+    async isUserBlocked(myId: string, username: string) {
+        const meUser = await this.prisma.user.findUnique({
+            where: { id: myId },
+            include: {
+                blockedUsers: true,
+            },
+        });
+
+        if (!meUser) {
+            throw new NotFoundException('User not found');
+        }
+
+        const blockedUsers = meUser.blockedUsers.filter((user) => user.username === username);
+
+        return blockedUsers.length > 0;
+    }
+
+    async isisBlockedByUser(myId: string, username: string) {
+        const meUser = await this.prisma.user.findUnique({
+            where: { id: myId },
+            include: {
+                blockedBy: true,
+            },
+        });
+
+        if (!meUser) {
+            throw new NotFoundException('User not found');
+        }
+
+        const blockedUsers = meUser.blockedBy.filter((user) => user.username === username);
+
+        return blockedUsers.length > 0;
     }
 }
