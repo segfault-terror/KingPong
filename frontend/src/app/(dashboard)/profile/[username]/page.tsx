@@ -34,15 +34,31 @@ export default function ProfilePage({ params }: ProfilePageProps) {
     const {socket } = useSocket();
     const queryClient = useQueryClient();
     useEffect(() => {
-        socket?.on('profile', () => {
-            console.log('profile on');
-            queryClient.invalidateQueries(['profile', params.username], {
+        socket?.on('profile', ({user1, user2}: {user1: string, user2:string}) => {
+            console.log('profile on: ', user1);
+            queryClient.invalidateQueries(['profile', user1], {
                 exact: true,
             });
-            queryClient.invalidateQueries(['isFriend', params.username], {
+            queryClient.invalidateQueries(['user', user1], {
                 exact: true,
             });
-            queryClient.invalidateQueries(['userFriends', params.username], {
+            queryClient.invalidateQueries(['isFriend', user1], {
+                exact: true,
+            });
+            queryClient.invalidateQueries(['userFriends', user1], {
+                exact: true,
+            });
+            console.log('profile on: ', user2);
+            queryClient.invalidateQueries(['profile', user2], {
+                exact: true,
+            });
+            queryClient.invalidateQueries(['user', user2], {
+                exact: true,
+            });
+            queryClient.invalidateQueries(['isFriend', user2], {
+                exact: true,
+            });
+            queryClient.invalidateQueries(['userFriends', user2], {
                 exact: true,
             });
         });

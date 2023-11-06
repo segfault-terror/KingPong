@@ -47,7 +47,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
     });
 
     const { data: visitedUser, isLoading: visitedUserLoading } = useQuery({
-        queryKey: ['profile', username],
+        queryKey: ['profile', username, 'me'],
         queryFn: async () => {
             const { data } = await axios.get(
                 `/api/user/get/${username}/stats`,
@@ -55,7 +55,10 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                     withCredentials: true,
                 },
             );
-            return data;
+            const { data: me } = await axios.get(`/api/user/me`, {
+                withCredentials: true,
+            });
+            return {data, me};
         },
     });
 
@@ -77,7 +80,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
         );
     }
 
-    const leagueImgPath = `/images/${visitedUser?.stats.league.toLowerCase()}-league.svg`;
+    const leagueImgPath = `/images/${visitedUser?.data.stats.league.toLowerCase()}-league.svg`;
 
     return (
         <div
@@ -106,7 +109,10 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                                     hover:text-background"
                             onClick={() => {
                                 removeFriend();
-                                socket?.emit('profile', username);
+                                socket?.emit('profile', {
+                                    user1: visitedUser?.me.username,
+                                    user2: username,
+                                });
                                 setShowModal(false);
                             }}
                         >
@@ -155,16 +161,16 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                 <div className="flex items-center justify-between pt-2 pl-1 ml-24 md:ml-32 gap-4">
                     <div>
                         <h1 className="text-secondary-200 font-mulish font-bold text-xl md:text-2xl">
-                            {visitedUser.fullname}
+                            {visitedUser?.data.fullname}
                         </h1>
                         <h2 className="text-cube_palette-200 opacity-80 font-mulish text-lg">
-                            @{visitedUser.username}
+                            @{visitedUser?.data.username}
                         </h2>
                     </div>
                     <img
                         src={leagueImgPath}
                         alt="League"
-                        title={`${visitedUser?.stats.league.toLowerCase()} league`}
+                        title={`${visitedUser?.data.stats.league.toLowerCase()} league`}
                         className="ml-2 select-none"
                     />
                 </div>
@@ -174,11 +180,11 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                 <div className="flex gap-1 items-center md:text-2xl">
                     <div className="flex items-center text-online">
                         <AiFillTrophy />
-                        <span>{visitedUser?.stats.wins}</span>
+                        <span>{visitedUser?.data.stats.wins}</span>
                     </div>
                     <div className="flex items-center text-red-600">
                         <AiOutlineClose />
-                        <span>{visitedUser?.stats.losses}</span>
+                        <span>{visitedUser?.data.stats.losses}</span>
                     </div>
                 </div>
 
@@ -197,7 +203,10 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                             title="Remove friend"
                             onClick={() => {
                                 setShowModal(true);
-                                socket?.emit('profile', username);
+                                socket?.emit('profile', {
+                                    user1: visitedUser?.me.username,
+                                    user2: username,
+                                });
                             }}
                         >
                             <TbUserX />
@@ -210,11 +219,6 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                             type="button"
                             title="Send a friend request"
                             onClick={() => {
-                                console.log(
-                                    'emited notification to ',
-                                    visitedUser.username,
-                                );
-
                                 if (!showNotification) {
                                     setShowNotification(true);
                                     setTimeout(
@@ -223,12 +227,12 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                                     );
                                 }
                                 createNotification({
-                                    id: visitedUser.id,
+                                    id: visitedUser?.data.id,
                                     type: 'FRIEND',
                                 });
                                 socket?.emit(
                                     'notifications',
-                                    visitedUser.username,
+                                    visitedUser?.data.username,
                                 );
                             }}
                         >

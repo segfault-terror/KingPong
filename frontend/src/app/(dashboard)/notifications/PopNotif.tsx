@@ -65,9 +65,16 @@ export default function PopNotif({
             queryClient.invalidateQueries(['friends']);
         },
     });
+
+    const {data: me, isLoading: meLoading} = useQuery(['me'], async () => {
+        const res = await axios.get('/api/users/me', {
+            withCredentials: true,
+        });
+        return res.data;
+    });
     const {socket} = useSocket();
 
-    if (deleteLoading || acceptLoading) return <LoadingEmpty />;
+    if (deleteLoading || acceptLoading || meLoading) return <LoadingEmpty />;
 
     return (
         <div
@@ -96,7 +103,8 @@ export default function PopNotif({
                         title="Accept"
                         onClick={() => {
                             if (notif.type == 'FRIEND') {
-                                socket?.emit('profile', notif.username);
+                                console.log('me: ', me, {sender: notif.username, receiver: me.username});
+                                socket?.emit('profile', {user1: me.username, user2: notif.username});
                                 acceptFriend({ username: notif.username });
                             }
                             deleteNotif({ id: notif.id });

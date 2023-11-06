@@ -27,14 +27,10 @@ export class GlobalGateway implements OnGatewayDisconnect {
             (user) => user.username === username,
         );
         if (!user) {
-            console.log(
-                `[Global] Registered ${username} for the first time`,
-            );
+            console.log(`[Global] Registered ${username} for the first time`);
             this.connectedUsers.push({ username, sockets: [socket.id] });
         } else {
-            console.log(
-                `[Global] Registered ${username} in another tab`,
-            );
+            console.log(`[Global] Registered ${username} in another tab`);
             user.sockets.push(socket.id);
         }
     }
@@ -48,14 +44,9 @@ export class GlobalGateway implements OnGatewayDisconnect {
         user.sockets = user.sockets.filter((id) => id !== socket.id);
 
         if (user.sockets.length === 0) {
-            console.log(
-                `[Global] Unregistered ${user.username} from all tabs`,
-            );
-        }
-        else {
-            console.log(
-                `[Global] Unregistered ${user.username} from one tab`,
-            );
+            console.log(`[Global] Unregistered ${user.username} from all tabs`);
+        } else {
+            console.log(`[Global] Unregistered ${user.username} from one tab`);
         }
     }
 
@@ -88,17 +79,33 @@ export class GlobalGateway implements OnGatewayDisconnect {
     }
 
     @SubscribeMessage('profile')
-    async handleProfile(@MessageBody() username: string) {
-        const result = this.connectedUsers.find(
-            (user) => user.username === username,
+    async handleProfile(
+        @MessageBody() { user1, user2 }: { user1: string; user2: string },
+    ) {
+        console.log(`Profile to ${user1} and ${user2}`);
+        const result1 = this.connectedUsers.find(
+            (user) => user.username === user1,
         );
 
-        if (!result) return;
-        result.sockets.forEach((id) => {
-            this.server.to(id).emit('profile', username);
-            console.log(`+++${this.counter} - Profile to ${username}`);
-            this.counter++;
-        });
-    }
+        const result2 = this.connectedUsers.find(
+            (user) => user.username === user2,
+        );
 
+        if (result1)
+            result1.sockets.forEach((id) => {
+                this.server.to(id).emit('profile', { user1, user2 });
+                console.log(
+                    `+++${this.counter} - Profile to ${user1} and ${user2}`,
+                );
+                this.counter++;
+            });
+        if (result2)
+            result2.sockets.forEach((id) => {
+                this.server.to(id).emit('profile', { user1, user2 });
+                console.log(
+                    `+++${this.counter} - Profile to ${user1} and ${user2}`,
+                );
+                this.counter++;
+            });
+    }
 }
