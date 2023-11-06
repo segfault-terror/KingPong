@@ -319,6 +319,9 @@ export class ChatService {
             where: { name: channelName },
             select: {
                 name: true,
+                owner: {
+                    select: { username: true },
+                },
                 messages: {
                     select: {
                         id: true,

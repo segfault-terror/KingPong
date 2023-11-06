@@ -3,9 +3,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { redirect, usePathname, useRouter } from 'next/navigation';
 import path from 'path';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import Loading from '../loading';
 import Modal from '@/components/Modal';
 
@@ -24,7 +24,9 @@ export default function ChatMenu() {
             {pathname.startsWith('/chat/dm') && (
                 <DmMenu username={currentPage} />
             )}
-            {pathname.startsWith('/chat/channel') && <ChannelMenu />}
+            {pathname.startsWith('/chat/channel') && (
+                <ChannelMenu channelName={currentPage} />
+            )}
         </ul>
     );
 }
@@ -139,9 +141,64 @@ function DmMenu(props: { username: string }) {
     );
 }
 
-function ChannelMenu() {
+function ChannelMenu(props: { channelName: string }) {
+    const { data: channel, isLoading: channelIsLoading } = useQuery({
+        queryKey: ['channel', props.channelName],
+        queryFn: async () => {
+            const { data } = await axios.get(
+                `/api/chat/channel/${props.channelName}`,
+                { withCredentials: true },
+            );
+            return data;
+        },
+    });
+
+    const { data: me, isLoading: meIsLoading } = useQuery({
+        queryKey: ['user', 'me'],
+        queryFn: async () => {
+            const { data } = await axios.get('/api/user/me', {
+                withCredentials: true,
+            });
+            return data;
+        },
+    });
+
+    const [redirectChannel, setRedirectChannel] = useState(false);
+
+    useEffect(() => {
+        if (!redirectChannel) return;
+        redirect('/chat');
+    }, [redirectChannel]);
+
+    const { mutate: deleteChannel, isLoading: deleteChannelIsLoading } =
+        useMutation({
+            mutationFn: async () => {
+                await axios.delete(`/api/chat/channel/${props.channelName}`, {
+                    withCredentials: true,
+                });
+            },
+            onSuccess: () => {
+                setRedirectChannel(true);
+            },
+        });
+
+    if (channelIsLoading || meIsLoading || deleteChannelIsLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
+
     return (
         <>
+            {channel?.owner.username === me?.username && (
+                <ChatMenuItem>
+                    <button onClick={() => deleteChannel()}>
+                        Delete channel
+                    </button>
+                </ChatMenuItem>
+            )}
             <ChatMenuItem>
                 <button>Channel</button>
             </ChatMenuItem>
