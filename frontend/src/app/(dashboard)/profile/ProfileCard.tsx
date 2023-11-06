@@ -116,7 +116,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
             );
 
             const { data: BlockedBy } = await axios.get(
-                `/api/friends/isBlockedBy/${visitedUser?.me.username}`,
+                `/api/friends/isBlockedBy/${username}`,
                 {
                     withCredentials: true,
                 },
@@ -276,7 +276,8 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                                 type="button"
                                 title="Send a friend request"
                                 onClick={() => {
-                                    if (isBlocked?.blockedBy === true) {
+                                    if (!isBlocked?.blockedBy) {
+                                        console.log('is not blocked');
                                         if (!showNotification) {
                                             setShowNotification(true);
                                             setTimeout(
@@ -302,7 +303,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
 
                     {/* Not me - Block */}
 
-                    {isBlocked?.blocked === true ? (
+                    {isBlocked?.blocked ? (
                         <button
                             type="button"
                             title="unBlock user"
