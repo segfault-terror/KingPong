@@ -5,7 +5,8 @@ import { BiSolidSend } from 'react-icons/bi';
 
 type ChatInputProps = {
     sendMessage: Function;
-    username: string;
+    username?: string;
+    channelName?: string;
     isTyping: boolean;
     setIsTyping: Function;
 };
@@ -13,6 +14,7 @@ type ChatInputProps = {
 export default function ChatInput({
     sendMessage,
     username,
+    channelName,
     setIsTyping,
 }: ChatInputProps) {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -24,8 +26,22 @@ export default function ChatInput({
 
         socket?.on('new-message', () => {
             console.log(`Invalidating query [dm, ${username}]`);
-            queryClient.invalidateQueries(['dm', username], { exact: true });
-            queryClient.invalidateQueries(['dms', 'brief'], { exact: true });
+            if (username /* DM */) {
+                queryClient.invalidateQueries(['dm', username], {
+                    exact: true,
+                });
+                queryClient.invalidateQueries(['dms', 'brief'], {
+                    exact: true,
+                });
+            }
+            if (channelName /* Channel */) {
+                queryClient.invalidateQueries(['channel', channelName], {
+                    exact: true,
+                });
+                queryClient.invalidateQueries(['channels', 'brief'], {
+                    exact: true,
+                });
+            }
         });
         return () => {
             socket?.off('typing');
@@ -69,7 +85,11 @@ export default function ChatInput({
                         if (event.currentTarget.value.trim() === '') return;
 
                         sendMessage(event.currentTarget.value);
-                        socket?.emit('new-message', username);
+
+                        if (username /* DM */) {
+                            socket?.emit('new-message', username);
+                        }
+
                         event.currentTarget.value = '';
                         event.currentTarget.focus();
                     } else {

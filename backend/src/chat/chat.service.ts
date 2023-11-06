@@ -503,4 +503,70 @@ export class ChatService {
             },
         });
     }
+
+    async sendMessageToChannel(
+        channelName: string,
+        username: string,
+        content: string,
+    ) {
+        // Check if channel exists
+        const channel = await this.prisma.channel.findFirst({
+            where: { name: channelName },
+            select: {
+                id: true,
+                owner: true,
+                admins: true,
+                members: true,
+                mutes: true,
+                bannedUsers: true,
+            },
+        });
+        if (!channel) {
+            throw new NotFoundException(
+                `Channel ${channelName} does not exist`,
+            );
+        }
+
+        // Check if user exists
+        const user = await this.prisma.user.findFirst({
+            where: { username },
+            select: { id: true },
+        });
+        if (!user) {
+            throw new NotFoundException(`User ${username} does not exist`);
+        }
+
+        // Check if user is not banned
+        if (channel.bannedUsers.some((user) => user.username === username)) {
+            throw new BadRequestException(
+                `User ${username} is banned from channel ${channelName}`,
+            );
+        }
+
+        // Check if user is in channel
+        if (
+            username !== channel.owner.username &&
+            channel.admins.every((admin) => admin.username !== username) &&
+            channel.members.every((member) => member.username !== username)
+        ) {
+            throw new BadRequestException(
+                `User ${username} is not in channel ${channelName}`,
+            );
+        }
+
+        // Check if user is not muted
+        if (channel.mutes.some((mutedUser) => mutedUser.id === user.id)) {
+            throw new BadRequestException(
+                `User ${username} is muted in channel ${channelName}`,
+            );
+        }
+
+        return await this.prisma.channelMessage.create({
+            data: {
+                content,
+                sender: { connect: { id: user.id } },
+                channel: { connect: { id: channel.id } },
+            },
+        });
+    }
 }
