@@ -127,4 +127,15 @@ export class ChatController {
             request.user.username,
         );
     }
+
+    @Delete('/channel/leave/:channel_name')
+    async leaveChannel(
+        @Param('channel_name') channelName: string,
+        @Req() request: any,
+    ) {
+        return this.chatService.leaveChannel(
+            channelName,
+            request.user.username,
+        );
+    }
 }

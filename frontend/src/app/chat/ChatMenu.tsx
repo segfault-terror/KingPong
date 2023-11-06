@@ -164,6 +164,7 @@ function ChannelMenu(props: { channelName: string }) {
     });
 
     const [redirectChannel, setRedirectChannel] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         if (!redirectChannel) return;
@@ -182,7 +183,25 @@ function ChannelMenu(props: { channelName: string }) {
             },
         });
 
-    if (channelIsLoading || meIsLoading || deleteChannelIsLoading) {
+    const { mutate: leaveChannel, isLoading: leaveChannelIsLoading } =
+        useMutation({
+            mutationFn: async () => {
+                await axios.delete(
+                    `/api/chat/channel/leave/${props.channelName}`,
+                    { withCredentials: true },
+                );
+            },
+            onSuccess: () => {
+                setRedirectChannel(true);
+            },
+        });
+
+    if (
+        channelIsLoading ||
+        meIsLoading ||
+        deleteChannelIsLoading ||
+        leaveChannelIsLoading
+    ) {
         return (
             <div className="bg-default fixed inset-0 z-50">
                 <Loading />
@@ -192,6 +211,45 @@ function ChannelMenu(props: { channelName: string }) {
 
     return (
         <>
+            {showModal && (
+                <Modal
+                    onClose={() => setShowModal(false)}
+                    childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%]
+                    max-w-[400px]"
+                >
+                    <h1 className="text-center text-xl font-jost">
+                        Leave channel{' '}
+                        <span className="text-secondary-200">
+                            {props.channelName}
+                        </span>
+                        ?
+                    </h1>
+                    <div className="w-full flex justify-center gap-4 pt-4">
+                        <button
+                            type="button"
+                            title="Remove friend"
+                            className="bg-background rounded-2xl px-4
+                                    border border-white text-secondary-200
+                                    font-jost hover:bg-secondary-200
+                                    hover:text-background"
+                            onClick={() => {
+                                leaveChannel();
+                            }}
+                        >
+                            OK
+                        </button>
+                        <button
+                            className="bg-background rounded-2xl px-4
+                                    border border-white text-red-400
+                                    font-jost hover:bg-red-400
+                                    hover:text-background"
+                            onClick={() => setShowModal(false)}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </Modal>
+            )}
             {channel?.owner.username === me?.username && (
                 <ChatMenuItem>
                     <button onClick={() => deleteChannel()}>
@@ -199,9 +257,13 @@ function ChannelMenu(props: { channelName: string }) {
                     </button>
                 </ChatMenuItem>
             )}
-            <ChatMenuItem>
-                <button>Channel</button>
-            </ChatMenuItem>
+            {channel?.owner.username !== me?.username && (
+                <ChatMenuItem>
+                    <button onClick={() => setShowModal(true)}>
+                        Leave channel
+                    </button>
+                </ChatMenuItem>
+            )}
             <ChatMenuItem>
                 <button>Channel</button>
             </ChatMenuItem>

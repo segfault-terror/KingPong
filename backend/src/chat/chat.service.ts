@@ -611,4 +611,47 @@ export class ChatService {
             where: { id: channel.id },
         });
     }
+
+    async leaveChannel(channelName: string, username: string) {
+        const user = await this.prisma.user.findFirst({
+            where: { username },
+            select: { id: true },
+        });
+
+        if (!user) {
+            throw new NotFoundException(`User ${username} not found`);
+        }
+
+        const channel = await this.prisma.channel.findFirst({
+            where: { name: channelName },
+            select: {
+                id: true,
+                owner: {
+                    select: { username: true },
+                },
+            },
+        });
+
+        if (!channel) {
+            throw new NotFoundException(`Channel ${channelName} not found`);
+        }
+
+        if (channel.owner.username === username) {
+            throw new BadRequestException(
+                `User ${username} is the owner of channel ${channelName}, cannot leave`,
+            );
+        }
+
+        await this.prisma.channel.update({
+            where: { id: channel.id },
+            data: {
+                members: {
+                    disconnect: { id: user.id },
+                },
+                admins: {
+                    disconnect: { id: user.id },
+                },
+            },
+        });
+    }
 }
