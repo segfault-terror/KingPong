@@ -13,7 +13,13 @@ import {
     AiOutlineCheckCircle,
     AiOutlineClose,
 } from 'react-icons/ai';
-import { TbMessage2, TbUserCancel, TbUserPlus, TbUserX } from 'react-icons/tb';
+import {
+    TbMessage2,
+    TbUserCancel,
+    TbUserPlus,
+    TbUserX,
+    TbUserOff,
+} from 'react-icons/tb';
 import UserCircleInfo from './UserCircleInfo';
 
 type ProfileCardProps = {
@@ -45,6 +51,34 @@ export default function ProfileCard({ username }: ProfileCardProps) {
         },
     });
 
+    const { mutate: blockUser } = useMutation({
+        mutationFn: async () => {
+            return await axios.post(`/api/friends/block/${username}`, {
+                withCredentials: true,
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['isBlocked', username], {
+                exact: true,
+            });
+            queryClient.invalidateQueries(['profile', username]);
+        },
+    });
+
+    const { mutate: unBlockUser } = useMutation({
+        mutationFn: async () => {
+            return await axios.post(`/api/friends/unblock/${username}`, {
+                withCredentials: true,
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['isBlocked', username], {
+                exact: true,
+            });
+            queryClient.invalidateQueries(['profile', username]);
+        },
+    });
+
     const { data: visitedUser, isLoading: visitedUserLoading } = useQuery({
         queryKey: ['profile', username, 'me'],
         queryFn: async () => {
@@ -57,7 +91,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
             const { data: me } = await axios.get(`/api/user/me`, {
                 withCredentials: true,
             });
-            return {data, me};
+            return { data, me };
         },
     });
 
@@ -71,13 +105,35 @@ export default function ProfileCard({ username }: ProfileCardProps) {
         },
     });
 
-    if (visitedUserLoading || friendshipLoading) {
+    const { data: isBlocked, isLoading } = useQuery({
+        queryKey: ['isBlocked', username],
+        queryFn: async () => {
+            const { data: Blocked } = await axios.get(
+                `/api/friends/isBlocked/${username}`,
+                {
+                    withCredentials: true,
+                },
+            );
+
+            const { data: BlockedBy } = await axios.get(
+                `/api/friends/isBlockedBy/${visitedUser?.me.username}`,
+                {
+                    withCredentials: true,
+                },
+            );
+            return { blocked: Blocked, blockedBy: BlockedBy };
+        },
+    });
+
+    if (visitedUserLoading || friendshipLoading || isLoading) {
         return (
             <div className="bg-default fixed inset-0 z-50">
                 <Loading />
             </div>
         );
     }
+    console.log("blocked", isBlocked?.blocked, ' username', username);
+    console.log("blocked by", isBlocked?.blockedBy , ' visitedUser?.data.username', visitedUser?.me.username);
 
     const leagueImgPath = `/images/${visitedUser?.data.stats.league.toLowerCase()}-league.svg`;
 
@@ -213,41 +269,61 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                     )}
 
                     {/* Not me and not my friend - Add friend */}
-                    {!friendship.isMe && !friendship.isFriend && (
-                        <button
-                            type="button"
-                            title="Send a friend request"
-                            onClick={() => {
-                                if (!showNotification) {
-                                    setShowNotification(true);
-                                    setTimeout(
-                                        () => setShowNotification(false),
-                                        2000,
-                                    );
-                                }
-                                createNotification({
-                                    id: visitedUser?.data.id,
-                                    type: 'FRIEND',
-                                });
-                                socket?.emit(
-                                    'notifications',
-                                    visitedUser?.data.username,
-                                );
-                            }}
-                        >
-                            <TbUserPlus />
-                        </button>
-                    )}
+                    {!isBlocked?.blocked &&
+                        !friendship.isMe &&
+                        !friendship.isFriend && (
+                            <button
+                                type="button"
+                                title="Send a friend request"
+                                onClick={() => {
+                                    if (isBlocked?.blockedBy === true) {
+                                        if (!showNotification) {
+                                            setShowNotification(true);
+                                            setTimeout(
+                                                () =>
+                                                    setShowNotification(false),
+                                                2000,
+                                            );
+                                        }
+                                        createNotification({
+                                            id: visitedUser?.data.id,
+                                            type: 'FRIEND',
+                                        });
+                                        socket?.emit(
+                                            'notifications',
+                                            visitedUser?.data.username,
+                                        );
+                                    }
+                                }}
+                            >
+                                <TbUserPlus />
+                            </button>
+                        )}
 
                     {/* Not me - Block */}
-                    {!friendship.isMe && (
+
+                    {isBlocked?.blocked === true ? (
                         <button
                             type="button"
-                            title="Block user"
-                            onClick={() => console.log(`Block ${username}`)}
+                            title="unBlock user"
+                            onClick={() => {
+                                unBlockUser();
+                            }}
                         >
-                            <TbUserCancel />
+                            <TbUserOff />
                         </button>
+                    ) : (
+                        !friendship.isMe && (
+                            <button
+                                type="button"
+                                title="Block user"
+                                onClick={() => {
+                                    blockUser();
+                                }}
+                            >
+                                <TbUserCancel />
+                            </button>
+                        )
                     )}
                 </div>
             </div>
