@@ -8,6 +8,7 @@ import {
 import { ChannelType } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 import { UserService } from 'src/user/user.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ChatService {
@@ -424,8 +425,7 @@ export class ChatService {
                 );
             }
 
-            // TODO: Hash password using bcrypt
-            if (password !== channel.password) {
+            if (!(await bcrypt.compare(password, channel.password))) {
                 throw new UnauthorizedException('Invalid password');
             }
 
@@ -445,6 +445,61 @@ export class ChatService {
             where: { name: channelName },
             data: {
                 members: { connect: { id: user.id } },
+            },
+        });
+    }
+
+    async createChannel(
+        ownerName: string,
+        name: string,
+        type: string,
+        password?: string,
+    ) {
+        // Protected channels must have a password
+        if (type === 'PROTECTED' && !password) {
+            throw new BadRequestException(
+                'You must provide a password for a protected channel',
+            );
+        }
+
+        // Public and private channels cannot have a password
+        if (type !== 'PROTECTED' && password) {
+            throw new BadRequestException(
+                'You cannot provide a password for a public or private channel',
+            );
+        }
+
+        // Check if channel already exists
+        const channel = await this.prisma.channel.findFirst({
+            where: { name },
+        });
+        if (channel) {
+            throw new BadRequestException(
+                `Channel ${name} already exists, please choose another name`,
+            );
+        }
+
+        // Check if owner exists
+        const owner = await this.prisma.user.findFirst({
+            where: { username: ownerName },
+            select: { id: true },
+        });
+        if (!owner)
+            throw new NotFoundException(`User ${ownerName} does not exist`);
+
+        const channelType =
+            type === 'PUBLIC'
+                ? ChannelType.PUBLIC
+                : type === 'PROTECTED'
+                ? ChannelType.PROTECTED
+                : ChannelType.PRIVATE;
+
+        return await this.prisma.channel.create({
+            data: {
+                name,
+                type: channelType,
+                password,
+                owner: { connect: { id: owner.id } },
             },
         });
     }

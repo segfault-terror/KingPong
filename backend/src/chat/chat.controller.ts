@@ -14,6 +14,7 @@ import { AuthGard } from 'src/auth/auth.guard';
 import { ChatService } from './chat.service';
 import { CreateMessageDto } from './dto/create.message.dto';
 import { JoinChannelDto } from './dto/join.channel.dto';
+import { CreateChannelDto } from './dto/create.channel.dto';
 
 @Controller('chat')
 @UseGuards(AuthGard)
@@ -92,6 +93,16 @@ export class ChatController {
         return this.chatService.joinChannel(
             data.channelName,
             request.user.username,
+            data.password,
+        );
+    }
+
+    @Post('channel/create')
+    async createChannel(@Body() data: CreateChannelDto, @Req() request: any) {
+        return this.chatService.createChannel(
+            request.user.username,
+            data.channelName,
+            data.channelType,
             data.password,
         );
     }

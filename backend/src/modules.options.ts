@@ -19,6 +19,21 @@ export const prismaModuleOptions: PrismaModuleOptions = {
                         }
                     }
                 }
+                // Add password hashing for channels
+                if (params.model === 'Channel') {
+                    if (
+                        params.action === 'create' ||
+                        params.action === 'update'
+                    ) {
+                        if (params.args.data.password) {
+                            const hashedPassword = await bcrypt.hash(
+                                params.args.data.password,
+                                10,
+                            );
+                            params.args.data.password = hashedPassword;
+                        }
+                    }
+                }
                 return await next(params);
             },
         ],
