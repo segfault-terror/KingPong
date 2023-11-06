@@ -47,6 +47,8 @@ model User {
     friendOf User[] @relation("friends")
     sentFriendRequests FriendRequest[] @relation("sender")
     pendingFriendRequests FriendRequest[] @relation("receiver")
+    blockedUsers User[] @relation("block")
+    blockedBy User[] @relation("block")
     gamesAsPlayer1 Game[] @relation("player1")
     gamesAsPlayer2 Game[] @relation("player2")
     dms1 DM[] @relation("user1")
