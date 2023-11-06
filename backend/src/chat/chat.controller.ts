@@ -115,4 +115,16 @@ export class ChatController {
             data.content,
         );
     }
+
+    @Delete('/channel/:channel_name')
+    async deleteChannel(
+        @Param('channel_name') channelName: string,
+        @Req() request: any,
+    ) {
+        console.log(`[chat] DELETE /channel/${channelName}`);
+        return this.chatService.deleteChannel(
+            channelName,
+            request.user.username,
+        );
+    }
 }
