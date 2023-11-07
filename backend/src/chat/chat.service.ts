@@ -9,7 +9,7 @@ import {
 import { ChannelType } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 import { UserService } from 'src/user/user.service';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class ChatService {

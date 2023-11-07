@@ -1,5 +1,5 @@
 import { PrismaModuleOptions } from 'nestjs-prisma';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 export const prismaModuleOptions: PrismaModuleOptions = {
     prismaServiceOptions: {
