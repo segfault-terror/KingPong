@@ -21,6 +21,7 @@ import {
     TbUserOff,
 } from 'react-icons/tb';
 import UserCircleInfo from './UserCircleInfo';
+import { set } from 'react-hook-form';
 
 type ProfileCardProps = {
     username: string;
@@ -28,6 +29,7 @@ type ProfileCardProps = {
 
 export default function ProfileCard({ username }: ProfileCardProps) {
     const [showModal, setShowModal] = useState(false);
+    const [message, setMessage] = useState('');
     const [showNotification, setShowNotification] = useState(false);
     const { socket } = useSocket();
 
@@ -151,7 +153,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                     max-w-[400px]"
                 >
                     <h1 className="text-center text-xl font-jost">
-                        Remove friend{' '}
+                        {message}{' '}
                         <span className="text-secondary-200">@{username}</span>?
                     </h1>
                     <div className="w-full flex justify-center gap-4 pt-4">
@@ -163,7 +165,12 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                                     font-jost hover:bg-secondary-200
                                     hover:text-background"
                             onClick={() => {
-                                removeFriend();
+                                if (message === 'Block user?')
+                                    blockUser();
+                                else if (message === 'Unblock user?')
+                                    unBlockUser();
+                                else if (message === 'Remove friend?')
+                                    removeFriend();
                                 socket?.emit('profile', {
                                     user1: visitedUser?.me.username,
                                     user2: username,
@@ -257,6 +264,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                             type="button"
                             title="Remove friend"
                             onClick={() => {
+                                setMessage('Remove friend?')
                                 setShowModal(true);
                                 socket?.emit('profile', {
                                     user1: visitedUser?.me.username,
@@ -294,6 +302,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                                             'notifications',
                                             visitedUser?.data.username,
                                         );
+                                        socket?.emit('notif', {username: visitedUser?.data.username, type : 'FRIEND'});
                                     }
                                 }}
                             >
@@ -308,7 +317,8 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                             type="button"
                             title="unBlock user"
                             onClick={() => {
-                                unBlockUser();
+                                setMessage('Unblock user?')
+                                setShowModal(true);
                             }}
                         >
                             <TbUserOff />
@@ -319,7 +329,8 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                                 type="button"
                                 title="Block user"
                                 onClick={() => {
-                                    blockUser();
+                                    setMessage('Block user?')
+                                    setShowModal(true);
                                 }}
                             >
                                 <TbUserCancel />
