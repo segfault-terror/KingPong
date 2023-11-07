@@ -1,5 +1,6 @@
 import {
     BadRequestException,
+    ForbiddenException,
     ImATeapotException,
     Injectable,
     NotFoundException,
@@ -653,5 +654,72 @@ export class ChatService {
                 },
             },
         });
+    }
+
+    async changeOwner(
+        channelName: string,
+        prevOwnerId: string,
+        newOwnerUsename: string,
+    ) {
+        // Check if channel exists
+        const channel = await this.prisma.channel.findFirst({
+            where: { name: channelName },
+            select: {
+                owner: {
+                    select: { id: true },
+                },
+            },
+        });
+        if (!channel) {
+            throw new NotFoundException(
+                `Channel ${channelName} does not exist`,
+            );
+        }
+
+        // Check if request user is the real owner
+        if (prevOwnerId !== channel.owner.id) {
+            throw new UnauthorizedException(
+                `You are not owner of the channel ${channelName}`,
+            );
+        }
+
+        // Check if the new owner exists
+        const newOwner = await this.prisma.user.findFirst({
+            where: { username: newOwnerUsename },
+        });
+        if (!newOwner) {
+            throw new NotFoundException(
+                `User ${newOwnerUsename} does not exist`,
+            );
+        }
+
+        // Check if the new owner is a member
+        const isMember = await this.prisma.channel.findFirst({
+            where: {
+                name: channelName,
+                members: { some: { id: newOwner.id } },
+                admins: { some: { id: newOwner.id } },
+            },
+        });
+        if (!isMember) {
+            throw new ForbiddenException(
+                `User ${newOwnerUsename} is not a member in channel ${channelName}`,
+            );
+        }
+
+        // Remove current owner and set new owner
+        return await this.prisma.channel.update({
+            where: { name: channelName },
+            data: {
+                owner: { connect: { id: newOwner.id } },
+                members: {
+                    connect: { id: prevOwnerId },
+                    disconnect: { id: newOwner.id },
+                },
+            },
+        });
+
+        // NOTE: If newOwner is the same as the current owner,
+        // it will get replaced by itself
     }
 }

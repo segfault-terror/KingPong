@@ -138,4 +138,16 @@ export class ChatController {
             request.user.username,
         );
     }
+
+    @Post('/channel/change-owner')
+    async changeChannelOwner(
+        @Body() data: { channelName: string; newOwner: string },
+        @Req() request: any,
+    ) {
+        return this.chatService.changeOwner(
+            data.channelName,
+            request.user.id,
+            data.newOwner,
+        );
+    }
 }
