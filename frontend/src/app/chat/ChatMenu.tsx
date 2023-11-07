@@ -141,6 +141,130 @@ function DmMenu(props: { username: string }) {
     );
 }
 
+function LeaveChannelModal(props: {
+    channelName: string;
+    setShowLeaveModal: (val: boolean) => void;
+    setRedirectChannel: (val: boolean) => void;
+}) {
+    const { mutate: leaveChannel, isLoading } = useMutation({
+        mutationFn: async () => {
+            await axios.delete(`/api/chat/channel/leave/${props.channelName}`, {
+                withCredentials: true,
+            });
+        },
+        onSuccess: () => {
+            props.setRedirectChannel(true);
+        },
+    });
+
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
+
+    return (
+        <Modal
+            onClose={() => props.setShowLeaveModal(false)}
+            childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%]
+                    max-w-[400px]"
+        >
+            <h1 className="text-center text-xl font-jost">
+                Leave channel{' '}
+                <span className="text-secondary-200">{props.channelName}</span>?
+            </h1>
+            <div className="w-full flex justify-center gap-4 pt-4">
+                <button
+                    type="button"
+                    title="Leave channel"
+                    className="bg-background rounded-2xl px-4
+                                    border border-white text-secondary-200
+                                    font-jost hover:bg-secondary-200
+                                    hover:text-background"
+                    onClick={() => {
+                        leaveChannel();
+                    }}
+                >
+                    OK
+                </button>
+                <button
+                    className="bg-background rounded-2xl px-4
+                                    border border-white text-red-400
+                                    font-jost hover:bg-red-400
+                                    hover:text-background"
+                    onClick={() => props.setShowLeaveModal(false)}
+                >
+                    Cancel
+                </button>
+            </div>
+        </Modal>
+    );
+}
+
+function DeleteChannelModal(props: {
+    channelName: string;
+    setShowDeleteModal: (val: boolean) => void;
+    setRedirectChannel: (val: boolean) => void;
+}) {
+    const { mutate: deleteChannel, isLoading } = useMutation({
+        mutationFn: async () => {
+            await axios.delete(`/api/chat/channel/${props.channelName}`, {
+                withCredentials: true,
+            });
+        },
+        onSuccess: () => {
+            props.setRedirectChannel(true);
+        },
+    });
+
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
+
+    return (
+        <Modal
+            onClose={() => props.setShowDeleteModal(false)}
+            childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%]
+                    max-w-[400px]"
+        >
+            <h1 className="text-center text-xl font-jost">
+                Delete channel{' '}
+                <span className="text-secondary-200">{props.channelName}</span>?
+            </h1>
+            <div className="w-full flex justify-center gap-4 pt-4">
+                <button
+                    type="button"
+                    title="Delete channel"
+                    className="bg-background rounded-2xl px-4
+                                    border border-white text-secondary-200
+                                    font-jost hover:bg-secondary-200
+                                    hover:text-background"
+                    onClick={() => {
+                        deleteChannel();
+                    }}
+                >
+                    OK
+                </button>
+                <button
+                    className="bg-background rounded-2xl px-4
+                                    border border-white text-red-400
+                                    font-jost hover:bg-red-400
+                                    hover:text-background"
+                    onClick={() => props.setShowDeleteModal(false)}
+                >
+                    Cancel
+                </button>
+            </div>
+        </Modal>
+    );
+}
+
 function ChannelMenu(props: { channelName: string }) {
     const { data: channel, isLoading: channelIsLoading } = useQuery({
         queryKey: ['channel', props.channelName],
@@ -172,37 +296,7 @@ function ChannelMenu(props: { channelName: string }) {
         redirect('/chat');
     }, [redirectChannel]);
 
-    const { mutate: deleteChannel, isLoading: deleteChannelIsLoading } =
-        useMutation({
-            mutationFn: async () => {
-                await axios.delete(`/api/chat/channel/${props.channelName}`, {
-                    withCredentials: true,
-                });
-            },
-            onSuccess: () => {
-                setRedirectChannel(true);
-            },
-        });
-
-    const { mutate: leaveChannel, isLoading: leaveChannelIsLoading } =
-        useMutation({
-            mutationFn: async () => {
-                await axios.delete(
-                    `/api/chat/channel/leave/${props.channelName}`,
-                    { withCredentials: true },
-                );
-            },
-            onSuccess: () => {
-                setRedirectChannel(true);
-            },
-        });
-
-    if (
-        channelIsLoading ||
-        meIsLoading ||
-        deleteChannelIsLoading ||
-        leaveChannelIsLoading
-    ) {
+    if (channelIsLoading || meIsLoading) {
         return (
             <div className="bg-default fixed inset-0 z-50">
                 <Loading />
@@ -213,82 +307,19 @@ function ChannelMenu(props: { channelName: string }) {
     return (
         <>
             {showLeaveModal && (
-                <Modal
-                    onClose={() => setShowLeaveModal(false)}
-                    childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%]
-                    max-w-[400px]"
-                >
-                    <h1 className="text-center text-xl font-jost">
-                        Leave channel{' '}
-                        <span className="text-secondary-200">
-                            {props.channelName}
-                        </span>
-                        ?
-                    </h1>
-                    <div className="w-full flex justify-center gap-4 pt-4">
-                        <button
-                            type="button"
-                            title="Leave channel"
-                            className="bg-background rounded-2xl px-4
-                                    border border-white text-secondary-200
-                                    font-jost hover:bg-secondary-200
-                                    hover:text-background"
-                            onClick={() => {
-                                leaveChannel();
-                            }}
-                        >
-                            OK
-                        </button>
-                        <button
-                            className="bg-background rounded-2xl px-4
-                                    border border-white text-red-400
-                                    font-jost hover:bg-red-400
-                                    hover:text-background"
-                            onClick={() => setShowLeaveModal(false)}
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </Modal>
+                <LeaveChannelModal
+                    channelName={props.channelName}
+                    setShowLeaveModal={setShowLeaveModal}
+                    setRedirectChannel={setRedirectChannel}
+                />
             )}
+
             {showDeleteModal && (
-                <Modal
-                    onClose={() => setShowDeleteModal(false)}
-                    childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%]
-                    max-w-[400px]"
-                >
-                    <h1 className="text-center text-xl font-jost">
-                        Delete channel{' '}
-                        <span className="text-secondary-200">
-                            {props.channelName}
-                        </span>
-                        ?
-                    </h1>
-                    <div className="w-full flex justify-center gap-4 pt-4">
-                        <button
-                            type="button"
-                            title="Delete channel"
-                            className="bg-background rounded-2xl px-4
-                                    border border-white text-secondary-200
-                                    font-jost hover:bg-secondary-200
-                                    hover:text-background"
-                            onClick={() => {
-                                deleteChannel();
-                            }}
-                        >
-                            OK
-                        </button>
-                        <button
-                            className="bg-background rounded-2xl px-4
-                                    border border-white text-red-400
-                                    font-jost hover:bg-red-400
-                                    hover:text-background"
-                            onClick={() => setShowDeleteModal(false)}
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </Modal>
+                <DeleteChannelModal
+                    channelName={props.channelName}
+                    setShowDeleteModal={setShowDeleteModal}
+                    setRedirectChannel={setRedirectChannel}
+                />
             )}
 
             {channel?.owner.username === me?.username && (
@@ -305,9 +336,17 @@ function ChannelMenu(props: { channelName: string }) {
                     </button>
                 </ChatMenuItem>
             )}
-            <ChatMenuItem>
-                <button>Channel</button>
-            </ChatMenuItem>
+            {channel?.owner.username === me?.username && (
+                <ChatMenuItem>
+                    <button
+                        onClick={() => {
+                            console.log('Transferring ownership');
+                        }}
+                    >
+                        Set new owner
+                    </button>
+                </ChatMenuItem>
+            )}
             <ChatMenuItem>
                 <button>Channel</button>
             </ChatMenuItem>
