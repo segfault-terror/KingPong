@@ -27,7 +27,7 @@ export default function ChatPage() {
     }
 
     return (
-        <SocketProvider username={me.username}>
+        <SocketProvider username={me.username} namespace='chat'>
             <ChatSideBar toggle={toggle} setToggle={setToggle} />
         </SocketProvider>
     );
