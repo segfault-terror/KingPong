@@ -269,7 +269,9 @@ function DeleteChannelModal(props: {
 
 function NewOwnerModal(props: {
     channelName: string;
+    setNewOwnerUsername: (val: string) => void;
     setShowNewOwnerModal: (val: boolean) => void;
+    setShowNewOwnerDialog: (val: boolean) => void;
 }) {
     const { data: channelMembers, isLoading } = useQuery({
         queryKey: ['channel', props.channelName, 'members'],
@@ -323,93 +325,140 @@ function NewOwnerModal(props: {
     }
 
     return (
-        <Modal
-            onClose={() => props.setShowNewOwnerModal(false)}
-            childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%] h-[300px]
+        <>
+            <Modal
+                onClose={() => props.setShowNewOwnerModal(false)}
+                childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%] h-[300px]
                                         lg:w-2/3 max-w-[600px]"
-        >
-            <div
-                className="text-white accent-secondary-200
-                flex flex-col gap-2 font-jost"
             >
-                <h1 className="text-secondary-200 text-center text-2xl mb-4">
-                    Set new owner
-                </h1>
-                <input
-                    type="text"
-                    autoFocus
-                    placeholder="Search"
-                    onKeyDown={(event) => {
-                        if (event.key === 'Enter') {
+                <div
+                    className="text-white accent-secondary-200
+                flex flex-col gap-2 font-jost"
+                >
+                    <h1 className="text-secondary-200 text-center text-2xl mb-4">
+                        Set new owner
+                    </h1>
+                    <input
+                        type="text"
+                        autoFocus
+                        placeholder="Search"
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                                event.preventDefault();
+                            }
+                        }}
+                        onChange={(event) => {
                             event.preventDefault();
-                        }
-                    }}
-                    onChange={(event) => {
-                        event.preventDefault();
-                        const query = event.target.value;
-                        if (query === '') {
-                            setResults([]);
-                            return;
-                        }
-                        const newResults = filterMembers(
-                            channelMembers?.members,
-                            channelMembers?.admins,
-                            query,
-                        );
-                        setResults(newResults);
-                    }}
-                    className="bg-background text-white accent-secondary-200
+                            const query = event.target.value;
+                            if (query === '') {
+                                setResults([]);
+                                return;
+                            }
+                            const newResults = filterMembers(
+                                channelMembers?.members,
+                                channelMembers?.admins,
+                                query,
+                            );
+                            setResults(newResults);
+                        }}
+                        className="bg-background text-white accent-secondary-200
 						outline-none
 						border-2 border-secondary-200
 						rounded-2xl px-2 py-1"
-                />
-                {results.length !== 0 && (
-                    <ul
-                        className="bg-primary border-[0.5px] border-secondary-200 p-2 max-h-36
+                    />
+                    {results.length !== 0 && (
+                        <ul
+                            className="bg-primary border-[0.5px] border-secondary-200 p-2 max-h-36
 							overflow-y-scroll scrollbar-thumb-secondary-200 scrollbar-thin"
-                    >
-                        {results.map((result, idx) => (
-                            <button
-                                onClick={() =>
-                                    console.log(
-                                        `${result.username} is the new owner!`,
-                                    )
-                                }
-                                key={idx}
-                                className="hover:bg-background/80 hover:rounded-xl block w-full text-left py-1"
-                            >
-                                <li className="flex items-center gap-4 pr-4">
-                                    <img
-                                        src={result.avatar}
-                                        alt={`${result.username}'s profile picture`}
-                                        className="w-12 h-12 rounded-full object-cover
+                        >
+                            {results.map((result, idx) => (
+                                <button
+                                    onClick={() => {
+                                        props.setShowNewOwnerModal(false);
+                                        props.setNewOwnerUsername(
+                                            result.username,
+                                        );
+                                        props.setShowNewOwnerDialog(true);
+                                    }}
+                                    key={idx}
+                                    className="hover:bg-background/80 hover:rounded-xl block w-full text-left py-1"
+                                >
+                                    <li className="flex items-center gap-4 pr-4">
+                                        <img
+                                            src={result.avatar}
+                                            alt={`${result.username}'s profile picture`}
+                                            className="w-12 h-12 rounded-full object-cover
                                         border-[1px] border-secondary-200 font-jost flex-shrink-0"
-                                    />
-                                    <div className="flex flex-col flex-grow">
-                                        <p>{result.fullname}</p>
-                                        <p className="text-secondary-200 italic">
-                                            @{result.username}
-                                        </p>
-                                    </div>
-                                    <div className="font-mulish italic">
-                                        {result.isAdmin && 'Admin'}
-                                    </div>
-                                </li>
-                            </button>
-                        ))}
-                    </ul>
-                )}
-                {channelMembers?.admins.length === 0 &&
-                    channelMembers?.members.length === 0 && (
-                        <>
-                            <div className="w-[20%] mx-auto">
-                                <Lottie animationData={Ghost} loop={true} />
-                            </div>
-                            <p className="text-center text-lg font-jost">
-                                This channel has no members other than you
-                            </p>
-                        </>
+                                        />
+                                        <div className="flex flex-col flex-grow">
+                                            <p>{result.fullname}</p>
+                                            <p className="text-secondary-200 italic">
+                                                @{result.username}
+                                            </p>
+                                        </div>
+                                        <div className="font-mulish italic">
+                                            {result.isAdmin && 'Admin'}
+                                        </div>
+                                    </li>
+                                </button>
+                            ))}
+                        </ul>
                     )}
+                    {channelMembers?.admins.length === 0 &&
+                        channelMembers?.members.length === 0 && (
+                            <>
+                                <div className="w-[20%] mx-auto">
+                                    <Lottie animationData={Ghost} loop={true} />
+                                </div>
+                                <p className="text-center text-lg font-jost">
+                                    This channel has no members other than you
+                                </p>
+                            </>
+                        )}
+                </div>
+            </Modal>
+        </>
+    );
+}
+
+function SetNewOwnerDialog(props: {
+    newOwnerUsername: string;
+    setShowNewOwnerDialog: (val: boolean) => void;
+}) {
+    return (
+        <Modal
+            onClose={() => props.setShowNewOwnerDialog(false)}
+            childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%]
+                    max-w-[400px]"
+        >
+            <h1 className="text-center text-xl font-jost">
+                Transfer ownership to{' '}
+                <span className="text-secondary-200">
+                    {props.newOwnerUsername}
+                </span>
+                ?
+            </h1>
+            <div className="w-full flex justify-center gap-4 pt-4">
+                <button
+                    type="button"
+                    title="Leave channel"
+                    className="bg-background rounded-2xl px-4
+                                    border border-white text-secondary-200
+                                    font-jost hover:bg-secondary-200
+                                    hover:text-background"
+                    onClick={() => {}}
+                >
+                    OK
+                </button>
+                <button
+                    className="bg-background rounded-2xl px-4
+                                    border border-white text-red-400
+                                    font-jost hover:bg-red-400
+                                    hover:text-background"
+                    onClick={() => props.setShowNewOwnerDialog(false)}
+                >
+                    Cancel
+                </button>
             </div>
         </Modal>
     );
@@ -441,6 +490,8 @@ function ChannelMenu(props: { channelName: string }) {
     const [showLeaveModal, setShowLeaveModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showNewOwnerModal, setShowNewOwnerModal] = useState(false);
+    const [showNewOwnerDialog, setShowNewOwnerDialog] = useState(false);
+    const [newOwnerUsername, setNewOwnerUsername] = useState('');
 
     useEffect(() => {
         if (!redirectChannel) return;
@@ -477,6 +528,14 @@ function ChannelMenu(props: { channelName: string }) {
                 <NewOwnerModal
                     channelName={props.channelName}
                     setShowNewOwnerModal={setShowNewOwnerModal}
+                    setShowNewOwnerDialog={setShowNewOwnerDialog}
+                    setNewOwnerUsername={setNewOwnerUsername}
+                />
+            )}
+            {showNewOwnerDialog && (
+                <SetNewOwnerDialog
+                    newOwnerUsername={newOwnerUsername}
+                    setShowNewOwnerDialog={setShowNewOwnerDialog}
                 />
             )}
 
