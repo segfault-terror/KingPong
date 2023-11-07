@@ -350,6 +350,7 @@ export class ChatService {
                     select: {
                         id: true,
                         username: true,
+                        fullname: true,
                         avatar: true,
                         status: true,
                     },
@@ -358,6 +359,7 @@ export class ChatService {
                     select: {
                         id: true,
                         username: true,
+                        fullname: true,
                         avatar: true,
                         status: true,
                     },
@@ -366,6 +368,7 @@ export class ChatService {
                     select: {
                         id: true,
                         username: true,
+                        fullname: true,
                         avatar: true,
                         status: true,
                     },
