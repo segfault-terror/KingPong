@@ -13,6 +13,7 @@ import { ChatModule } from './chat/chat.module';
 import { UpdateModule } from './update/updateStats.module';
 import { FriendsModule } from './friends/friends.module';
 import { GlobalGateway } from './global.gateway';
+import { GameModule } from './game/game.module';
 
 @Module({
     imports: [
@@ -26,6 +27,7 @@ import { GlobalGateway } from './global.gateway';
         PrismaModule.forRoot(prismaModuleOptions),
         PassportModule.register({ session: true }),
         ChatModule,
+        GameModule,
     ],
     controllers: [AppController],
     providers: [AppService, GlobalGateway],
