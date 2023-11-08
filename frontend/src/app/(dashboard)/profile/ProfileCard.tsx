@@ -21,7 +21,6 @@ import {
     TbUserOff,
 } from 'react-icons/tb';
 import UserCircleInfo from './UserCircleInfo';
-import { set } from 'react-hook-form';
 
 type ProfileCardProps = {
     username: string;
@@ -93,6 +92,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
             const { data: me } = await axios.get(`/api/user/me`, {
                 withCredentials: true,
             });
+
             return { data, me };
         },
     });
@@ -127,15 +127,13 @@ export default function ProfileCard({ username }: ProfileCardProps) {
         },
     });
 
-    if (visitedUserLoading || friendshipLoading || isLoading) {
+    if (visitedUserLoading || friendshipLoading || isLoading ) {
         return (
             <div className="bg-default fixed inset-0 z-50">
                 <Loading />
             </div>
         );
     }
-    console.log("blocked", isBlocked?.blocked, ' username', username);
-    console.log("blocked by", isBlocked?.blockedBy , ' visitedUser?.data.username', visitedUser?.me.username);
 
     const leagueImgPath = `/images/${visitedUser?.data.stats.league.toLowerCase()}-league.svg`;
 
@@ -165,8 +163,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                                     font-jost hover:bg-secondary-200
                                     hover:text-background"
                             onClick={() => {
-                                if (message === 'Block user?')
-                                    blockUser();
+                                if (message === 'Block user?') blockUser();
                                 else if (message === 'Unblock user?')
                                     unBlockUser();
                                 else if (message === 'Remove friend?')
@@ -264,7 +261,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                             type="button"
                             title="Remove friend"
                             onClick={() => {
-                                setMessage('Remove friend?')
+                                setMessage('Remove friend?');
                                 setShowModal(true);
                                 socket?.emit('profile', {
                                     user1: visitedUser?.me.username,
@@ -285,7 +282,6 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                                 title="Send a friend request"
                                 onClick={() => {
                                     if (!isBlocked?.blockedBy) {
-                                        console.log('is not blocked');
                                         if (!showNotification) {
                                             setShowNotification(true);
                                             setTimeout(
@@ -302,7 +298,12 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                                             'notifications',
                                             visitedUser?.data.username,
                                         );
-                                        socket?.emit('notif', {username: visitedUser?.data.username, type : 'FRIEND'});
+                                        socket?.emit('notif', {
+                                            sender: visitedUser?.data.username,
+                                            username: visitedUser?.me.username,
+                                            type: 'FRIEND',
+                                            avatar: visitedUser?.me.avatar,
+                                        });
                                     }
                                 }}
                             >
@@ -317,7 +318,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                             type="button"
                             title="unBlock user"
                             onClick={() => {
-                                setMessage('Unblock user?')
+                                setMessage('Unblock user?');
                                 setShowModal(true);
                             }}
                         >
@@ -329,7 +330,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                                 type="button"
                                 title="Block user"
                                 onClick={() => {
-                                    setMessage('Block user?')
+                                    setMessage('Block user?');
                                     setShowModal(true);
                                 }}
                             >

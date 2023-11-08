@@ -170,7 +170,8 @@ export default function Notification({ notifications }: NotificationState) {
     const [deleteAll, setDeleteAll] = useState(false);
 
     useEffect(() => {
-        console.log('useEffect');
+        if (!isloadingMe)
+            console.log('useEffect: notifications', meData.username);
         if (!isloadingMe) socket?.emit('notifications', meData.username);
         if (!isloadingMe && acceptNewFriend)
         {

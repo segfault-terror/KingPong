@@ -56,7 +56,7 @@ export class GlobalGateway implements OnGatewayDisconnect {
             (user) => user.username === username,
         );
 
-        console.log(result);
+        console.log('friends ', result);
         if (!result) return;
         result.sockets.forEach((id) => {
             this.server.to(id).emit('friends', username);
@@ -101,11 +101,38 @@ export class GlobalGateway implements OnGatewayDisconnect {
             });
         if (result2)
             result2.sockets.forEach((id) => {
-                this.server.to(id).emit('profile', { user1, user2 });
+                this.server.to(id).emit('profile', { user2, user1 });
                 console.log(
-                    `+++${this.counter} - Profile to ${user1} and ${user2}`,
+                    `+++${this.counter} - Profile to ${user2} and ${user1}`,
                 );
                 this.counter++;
             });
-    }
+        }
+
+        @SubscribeMessage('notif')
+        async handleNotif(
+            @MessageBody()
+            {
+                sender,
+                username,
+                type,
+                avatar,
+            }: {
+                sender: string;
+                username: string;
+                type: string;
+                avatar: string;
+            },
+        ) {
+            const result = this.connectedUsers.find(
+                (user) => user.username === sender,
+            );
+            
+            if (result)
+                result.sockets.forEach((id) => {
+                    this.server.to(id).emit('notif', { username, type, avatar });
+                    console.log(`+++${this.counter} - Notif to ${sender}`);
+                    this.counter++;
+                });
+        }
 }

@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { io } from 'socket.io-client';
 import { Socket } from 'dgram';
 import { SocketProvider } from '@/contexts/SocketContext';
+import Notif from '@/components/Notif';
 
 export default function DashboardLayout({
     children,
@@ -86,6 +87,7 @@ export default function DashboardLayout({
         <SocketProvider username={me?.data.username} namespace="Global">
             <div className="flex flex-col min-h-screen">
                 <Header />
+                <Notif />
                 <main className="">{children}</main>
                 {/* <Footer /> */}
             </div>
