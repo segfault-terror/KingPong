@@ -1,15 +1,15 @@
 'use client';
 
+import Modal from '@/components/Modal';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import Lottie from 'lottie-react';
 import Link from 'next/link';
 import { redirect, usePathname, useRouter } from 'next/navigation';
 import path from 'path';
 import { ReactNode, useEffect, useState } from 'react';
-import Loading from '../loading';
-import Modal from '@/components/Modal';
-import Lottie from 'lottie-react';
 import Ghost from '../../../public/lottie/ghost.json';
+import Loading from '../loading';
 
 export default function ChatMenu() {
     const pathname = usePathname();
@@ -422,9 +422,35 @@ function NewOwnerModal(props: {
 }
 
 function SetNewOwnerDialog(props: {
+    channelName: string;
     newOwnerUsername: string;
     setShowNewOwnerDialog: (val: boolean) => void;
 }) {
+    const queryClient = useQueryClient();
+    const { mutate: changeOwner, isLoading } = useMutation({
+        mutationFn: async (args: any) => {
+            return await axios.post('/api/chat/channel/change-owner', {
+                withCredentials: true,
+                ...args,
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries([
+                'channel',
+                props.channelName,
+                'members',
+            ]);
+        },
+    });
+
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
+
     return (
         <Modal
             onClose={() => props.setShowNewOwnerDialog(false)}
@@ -434,7 +460,7 @@ function SetNewOwnerDialog(props: {
             <h1 className="text-center text-xl font-jost">
                 Transfer ownership to{' '}
                 <span className="text-secondary-200">
-                    {props.newOwnerUsername}
+                    @{props.newOwnerUsername}
                 </span>
                 ?
             </h1>
@@ -446,7 +472,13 @@ function SetNewOwnerDialog(props: {
                                     border border-white text-secondary-200
                                     font-jost hover:bg-secondary-200
                                     hover:text-background"
-                    onClick={() => {}}
+                    onClick={() => {
+                        changeOwner({
+                            channelName: props.channelName,
+                            newOwner: props.newOwnerUsername,
+                        });
+                        props.setShowNewOwnerDialog(false);
+                    }}
                 >
                     OK
                 </button>
@@ -534,6 +566,7 @@ function ChannelMenu(props: { channelName: string }) {
             )}
             {showNewOwnerDialog && (
                 <SetNewOwnerDialog
+                    channelName={props.channelName}
                     newOwnerUsername={newOwnerUsername}
                     setShowNewOwnerDialog={setShowNewOwnerDialog}
                 />

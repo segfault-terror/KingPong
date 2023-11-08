@@ -700,12 +700,19 @@ export class ChatService {
         const isMember = await this.prisma.channel.findFirst({
             where: {
                 name: channelName,
-                members: { some: { id: newOwner.id } },
-                admins: { some: { id: newOwner.id } },
+                OR: [
+                    {
+                        members: { some: { id: newOwner.id } },
+                    },
+                    {
+                        admins: { some: { id: newOwner.id } },
+                    },
+                ],
             },
         });
+
         if (!isMember) {
-            throw new ForbiddenException(
+            throw new BadRequestException(
                 `User ${newOwnerUsename} is not a member in channel ${channelName}`,
             );
         }
@@ -717,6 +724,9 @@ export class ChatService {
                 owner: { connect: { id: newOwner.id } },
                 members: {
                     connect: { id: prevOwnerId },
+                    disconnect: { id: newOwner.id },
+                },
+                admins: {
                     disconnect: { id: newOwner.id },
                 },
             },
