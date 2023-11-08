@@ -8,7 +8,5 @@ type ChannelProps = {
 };
 
 export default function Channel({ params }: ChannelProps) {
-    return (
-        <ChannelConversation channelName={params.channelname}/>
-    );
+    return <ChannelConversation channelName={params.channelname} />;
 }

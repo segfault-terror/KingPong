@@ -7,8 +7,10 @@ import {
     WebSocketGateway,
     WebSocketServer,
 } from '@nestjs/websockets';
+import { PrismaService } from 'nestjs-prisma';
 import { Namespace, Socket } from 'socket.io';
 import { WsAuthGuard } from 'src/auth/ws.auth.guard';
+import { ChatService } from './chat.service';
 
 type IsTypingData = {
     username: string;
@@ -20,15 +22,22 @@ type ConnectedUser = {
     socketsId: string[];
 };
 
+type ChannelData = {
+    channelName: string;
+    connectedUsers: ConnectedUser[];
+}[];
+
 @WebSocketGateway({ namespace: 'chat' })
 @UseGuards(WsAuthGuard)
 export class ChatGateway implements OnGatewayDisconnect {
     connectedUsers: ConnectedUser[] = [];
+    channels: ChannelData = [];
     counter = 0;
     @WebSocketServer() server: Namespace;
+    constructor(private readonly chatService: ChatService) {}
 
     @SubscribeMessage('register')
-    handleRegister(
+    async handleRegister(
         @MessageBody() username: string,
         @ConnectedSocket() socket: Socket,
     ) {
@@ -42,6 +51,29 @@ export class ChatGateway implements OnGatewayDisconnect {
         }
         this.connectedUsers.push({ username, socketsId: [socket.id] });
         console.log(`[chat] Registered ${username} for the first time`);
+
+        const userChannels = await this.chatService.getUserChannels(username);
+
+        userChannels.forEach((channel) => {
+            const channelData = this.channels.find(
+                (channelData) => channelData.channelName === channel.name,
+            );
+
+            if (!channelData) {
+                this.channels.push({
+                    channelName: channel.name,
+                    connectedUsers: [{ username, socketsId: [socket.id] }],
+                });
+                console.log(`[channel] Created channel ${channel.name}`);
+                return;
+            }
+            channelData.connectedUsers.push({
+                username,
+                socketsId: [socket.id],
+            });
+            console.log(`[channel] Added ${username} to ${channel.name}`);
+            console.dir(this.channels);
+        });
     }
 
     async handleDisconnect(socket: Socket) {
@@ -69,6 +101,40 @@ export class ChatGateway implements OnGatewayDisconnect {
                 (user) => user.socketsId.length !== 0,
             );
         }
+
+        const userChannels = await this.chatService.getUserChannels(
+            user.username,
+        );
+
+        userChannels.forEach((channel) => {
+            const channelData = this.channels.find(
+                (channelData) => channelData.channelName === channel.name,
+            );
+
+            if (!channelData) {
+                console.log(
+                    `[channel] Couldn't find channel ${channel.name} in channels`,
+                );
+                return;
+            }
+
+            channelData.connectedUsers = channelData.connectedUsers.filter(
+                (connectedUser) => connectedUser.username !== user.username,
+            );
+
+            console.log(
+                `[channel] Removed ${user.username} from ${channel.name}`,
+            );
+
+            if (channelData.connectedUsers.length === 0) {
+                this.channels = this.channels.filter(
+                    (channelData) =>
+                        channelData.connectedUsers.length !== 0 &&
+                        channelData.channelName !== channel.name,
+                );
+                console.log(`[channel] Deleted channel ${channel.name}`);
+            }
+        });
     }
 
     @SubscribeMessage('typing')

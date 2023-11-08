@@ -39,7 +39,7 @@ export function SocketProvider(props: {
         return () => {
             setTimeout(() => newSocket.close(), 0);
         };
-    }, [props.username]);
+    }, [props.username, props.namespace]);
 
     return (
         <SocketContext.Provider value={{ socket }}>

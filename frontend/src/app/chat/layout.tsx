@@ -8,6 +8,10 @@ import DropdownModal from './DropdownModal';
 import JoinNewChannel from './JoinNewChannel';
 import NewConversation from './NewConversation';
 import WelcomeChannel from './WelcomeChannel';
+import Loading from '../loading';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import { SocketProvider } from '@/contexts/SocketContext';
 
 type MainChatLayoutProps = {
     children: React.ReactNode;
@@ -21,6 +25,24 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
     const [channel, setChannel] = useState<Channel>({} as Channel);
     const [newConversation, setNewConversation] = useState(false);
     const [dotsDropdown, setDotsDropdown] = useState(false);
+
+    const { data: me, isLoading } = useQuery({
+        queryKey: ['user', 'me'],
+        queryFn: async () => {
+            const { data: me } = await axios.get('/api/user/me', {
+                withCredentials: true,
+            });
+            return me;
+        },
+    });
+
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
 
     return (
         <toggleContext.Provider value={{ toggle, setToggle }}>
@@ -88,7 +110,9 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
                         <ChatMenu />
                     </DropdownModal>
                 )}
-                {children}
+                <SocketProvider username={me.username} namespace="chat">
+                    {children}
+                </SocketProvider>
             </modalContext.Provider>
         </toggleContext.Provider>
     );
