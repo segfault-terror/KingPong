@@ -4,6 +4,7 @@ import { Body, Engine } from 'matter-js';
 import { PongTable } from '../utils/PongTable';
 import { Ball } from '../utils/Ball';
 import { Paddle } from '../utils/Paddle';
+import { UserService } from 'src/user/user.service';
 
 enum Direction {
     LEFT = 'left',
@@ -13,7 +14,7 @@ enum Direction {
 
 @Injectable()
 export class ComputerService {
-    constructor() {}
+    constructor(private readonly userService: UserService) {}
 
     startGame(client: Socket) {
         client.emit('start-game', 'start-game');
@@ -28,6 +29,12 @@ export class ComputerService {
             frictionAir: 0,
             frictionStatic: 0,
         });
+        Body.applyForce(
+            ball.body,
+            { x: ball.body.position.x, y: ball.body.position.y },
+            { x: 0, y: 0.0025 },
+        );
+
         const topPaddle = new Paddle(canvas.width / 2, 50, 100, 20, world, {
             isStatic: true,
         });

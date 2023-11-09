@@ -26,11 +26,11 @@ export function setup(p5: p5Types, canvasParentRef: Element) {
 
     Events.on(engine, 'collisionStart', (event) => {
         const pairs = event.pairs;
-        console.log(pairs);
+        //console.log(pairs);
         for (let i = 0; i < pairs.length; i++) {
             const pair = pairs[i];
             if (pair.bodyA === ball.body) {
-                console.log('The ball has hit something!');
+                //console.log('The ball has hit something!');
                 Body.applyForce(ball.body, { x: ball.body.position.x, y: ball.body.position.y }, { x: 0, y: 0.025 });
             }
         }
