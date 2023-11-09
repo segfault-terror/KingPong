@@ -25,26 +25,29 @@ export default function ChatInput({
         socket?.on('typing', (data) => setIsTyping(data.isTyping));
 
         socket?.on('new-message', () => {
-            if (username /* DM */) {
-                queryClient.invalidateQueries(['dm', username], {
-                    exact: true,
-                });
-                queryClient.invalidateQueries(['dms', 'brief'], {
-                    exact: true,
-                });
-            }
-            if (channelName /* Channel */) {
-                queryClient.invalidateQueries(['channel', channelName], {
-                    exact: true,
-                });
-                queryClient.invalidateQueries(['channels', 'brief'], {
-                    exact: true,
-                });
-            }
+            console.log(`Invalidating query [dm, ${username}]`);
+            queryClient.invalidateQueries(['dm', username], {
+                exact: true,
+            });
+            queryClient.invalidateQueries(['dms', 'brief'], {
+                exact: true,
+            });
         });
+
+        socket?.on('new-channel-message', () => {
+            console.log(`Invalidating query [channel, ${channelName}]`);
+            queryClient.invalidateQueries(['channel', channelName], {
+                exact: true,
+            });
+            queryClient.invalidateQueries(['channels', 'brief'], {
+                exact: true,
+            });
+        });
+
         return () => {
             socket?.off('typing');
             socket?.off('new-message');
+            socket?.off('new-channel-message');
         };
     });
 
@@ -87,6 +90,11 @@ export default function ChatInput({
 
                         if (username /* DM */) {
                             socket?.emit('new-message', username);
+                        }
+
+                        if (channelName /* Channel */) {
+                            console.log(`Emitting new-channel-message`);
+                            socket?.emit('new-channel-message', channelName);
                         }
 
                         event.currentTarget.value = '';

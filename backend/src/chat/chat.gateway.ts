@@ -52,21 +52,8 @@ export class ChatGateway implements OnGatewayDisconnect {
         const userChannels = await this.chatService.getUserChannels(username);
 
         userChannels.forEach((channel) => {
-            const channelData = this.channels.find(
-                (channelData) => channelData.channelName === channel.name,
-            );
-
-            if (!channelData) {
-                this.channels.push({
-                    channelName: channel.name,
-                    connectedUsers: [{ username, socketsId: [socket.id] }],
-                });
-                return;
-            }
-            channelData.connectedUsers.push({
-                username,
-                socketsId: [socket.id],
-            });
+            socket.join(channel.name);
+            console.log(`[channel] Joined ${channel.name}`);
         });
     }
 
@@ -94,25 +81,8 @@ export class ChatGateway implements OnGatewayDisconnect {
         );
 
         userChannels.forEach((channel) => {
-            const channelData = this.channels.find(
-                (channelData) => channelData.channelName === channel.name,
-            );
-
-            if (!channelData) {
-                return;
-            }
-
-            channelData.connectedUsers = channelData.connectedUsers.filter(
-                (connectedUser) => connectedUser.username !== user.username,
-            );
-
-            if (channelData.connectedUsers.length === 0) {
-                this.channels = this.channels.filter(
-                    (channelData) =>
-                        channelData.connectedUsers.length !== 0 &&
-                        channelData.channelName !== channel.name,
-                );
-            }
+            socket.leave(channel.name);
+            console.log(`[channel] Left ${channel.name}`);
         });
     }
 
@@ -144,5 +114,12 @@ export class ChatGateway implements OnGatewayDisconnect {
         user.socketsId.forEach((socketId: string) => {
             this.server.to(socketId).emit('new-message', username);
         });
+    }
+
+    @SubscribeMessage('new-channel-message')
+    handleNewChannelMessage(@MessageBody() channelName: string) {
+        console.log(`[channel] New message to channel ${channelName}`);
+
+        this.server.to(channelName).emit('new-channel-message', channelName);
     }
 }
