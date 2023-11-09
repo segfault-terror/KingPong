@@ -1,10 +1,17 @@
+import { use } from 'react';
 import MatchMaking from './MatchMaking';
+import { useSocket } from '@/contexts/SocketContext';
 
-import TopImg from '../../../../public/images/MatchMacking_t.svg';
-import BottomImg from '../../../../public/images/MatchMacking_b.svg';
-import LeftImg from '../../../../public/images/MatchMacking_l.svg';
-import RightImg from '../../../../public/images/MatchMacking_r.svg';
-
-export default function MatchMakingPage() {
-    return <MatchMaking topImg={TopImg.src} bottomImg={BottomImg.src} leftImg={LeftImg.src} rightImg={RightImg.src} />;
+type Props = {
+    matchmaking: boolean;
+    setmatchmaking: (matchmaking: boolean) => void;
+    me: any;
+};
+export default function MatchMakingPage({matchmaking, setmatchmaking, me}: Props) {
+    const {socket} = useSocket();
+    socket?.emit('matchmaking', me);
+    socket?.on('matchmaking', (foundPlayer: boolean) => {
+        if (foundPlayer) setmatchmaking(false);
+    });
+    return <MatchMaking />;
 }

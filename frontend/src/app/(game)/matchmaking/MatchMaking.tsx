@@ -2,24 +2,22 @@
 
 import PlayerCard from './PlayerCard';
 
-import Archer from '../../../../public/images/2.jpeg';
-import Tommy from '../../../../public/images/1.jpeg';
-import VsMobile from '../../../../public/images/VS-Mobile.svg';
-import VsDesktop from '../../../../public/images/VS-Desktop.svg';
-import Ball from '../../../../public/images/ball-noshadow.svg';
+import VsMobile from '@/../public/images/VS-Mobile.svg';
+import VsDesktop from '@/../public/images/VS-Desktop.svg';
+import Ball from '@/../public/images/ball-noshadow.svg';
+import TopImg from '@/../public/images/MatchMacking_t.svg';
+import BottomImg from '@/../public/images/MatchMacking_b.svg';
+import LeftImg from '@/../public/images/MatchMacking_l.svg';
+import RightImg from '@/../public/images/MatchMacking_r.svg';
+import Tommy from '@/../public/images/1.jpeg';
+import Archer from '@/../public/images/2.jpeg';
 
 type Props = {
-    topImg: string;
-    bottomImg: string;
-    rightImg: string;
-    leftImg: string;
+
 };
 
 export default function MatchMaking({
-    topImg,
-    bottomImg,
-    rightImg,
-    leftImg,
+
 }: Props) {
     return (
         <div
@@ -29,12 +27,12 @@ export default function MatchMaking({
                 flex flex-col lg:flex-row justify-center"
         >
             <img
-                src={topImg}
+                src={TopImg.src}
                 alt="Top Side"
                 className="lg:object-cover h-full lg:hidden animate-slide-up-gate"
             />
             <img
-                src={leftImg}
+                src={LeftImg.src}
                 alt="Left Side"
                 className="hidden lg:inline lg:object-cover lg:w-full animate-slide-left-gate"
             />
@@ -57,12 +55,12 @@ export default function MatchMaking({
             </div>
 
             <img
-                src={bottomImg}
+                src={BottomImg.src}
                 alt="Bottom Side"
                 className="lg:object-cover h-full lg:hidden animate-slide-down-gate "
             />
             <img
-                src={rightImg}
+                src={RightImg.src}
                 alt="Right Side"
                 className="hidden lg:inline lg:object-cover lg:w-full animate-slide-right-gate"
             />
