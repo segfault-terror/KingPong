@@ -29,11 +29,13 @@ export class ComputerService {
             frictionAir: 0,
             frictionStatic: 0,
         });
-        Body.applyForce(
-            ball.body,
-            { x: ball.body.position.x, y: ball.body.position.y },
-            { x: 0, y: 0.0025 },
-        );
+        setTimeout(() => {
+            Body.applyForce(
+                ball.body,
+                { x: ball.body.position.x, y: ball.body.position.y },
+                { x: 0, y: 0.0025 },
+            );
+        }, 2000);
 
         const topPaddle = new Paddle(canvas.width / 2, 50, 100, 20, world, {
             isStatic: true,
@@ -48,6 +50,13 @@ export class ComputerService {
         );
         const frameRate = 1000 / 30;
 
+        client.emit('canvas', {
+            canvas,
+            frameRate,
+            topPaddle: { width: topPaddle.w, height: topPaddle.h },
+            bottomPaddle: { width: bottomPaddle.w, height: bottomPaddle.h },
+            ball: { radius: ball.r },
+        });
         const interval = setInterval(() => {
             Engine.update(engine, frameRate);
             const ballPos = ball.body.position;
@@ -92,6 +101,26 @@ export class ComputerService {
         const stopMoving = () => {
             clearInterval(moveInterval);
         };
+
+        client.on('move-left', () => {
+            if (bottomPaddle.body.position.x < 50) {
+                return;
+            }
+            Body.setPosition(bottomPaddle.body, {
+                x: bottomPaddle.body.position.x - 10,
+                y: bottomPaddle.body.position.y,
+            });
+        });
+
+        client.on('move-right', () => {
+            if (bottomPaddle.body.position.x > canvas.width - 50) {
+                return;
+            }
+            Body.setPosition(bottomPaddle.body, {
+                x: bottomPaddle.body.position.x + 10,
+                y: bottomPaddle.body.position.y,
+            });
+        });
 
         client.on('press-left', () => {
             currentDirection = Direction.LEFT;
