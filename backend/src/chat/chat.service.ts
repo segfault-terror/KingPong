@@ -730,16 +730,25 @@ export class ChatService {
         // it will get replaced by itself
     }
 
-    async editChannel(oldName: string, data: UpdateChannelDto) {
-        this.logger.verbose(`Editing channel ${oldName}`);
-        this.logger.verbose(`Data: ${JSON.stringify(data)}`);
-
+    async editChannel(
+        oldName: string,
+        data: UpdateChannelDto,
+        username: string,
+    ) {
         // Check if channel exists
         const channel = await this.prisma.channel.findFirst({
             where: { name: oldName },
+            include: { owner: true },
         });
         if (!channel) {
             throw new NotFoundException(`Channel ${oldName} does not exist`);
+        }
+
+        // Check if request user is the real owner
+        if (channel.owner.username !== username) {
+            throw new UnauthorizedException(
+                `User ${username} is not the owner of channel ${oldName}`,
+            );
         }
 
         // Check if the new name is not taken
@@ -775,7 +784,11 @@ export class ChatService {
 
         return await this.prisma.channel.update({
             where: { id: channel.id },
-            data: { ...channel },
+            data: {
+                name: channel.name,
+                type: channel.type,
+                password: channel.password,
+            },
         });
     }
 }
