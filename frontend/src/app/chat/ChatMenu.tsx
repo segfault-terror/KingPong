@@ -47,7 +47,6 @@ function DmMenu(props: { username: string }) {
 
     const { data: dm, isLoading: dmIsLoding } = useQuery({
         queryFn: async () => {
-            console.log(props.username);
             const { data: dm } = await axios.get(
                 `/api/chat/dm/${props.username}`,
                 {
@@ -508,7 +507,6 @@ function EditChannelModal(props: {
 
     useEffect(() => {
         if (!redirectChannel) return;
-        console.log(`redirecting to ${watch('name')}`);
         redirect(`/chat/channel/${watch('name')}`);
     }, [redirectChannel]);
 
@@ -527,14 +525,16 @@ function EditChannelModal(props: {
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async (args: any) => {
-            try {
-                await axios.post(
-                    `/api/chat/channel/${props.channelName}/edit`,
-                    { withCredentials: true, ...args },
-                );
-            } catch (e) {
-                setChannelExists(true);
-            }
+            await axios.post(`/api/chat/channel/${props.channelName}/edit`, {
+                withCredentials: true,
+                ...args,
+            });
+        },
+        onSuccess: () => {
+            setRedirectChannel(true);
+        },
+        onError: () => {
+            setChannelExists(true);
         },
     });
 
@@ -569,8 +569,6 @@ function EditChannelModal(props: {
                         newType: watch('visibility') || null,
                         password: watch('password') || null,
                     });
-                    setChannelExists(false);
-                    setRedirectChannel(true);
                 })}
                 className="text-white accent-secondary-200
                         flex flex-col gap-4 font-jost"
@@ -756,8 +754,6 @@ function ChannelMenu(props: { channelName: string }) {
             </div>
         );
     }
-
-    console.log('channel data', channel);
 
     return (
         <>
