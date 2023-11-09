@@ -42,7 +42,6 @@ export class UserController {
     @Get('me/:data')
     @UseGuards(AuthGard)
     async meData(@Req() req: any, @Param('data') data: string) {
-        console.log('blabla');
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...user } = req.user;
         return user[data];
@@ -52,7 +51,6 @@ export class UserController {
     @UseGuards(AuthGard)
     async myFriends(@Req() req: any) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        // console.log(`/api/user/me/friends ${req.user.username}`);
         const myFriends = await this.userService.getFriends(req.user.username);
         delete myFriends.password;
         return myFriends;

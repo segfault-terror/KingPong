@@ -7,7 +7,6 @@ import {
     WebSocketGateway,
     WebSocketServer,
 } from '@nestjs/websockets';
-import { PrismaService } from 'nestjs-prisma';
 import { Namespace, Socket } from 'socket.io';
 import { WsAuthGuard } from 'src/auth/ws.auth.guard';
 import { ChatService } from './chat.service';
@@ -46,11 +45,9 @@ export class ChatGateway implements OnGatewayDisconnect {
         );
         if (user) {
             user.socketsId.push(socket.id);
-            console.log(`[chat] Registered ${username} in another tab`);
             return;
         }
         this.connectedUsers.push({ username, socketsId: [socket.id] });
-        console.log(`[chat] Registered ${username} for the first time`);
 
         const userChannels = await this.chatService.getUserChannels(username);
 
@@ -64,15 +61,12 @@ export class ChatGateway implements OnGatewayDisconnect {
                     channelName: channel.name,
                     connectedUsers: [{ username, socketsId: [socket.id] }],
                 });
-                console.log(`[channel] Created channel ${channel.name}`);
                 return;
             }
             channelData.connectedUsers.push({
                 username,
                 socketsId: [socket.id],
             });
-            console.log(`[channel] Added ${username} to ${channel.name}`);
-            console.dir(this.channels);
         });
     }
 
@@ -82,21 +76,14 @@ export class ChatGateway implements OnGatewayDisconnect {
         );
 
         if (!user) {
-            console.log(
-                `[chat] Couldn't find user with socket id ${socket.id}`,
-            );
             return;
         }
 
         user.socketsId = user.socketsId.filter(
             (socketId: string) => socketId !== socket.id,
         );
-        console.log(
-            `[chat] Disconnected ${user.username} from ${socket.id} - user has ${user.socketsId.length} sockets left`,
-        );
 
         if (user.socketsId.length === 0) {
-            console.log(`[chat] Completely unregistered ${user.username}`);
             this.connectedUsers = this.connectedUsers.filter(
                 (user) => user.socketsId.length !== 0,
             );
@@ -112,18 +99,11 @@ export class ChatGateway implements OnGatewayDisconnect {
             );
 
             if (!channelData) {
-                console.log(
-                    `[channel] Couldn't find channel ${channel.name} in channels`,
-                );
                 return;
             }
 
             channelData.connectedUsers = channelData.connectedUsers.filter(
                 (connectedUser) => connectedUser.username !== user.username,
-            );
-
-            console.log(
-                `[channel] Removed ${user.username} from ${channel.name}`,
             );
 
             if (channelData.connectedUsers.length === 0) {
@@ -132,7 +112,6 @@ export class ChatGateway implements OnGatewayDisconnect {
                         channelData.connectedUsers.length !== 0 &&
                         channelData.channelName !== channel.name,
                 );
-                console.log(`[channel] Deleted channel ${channel.name}`);
             }
         });
     }
@@ -147,7 +126,6 @@ export class ChatGateway implements OnGatewayDisconnect {
 
         result.socketsId.forEach((socketId: string) => {
             this.server.to(socketId).emit('typing', data);
-            console.log(`[chat] #${this.counter} - Typing to ${data.username}`);
         });
 
         ++this.counter;
@@ -155,20 +133,14 @@ export class ChatGateway implements OnGatewayDisconnect {
 
     @SubscribeMessage('new-message')
     handleNewMessage(@MessageBody() username: string) {
-        console.log(`[chat] New message to ${username}`);
-
         const user = this.connectedUsers.find(
             (user) => user.username === username,
         );
 
         if (!user) {
-            console.log(
-                `[chat] Couldn't find user ${username} in connectedUsers`,
-            );
             return;
         }
 
-        console.log(`[chat] Sending message to user ${username}`);
         user.socketsId.forEach((socketId: string) => {
             this.server.to(socketId).emit('new-message', username);
         });
