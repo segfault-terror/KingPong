@@ -156,7 +156,12 @@ export class ChatController {
     async editChannel(
         @Param('channel_name') oldName: string,
         @Body() data: UpdateChannelDto,
+        @Req() request: any,
     ) {
-        return this.chatService.editChannel(oldName, data);
+        return this.chatService.editChannel(
+            oldName,
+            data,
+            request.user.username,
+        );
     }
 }
