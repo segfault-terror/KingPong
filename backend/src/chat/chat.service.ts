@@ -1,18 +1,21 @@
 import {
     BadRequestException,
-    ForbiddenException,
     ImATeapotException,
     Injectable,
+    Logger,
     NotFoundException,
     UnauthorizedException,
 } from '@nestjs/common';
 import { ChannelType } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'nestjs-prisma';
 import { UserService } from 'src/user/user.service';
-import * as bcrypt from 'bcryptjs';
+import { UpdateChannelDto } from './dto/update.channel.dto';
 
 @Injectable()
 export class ChatService {
+    readonly logger = new Logger(ChatService.name);
+
     constructor(
         private readonly prisma: PrismaService,
         private readonly userService: UserService,
@@ -238,14 +241,12 @@ export class ChatService {
         });
 
         if (dm == null) {
-            console.log('creating new dm');
             dm = await this.prisma.dM.create({
                 data: {
                     user1: { connect: { id: sender.id } },
                     user2: { connect: { id: receiver.id } },
                 },
             });
-            console.log('created dm');
         }
 
         await this.prisma.message.create({
@@ -320,6 +321,7 @@ export class ChatService {
             where: { name: channelName },
             select: {
                 name: true,
+                type: true,
                 owner: {
                     select: { username: true },
                 },
@@ -401,10 +403,6 @@ export class ChatService {
         username: string,
         password?: string,
     ) {
-        console.log(
-            `channelName: ${channelName}, username: ${username}, password: ${password}`,
-        );
-
         const channel = await this.prisma.channel.findFirst({
             where: {
                 name: channelName,
@@ -435,10 +433,6 @@ export class ChatService {
             if (!(await bcrypt.compare(password, channel.password))) {
                 throw new UnauthorizedException('Invalid password');
             }
-
-            console.log(
-                `[chat] Joining ${channelName} with password ${password}`,
-            );
         }
 
         const user = await this.prisma.user.findFirst({
@@ -734,5 +728,54 @@ export class ChatService {
 
         // NOTE: If newOwner is the same as the current owner,
         // it will get replaced by itself
+    }
+
+    async editChannel(oldName: string, data: UpdateChannelDto) {
+        this.logger.verbose(`Editing channel ${oldName}`);
+        this.logger.verbose(`Data: ${JSON.stringify(data)}`);
+
+        // Check if channel exists
+        const channel = await this.prisma.channel.findFirst({
+            where: { name: oldName },
+        });
+        if (!channel) {
+            throw new NotFoundException(`Channel ${oldName} does not exist`);
+        }
+
+        // Check if the new name is not taken
+        if (data.newName && data.newName !== oldName) {
+            const channelWithNewName = await this.prisma.channel.findFirst({
+                where: { name: data.newName },
+            });
+            if (channelWithNewName) {
+                throw new BadRequestException(
+                    `Channel '${data.newName}' already exists`,
+                );
+            }
+        }
+
+        // If new type is protected a password must be provided
+        if (data.newType === 'PROTECTED' && !data.password) {
+            throw new BadRequestException(
+                'Password must be provided for protected channels',
+            );
+        }
+
+        // If new type is public or private, password must not be provided
+        if (data.newType !== 'PROTECTED' && data.password) {
+            throw new BadRequestException(
+                'Password must not be provided for public and protected channels',
+            );
+        }
+
+        // Update channel data
+        channel.name = data.newName ?? channel.name;
+        channel.type = data.newType ?? channel.type;
+        channel.password = data.password ?? channel.password;
+
+        return await this.prisma.channel.update({
+            where: { id: channel.id },
+            data: { ...channel },
+        });
     }
 }

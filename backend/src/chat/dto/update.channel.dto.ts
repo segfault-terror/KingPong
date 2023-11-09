@@ -1,6 +1,8 @@
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateChannelDto } from './create.channel.dto';
 import {
-    IsOptional,
     IsEnum,
+    IsOptional,
     IsString,
     MaxLength,
     MinLength,
@@ -12,17 +14,19 @@ enum ChannelType {
     PROTECTED = 'PROTECTED',
 }
 
-export class CreateChannelDto {
+export class UpdateChannelDto extends PartialType(CreateChannelDto) {
+    @IsOptional()
     @IsString()
     @MinLength(1, { message: 'Channel name is too short' })
     @MaxLength(20, { message: 'Channel name is too long' })
-    channelName: string;
+    newName?: string;
 
-    @IsEnum(ChannelType)
-    channelType: ChannelType;
-
-    @IsString()
     @IsOptional()
+    @IsEnum(ChannelType)
+    newType?: ChannelType;
+
+    @IsOptional()
+    @IsString()
     @MinLength(8, { message: 'Password is too short' })
     @MaxLength(32, { message: 'Password is too long' })
     password?: string;

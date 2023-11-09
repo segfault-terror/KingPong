@@ -15,6 +15,7 @@ import { ChatService } from './chat.service';
 import { CreateMessageDto } from './dto/create.message.dto';
 import { JoinChannelDto } from './dto/join.channel.dto';
 import { CreateChannelDto } from './dto/create.channel.dto';
+import { UpdateChannelDto } from './dto/update.channel.dto';
 
 @Controller('chat')
 @UseGuards(AuthGard)
@@ -149,5 +150,13 @@ export class ChatController {
             request.user.id,
             data.newOwner,
         );
+    }
+
+    @Post('/channel/:channel_name/edit')
+    async editChannel(
+        @Param('channel_name') oldName: string,
+        @Body() data: UpdateChannelDto,
+    ) {
+        return this.chatService.editChannel(oldName, data);
     }
 }
