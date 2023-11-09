@@ -58,7 +58,6 @@ function ProtectedChannelContent(props: {
     return (
         <form
             onSubmit={handleSubmit(() => {
-                console.log(`[onSubmit] Joining `);
                 props.mutate({
                     channelName: props.channelName,
                     password: watch('password'),

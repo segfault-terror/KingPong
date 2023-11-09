@@ -74,7 +74,6 @@ export class ChatController {
          * but they should be able to enter its name in the URL bar and access it without joining
          * This is a security issue
          */
-        console.log('channelName', channelName);
         return this.chatService.getChannel(channelName);
     }
 
@@ -90,7 +89,6 @@ export class ChatController {
 
     @Post('channel/join')
     async joinChannel(@Body() data: JoinChannelDto, @Req() request: any) {
-        console.log(`data: ${JSON.stringify(data)}`);
         return this.chatService.joinChannel(
             data.channelName,
             request.user.username,
@@ -122,7 +120,6 @@ export class ChatController {
         @Param('channel_name') channelName: string,
         @Req() request: any,
     ) {
-        console.log(`[chat] DELETE /channel/${channelName}`);
         return this.chatService.deleteChannel(
             channelName,
             request.user.username,

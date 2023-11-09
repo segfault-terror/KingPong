@@ -25,7 +25,6 @@ export default function ChatInput({
         socket?.on('typing', (data) => setIsTyping(data.isTyping));
 
         socket?.on('new-message', () => {
-            console.log(`Invalidating query [dm, ${username}]`);
             if (username /* DM */) {
                 queryClient.invalidateQueries(['dm', username], {
                     exact: true,
