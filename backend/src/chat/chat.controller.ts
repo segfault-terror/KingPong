@@ -161,4 +161,17 @@ export class ChatController {
             request.user.username,
         );
     }
+
+    @Post('/channel/:channel_name/ban')
+    async banUser(
+        @Param('channel_name') channelName: string,
+        @Body() data: { usernameToBan: string },
+        @Req() request: any,
+    ) {
+        return this.chatService.banUser(
+            channelName,
+            request.user.username,
+            data.usernameToBan,
+        );
+    }
 }

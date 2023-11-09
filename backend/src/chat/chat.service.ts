@@ -805,4 +805,83 @@ export class ChatService {
             },
         });
     }
+
+    async banUser(
+        channelName: string,
+        requestUsername: string,
+        usernameToBan: string,
+    ) {
+        // Check if channel exists
+        const channel = await this.prisma.channel.findFirst({
+            where: { name: channelName },
+            include: {
+                owner: true,
+                admins: true,
+                members: true,
+                bannedUsers: true,
+            },
+        });
+        if (!channel) {
+            throw new NotFoundException(`Channel ${channelName} not found`);
+        }
+
+        // Check if user to ban exists
+        const userToBan = await this.prisma.user.findFirst({
+            where: { username: usernameToBan },
+        });
+        if (!userToBan) {
+            throw new NotFoundException(`User ${usernameToBan} not found`);
+        }
+
+        // if request user is admin, check if user to ban is not owner or another admin
+        if (
+            channel.admins.some((admin) => admin.username === requestUsername)
+        ) {
+            if (
+                channel.admins.some((admin) => admin.username === usernameToBan)
+            ) {
+                throw new ForbiddenException(
+                    `${usernameToBan} is an admin, cannot ban`,
+                );
+            }
+
+            if (channel.owner.username === usernameToBan) {
+                throw new UnauthorizedException(
+                    `${usernameToBan} is the owner, cannot ban`,
+                );
+            }
+        }
+
+        // If request user is a member, throw forbidden exception
+        if (
+            channel.members.some(
+                (member) => member.username === requestUsername,
+            )
+        ) {
+            throw new ForbiddenException(
+                `User ${requestUsername} is not an admin in channel ${channelName}`,
+            );
+        }
+
+        // You cannot ban yourself
+        if (requestUsername === usernameToBan) {
+            throw new ImATeapotException('You cannot ban yourself stupid');
+        }
+
+        // Ban the user
+        return await this.prisma.channel.update({
+            where: { name: channelName },
+            data: {
+                bannedUsers: {
+                    connect: { id: userToBan.id },
+                },
+                members: {
+                    disconnect: { id: userToBan.id },
+                },
+                admins: {
+                    disconnect: { id: userToBan.id },
+                },
+            },
+        });
+    }
 }
