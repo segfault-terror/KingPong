@@ -1,5 +1,6 @@
 import {
     BadRequestException,
+    ForbiddenException,
     ImATeapotException,
     Injectable,
     Logger,
@@ -389,6 +390,7 @@ export class ChatService {
                                 { owner: { username } },
                                 { admins: { some: { username } } },
                                 { members: { some: { username } } },
+                                { bannedUsers: { some: { username } } },
                             ],
                         },
                     },
@@ -404,22 +406,34 @@ export class ChatService {
         password?: string,
     ) {
         const channel = await this.prisma.channel.findFirst({
-            where: {
-                name: channelName,
-                members: {
-                    none: { username },
-                },
-            },
+            where: { name: channelName },
             select: {
                 password: true,
                 type: true,
                 members: true,
+                admins: true,
+                bannedUsers: true,
             },
         });
 
         if (!channel) {
-            throw new NotFoundException(
-                `Channel ${channelName} not found or you are already in it`,
+            throw new NotFoundException(`Channel ${channelName} not found`);
+        }
+
+        // Check if user is not already joined
+        if (
+            channel.members.find((member) => member.username === username) ||
+            channel.admins.find((admin) => admin.username === username)
+        ) {
+            throw new BadRequestException(
+                `You are already a member in ${channelName}`,
+            );
+        }
+
+        // Check if user is banned, if so they cannot join
+        if (channel.bannedUsers.find((user) => user.username === username)) {
+            throw new ForbiddenException(
+                'You are banned from channel ${channelName}',
             );
         }
 
