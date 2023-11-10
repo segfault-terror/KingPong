@@ -10,12 +10,16 @@ type BanUserProps = {
     channelName: string;
     setShowBanModal: (val: boolean) => void;
     isAdmin: boolean;
+    setUsernameToBan: (val: string) => void;
+    setShowBanDialog: (val: boolean) => void;
 };
 
 export default function BanUserModal({
     setShowBanModal,
     channelName,
     isAdmin,
+    setUsernameToBan,
+    setShowBanDialog,
 }: BanUserProps) {
     const { data: channelMembers, isLoading } = useQuery({
         queryKey: ['channel', channelName, 'members'],
@@ -124,11 +128,9 @@ export default function BanUserModal({
                             {results.map((result, idx) => (
                                 <button
                                     onClick={() => {
-                                        window.alert(
-                                            `Banning user ${result.username}`,
-                                        );
-                                        // setShowBanModal(false);
-                                        // TODO: Create ban user dialog
+                                        setShowBanModal(false);
+                                        setUsernameToBan(result.username);
+                                        setShowBanDialog(true);
                                     }}
                                     key={idx}
                                     className="hover:bg-background/80 hover:rounded-xl block w-full text-left py-1"
@@ -161,7 +163,7 @@ export default function BanUserModal({
                                     <Lottie animationData={Ghost} loop={true} />
                                 </div>
                                 <p className="text-center text-lg font-jost">
-                                    This channel has no members other than you
+                                    No users to ban
                                 </p>
                             </>
                         )}

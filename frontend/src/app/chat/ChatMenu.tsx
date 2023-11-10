@@ -14,6 +14,7 @@ import LeaveChannelModal from './components/LeaveChannel';
 import SetNewOwnerDialog from './components/NewOwnerDialog';
 import NewOwnerModal from './components/NewOwnerModal';
 import BanUserModal from './components/BanUserModal';
+import BanDialog from './components/BanUserDialog';
 
 export default function ChatMenu() {
     const pathname = usePathname();
@@ -176,6 +177,8 @@ function ChannelMenu(props: { channelName: string }) {
     const [newOwnerUsername, setNewOwnerUsername] = useState('');
     const [showEditChannelModal, setShowEditChannelModal] = useState(false);
     const [showBanModal, setShowBanModal] = useState(false);
+    const [showBanDialog, setShowBanDialog] = useState(false);
+    const [usernameToBan, setUsernameToBan] = useState('');
 
     useEffect(() => {
         if (!redirectChannel) return;
@@ -243,6 +246,16 @@ function ChannelMenu(props: { channelName: string }) {
                     setShowBanModal={setShowBanModal}
                     channelName={props.channelName}
                     isAdmin={isAdmin}
+                    setUsernameToBan={setUsernameToBan}
+                    setShowBanDialog={setShowBanDialog}
+                />
+            )}
+
+            {showBanDialog && (
+                <BanDialog
+                    channelName={props.channelName}
+                    setShowBanDialog={setShowBanDialog}
+                    usernameToBan={usernameToBan}
                 />
             )}
 
