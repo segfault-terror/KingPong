@@ -296,21 +296,33 @@ export class ChatService {
     }
 
     async getUserChannels(username: string) {
+        // Not banned AND joined the channel (Owner, Admin or Member)
         return this.prisma.channel.findMany({
             where: {
-                OR: [
+                AND: [
                     {
-                        owner: { username },
-                    },
-                    {
-                        admins: {
-                            some: { username },
+                        NOT: {
+                            bannedUsers: {
+                                some: { username },
+                            },
                         },
                     },
                     {
-                        members: {
-                            some: { username },
-                        },
+                        OR: [
+                            {
+                                owner: { username },
+                            },
+                            {
+                                admins: {
+                                    some: { username },
+                                },
+                            },
+                            {
+                                members: {
+                                    some: { username },
+                                },
+                            },
+                        ],
                     },
                 ],
             },
@@ -327,6 +339,14 @@ export class ChatService {
                     select: { username: true },
                 },
                 admins: {
+                    // Exclude banned admins
+                    where: {
+                        NOT: {
+                            bannedChannels: {
+                                some: { name: channelName },
+                            },
+                        },
+                    },
                     select: { username: true },
                 },
                 messages: {
@@ -362,6 +382,14 @@ export class ChatService {
                     },
                 },
                 admins: {
+                    // Exclude banned admins
+                    where: {
+                        NOT: {
+                            bannedChannels: {
+                                some: { name: channelName },
+                            },
+                        },
+                    },
                     select: {
                         id: true,
                         username: true,
@@ -371,6 +399,14 @@ export class ChatService {
                     },
                 },
                 members: {
+                    // Exclude banned members
+                    where: {
+                        NOT: {
+                            bannedChannels: {
+                                some: { name: channelName },
+                            },
+                        },
+                    },
                     select: {
                         id: true,
                         username: true,
@@ -423,6 +459,13 @@ export class ChatService {
             throw new NotFoundException(`Channel ${channelName} not found`);
         }
 
+        // Check if user is banned, if so they cannot join
+        if (channel.bannedUsers.find((user) => user.username === username)) {
+            throw new ForbiddenException(
+                'You are banned from channel ${channelName}',
+            );
+        }
+
         // Check if user is not already joined
         if (
             channel.members.find((member) => member.username === username) ||
@@ -430,13 +473,6 @@ export class ChatService {
         ) {
             throw new BadRequestException(
                 `You are already a member in ${channelName}`,
-            );
-        }
-
-        // Check if user is banned, if so they cannot join
-        if (channel.bannedUsers.find((user) => user.username === username)) {
-            throw new ForbiddenException(
-                'You are banned from channel ${channelName}',
             );
         }
 
@@ -593,7 +629,6 @@ export class ChatService {
             where: { username },
             select: { id: true },
         });
-
         if (!user) {
             throw new NotFoundException(`User ${username} not found`);
         }
@@ -632,7 +667,6 @@ export class ChatService {
             where: { username },
             select: { id: true },
         });
-
         if (!user) {
             throw new NotFoundException(`User ${username} not found`);
         }
@@ -644,9 +678,9 @@ export class ChatService {
                 owner: {
                     select: { username: true },
                 },
+                bannedUsers: true,
             },
         });
-
         if (!channel) {
             throw new NotFoundException(`Channel ${channelName} not found`);
         }
@@ -654,6 +688,13 @@ export class ChatService {
         if (channel.owner.username === username) {
             throw new BadRequestException(
                 `User ${username} is the owner of channel ${channelName}, cannot leave`,
+            );
+        }
+
+        // Check if user is banned
+        if (channel.bannedUsers.some((user) => user.username === username)) {
+            throw new ForbiddenException(
+                `User ${username} is banned from ${channelName}`,
             );
         }
 
@@ -877,12 +918,6 @@ export class ChatService {
             data: {
                 bannedUsers: {
                     connect: { id: userToBan.id },
-                },
-                members: {
-                    disconnect: { id: userToBan.id },
-                },
-                admins: {
-                    disconnect: { id: userToBan.id },
                 },
             },
         });
