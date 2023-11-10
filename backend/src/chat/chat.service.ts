@@ -976,4 +976,76 @@ export class ChatService {
         // If request user is the owner, return the whole ban list
         return channel.bannedUsers;
     }
+
+    async unbanUser(
+        channelName: string,
+        requestUsername: string,
+        usernameToUnban: string,
+    ) {
+        // Check if channel exists
+        const channel = await this.prisma.channel.findFirst({
+            where: { name: channelName },
+            include: {
+                bannedUsers: {
+                    select: { username: true },
+                },
+                members: {
+                    select: { username: true },
+                },
+                admins: {
+                    select: { username: true },
+                },
+            },
+        });
+        if (!channel) {
+            throw new NotFoundException(
+                `Channel ${channelName} does not exist`,
+            );
+        }
+
+        // Check if username to ban is really banned
+        if (
+            !channel.bannedUsers.some(
+                (bannedUser) => bannedUser.username === usernameToUnban,
+            )
+        ) {
+            throw new BadRequestException(
+                `User ${usernameToUnban} is either not a memeber or not banned`,
+            );
+        }
+
+        // If request user is a regular member, throw UnauthorizedException
+        const isRegularMember = channel.members.some(
+            (member) => member.username === requestUsername,
+        );
+        if (isRegularMember) {
+            throw new UnauthorizedException('You are not allowed to un-ban');
+        }
+
+        // If request user is an admin, check if username to unban was an admin, if so throw UnauthorizedException
+        const isAdmin = channel.admins.some(
+            (admin) => admin.username === requestUsername,
+        );
+        if (isAdmin) {
+            if (
+                channel.admins.some(
+                    (admin) => admin.username === usernameToUnban,
+                )
+            ) {
+                throw new UnauthorizedException(
+                    'You are not allowed to un-ban an ex-admin',
+                );
+            }
+        }
+
+        // else, unban the user
+        return await this.prisma.channel.update({
+            where: { name: channelName },
+            data: {
+                bannedUsers: {
+                    disconnect: { username: usernameToUnban },
+                },
+            },
+        });
+    }
 }

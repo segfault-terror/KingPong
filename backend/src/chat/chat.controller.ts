@@ -182,4 +182,17 @@ export class ChatController {
     ) {
         return this.chatService.getBanList(channelName, request.user.username);
     }
+
+    @Post('/channel/:channel_name/unban')
+    async unbanUser(
+        @Param('channel_name') channelName: string,
+        @Body() data: { usernameToUnban: string },
+        @Req() request: any,
+    ) {
+        return this.chatService.unbanUser(
+            channelName,
+            request.user.username,
+            data.usernameToUnban,
+        );
+    }
 }
