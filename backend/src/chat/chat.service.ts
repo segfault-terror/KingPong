@@ -326,6 +326,9 @@ export class ChatService {
                 owner: {
                     select: { username: true },
                 },
+                admins: {
+                    select: { username: true },
+                },
                 messages: {
                     select: {
                         id: true,

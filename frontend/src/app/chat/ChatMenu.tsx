@@ -13,6 +13,7 @@ import EditChannelModal from './components/EditChannelModal';
 import LeaveChannelModal from './components/LeaveChannel';
 import SetNewOwnerDialog from './components/NewOwnerDialog';
 import NewOwnerModal from './components/NewOwnerModal';
+import BanUserModal from './components/BanUserModal';
 
 export default function ChatMenu() {
     const pathname = usePathname();
@@ -174,6 +175,7 @@ function ChannelMenu(props: { channelName: string }) {
     const [showNewOwnerDialog, setShowNewOwnerDialog] = useState(false);
     const [newOwnerUsername, setNewOwnerUsername] = useState('');
     const [showEditChannelModal, setShowEditChannelModal] = useState(false);
+    const [showBanModal, setShowBanModal] = useState(false);
 
     useEffect(() => {
         if (!redirectChannel) return;
@@ -187,6 +189,11 @@ function ChannelMenu(props: { channelName: string }) {
             </div>
         );
     }
+
+    const isOwner = channel?.owner.username === me?.username;
+    const isAdmin = channel?.admins.some(
+        (admin: any) => admin.username === me?.username,
+    );
 
     return (
         <>
@@ -231,31 +238,48 @@ function ChannelMenu(props: { channelName: string }) {
                 />
             )}
 
-            {channel?.owner.username === me?.username && (
+            {showBanModal && (
+                <BanUserModal
+                    setShowBanModal={setShowBanModal}
+                    channelName={props.channelName}
+                    isAdmin={isAdmin}
+                />
+            )}
+
+            {isOwner && (
                 <ChatMenuItem>
                     <button onClick={() => setShowDeleteModal(true)}>
                         Delete channel
                     </button>
                 </ChatMenuItem>
             )}
-            {channel?.owner.username !== me?.username && (
+
+            {!isOwner && (
                 <ChatMenuItem>
                     <button onClick={() => setShowLeaveModal(true)}>
                         Leave channel
                     </button>
                 </ChatMenuItem>
             )}
-            {channel?.owner.username === me?.username && (
+
+            {isOwner && (
                 <ChatMenuItem>
                     <button onClick={() => setShowNewOwnerModal(true)}>
                         Set new owner
                     </button>
                 </ChatMenuItem>
             )}
-            {channel?.owner.username === me?.username && (
+            {isOwner && (
                 <ChatMenuItem>
                     <button onClick={() => setShowEditChannelModal(true)}>
                         Edit channel
+                    </button>
+                </ChatMenuItem>
+            )}
+            {(isOwner || isAdmin) && (
+                <ChatMenuItem>
+                    <button onClick={() => setShowBanModal(true)}>
+                        Ban user
                     </button>
                 </ChatMenuItem>
             )}
