@@ -15,6 +15,7 @@ import SetNewOwnerDialog from './components/NewOwnerDialog';
 import NewOwnerModal from './components/NewOwnerModal';
 import BanUserModal from './components/BanUserModal';
 import BanDialog from './components/BanUserDialog';
+import UnbanUserModal from './components/UnbanUserModal';
 
 export default function ChatMenu() {
     const pathname = usePathname();
@@ -179,6 +180,7 @@ function ChannelMenu(props: { channelName: string }) {
     const [showBanModal, setShowBanModal] = useState(false);
     const [showBanDialog, setShowBanDialog] = useState(false);
     const [usernameToBan, setUsernameToBan] = useState('');
+    const [showUnbanModal, setShowUnbanModal] = useState(false);
 
     useEffect(() => {
         if (!redirectChannel) return;
@@ -259,6 +261,16 @@ function ChannelMenu(props: { channelName: string }) {
                 />
             )}
 
+            {showUnbanModal && (
+                <UnbanUserModal
+                    channelName={props.channelName}
+                    setShowUnbanModal={setShowUnbanModal}
+                    // HACK: The props values blow are temporary
+                    setShowUnbanDialog={(val: boolean) => val}
+                    setUsernameToUnban={(val: string) => val}
+                />
+            )}
+
             {isOwner && (
                 <ChatMenuItem>
                     <button onClick={() => setShowDeleteModal(true)}>
@@ -293,6 +305,13 @@ function ChannelMenu(props: { channelName: string }) {
                 <ChatMenuItem>
                     <button onClick={() => setShowBanModal(true)}>
                         Ban user
+                    </button>
+                </ChatMenuItem>
+            )}
+            {(isOwner || isAdmin) && (
+                <ChatMenuItem>
+                    <button onClick={() => setShowUnbanModal(true)}>
+                        Un-ban user
                     </button>
                 </ChatMenuItem>
             )}
