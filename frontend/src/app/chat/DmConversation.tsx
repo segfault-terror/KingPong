@@ -3,12 +3,13 @@ import { modalContext } from '@/contexts/contexts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
-import { ReactNode, useContext, useEffect, useRef, useState } from 'react';
+import { ReactNode, use, useContext, useEffect, useRef, useState } from 'react';
 import { HiDotsVertical } from 'react-icons/hi';
 import Loading from '../loading';
 import ChatInput from './ChatInput';
 import { getStatusColor } from './DirectMessage';
 import Modal from '@/components/Modal';
+import { useSocket } from '@/contexts/SocketContext';
 
 export type DmConversationProps = {
     userName: string;
@@ -21,6 +22,7 @@ type UserDMInfoProps = DmConversationHeaderProps;
 export default function DmConversation({ userName }: DmConversationProps) {
     const queryClient = useQueryClient();
     const [isTyping, setIsTyping] = useState(false);
+    const { socket } = useSocket();
 
     const { mutate } = useMutation({
         mutationFn: async (content: string) => {
@@ -34,6 +36,7 @@ export default function DmConversation({ userName }: DmConversationProps) {
         onSuccess: () => {
             queryClient.invalidateQueries(['dm', userName], { exact: true });
             queryClient.invalidateQueries(['dms', 'brief'], { exact: true });
+            socket?.emit('new-message', userName);
         },
     });
 

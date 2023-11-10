@@ -88,10 +88,6 @@ export default function ChatInput({
 
                         sendMessage(event.currentTarget.value);
 
-                        if (username /* DM */) {
-                            socket?.emit('new-message', username);
-                        }
-
                         event.currentTarget.value = '';
                         event.currentTarget.focus();
                     } else {
