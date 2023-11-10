@@ -21,17 +21,12 @@ type ConnectedUser = {
     socketsId: string[];
 };
 
-type ChannelData = {
-    channelName: string;
-    connectedUsers: ConnectedUser[];
-}[];
-
 @WebSocketGateway({ namespace: 'chat' })
 @UseGuards(WsAuthGuard)
 export class ChatGateway implements OnGatewayDisconnect {
     connectedUsers: ConnectedUser[] = [];
-    channels: ChannelData = [];
     counter = 0;
+
     @WebSocketServer() server: Namespace;
     constructor(private readonly chatService: ChatService) {}
 
@@ -43,17 +38,13 @@ export class ChatGateway implements OnGatewayDisconnect {
         const user = this.connectedUsers.find(
             (user) => user.username === username,
         );
-        if (user) {
-            user.socketsId.push(socket.id);
-            return;
-        }
-        this.connectedUsers.push({ username, socketsId: [socket.id] });
+        if (user) user.socketsId.push(socket.id);
+        else this.connectedUsers.push({ username, socketsId: [socket.id] });
 
         const userChannels = await this.chatService.getUserChannels(username);
 
         userChannels.forEach((channel) => {
             socket.join(channel.name);
-            console.log(`[channel] Joined ${channel.name}`);
         });
     }
 
@@ -82,7 +73,6 @@ export class ChatGateway implements OnGatewayDisconnect {
 
         userChannels.forEach((channel) => {
             socket.leave(channel.name);
-            console.log(`[channel] Left ${channel.name}`);
         });
     }
 
@@ -118,8 +108,6 @@ export class ChatGateway implements OnGatewayDisconnect {
 
     @SubscribeMessage('new-channel-message')
     handleNewChannelMessage(@MessageBody() channelName: string) {
-        console.log(`[channel] New message to channel ${channelName}`);
-
         this.server.to(channelName).emit('new-channel-message', channelName);
     }
 }

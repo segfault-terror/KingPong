@@ -92,11 +92,6 @@ export default function ChatInput({
                             socket?.emit('new-message', username);
                         }
 
-                        if (channelName /* Channel */) {
-                            console.log(`Emitting new-channel-message`);
-                            socket?.emit('new-channel-message', channelName);
-                        }
-
                         event.currentTarget.value = '';
                         event.currentTarget.focus();
                     } else {

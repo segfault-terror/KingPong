@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Loading from '../loading';
 import { redirect } from 'next/navigation';
+import { useSocket } from '@/contexts/SocketContext';
 
 type ChannelConversationProps = {
     channelName: string;
@@ -17,6 +18,8 @@ type ChannelConversationProps = {
 export default function ChannelConversation(props: ChannelConversationProps) {
     const { setDotsDropdown } = useContext(modalContext);
     const { showMembers, setShowMembers } = useContext(channelModalContext);
+
+    const { socket } = useSocket();
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ['channel', props.channelName],
@@ -56,6 +59,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
             queryClient.invalidateQueries(['channels', 'brief'], {
                 exact: true,
             });
+            socket?.emit('new-channel-message', props.channelName);
         },
     });
 
