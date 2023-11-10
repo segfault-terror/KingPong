@@ -1,11 +1,11 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import Loading from '../loading';
+import Loading from '../../loading';
 import { SocketProvider } from '@/contexts/SocketContext';
 
 import React from 'react';
-import MatchMaking from './matchmaking/page';
+import MatchMaking from '../matchmaking/page';
 import { match } from 'assert';
 
 type PageProps = {

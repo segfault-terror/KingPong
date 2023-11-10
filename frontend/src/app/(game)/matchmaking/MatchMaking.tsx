@@ -11,14 +11,63 @@ import LeftImg from '@/../public/images/MatchMacking_l.svg';
 import RightImg from '@/../public/images/MatchMacking_r.svg';
 import Tommy from '@/../public/images/1.jpeg';
 import Archer from '@/../public/images/2.jpeg';
+import { useSocket } from '@/contexts/SocketContext';
+import { useEffect, useState } from 'react';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { set } from 'react-hook-form';
 
 type Props = {
-
+    me: any;
+    setMatchmaking: (matchmaking: boolean) => void;
 };
 
-export default function MatchMaking({
+function getAnimations(isDesktop: boolean) {
+    const MobileAnimations = [
+        'animate-slide-up-gate',
+        'animate-slide-down-gate',
+        'animate-slide-left-gate',
+        'animate-slide-right-gate',
+        'animate-slide-up-player',
+        'animate-slide-down-opponent',
+    ];
+    const DesktopAnimations = [
+        'animate-slide-up-gate',
+        'animate-slide-down-gate',
+        'animate-slide-left-gate',
+        'animate-slide-right-gate',
+        'animate-slide-left-player',
+        'animate-slide-right-opponent',
+    ];
+    return isDesktop ? DesktopAnimations : MobileAnimations;
+}
 
-}: Props) {
+export default function MatchMaking({ me, setMatchmaking }: Props) {
+    const isDesktop = useMediaQuery('(min-width: 1024px)');
+    const [animations, setAnimations] = useState(['', '', '', '', '', '']);
+    const { socket } = useSocket();
+    socket?.emit('matchmaking', me);
+    useEffect(() => {
+        if (socket) {
+            socket?.on('matchmakingfound', (foundPlayer: boolean) => {
+                if (foundPlayer) {
+                    console.log('matchmaking found');
+                    setAnimations(getAnimations(isDesktop));
+                    setTimeout(() => {
+                        setMatchmaking(false);
+                    }, 10000);
+                }
+            });
+
+            return () => {
+                socket?.off('matchmakingfound');
+            };
+        }
+    }, [socket]);
+
+    useEffect(() => {
+        console.log(animations);
+    }, [animations]);
+
     return (
         <div
             className="bg-gradient-to-r lg:bg-gradient-to-b from-background via-primary to-background
@@ -29,15 +78,17 @@ export default function MatchMaking({
             <img
                 src={TopImg.src}
                 alt="Top Side"
-                className="lg:object-cover h-full lg:hidden animate-slide-up-gate"
+                className={`lg:object-cover h-full lg:hidden ${animations[0]}`}
             />
             <img
                 src={LeftImg.src}
                 alt="Left Side"
-                className="hidden lg:inline lg:object-cover lg:w-full animate-slide-left-gate"
+                className={`hidden lg:inline lg:object-cover lg:w-full ${animations[2]}}`}
             />
 
-            <div className="self-center animate-slide-up-player lg:animate-slide-left-player z-20 absolute">
+            <div
+                className={`self-center ${animations[4]} z-20 absolute`}
+            >
                 <PlayerCard img={Tommy.src} name="Tommy" />
             </div>
             <img
@@ -50,19 +101,21 @@ export default function MatchMaking({
                 alt="VS"
                 className="self-center absolute hidden lg:inline"
             />
-            <div className="self-center animate-slide-down-opponent lg:animate-slide-right-opponent z-10 absolute">
+            <div
+                className={`self-center ${animations[5]} z-10 absolute`}
+            >
                 <PlayerCard img={Archer.src} name="Archer" />
             </div>
 
             <img
                 src={BottomImg.src}
                 alt="Bottom Side"
-                className="lg:object-cover h-full lg:hidden animate-slide-down-gate "
+                className={`lg:object-cover h-full lg:hidden ${animations[1]}`}
             />
             <img
                 src={RightImg.src}
                 alt="Right Side"
-                className="hidden lg:inline lg:object-cover lg:w-full animate-slide-right-gate"
+                className={`hidden lg:inline lg:object-cover lg:w-full ${animations[3]}`}
             />
             <p className="absolute bottom-4 right-4 text-2xl">
                 <img
