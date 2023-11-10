@@ -922,4 +922,58 @@ export class ChatService {
             },
         });
     }
+
+    async getBanList(channelName: string, username: string) {
+        // If request user does not exist, he will be unauthorized
+
+        // Check if channel exists
+        const channel = await this.prisma.channel.findFirst({
+            where: { name: channelName },
+            include: {
+                owner: true,
+                admins: true,
+                members: true,
+                bannedUsers: {
+                    select: {
+                        username: true,
+                        fullname: true,
+                        avatar: true,
+                    },
+                },
+            },
+        });
+        if (!channel) {
+            throw new NotFoundException(`Channel ${channelName} not found`);
+        }
+
+        // If request user is banned, throw ForbiddenException
+        if (
+            channel.bannedUsers.some(
+                (bannedUser) => bannedUser.username === username,
+            )
+        ) {
+            throw new ForbiddenException('Banned users access ban list');
+        }
+
+        // If request user is a member, throw UnauthorizedException
+        if (channel.members.some((member) => member.username === username)) {
+            throw new ForbiddenException(
+                'Regular members cannot access ban list',
+            );
+        }
+
+        // If request user is an admin, return banned users only (exclude banned admins)
+        if (channel.admins.some((admin) => admin.username === username)) {
+            return channel.bannedUsers.filter((bannedUser) => {
+                // If banned user was an admin remove it from the list
+                const notAnAdmin = !channel.admins.some(
+                    (admin) => admin.username === bannedUser.username,
+                );
+                return notAnAdmin;
+            });
+        }
+
+        // If request user is the owner, return the whole ban list
+        return channel.bannedUsers;
+    }
 }

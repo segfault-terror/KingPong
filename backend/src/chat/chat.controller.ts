@@ -174,4 +174,12 @@ export class ChatController {
             data.usernameToBan,
         );
     }
+
+    @Get('/channel/:channel_name/ban-list')
+    async getBanList(
+        @Param('channel_name') channelName: string,
+        @Req() request: any,
+    ) {
+        return this.chatService.getBanList(channelName, request.user.username);
+    }
 }
