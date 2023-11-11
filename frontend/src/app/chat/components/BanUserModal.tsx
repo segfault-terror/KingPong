@@ -104,10 +104,6 @@ export default function BanUserModal({
                         onChange={(event) => {
                             event.preventDefault();
                             const query = event.target.value;
-                            if (query === '') {
-                                setResults([]);
-                                return;
-                            }
                             const newResults = filterMembers(
                                 channelMembers?.members,
                                 channelMembers?.admins,
