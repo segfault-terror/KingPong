@@ -18,6 +18,7 @@ import BanDialog from './components/BanUserDialog';
 import UnbanUserModal from './components/UnbanUserModal';
 import UnbanDialog from './components/UnbanUserDialog';
 import KickUserModal from './components/KickUserModal';
+import KickDialog from './components/KickUserDialog';
 
 export default function ChatMenu() {
     const pathname = usePathname();
@@ -292,6 +293,14 @@ function ChannelMenu(props: { channelName: string }) {
                     isAdmin={isAdmin}
                     setShowKickDialog={setShowKickDialog}
                     setUsernameToKick={setUsernameToKick}
+                />
+            )}
+
+            {showKickDialog && (
+                <KickDialog
+                    channelName={props.channelName}
+                    usernameToKick={usernameToKick}
+                    setShowKickDialog={setShowKickDialog}
                 />
             )}
 
