@@ -14,6 +14,8 @@ import { ChatService } from './chat.service';
 type IsTypingData = {
     username: string;
     isTyping: boolean;
+    isChannel: boolean;
+    channelName?: string;
 };
 
 type ConnectedUser = {
@@ -46,6 +48,7 @@ export class ChatGateway implements OnGatewayDisconnect {
         userChannels.forEach((channel) => {
             socket.join(channel.name);
         });
+        console.log('register', socket.id);
     }
 
     async handleDisconnect(socket: Socket) {
@@ -78,17 +81,28 @@ export class ChatGateway implements OnGatewayDisconnect {
 
     @SubscribeMessage('typing')
     handleTyping(@MessageBody() data: IsTypingData) {
-        const result = this.connectedUsers.find(
-            (user) => user.username === data.username,
-        );
+        if (data.isChannel) {
+            const result = this.connectedUsers.find(
+                (user) => user.username === data.username,
+            );
 
-        if (!result) return;
+            this.server
+                .to(data.channelName)
+                .except(result.socketsId)
+                .emit('typing', data);
+        } else {
+            const result = this.connectedUsers.find(
+                (user) => user.username === data.username,
+            );
 
-        result.socketsId.forEach((socketId: string) => {
-            this.server.to(socketId).emit('typing', data);
-        });
+            if (!result) return;
 
-        ++this.counter;
+            result.socketsId.forEach((socketId: string) => {
+                this.server.to(socketId).emit('typing', data);
+            });
+
+            ++this.counter;
+        }
     }
 
     @SubscribeMessage('new-message')

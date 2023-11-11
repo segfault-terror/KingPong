@@ -17,6 +17,8 @@ import BanUserModal from './components/BanUserModal';
 import BanDialog from './components/BanUserDialog';
 import UnbanUserModal from './components/UnbanUserModal';
 import UnbanDialog from './components/UnbanUserDialog';
+import KickUserModal from './components/KickUserModal';
+import KickDialog from './components/KickUserDialog';
 
 export default function ChatMenu() {
     const pathname = usePathname();
@@ -184,6 +186,9 @@ function ChannelMenu(props: { channelName: string }) {
     const [showUnbanModal, setShowUnbanModal] = useState(false);
     const [showUnbanDialog, setShowUnbanDialog] = useState(false);
     const [usernameToUnban, setUsernameToUnban] = useState('');
+    const [showKickModal, setShowKickModal] = useState(false);
+    const [showKickDialog, setShowKickDialog] = useState(false);
+    const [usernameToKick, setUsernameToKick] = useState('');
 
     useEffect(() => {
         if (!redirectChannel) return;
@@ -281,6 +286,24 @@ function ChannelMenu(props: { channelName: string }) {
                 />
             )}
 
+            {showKickModal && (
+                <KickUserModal
+                    channelName={props.channelName}
+                    setShowKickModal={setShowKickModal}
+                    isAdmin={isAdmin}
+                    setShowKickDialog={setShowKickDialog}
+                    setUsernameToKick={setUsernameToKick}
+                />
+            )}
+
+            {showKickDialog && (
+                <KickDialog
+                    channelName={props.channelName}
+                    usernameToKick={usernameToKick}
+                    setShowKickDialog={setShowKickDialog}
+                />
+            )}
+
             {isOwner && (
                 <ChatMenuItem>
                     <button onClick={() => setShowDeleteModal(true)}>
@@ -322,6 +345,13 @@ function ChannelMenu(props: { channelName: string }) {
                 <ChatMenuItem>
                     <button onClick={() => setShowUnbanModal(true)}>
                         Un-ban user
+                    </button>
+                </ChatMenuItem>
+            )}
+            {(isOwner || isAdmin) && (
+                <ChatMenuItem>
+                    <button onClick={() => setShowKickModal(true)}>
+                        Kick user
                     </button>
                 </ChatMenuItem>
             )}

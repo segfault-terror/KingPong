@@ -80,10 +80,6 @@ export default function UnbanUserModal({
                         onChange={(event) => {
                             event.preventDefault();
                             const query = event.target.value;
-                            if (query === '') {
-                                setResults([]);
-                                return;
-                            }
                             const newResults = filterMembers(banList, query);
                             setResults(newResults);
                         }}

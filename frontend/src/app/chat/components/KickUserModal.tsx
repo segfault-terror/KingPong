@@ -6,19 +6,26 @@ import Lottie from 'lottie-react';
 import { useEffect, useState } from 'react';
 import Ghost from '../../../../public/lottie/ghost.json';
 
-type NewOwnerProps = {
+type KickUserProps = {
     channelName: string;
-    setNewOwnerUsername: (val: string) => void;
-    setShowNewOwnerModal: (val: boolean) => void;
-    setShowNewOwnerDialog: (val: boolean) => void;
+    setShowKickModal: (val: boolean) => void;
+    isAdmin: boolean;
+    setUsernameToKick: (val: string) => void;
+    setShowKickDialog: (val: boolean) => void;
 };
 
-export default function NewOwnerModal(props: NewOwnerProps) {
+export default function KickUserModal({
+    setShowKickModal: setShowKickModal,
+    channelName,
+    isAdmin,
+    setUsernameToKick,
+    setShowKickDialog,
+}: KickUserProps) {
     const { data: channelMembers, isLoading } = useQuery({
-        queryKey: ['channel', props.channelName, 'members'],
+        queryKey: ['channel', channelName, 'members'],
         queryFn: async () => {
             const { data } = await axios.get(
-                `/api/chat/channel/${props.channelName}/members`,
+                `/api/chat/channel/${channelName}/members`,
                 { withCredentials: true },
             );
             return data;
@@ -29,8 +36,14 @@ export default function NewOwnerModal(props: NewOwnerProps) {
 
     useEffect(() => {
         if (!channelMembers?.members || !channelMembers?.admins) return;
+
+        if (isAdmin) {
+            console.log('Removing admins from ban list');
+            channelMembers.admins = [];
+        }
+
         setResults(
-            filterMembers(channelMembers?.members, channelMembers?.admins, ''),
+            filterMembers(channelMembers.members, channelMembers.admins, ''),
         );
     }, [channelMembers]);
 
@@ -68,7 +81,7 @@ export default function NewOwnerModal(props: NewOwnerProps) {
     return (
         <>
             <Modal
-                onClose={() => props.setShowNewOwnerModal(false)}
+                onClose={() => setShowKickModal(false)}
                 childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%] h-[300px]
                                         lg:w-2/3 max-w-[600px]"
             >
@@ -77,7 +90,7 @@ export default function NewOwnerModal(props: NewOwnerProps) {
                 flex flex-col gap-2 font-jost"
                 >
                     <h1 className="text-secondary-200 text-center text-2xl mb-4">
-                        Set new owner
+                        Kick user
                     </h1>
                     <input
                         type="text"
@@ -111,11 +124,9 @@ export default function NewOwnerModal(props: NewOwnerProps) {
                             {results.map((result, idx) => (
                                 <button
                                     onClick={() => {
-                                        props.setShowNewOwnerModal(false);
-                                        props.setNewOwnerUsername(
-                                            result.username,
-                                        );
-                                        props.setShowNewOwnerDialog(true);
+                                        setShowKickModal(false);
+                                        setUsernameToKick(result.username);
+                                        setShowKickDialog(true);
                                     }}
                                     key={idx}
                                     className="hover:bg-background/80 hover:rounded-xl block w-full text-left py-1"
@@ -148,7 +159,7 @@ export default function NewOwnerModal(props: NewOwnerProps) {
                                     <Lottie animationData={Ghost} loop={true} />
                                 </div>
                                 <p className="text-center text-lg font-jost">
-                                    This channel has no members other than you
+                                    No users to kick
                                 </p>
                             </>
                         )}

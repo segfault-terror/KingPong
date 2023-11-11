@@ -1,7 +1,7 @@
 'use client';
 import { channelModalContext, modalContext } from '@/contexts/contexts';
 import Link from 'next/link';
-import { useContext, useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { FaUserFriends } from 'react-icons/fa';
 import { HiDotsVertical } from 'react-icons/hi';
 import ChatInput from './ChatInput';
@@ -18,6 +18,7 @@ type ChannelConversationProps = {
 export default function ChannelConversation(props: ChannelConversationProps) {
     const { setDotsDropdown } = useContext(modalContext);
     const { showMembers, setShowMembers } = useContext(channelModalContext);
+    const [isTyping, setIsTyping] = useState(false);
 
     const { socket } = useSocket();
 
@@ -99,6 +100,12 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                             bg-gradient-to-b from-background/60 to-[#330E51]/60"
             >
                 <h1 className="text-cube_palette-200 text-2xl">{data?.name}</h1>
+                {isTyping && (
+                    <p className="text-secondary-500 text-xs">
+                        {' '}
+                        someone is typing...{' '}
+                    </p>
+                )}
                 <div className="flex gap-4 text-secondary-200">
                     <button onClick={() => setShowMembers(!showMembers)}>
                         <FaUserFriends className="w-8 h-8" />
@@ -136,9 +143,9 @@ export default function ChannelConversation(props: ChannelConversationProps) {
 
             <ChatInput
                 sendMessage={sendMessage}
+                username={me?.username}
                 channelName={props.channelName}
-                isTyping={false}
-                setIsTyping={() => {}}
+                setIsTyping={setIsTyping}
             />
         </div>
     );
