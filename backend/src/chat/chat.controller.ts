@@ -195,4 +195,17 @@ export class ChatController {
             data.usernameToUnban,
         );
     }
+
+    @Post('/channel/:channel_name/kick')
+    async kickUser(
+        @Param('channel_name') channelName: string,
+        @Body() data: { usernameToKick: string },
+        @Req() request: any,
+    ) {
+        return this.chatService.kickUser(
+            channelName,
+            request.user.username,
+            data.usernameToKick,
+        );
+    }
 }

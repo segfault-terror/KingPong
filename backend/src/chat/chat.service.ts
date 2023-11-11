@@ -1048,4 +1048,69 @@ export class ChatService {
             },
         });
     }
+
+    async kickUser(
+        channelName: string,
+        requestUsername: string,
+        usernameToKick: string,
+    ) {
+        // Check if channel exists
+        const channel = await this.prisma.channel.findFirst({
+            where: { name: channelName },
+            include: {
+                bannedUsers: { select: { username: true } },
+                members: { select: { username: true } },
+                admins: { select: { username: true } },
+                owner: { select: { username: true } },
+            },
+        });
+        if (!channel) {
+            throw new NotFoundException(
+                `Channel ${channelName} does not exist`,
+            );
+        }
+
+        // Check if request user is a member, if so throw ForbiddenException
+        if (channel.members.some((m) => m.username === requestUsername)) {
+            throw new ForbiddenException(
+                'Regular members cannot kick other users',
+            );
+        }
+
+        // Check if username to kick is banned
+        if (channel.bannedUsers.some((b) => b.username === usernameToKick)) {
+            throw new BadRequestException(
+                `User ${usernameToKick} is banned from channel ${channelName}`,
+            );
+        }
+
+        // It's impossible to kick the owner
+        if (channel.owner.username === usernameToKick) {
+            throw new ForbiddenException('Channel owner cannot be kicked');
+        }
+
+        // Check if request user is an admin and the user to kick is an admin, throw UnauthorizedException
+        if (
+            channel.admins.some((a) => a.username === requestUsername) &&
+            channel.admins.some((a) => a.username === usernameToKick)
+        ) {
+            throw new UnauthorizedException(`Admin cannot kick another admin`);
+        }
+
+        // Check if you're kicking yourself
+        if (requestUsername === usernameToKick) {
+            throw new ImATeapotException(
+                'Wanna kick yourself, are you stupid?',
+            );
+        }
+
+        // Kick the user
+        return await this.prisma.channel.update({
+            where: { name: channelName },
+            data: {
+                members: { disconnect: { username: usernameToKick } },
+                admins: { disconnect: { username: usernameToKick } },
+            },
+        });
+    }
 }
