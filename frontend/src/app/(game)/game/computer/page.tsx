@@ -24,7 +24,7 @@ interface InitData {
 }
 
 interface Data {
-    ball: Vector;
+    ballPos: Vector;
     topPaddlePos: Vector;
     bottomPaddlePos: Vector;
 }
