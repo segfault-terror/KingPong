@@ -7,7 +7,6 @@ type ChatInputProps = {
     sendMessage: Function;
     username?: string;
     channelName?: string;
-    isTyping: boolean;
     setIsTyping: Function;
 };
 
@@ -57,12 +56,39 @@ export default function ChatInput({
     function onUserTyping() {
         if (typingTimeout) clearTimeout(typingTimeout);
 
-        if (!typingTimeout) {
-            socket?.emit('typing', { username, isTyping: true });
+        if (channelName) {
+            if (!typingTimeout) {
+                socket?.emit('typing', {
+                    username,
+                    isTyping: true,
+                    isChannel: true,
+                    channelName,
+                });
+            }
+        } else {
+            if (!typingTimeout) {
+                socket?.emit('typing', {
+                    username,
+                    isTyping: true,
+                    isChannel: false,
+                });
+            }
         }
 
         typingTimeout = setTimeout(() => {
-            socket?.emit('typing', { username, isTyping: false });
+            if (channelName)
+                socket?.emit('typing', {
+                    username,
+                    isTyping: false,
+                    isChannel: true,
+                    channelName,
+                });
+            else
+                socket?.emit('typing', {
+                    username,
+                    isTyping: false,
+                    isChannel: false,
+                });
             typingTimeout = null;
         }, typingDelay);
     }
@@ -91,6 +117,7 @@ export default function ChatInput({
                         event.currentTarget.value = '';
                         event.currentTarget.focus();
                     } else {
+                        console.log(`${username} is typing...}`);
                         onUserTyping();
                     }
                 }}

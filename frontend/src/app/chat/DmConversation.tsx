@@ -58,8 +58,6 @@ export default function DmConversation({ userName }: DmConversationProps) {
         );
     }
 
-    console.log(`userName = ${userName}`);
-
     return (
         <div
             className="flex flex-col h-full
@@ -79,7 +77,6 @@ export default function DmConversation({ userName }: DmConversationProps) {
                 <ChatInput
                     sendMessage={mutate}
                     username={userName}
-                    isTyping={isTyping}
                     setIsTyping={setIsTyping}
                 />
         </div>
