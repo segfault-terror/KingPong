@@ -66,7 +66,7 @@ export default function MatchMaking({ me, setMatchmaking }: Props) {
                         setData(opponent);
                         setTimeout(() => {
                             setMatchmaking(false);
-                        }, 10000);
+                        }, 5000);
                     }
                 },
             );

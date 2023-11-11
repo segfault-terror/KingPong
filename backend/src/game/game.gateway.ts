@@ -48,23 +48,19 @@ export class GameGateway implements OnGatewayConnection {
     }
 
     async handleDisconnect(socket: Socket) {
-        for (let i = 0; i < this.queue.length; i++) {
-            const user = this.connectedUsers.find(
-                (user) => user.id === socket.id,
-            );
-            console.log('disconnect', user);
-            if (!user) break;
-            // remove user from queue
-            console.log(user);
-            console.log(`[Game] Unregistered ${user.username} from one tab`);
-            this.queue = this.queue.filter(
-                (queue) => queue.username !== user.username,
-            );
-            // remove user from connected users
-            this.connectedUsers = this.connectedUsers.filter(
-                (user) => user.username !== user.username,
-            );
-        }
+        const user = this.connectedUsers.find((user) => user.id === socket.id);
+        console.log('disconnect', this.connectedUsers);
+        if (!user) return;
+        // remove user from queue
+        // console.log(user);
+        console.log(`------[Game] Unregistered ${user.username} from one tab`);
+        this.queue = this.queue.filter(
+            (queue) => queue.username !== user.username,
+        );
+        // remove user from connected users
+        this.connectedUsers = this.connectedUsers.filter(
+            (users) => user.username !== users.username,
+        );
     }
 
     @SubscribeMessage('register')
@@ -72,12 +68,10 @@ export class GameGateway implements OnGatewayConnection {
         @MessageBody() username: string,
         @ConnectedSocket() socket: Socket,
     ) {
-        console.log(`Game Register... ${username}`);
-        const user = this.connectedUsers.find(
-            (user) => user.username === username,
-        );
+        console.log(`+++++ [Game] Register... ${username}`);
+        const user = this.connectedUsers.find((user) => user.id === socket.id);
         if (!user) {
-            console.log(`[Game] Registered ${username} for the first time`);
+            console.log(`++++++[Game] Registered ${username} for the first time`);
             this.connectedUsers.push({
                 username: username,
                 sockets: socket.id,
@@ -87,11 +81,12 @@ export class GameGateway implements OnGatewayConnection {
             // change username in connected users
             user.username = username;
             user.sockets = socket.id;
-            console.log(`[Game] Registered ${username} in another tab`);
+            console.log(`++++++[Game] Registered ${username} in another tab`);
+            console.log(this.connectedUsers);
         } else {
             // disallow multiple connections
             if (user.sockets !== socket.id) {
-                console.log(`[Game] ${username} already has a connection`);
+                console.log(`++++++[Game] ${username} already has a connection`);
                 socket.disconnect(true);
             }
         }
@@ -118,33 +113,22 @@ export class GameGateway implements OnGatewayConnection {
             );
             if (queue.length >= 2) {
                 console.log('matchmaking', '2 players found');
-                this.server
-                    .to(queue[0].socket)
-                    .emit('matchmakingfound', {
-                        matchmaking: true,
-                        opponent: queue[1].username,
-                    });
-                this.server
-                    .to(queue[1].socket)
-                    .emit('matchmakingfound', {
-                        matchmaking: true,
-                        opponent: queue[0].username,
-                    });
-                // const player1 = queue[0];
-                // const player2 = queue[1];
-                // this.gameService.createGame(
-                //     player1.username,
-                //     player2.username,
-                //     player1.socket,
-                //     player2.socket,
-                // );
-                // this.queue = this.queue.filter(
-                //     (queue) =>
-                //         queue.username !== player1.username &&
-                //         queue.username !== player2.username,
-                // );
+                this.server.to(queue[0].socket).emit('matchmakingfound', {
+                    matchmaking: true,
+                    opponent: queue[1].username,
+                });
+                this.server.to(queue[1].socket).emit('matchmakingfound', {
+                    matchmaking: true,
+                    opponent: queue[0].username,
+                });
+                this.queue = this.queue.filter(
+                    (queue) =>
+                        queue.username !== queue[0].username &&
+                        queue.username !== queue[1].username,
+                );
             }
             // console.log('matchmaking', data);
         }
     }
 }
+
