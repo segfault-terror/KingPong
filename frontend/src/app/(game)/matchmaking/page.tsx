@@ -13,6 +13,8 @@ export default function MatchMakingPage({
     setmatchmaking,
     me,
 }: Props) {
+    const { socket } = useSocket();
+    socket?.emit('matchmaking', me);
     // const { socket } = useSocket();
     // useEffect(() => {
     //     if (socket) {

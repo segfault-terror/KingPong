@@ -48,7 +48,6 @@ export default function MatchMaking({ me, setMatchmaking }: Props) {
     const [animations, setAnimations] = useState(['', '', '', '', '', '']);
     const { socket } = useSocket();
     const [oppdata, setData] = useState('');
-    socket?.emit('matchmaking', me);
     useEffect(() => {
         if (socket) {
             socket?.on(

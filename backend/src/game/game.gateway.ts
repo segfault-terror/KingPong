@@ -122,9 +122,9 @@ export class GameGateway implements OnGatewayConnection {
                     opponent: queue[0].username,
                 });
                 this.queue = this.queue.filter(
-                    (queue) =>
-                        queue.username !== queue[0].username &&
-                        queue.username !== queue[1].username,
+                    (queues) =>
+                        queues.username !== queue[0].username &&
+                        queues.username !== queue[1].username,
                 );
             }
             // console.log('matchmaking', data);
