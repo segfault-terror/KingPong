@@ -48,12 +48,23 @@ export class GameGateway implements OnGatewayConnection {
     }
 
     async handleDisconnect(socket: Socket) {
-        const user = this.connectedUsers.find((user) =>
-            user.sockets.includes(socket.id),
-        );
-
-        if (!user) return;
-        console.log(`[Global] Unregistered ${user.username} from one tab`);
+        for (let i = 0; i < this.queue.length; i++) {
+            const user = this.connectedUsers.find(
+                (user) => user.id === socket.id,
+            );
+            console.log('disconnect', user);
+            if (!user) break;
+            // remove user from queue
+            console.log(user);
+            console.log(`[Game] Unregistered ${user.username} from one tab`);
+            this.queue = this.queue.filter(
+                (queue) => queue.username !== user.username,
+            );
+            // remove user from connected users
+            this.connectedUsers = this.connectedUsers.filter(
+                (user) => user.username !== user.username,
+            );
+        }
     }
 
     @SubscribeMessage('register')
@@ -61,21 +72,26 @@ export class GameGateway implements OnGatewayConnection {
         @MessageBody() username: string,
         @ConnectedSocket() socket: Socket,
     ) {
-        console.log(`Register... ${username}`);
+        console.log(`Game Register... ${username}`);
         const user = this.connectedUsers.find(
             (user) => user.username === username,
         );
         if (!user) {
-            console.log(`[Global] Registered ${username} for the first time`);
+            console.log(`[Game] Registered ${username} for the first time`);
             this.connectedUsers.push({
-                username,
+                username: username,
                 sockets: socket.id,
                 id: socket.id,
             });
+        } else if (user.username === '') {
+            // change username in connected users
+            user.username = username;
+            user.sockets = socket.id;
+            console.log(`[Game] Registered ${username} in another tab`);
         } else {
             // disallow multiple connections
             if (user.sockets !== socket.id) {
-                console.log(`[Global] ${username} already has a connection`);
+                console.log(`[Game] ${username} already has a connection`);
                 socket.disconnect(true);
             }
         }
@@ -102,8 +118,18 @@ export class GameGateway implements OnGatewayConnection {
             );
             if (queue.length >= 2) {
                 console.log('matchmaking', '2 players found');
-                this.server.to(queue[0].socket).emit('matchmakingfound', true);
-                this.server.to(queue[1].socket).emit('matchmakingfound', true);
+                this.server
+                    .to(queue[0].socket)
+                    .emit('matchmakingfound', {
+                        matchmaking: true,
+                        opponent: queue[1].username,
+                    });
+                this.server
+                    .to(queue[1].socket)
+                    .emit('matchmakingfound', {
+                        matchmaking: true,
+                        opponent: queue[0].username,
+                    });
                 // const player1 = queue[0];
                 // const player2 = queue[1];
                 // this.gameService.createGame(
@@ -118,7 +144,7 @@ export class GameGateway implements OnGatewayConnection {
                 //         queue.username !== player2.username,
                 // );
             }
-            // console.log('matchmaking', data);    
+            // console.log('matchmaking', data);
         }
     }
 }

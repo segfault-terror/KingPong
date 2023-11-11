@@ -15,6 +15,8 @@ import { useSocket } from '@/contexts/SocketContext';
 import { useEffect, useState } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { set } from 'react-hook-form';
+import { useQueries, useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 type Props = {
     me: any;
@@ -45,18 +47,29 @@ export default function MatchMaking({ me, setMatchmaking }: Props) {
     const isDesktop = useMediaQuery('(min-width: 1024px)');
     const [animations, setAnimations] = useState(['', '', '', '', '', '']);
     const { socket } = useSocket();
+    const [oppdata, setData] = useState('');
     socket?.emit('matchmaking', me);
     useEffect(() => {
         if (socket) {
-            socket?.on('matchmakingfound', (foundPlayer: boolean) => {
-                if (foundPlayer) {
-                    console.log('matchmaking found');
-                    setAnimations(getAnimations(isDesktop));
-                    setTimeout(() => {
-                        setMatchmaking(false);
-                    }, 10000);
-                }
-            });
+            socket?.on(
+                'matchmakingfound',
+                ({
+                    matchmaking,
+                    opponent,
+                }: {
+                    matchmaking: boolean;
+                    opponent: string;
+                }) => {
+                    if (matchmaking) {
+                        console.log('matchmaking found');
+                        setAnimations(getAnimations(isDesktop));
+                        setData(opponent);
+                        setTimeout(() => {
+                            setMatchmaking(false);
+                        }, 10000);
+                    }
+                },
+            );
 
             return () => {
                 socket?.off('matchmakingfound');
@@ -64,9 +77,26 @@ export default function MatchMaking({ me, setMatchmaking }: Props) {
         }
     }, [socket]);
 
+    const [newOpponent, setNewOpponent] = useState({
+        username: '',
+        avatar: '',
+    });
+    const { data: opponent, isLoading } = useQuery(
+        ['opponent', oppdata],
+        async () => {
+            if (!oppdata) return null;
+            const { data } = await axios.get(`/api/user/get/${oppdata}`);
+            return data;
+        },
+    );
+
     useEffect(() => {
-        console.log(animations);
-    }, [animations]);
+        if (opponent) {
+            const { username, avatar } = opponent;
+            setNewOpponent({ username, avatar });
+        }
+    }, [opponent]);
+    // if (isLoading) return <div>Loading...</div>;
 
     return (
         <div
@@ -86,10 +116,8 @@ export default function MatchMaking({ me, setMatchmaking }: Props) {
                 className={`hidden lg:inline lg:object-cover lg:w-full ${animations[2]}}`}
             />
 
-            <div
-                className={`self-center ${animations[4]} z-20 absolute`}
-            >
-                <PlayerCard img={Tommy.src} name="Tommy" />
+            <div className={`self-center ${animations[4]} z-20 absolute`}>
+                <PlayerCard img={me.avatar} name={me.username} />
             </div>
             <img
                 src={VsMobile.src}
@@ -101,10 +129,11 @@ export default function MatchMaking({ me, setMatchmaking }: Props) {
                 alt="VS"
                 className="self-center absolute hidden lg:inline"
             />
-            <div
-                className={`self-center ${animations[5]} z-10 absolute`}
-            >
-                <PlayerCard img={Archer.src} name="Archer" />
+            <div className={`self-center ${animations[5]} z-10 absolute`}>
+                <PlayerCard
+                    img={newOpponent.avatar}
+                    name={newOpponent.username}
+                />
             </div>
 
             <img
