@@ -208,4 +208,22 @@ export class ChatController {
             data.usernameToKick,
         );
     }
+
+    @Post('/channel/:channel_name/mute')
+    async muteUser(
+        @Param('channel_name') channelName: string,
+        @Body()
+        data: {
+            usernameToMute: string;
+            muteDuration: number;
+        },
+        @Req() request: any,
+    ) {
+        return this.chatService.muteUser(
+            channelName,
+            request.user.username,
+            data.usernameToMute,
+            data.muteDuration,
+        );
+    }
 }

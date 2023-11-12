@@ -609,10 +609,10 @@ export class ChatService {
         }
 
         // Check if user is not muted
-        if (channel.mutes.some((mutedUser) => mutedUser.userId === user.id)) {
-            throw new BadRequestException(
-                `User ${username} is muted in channel ${channelName}`,
-            );
+        if (await this.isMuted(channelName, username)) {
+            throw new ForbiddenException(`You are muted in ${channelName}`);
+        } else {
+            this.unmuteUser(channelName, username);
         }
 
         return await this.prisma.channelMessage.create({
@@ -1111,6 +1111,101 @@ export class ChatService {
                 members: { disconnect: { username: usernameToKick } },
                 admins: { disconnect: { username: usernameToKick } },
             },
+        });
+    }
+
+    async muteUser(
+        channelName: string,
+        requestUsername: string,
+        usernameToMute: string,
+        muteDuration: number,
+    ) {
+        // Check if channel exists
+        const channel = await this.prisma.channel.findFirst({
+            where: { name: channelName },
+            select: {
+                id: true,
+                owner: { select: { username: true } },
+                admins: { select: { username: true } },
+                members: { select: { username: true } },
+                bannedUsers: { select: { username: true } },
+            },
+        });
+        if (!channel) {
+            throw new NotFoundException(`Channel ${channelName} not found`);
+        }
+
+        // Check if request user is member, if so throw ForbiddenException
+        if (channel.members.some((m) => m.username === requestUsername)) {
+            throw new ForbiddenException(
+                'Regular members cannot mute other users',
+            );
+        }
+
+        // Check if user to mute is not banned
+        if (channel.bannedUsers.some((b) => b.username === usernameToMute)) {
+            throw new BadRequestException(
+                `User ${usernameToMute} is banned from ${channelName}`,
+            );
+        }
+
+        // Check if request user is admin, and the user to mute is also admin, throw UnauthorizedException
+        if (
+            channel.admins.some((a) => a.username === requestUsername) &&
+            channel.admins.some((a) => a.username === usernameToMute)
+        ) {
+            throw new UnauthorizedException('Admin cannot mute another admin');
+        }
+
+        // Mute the user
+        const user = await this.prisma.user.findFirst({
+            where: { username: usernameToMute },
+            select: { id: true },
+        });
+        return await this.prisma.mute.create({
+            data: {
+                channel: { connect: { id: channel.id } },
+                user: { connect: { id: user.id } },
+                expiresAt: new Date(Date.now() + muteDuration * 1000),
+            },
+        });
+    }
+
+    async isMuted(channelName: string, username: string) {
+        const channel = await this.prisma.channel.findFirst({
+            where: { name: channelName },
+            select: { id: true },
+        });
+
+        const user = await this.prisma.user.findFirst({
+            where: { username },
+            select: { id: true },
+        });
+
+        const mute = await this.prisma.mute.findFirst({
+            where: {
+                channel: { id: channel.id },
+                user: { id: user.id },
+            },
+        });
+
+        if (!mute) return false;
+        return mute.expiresAt > new Date();
+    }
+
+    async unmuteUser(channelName: string, username: string) {
+        const mute = await this.prisma.mute.findFirst({
+            where: {
+                channel: { name: channelName },
+                user: { username },
+            },
+            select: { id: true },
+        });
+
+        if (!mute) return;
+
+        await this.prisma.mute.delete({
+            where: { id: mute.id },
         });
     }
 }
