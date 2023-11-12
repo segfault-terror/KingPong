@@ -609,7 +609,7 @@ export class ChatService {
         }
 
         // Check if user is not muted
-        if (channel.mutes.some((mutedUser) => mutedUser.id === user.id)) {
+        if (channel.mutes.some((mutedUser) => mutedUser.userId === user.id)) {
             throw new BadRequestException(
                 `User ${username} is muted in channel ${channelName}`,
             );
