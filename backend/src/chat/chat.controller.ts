@@ -234,4 +234,15 @@ export class ChatController {
     ) {
         return this.chatService.getMuteList(channelName, request.user.username);
     }
+
+    @Get('/channel/:channel_name/unmute-list')
+    async getUnmuteList(
+        @Param('channel_name') channelName: string,
+        @Req() request: any,
+    ) {
+        return this.chatService.getUnmuteList(
+            channelName,
+            request.user.username,
+        );
+    }
 }
