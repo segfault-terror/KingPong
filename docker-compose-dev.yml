@@ -31,15 +31,15 @@ services:
 
     nginx:
         container_name: nginx-dev
-        build:
-            context: ./nginx
-            dockerfile: dev.dockerfile
+        image: nginx:latest
         ports:
             - 8080:80
         # depends_on:
         #   - backend
         #   - frontend
         restart: always
+        volumes:
+            - ./nginx/config/dev.conf:/etc/nginx/nginx.conf
         extra_hosts:
             - 'host.docker.internal:host-gateway'
 
