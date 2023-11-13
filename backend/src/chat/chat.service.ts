@@ -571,7 +571,14 @@ export class ChatService {
                 owner: true,
                 admins: true,
                 members: true,
-                mutes: true,
+                mutes: {
+                    select: {
+                        expiresAt: true,
+                        user: {
+                            select: { username: true },
+                        },
+                    },
+                },
                 bannedUsers: true,
             },
         });
@@ -609,9 +616,15 @@ export class ChatService {
         }
 
         // Check if user is not muted
-        if (await this.isMuted(channelName, username)) {
+
+        const userMute = channel.mutes.find(
+            (mute) => mute.user.username === username,
+        );
+
+        if (userMute && userMute.expiresAt > new Date()) {
             throw new ForbiddenException(`You are muted in ${channelName}`);
         } else {
+            // NOTE: await is not necessary here
             this.unmuteUser(channelName, username);
         }
 
@@ -1169,28 +1182,6 @@ export class ChatService {
                 expiresAt: new Date(Date.now() + muteDuration * 1000),
             },
         });
-    }
-
-    async isMuted(channelName: string, username: string) {
-        const channel = await this.prisma.channel.findFirst({
-            where: { name: channelName },
-            select: { id: true },
-        });
-
-        const user = await this.prisma.user.findFirst({
-            where: { username },
-            select: { id: true },
-        });
-
-        const mute = await this.prisma.mute.findFirst({
-            where: {
-                channel: { id: channel.id },
-                user: { id: user.id },
-            },
-        });
-
-        if (!mute) return false;
-        return mute.expiresAt > new Date();
     }
 
     async unmuteUser(channelName: string, username: string) {
