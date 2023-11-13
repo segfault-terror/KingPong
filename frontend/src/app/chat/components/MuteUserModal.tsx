@@ -150,7 +150,7 @@ export default function MuteUserModal({
                                     <Lottie animationData={Ghost} loop={true} />
                                 </div>
                                 <p className="text-center text-lg font-jost">
-                                    No users to ban
+                                    No users to mute
                                 </p>
                             </>
                         )}
