@@ -1199,4 +1199,71 @@ export class ChatService {
             where: { id: mute.id },
         });
     }
+
+    async getMuteList(channelName: string, requestUsername: string) {
+        const channel = await this.prisma.channel.findFirst({
+            where: { name: channelName },
+            select: {
+                members: {
+                    select: {
+                        id: true,
+                        fullname: true,
+                        username: true,
+                        avatar: true,
+                    },
+                },
+                admins: {
+                    select: {
+                        id: true,
+                        fullname: true,
+                        username: true,
+                        avatar: true,
+                    },
+                },
+                bannedUsers: {
+                    select: { username: true },
+                },
+                mutes: {
+                    select: {
+                        expiresAt: true,
+                        user: {
+                            select: { username: true },
+                        },
+                    },
+                },
+            },
+        });
+        if (!channel) {
+            throw new NotFoundException(`Channel ${channelName} not found`);
+        }
+
+        if (
+            channel.members.some((m) => m.username === requestUsername) ||
+            channel.bannedUsers.some((b) => b.username === requestUsername)
+        ) {
+            throw new ForbiddenException(
+                'Only owner and admins can access mute list',
+            );
+        }
+
+        if (channel.admins.some((a) => a.username === requestUsername)) {
+            channel.admins = [];
+        }
+
+        channel.members = channel.members.filter((member) => {
+            const mute = channel.mutes.find(
+                (mute) => mute.user.username === member.username,
+            );
+            return !mute || mute.expiresAt < new Date();
+        });
+
+        channel.admins = channel.admins.filter((admin) => {
+            const mute = channel.mutes.find(
+                (mute) => mute.user.username === admin.username,
+            );
+            return !mute || mute.expiresAt < new Date();
+        });
+
+        return [...channel.admins, ...channel.members];
+    }
 }

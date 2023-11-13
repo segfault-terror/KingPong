@@ -226,4 +226,12 @@ export class ChatController {
             data.muteDuration,
         );
     }
+
+    @Get('/channel/:channel_name/mute-list')
+    async getMuteList(
+        @Param('channel_name') channelName: string,
+        @Req() request: any,
+    ) {
+        return this.chatService.getMuteList(channelName, request.user.username);
+    }
 }
