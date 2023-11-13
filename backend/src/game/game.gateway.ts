@@ -8,6 +8,7 @@ import {
 } from '@nestjs/websockets';
 import { Socket, Namespace } from 'socket.io';
 import { ComputerService } from './computer/computer.service';
+import { RankedService } from './ranked/ranked.service';
 import { GameService } from './game.service';
 import { ConsoleLogger } from '@nestjs/common';
 
@@ -17,7 +18,7 @@ import { ConsoleLogger } from '@nestjs/common';
 export class GameGateway implements OnGatewayConnection {
     constructor(
         private readonly computerService: ComputerService,
-        private readonly gameService: GameService,
+        private readonly rankedService: RankedService,
     ) {}
     @WebSocketServer() server: Namespace;
     connectedUsers: { id: string; username: string; sockets: string }[] = [];
@@ -69,9 +70,11 @@ export class GameGateway implements OnGatewayConnection {
         @ConnectedSocket() socket: Socket,
     ) {
         console.log(`+++++ [Game] Register... ${username}`);
-        const user = this.connectedUsers.find((user) => user.id === socket.id);
+        const user = this.connectedUsers.find((user) => user.username === '');
         if (!user) {
-            console.log(`++++++[Game] Registered ${username} for the first time`);
+            console.log(
+                `++++++[Game] Registered ${username} for the first time`,
+            );
             this.connectedUsers.push({
                 username: username,
                 sockets: socket.id,
@@ -86,7 +89,9 @@ export class GameGateway implements OnGatewayConnection {
         } else {
             // disallow multiple connections
             if (user.sockets !== socket.id) {
-                console.log(`++++++[Game] ${username} already has a connection`);
+                console.log(
+                    `++++++[Game] ${username} already has a connection`,
+                );
                 socket.disconnect(true);
             }
         }
@@ -126,9 +131,19 @@ export class GameGateway implements OnGatewayConnection {
                         queues.username !== queue[0].username &&
                         queues.username !== queue[1].username,
                 );
+                const client1 = this.server.sockets.get(queue[0].socket);
+                const client2 = this.server.sockets.get(queue[1].socket);
+                // get socket if user has multiple tabs open
+                setTimeout(() => {
+                    this.rankedService.startGame(
+                        client1,
+                        client2,
+                        queue[0],
+                        queue[1],
+                    );
+                }, 5000);
             }
             // console.log('matchmaking', data);
         }
     }
 }
-
