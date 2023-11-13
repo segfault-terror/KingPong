@@ -1,7 +1,9 @@
 import { useSocket } from '@/contexts/SocketContext';
-import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useRef } from 'react';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
 import { BiSolidSend } from 'react-icons/bi';
+import Loading from '../loading';
 
 type ChatInputProps = {
     sendMessage: Function;
@@ -19,6 +21,42 @@ export default function ChatInput({
     const inputRef = useRef<HTMLInputElement>(null);
     const { socket } = useSocket();
     const queryClient = useQueryClient();
+
+    const { data, isLoading } = useQuery({
+        queryKey: ['is-muted', username],
+        queryFn: async () => {
+            const { data } = await axios.get(
+                `/api/chat/channel/${channelName}/is-muted/${username}`,
+                { withCredentials: true },
+            );
+            return data;
+        },
+        refetchOnWindowFocus: false,
+    });
+
+    const [isMuted, setIsMuted] = useState(false);
+
+    useEffect(() => {
+        if (!channelName || !data) return;
+
+        let timeoutId: NodeJS.Timeout;
+
+        if (data.isMuted) {
+            setIsMuted(true);
+
+            const now = new Date();
+            const muteExpire = new Date(data.expiresAt);
+
+            timeoutId = setTimeout(
+                () => setIsMuted(false),
+                muteExpire.getTime() - now.getTime(),
+            );
+        }
+
+        return () => {
+            clearTimeout(timeoutId);
+        };
+    }, [data]);
 
     useEffect(() => {
         socket?.on('typing', (data) => setIsTyping(data.isTyping));
@@ -49,6 +87,14 @@ export default function ChatInput({
             socket?.off('new-channel-message');
         };
     });
+
+    if (isLoading) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
 
     let typingTimeout: NodeJS.Timeout | null;
     const typingDelay = 1000;
@@ -99,10 +145,11 @@ export default function ChatInput({
                 bg-background rounded-full pr-2"
         >
             <input
+                disabled={isMuted}
                 ref={inputRef}
                 type="text"
                 autoFocus
-                placeholder="Write a message"
+                placeholder={isMuted ? 'You are muted' : 'Write a message'}
                 className="px-4 py-2 bg-background rounded-full
                     text-cube_palette-200 placeholder-cube_palette-200
                     font-jost
@@ -122,18 +169,20 @@ export default function ChatInput({
                     }
                 }}
             />
-            <button
-                onClick={() => {
-                    if (inputRef.current == null) return;
-                    if (inputRef.current.value.trim() === '') return;
+            {!isMuted && (
+                <button
+                    onClick={() => {
+                        if (inputRef.current == null) return;
+                        if (inputRef.current.value.trim() === '') return;
 
-                    sendMessage(inputRef.current.value);
-                    inputRef.current.value = '';
-                    inputRef.current.focus();
-                }}
-            >
-                <BiSolidSend className="text-secondary-200 text-3xl" />
-            </button>
+                        sendMessage(inputRef.current.value);
+                        inputRef.current.value = '';
+                        inputRef.current.focus();
+                    }}
+                >
+                    <BiSolidSend className="text-secondary-200 text-3xl" />
+                </button>
+            )}
         </div>
     );
 }

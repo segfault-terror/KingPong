@@ -1354,4 +1354,56 @@ export class ChatService {
 
         return { admins: channel.admins, members: channel.members };
     }
+
+    async isMuted(channelName: string, username: string) {
+        const channel = await this.prisma.channel.findFirst({
+            where: { name: channelName },
+            select: {
+                owner: {
+                    select: { username: true },
+                },
+                admins: {
+                    select: { username: true },
+                },
+                members: {
+                    select: { username: true },
+                },
+                mutes: {
+                    select: {
+                        expiresAt: true,
+                        user: {
+                            select: { username: true },
+                        },
+                    },
+                },
+            },
+        });
+        if (!channel) {
+            throw new NotFoundException(`Channel ${channelName} not found`);
+        }
+
+        if (channel.owner.username === username) {
+            throw new BadRequestException('Owner cannot be muted');
+        }
+
+        if (
+            channel.admins.every((a) => a.username !== username) &&
+            channel.members.every((m) => m.username !== username)
+        ) {
+            throw new BadRequestException(
+                `${username} is not a member in ${channelName}`,
+            );
+        }
+
+        const mute = channel.mutes.find((m) => m.user.username === username);
+
+        if (mute && mute.expiresAt > new Date()) {
+            return {
+                isMuted: true,
+                expiresAt: mute.expiresAt,
+            };
+        }
+        this.unmuteUser(channelName, username);
+        return { isMuted: false };
+    }
 }

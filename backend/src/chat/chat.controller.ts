@@ -311,4 +311,12 @@ export class ChatController {
 
         this.chatService.unmuteUser(channelName, data.usernameToUnmute);
     }
+
+    @Get('/channel/:channel_name/is-muted/:username')
+    async isMuted(
+        @Param('channel_name') channelName: string,
+        @Param('username') username: string,
+    ) {
+        return this.chatService.isMuted(channelName, username);
+    }
 }

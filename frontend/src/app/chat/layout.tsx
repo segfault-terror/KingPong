@@ -2,9 +2,7 @@
 import { modalContext, toggleContext } from '@/contexts/contexts';
 import { useState } from 'react';
 import Modal from '../../components/Modal';
-import ChatMenu from './ChatMenu';
 import CreateNewChannel from './CreateNewChannel';
-import DropdownModal from './DropdownModal';
 import JoinNewChannel from './JoinNewChannel';
 import NewConversation from './NewConversation';
 import WelcomeChannel from './WelcomeChannel';
@@ -101,14 +99,6 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
                     >
                         <NewConversation />
                     </Modal>
-                )}
-                {dotsDropdown && (
-                    <DropdownModal
-                        onClose={() => setDotsDropdown(false)}
-                        childrenClassName="top-[246px] md:top-[200px] lg:top-[192px] right-16"
-                    >
-                        <ChatMenu />
-                    </DropdownModal>
                 )}
                 <SocketProvider username={me.username} namespace="chat">
                     {children}
