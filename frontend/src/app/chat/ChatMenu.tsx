@@ -20,6 +20,7 @@ import UnbanDialog from './components/UnbanUserDialog';
 import KickUserModal from './components/KickUserModal';
 import KickDialog from './components/KickUserDialog';
 import MuteUserModal from './components/MuteUserModal';
+import MuteUserForm from './components/MuteUserForm';
 
 export default function ChatMenu() {
     const pathname = usePathname();
@@ -191,7 +192,7 @@ function ChannelMenu(props: { channelName: string }) {
     const [showKickDialog, setShowKickDialog] = useState(false);
     const [usernameToKick, setUsernameToKick] = useState('');
     const [showMuteModal, setShowMuteModal] = useState(false);
-    const [showMuteDialog, setShowMuteDialog] = useState(false);
+    const [showMuteForm, setShowMuteForm] = useState(false);
     const [usernameToMute, setUsernameToMute] = useState('');
 
     useEffect(() => {
@@ -312,8 +313,16 @@ function ChannelMenu(props: { channelName: string }) {
                 <MuteUserModal
                     channelName={props.channelName}
                     setShowMuteModal={setShowMuteModal}
-                    setShowMuteDialog={setShowMuteDialog}
+                    setShowMuteDialog={setShowMuteForm}
                     setUsernameToMute={setUsernameToMute}
+                />
+            )}
+
+            {showMuteForm && (
+                <MuteUserForm
+                    channelName={props.channelName}
+                    usernameToMute={usernameToMute}
+                    setShowMuteUserForm={setShowMuteForm}
                 />
             )}
 
