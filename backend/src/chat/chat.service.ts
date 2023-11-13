@@ -1142,6 +1142,14 @@ export class ChatService {
                 admins: { select: { username: true } },
                 members: { select: { username: true } },
                 bannedUsers: { select: { username: true } },
+                mutes: {
+                    select: {
+                        expiresAt: true,
+                        user: {
+                            select: { username: true },
+                        },
+                    },
+                },
             },
         });
         if (!channel) {
@@ -1168,6 +1176,19 @@ export class ChatService {
             channel.admins.some((a) => a.username === usernameToMute)
         ) {
             throw new UnauthorizedException('Admin cannot mute another admin');
+        }
+
+        const mute = channel.mutes.find(
+            (m) => m.user.username === usernameToMute,
+        );
+
+        // Check if the user was muted, but the mute has expired
+        if (mute && mute.expiresAt > new Date()) {
+            this.unmuteUser(channelName, usernameToMute);
+        } else if (mute && mute.expiresAt < new Date()) {
+            throw new BadRequestException(
+                `User ${usernameToMute} is already muted`,
+            );
         }
 
         // Mute the user
