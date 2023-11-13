@@ -16,6 +16,7 @@ import { CreateMessageDto } from './dto/create.message.dto';
 import { JoinChannelDto } from './dto/join.channel.dto';
 import { CreateChannelDto } from './dto/create.channel.dto';
 import { UpdateChannelDto } from './dto/update.channel.dto';
+import { ForbiddenException } from '@nestjs/common';
 
 @Controller('chat')
 @UseGuards(AuthGard)
@@ -244,5 +245,70 @@ export class ChatController {
             channelName,
             request.user.username,
         );
+    }
+
+    @Post('/channel/:channel_name/unmute')
+    async unmuteUser(
+        @Param('channel_name') channelName: string,
+        @Body() data: { usernameToUnmute: string },
+        @Req() request: any,
+    ) {
+        const channel = await this.prismaService.channel.findFirst({
+            where: { name: channelName },
+            select: {
+                bannedUsers: {
+                    select: { username: true },
+                },
+                members: {
+                    select: { username: true },
+                },
+                admins: {
+                    select: { username: true },
+                },
+                mutes: {
+                    select: {
+                        user: {
+                            select: { username: true },
+                        },
+                    },
+                },
+            },
+        });
+        if (!channel) {
+            throw new NotFoundException(`Channel ${channelName} not found`);
+        }
+
+        if (
+            channel.bannedUsers.some(
+                (b) => b.username === request.user.username,
+            )
+        ) {
+            throw new ForbiddenException(`You are banned from ${channelName}`);
+        }
+
+        if (channel.members.some((m) => m.username === request.user.username)) {
+            throw new ForbiddenException('Members are not allowed to un-mute');
+        }
+
+        if (
+            channel.admins.some((a) => a.username === request.user.username) &&
+            channel.admins.some((a) => a.username === data.usernameToUnmute)
+        ) {
+            throw new ForbiddenException(
+                'Admins are not allowed to un-mute other admins',
+            );
+        }
+
+        if (
+            channel.mutes.every(
+                (m) => m.user.username !== data.usernameToUnmute,
+            )
+        ) {
+            throw new NotFoundException(
+                `${data.usernameToUnmute} is not muted`,
+            );
+        }
+
+        this.chatService.unmuteUser(channelName, data.usernameToUnmute);
     }
 }

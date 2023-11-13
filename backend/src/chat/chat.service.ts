@@ -1342,14 +1342,14 @@ export class ChatService {
             const mute = channel.mutes.find(
                 (mute) => mute.user.username === member.username,
             );
-            return mute && mute.expiresAt > new Date();
+            return mute && mute.expiresAt < new Date();
         });
 
         channel.admins = channel.admins.filter((admin) => {
             const mute = channel.mutes.find(
                 (mute) => mute.user.username === admin.username,
             );
-            return mute && mute.expiresAt > new Date();
+            return mute && mute.expiresAt < new Date();
         });
 
         return { admins: channel.admins, members: channel.members };
