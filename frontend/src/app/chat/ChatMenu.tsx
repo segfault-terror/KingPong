@@ -21,6 +21,7 @@ import KickUserModal from './components/KickUserModal';
 import KickDialog from './components/KickUserDialog';
 import MuteUserModal from './components/MuteUserModal';
 import MuteUserForm from './components/MuteUserForm';
+import UnmuteUserModal from './components/UnmuteUserModal';
 
 export default function ChatMenu() {
     const pathname = usePathname();
@@ -194,6 +195,9 @@ function ChannelMenu(props: { channelName: string }) {
     const [showMuteModal, setShowMuteModal] = useState(false);
     const [showMuteForm, setShowMuteForm] = useState(false);
     const [usernameToMute, setUsernameToMute] = useState('');
+    const [showUnmuteModal, setShowUnmuteModal] = useState(false);
+    const [showUnumteDialog, setShowUnmuteDialog] = useState(false);
+    const [usernameToUnmute, setUsernameToUnmute] = useState('');
 
     useEffect(() => {
         if (!redirectChannel) return;
@@ -326,6 +330,15 @@ function ChannelMenu(props: { channelName: string }) {
                 />
             )}
 
+            {showUnmuteModal && (
+                <UnmuteUserModal
+                    channelName={props.channelName}
+                    setShowUnmuteModal={setShowUnmuteModal}
+                    setUsernameToUnmute={setUsernameToUnmute}
+                    setShowUnmuteDialog={setShowUnmuteDialog}
+                />
+            )}
+
             {isOwner && (
                 <ChatMenuItem>
                     <button onClick={() => setShowDeleteModal(true)}>
@@ -381,6 +394,13 @@ function ChannelMenu(props: { channelName: string }) {
                 <ChatMenuItem>
                     <button onClick={() => setShowMuteModal(true)}>
                         Mute user
+                    </button>
+                </ChatMenuItem>
+            )}
+            {(isOwner || isAdmin) && (
+                <ChatMenuItem>
+                    <button onClick={() => setShowUnmuteModal(true)}>
+                        Un-mute user
                     </button>
                 </ChatMenuItem>
             )}
