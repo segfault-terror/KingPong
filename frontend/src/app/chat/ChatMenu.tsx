@@ -22,6 +22,7 @@ import KickDialog from './components/KickUserDialog';
 import MuteUserModal from './components/MuteUserModal';
 import MuteUserForm from './components/MuteUserForm';
 import UnmuteUserModal from './components/UnmuteUserModal';
+import UnmuteDialog from './components/UnmuteUserDialog';
 
 export default function ChatMenu() {
     const pathname = usePathname();
@@ -196,7 +197,7 @@ function ChannelMenu(props: { channelName: string }) {
     const [showMuteForm, setShowMuteForm] = useState(false);
     const [usernameToMute, setUsernameToMute] = useState('');
     const [showUnmuteModal, setShowUnmuteModal] = useState(false);
-    const [showUnumteDialog, setShowUnmuteDialog] = useState(false);
+    const [showUnmuteDialog, setShowUnmuteDialog] = useState(false);
     const [usernameToUnmute, setUsernameToUnmute] = useState('');
 
     useEffect(() => {
@@ -335,6 +336,14 @@ function ChannelMenu(props: { channelName: string }) {
                     channelName={props.channelName}
                     setShowUnmuteModal={setShowUnmuteModal}
                     setUsernameToUnmute={setUsernameToUnmute}
+                    setShowUnmuteDialog={setShowUnmuteDialog}
+                />
+            )}
+
+            {showUnmuteDialog && (
+                <UnmuteDialog
+                    channelName={props.channelName}
+                    usernameToUnmute={usernameToUnmute}
                     setShowUnmuteDialog={setShowUnmuteDialog}
                 />
             )}
