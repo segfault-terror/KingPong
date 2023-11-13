@@ -10,13 +10,15 @@ import axios from 'axios';
 import Loading from '../loading';
 import { redirect } from 'next/navigation';
 import { useSocket } from '@/contexts/SocketContext';
+import DropdownModal from './DropdownModal';
+import ChatMenu from './ChatMenu';
 
 type ChannelConversationProps = {
     channelName: string;
 };
 
 export default function ChannelConversation(props: ChannelConversationProps) {
-    const { setDotsDropdown } = useContext(modalContext);
+    const { dotsDropdown, setDotsDropdown } = useContext(modalContext);
     const { showMembers, setShowMembers } = useContext(channelModalContext);
     const [isTyping, setIsTyping] = useState(false);
 
@@ -116,6 +118,18 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                     >
                         <HiDotsVertical className="w-8 h-8" />
                     </button>
+                    {dotsDropdown && (
+                        <DropdownModal
+                            onClose={() => setDotsDropdown(false)}
+                            childrenClassName={
+                                showMembers
+                                    ? 'top-[246px] md:top-[200px] lg:top-[192px] right-[340px]'
+                                    : 'top-[246px] md:top-[200px] lg:top-[192px] right-16'
+                            }
+                        >
+                            <ChatMenu />
+                        </DropdownModal>
+                    )}
                 </div>
             </div>
 
