@@ -15,14 +15,6 @@ export default function MatchMakingPage({
 }: Props) {
     const { socket } = useSocket();
     socket?.emit('matchmaking', me);
-    // const { socket } = useSocket();
-    // useEffect(() => {
-    //     if (socket) {
-    //         console.log('emitting matchmaking');
-    //         socket?.on('matchmaking', (foundPlayer: boolean) => {
-    //             if (foundPlayer) setmatchmaking(false);
-    //         });
-    //     }
-    // }, [socket]);
+
     return <MatchMaking me={me} setMatchmaking={setmatchmaking}/>;
 }

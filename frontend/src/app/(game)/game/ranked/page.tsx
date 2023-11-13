@@ -8,14 +8,16 @@ import React from 'react';
 import MatchMaking from '../../matchmaking/page';
 import { match } from 'assert';
 import { redirect } from 'next/navigation';
+import PongApp from './game';
+import Game from './game';
 
-type PageProps = {
-    children: React.ReactNode;
-};
-
-export default function Page({ children }: PageProps) {
+export default function Page() {
     const [matchmaking, setMatchmaking] = React.useState(true);
-    const { data: me, isLoading: meLoading } = useQuery(['me'], async () => {
+    const {
+        data: me,
+        isLoading: meLoading,
+        isError,
+    } = useQuery(['me'], async () => {
         try {
             const { data } = await axios.get(`/api/user/get/stats/me`, {
                 withCredentials: true,
@@ -26,18 +28,20 @@ export default function Page({ children }: PageProps) {
         }
     });
 
+    if (isError) redirect('/signin');
     if (meLoading) return <Loading />;
-
+    console.log('me', me);
     return (
         <SocketProvider namespace="game" username={me.username}>
-            {matchmaking && (
+            {matchmaking ? (
                 <MatchMaking
                     matchmaking={matchmaking}
                     me={me}
                     setmatchmaking={setMatchmaking}
                 />
+            ) : (
+                <Game data={me} />
             )}
-            <div className="backdrop-blur-md">Ranked</div>
         </SocketProvider>
     );
 }
