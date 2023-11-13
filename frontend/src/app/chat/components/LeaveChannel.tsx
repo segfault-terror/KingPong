@@ -1,6 +1,7 @@
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
-import { useMutation } from '@tanstack/react-query';
+import { useSocket } from '@/contexts/SocketContext';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
 type LeaveChannelProps = {
@@ -10,6 +11,9 @@ type LeaveChannelProps = {
 };
 
 export default function LeaveChannelModal(props: LeaveChannelProps) {
+    const { socket } = useSocket();
+    const queryClient = useQueryClient();
+
     const { mutate: leaveChannel, isLoading } = useMutation({
         mutationFn: async () => {
             await axios.delete(`/api/chat/channel/leave/${props.channelName}`, {
@@ -18,6 +22,9 @@ export default function LeaveChannelModal(props: LeaveChannelProps) {
         },
         onSuccess: () => {
             props.setRedirectChannel(true);
+            queryClient.invalidateQueries(['channel', props.channelName, 'members'], {
+                exact: true,
+            });
         },
     });
 
@@ -49,6 +56,7 @@ export default function LeaveChannelModal(props: LeaveChannelProps) {
                                     hover:text-background"
                     onClick={() => {
                         leaveChannel();
+                        socket?.emit('leave-channel', props.channelName);
                     }}
                 >
                     OK

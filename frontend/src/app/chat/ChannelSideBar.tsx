@@ -1,9 +1,10 @@
+'use client';
 import Link from 'next/link';
-import { Users } from '../(dashboard)/profile/data/ProfileData';
-import { Channels } from './data/ChatData';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Loading from '../loading';
+import { useEffect } from 'react';
+import { useSocket } from '@/contexts/SocketContext';
 
 type ChannelSideBarProps = {
     channelName: string;
@@ -46,6 +47,9 @@ function Member({
 }
 
 export default function ChannelSideBar({ channelName }: ChannelSideBarProps) {
+    const { socket } = useSocket();
+    const queryClient = useQueryClient();
+
     const { data: members, isLoading } = useQuery({
         queryKey: ['channel', channelName, 'members'],
         queryFn: async () => {
@@ -56,6 +60,14 @@ export default function ChannelSideBar({ channelName }: ChannelSideBarProps) {
             return data;
         },
     });
+
+    useEffect(() => {
+        socket?.on('leave-channel', (channelName: string) => {
+            queryClient.invalidateQueries(['channel', channelName, 'members'], {
+                exact: true,
+            });
+        });
+    }, [members, channelName, socket, queryClient]);
 
     if (isLoading) {
         return (
