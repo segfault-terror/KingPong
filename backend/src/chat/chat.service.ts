@@ -1285,6 +1285,6 @@ export class ChatService {
             return !mute || mute.expiresAt < new Date();
         });
 
-        return [...channel.admins, ...channel.members];
+        return { admins: channel.admins, members: channel.members };
     }
 }

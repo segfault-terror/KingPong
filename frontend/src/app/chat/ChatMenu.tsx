@@ -19,6 +19,7 @@ import UnbanUserModal from './components/UnbanUserModal';
 import UnbanDialog from './components/UnbanUserDialog';
 import KickUserModal from './components/KickUserModal';
 import KickDialog from './components/KickUserDialog';
+import MuteUserModal from './components/MuteUserModal';
 
 export default function ChatMenu() {
     const pathname = usePathname();
@@ -189,6 +190,9 @@ function ChannelMenu(props: { channelName: string }) {
     const [showKickModal, setShowKickModal] = useState(false);
     const [showKickDialog, setShowKickDialog] = useState(false);
     const [usernameToKick, setUsernameToKick] = useState('');
+    const [showMuteModal, setShowMuteModal] = useState(false);
+    const [showMuteDialog, setShowMuteDialog] = useState(false);
+    const [usernameToMute, setUsernameToMute] = useState('');
 
     useEffect(() => {
         if (!redirectChannel) return;
@@ -304,6 +308,15 @@ function ChannelMenu(props: { channelName: string }) {
                 />
             )}
 
+            {showMuteModal && (
+                <MuteUserModal
+                    channelName={props.channelName}
+                    setShowMuteModal={setShowMuteModal}
+                    setShowMuteDialog={setShowMuteDialog}
+                    setUsernameToMute={setUsernameToMute}
+                />
+            )}
+
             {isOwner && (
                 <ChatMenuItem>
                     <button onClick={() => setShowDeleteModal(true)}>
@@ -352,6 +365,13 @@ function ChannelMenu(props: { channelName: string }) {
                 <ChatMenuItem>
                     <button onClick={() => setShowKickModal(true)}>
                         Kick user
+                    </button>
+                </ChatMenuItem>
+            )}
+            {(isOwner || isAdmin) && (
+                <ChatMenuItem>
+                    <button onClick={() => setShowMuteModal(true)}>
+                        Mute user
                     </button>
                 </ChatMenuItem>
             )}
