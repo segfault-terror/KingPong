@@ -1,5 +1,6 @@
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
+import { useSocket } from '@/contexts/SocketContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -9,6 +10,7 @@ export default function KickDialog(props: {
     setShowKickDialog: (val: boolean) => void;
 }) {
     const queryClient = useQueryClient();
+    const { socket } = useSocket();
     const { mutate: kickUser, isLoading } = useMutation({
         mutationFn: async (args: any) => {
             return await axios.post(
@@ -59,6 +61,7 @@ export default function KickDialog(props: {
                             usernameToKick: props.usernameToKick,
                         });
                         props.setShowKickDialog(false);
+                        socket?.emit('update-channel-sidebar', props.channelName);
                     }}
                 >
                     OK
