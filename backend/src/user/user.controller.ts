@@ -68,6 +68,18 @@ export class UserController {
         return user;
     }
 
+    @Get('get/id/:id')
+    @UseGuards(AuthGard)
+    async userById(@Param('id') id: string) {
+        const userById = await this.userService.userById(id);
+        if (!userById) {
+            throw new NotFoundException('User not found');
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, ...user } = userById;
+        return user;
+    }
+
     @Get('search')
     @UseGuards(AuthGard)
     async search(@Query('q') q: string) {
