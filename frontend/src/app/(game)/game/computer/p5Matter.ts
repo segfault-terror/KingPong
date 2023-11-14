@@ -22,7 +22,7 @@ export function setup(
     height: number,
 ) {
     p5.createCanvas(width, height).parent(canvasParentRef);
-    p5.frameRate(30);
+    p5.frameRate(60);
     topPaddle = new Paddle(p5.width / 2, 50, 100, 20);
     bottomPaddle = new Paddle(p5.width / 2, p5.height - 50, 100, 20);
 
@@ -58,12 +58,6 @@ export function draw(p5: p5Types, socket?: Socket) {
     bottomPaddle.show(p5, pos?.bottomPaddlePos);
     move(p5, socket);
     // pongTable.show(p5);
-}
-
-export function mousePressed(p5: p5Types) {
-    // balls.push(new Ball(p5.mouseX, p5.mouseY, 10, { friction: 0, frictionAir: 0, frictionStatic: 0, restitution: 1 }));
-    // balls[balls.length - 1].body.force.x = p5.random(-0.05, 0.05);
-    // balls[balls.length - 1].body.force.y = p5.random(-0.05, 0.05);
 }
 
 export function move(p5: p5Types, socket: Socket) {

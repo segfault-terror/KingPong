@@ -19,11 +19,9 @@ export class PongTable {
         });
         this.topWall = Bodies.rectangle(width / 2, 0 - 20, width, 50, {
             isStatic: true,
-            isSensor: true,
         });
         this.bottomWall = Bodies.rectangle(width / 2, height + 20, width, 50, {
             isStatic: true,
-            isSensor: true,
         });
         World.add(world, [
             this.leftWall,
