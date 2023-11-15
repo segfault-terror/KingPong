@@ -25,6 +25,7 @@ export default function LeaveChannelModal(props: LeaveChannelProps) {
             queryClient.invalidateQueries(['channel', props.channelName, 'members'], {
                 exact: true,
             });
+            socket?.emit('update-channel-sidebar', props.channelName);
         },
     });
 
@@ -56,7 +57,6 @@ export default function LeaveChannelModal(props: LeaveChannelProps) {
                                     hover:text-background"
                     onClick={() => {
                         leaveChannel();
-                        socket?.emit('leave-channel', props.channelName);
                     }}
                 >
                     OK

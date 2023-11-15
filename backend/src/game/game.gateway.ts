@@ -19,10 +19,15 @@ export class GameGateway implements OnGatewayConnection {
     constructor(
         private readonly computerService: ComputerService,
         private readonly rankedService: RankedService,
+        private readonly gameService: GameService,
     ) {}
     @WebSocketServer() server: Namespace;
     connectedUsers: { id: string; username: string; sockets: string }[] = [];
     queue: { username: string; league: string; socket: string }[] = [];
+    queueInMatch: {
+        player1: { username: string; socket: string };
+        player2: { username: string; socket: string };
+    }[] = [];
 
     @SubscribeMessage('message')
     handleMessage(client: Socket, payload: any): string {
@@ -53,7 +58,27 @@ export class GameGateway implements OnGatewayConnection {
         console.log('disconnect', this.connectedUsers);
         if (!user) return;
         // remove user from queue
-        // console.log(user);
+        const player = this.queueInMatch.find((player) => {
+            return (
+                player.player1.username === user.username ||
+                player.player2.username === user.username
+            );
+        });
+        if (player) {
+            if (player.player1.username === user.username)
+                this.server
+                    .to(player.player2.socket)
+                    .emit('opponentdisconnect');
+            else
+                this.server
+                    .to(player.player1.socket)
+                    .emit('opponentdisconnect');
+        }
+        this.queueInMatch = this.queueInMatch.filter(
+            (players) =>
+                players.player1.username !== player.player1.username &&
+                players.player2.username !== player.player2.username,
+        );
         console.log(`------[Game] Unregistered ${user.username} from one tab`);
         this.queue = this.queue.filter(
             (queue) => queue.username !== user.username,
@@ -97,6 +122,33 @@ export class GameGateway implements OnGatewayConnection {
         }
     }
 
+    @SubscribeMessage('gameOver')
+    async handleRemoveMatchMaking(@MessageBody() {player1, player2, score1, score2}:{player1: string, player2: string, score1: number, score2: number}) {
+       const match = await this.gameService.AddMatch(player1, player2, true, score1, score2);
+       // remove user from queue
+         const player = this.queueInMatch.find((player) => {
+              return (
+                player.player1.username === player1 ||
+                player.player2.username === player1
+              );
+         });
+            if (player) {
+                if (player.player1.username === player1)
+                    this.server
+                        .to(player.player2.socket)
+                        .emit('opponentdisconnect');
+                else
+                    this.server
+                        .to(player.player1.socket)
+                        .emit('opponentdisconnect');
+            }
+            this.queueInMatch = this.queueInMatch.filter(
+                (players) =>
+                    players.player1.username !== player.player1.username &&
+                    players.player2.username !== player.player2.username,
+            );
+    }
+
     @SubscribeMessage('matchmaking')
     async handleGame(@MessageBody() data: any) {
         const user = this.connectedUsers.find(
@@ -125,6 +177,16 @@ export class GameGateway implements OnGatewayConnection {
                 this.server.to(queue[1].socket).emit('matchmakingfound', {
                     matchmaking: true,
                     opponent: queue[0].username,
+                });
+                this.queueInMatch.push({
+                    player1: {
+                        username: queue[0].username,
+                        socket: queue[0].socket,
+                    },
+                    player2: {
+                        username: queue[1].username,
+                        socket: queue[1].socket,
+                    },
                 });
                 this.queue = this.queue.filter(
                     (queues) =>

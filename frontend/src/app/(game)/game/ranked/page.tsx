@@ -4,7 +4,7 @@ import axios from 'axios';
 import Loading from '../../../loading';
 import { SocketProvider } from '@/contexts/SocketContext';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import MatchMaking from '../../matchmaking/page';
 import { match } from 'assert';
 import { redirect } from 'next/navigation';
@@ -12,7 +12,8 @@ import PongApp from './game';
 import Game from './game';
 
 export default function Page() {
-    const [matchmaking, setMatchmaking] = React.useState(true);
+    const [matchmaking, setMatchmaking] = useState(true);
+    const [oppdata, setData] = useState('');
     const {
         data: me,
         isLoading: meLoading,
@@ -28,9 +29,12 @@ export default function Page() {
         }
     });
 
+    useEffect(() => {
+        console.log('oppData: ', oppdata);
+    }, [oppdata]);
+
     if (isError) redirect('/signin');
     if (meLoading) return <Loading />;
-    console.log('me', me);
     return (
         <SocketProvider namespace="game" username={me.username}>
             {matchmaking ? (
@@ -38,9 +42,11 @@ export default function Page() {
                     matchmaking={matchmaking}
                     me={me}
                     setmatchmaking={setMatchmaking}
+                    oppData={oppdata}
+                    setOppData={setData}
                 />
             ) : (
-                <Game data={me} />
+                <Game me={me} opponent={oppdata} />
             )}
         </SocketProvider>
     );

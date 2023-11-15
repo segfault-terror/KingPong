@@ -21,6 +21,8 @@ import axios from 'axios';
 type Props = {
     me: any;
     setMatchmaking: (matchmaking: boolean) => void;
+    oppData: any;
+    setOppData: (data: any) => void;
 };
 
 function getAnimations(isDesktop: boolean) {
@@ -43,11 +45,15 @@ function getAnimations(isDesktop: boolean) {
     return isDesktop ? DesktopAnimations : MobileAnimations;
 }
 
-export default function MatchMaking({ me, setMatchmaking }: Props) {
+export default function MatchMaking({
+    me,
+    setMatchmaking,
+    oppData,
+    setOppData,
+}: Props) {
     const isDesktop = useMediaQuery('(min-width: 1024px)');
     const [animations, setAnimations] = useState(['', '', '', '', '', '']);
     const { socket } = useSocket();
-    const [oppdata, setData] = useState('');
     useEffect(() => {
         if (socket) {
             socket?.on(
@@ -62,7 +68,7 @@ export default function MatchMaking({ me, setMatchmaking }: Props) {
                     if (matchmaking) {
                         console.log('matchmaking found');
                         setAnimations(getAnimations(isDesktop));
-                        setData(opponent);
+                        setOppData(opponent);
                         setTimeout(() => {
                             setMatchmaking(false);
                         }, 3000);
@@ -81,10 +87,10 @@ export default function MatchMaking({ me, setMatchmaking }: Props) {
         avatar: '',
     });
     const { data: opponent, isLoading } = useQuery(
-        ['opponent', oppdata],
+        ['opponent', oppData],
         async () => {
-            if (!oppdata) return null;
-            const { data } = await axios.get(`/api/user/get/${oppdata}`);
+            if (!oppData) return null;
+            const { data } = await axios.get(`/api/user/get/${oppData}`);
             return data;
         },
     );

@@ -62,11 +62,16 @@ export default function ChannelSideBar({ channelName }: ChannelSideBarProps) {
     });
 
     useEffect(() => {
-        socket?.on('leave-channel', (channelName: string) => {
-            queryClient.invalidateQueries(['channel', channelName, 'members'], {
-                exact: true,
+        if (socket)
+            socket.on('update-channel-sidebar', (channelName: string) => {
+                console.log('update-channel-sidebar');
+                queryClient.invalidateQueries(
+                    ['channel', channelName, 'members'],
+                    {
+                        exact: true,
+                    },
+                );
             });
-        });
     }, [members, channelName, socket, queryClient]);
 
     if (isLoading) {

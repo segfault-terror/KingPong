@@ -22,6 +22,12 @@ export default function DMLayout({ children }: { children: React.ReactNode }) {
         setIsRendred(true);
     }, []);
 
+    useEffect(() => {
+        if (pathname.startsWith('/chat/channel')) {
+            setToggle(true);
+        }
+    }, [pathname, setToggle]);
+
     if (!isRendred) {
         return null;
     }

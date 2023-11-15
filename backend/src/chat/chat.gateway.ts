@@ -125,8 +125,8 @@ export class ChatGateway implements OnGatewayDisconnect {
         this.server.to(channelName).emit('new-channel-message', channelName);
     }
 
-    @SubscribeMessage('leave-channel')
+    @SubscribeMessage('update-channel-sidebar')
     handleLeaveChannel(@MessageBody() channelName: string) {
-        this.server.to(channelName).emit('leave-channel', channelName);
+        this.server.to(channelName).emit('update-channel-sidebar', channelName);
     }
 }

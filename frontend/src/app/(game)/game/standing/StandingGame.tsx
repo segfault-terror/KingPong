@@ -1,8 +1,9 @@
+'use client';
 import Link from 'next/link';
-import Logo from './Logo';
 
-import FirstPlace from '../../public/images/FirstPlace.svg';
-import SecondPlace from '../../public/images/SecondPlace.svg';
+import FirstPlace from '@/../public/images/FirstPlace.svg';
+import SecondPlace from '@/../public/images/SecondPlace.svg';
+import { use, useEffect, useState } from 'react';
 
 type StandingGameResult = {
     myimage: string;
@@ -11,6 +12,13 @@ type StandingGameResult = {
 };
 
 const Winner = (image: string) => {
+    const [animate, setAnimate] = useState('');
+    useEffect(() => {
+        setTimeout(() => {
+            setAnimate('animate-[wiggle_1.5s_linear]');
+        }, 2000);
+    }, []);
+
     return (
         <div className="flex flex-col justify-between items-center col-span-4 border-yellow-300 relative h-52 md:h-64 lg:h-72 xl:h-80">
             <img
@@ -23,7 +31,7 @@ const Winner = (image: string) => {
                 alt="FirstPlace"
                 className="animate-[TranslateYDown_1.5s_linear] h-12 md:h-16 lg:h-20 xl:h-24  flex justify-end items-end bottom-0 z-0 drop-shadow-neon-orange"
             />
-            <div className="animate-[wiggle_1.5s_linear]">
+            <div className={`${animate}`}>
                 <img src="/images/StandingShadowFirst.svg" alt="" />
             </div>
         </div>
@@ -31,6 +39,12 @@ const Winner = (image: string) => {
 };
 
 const Loser = (image: string) => {
+    const [animate, setAnimate] = useState('');
+    useEffect(() => {
+        setTimeout(() => {
+            setAnimate('animate-[wiggle_1.5s_linear]');
+        }, 2000);
+    }, []);
     return (
         <div className="flex flex-col justify-between items-center col-span-4 relative md:h-44 h-36 lg:h-52 xl:64">
             <img
@@ -43,7 +57,7 @@ const Loser = (image: string) => {
                 alt="SecondPlace"
                 className=" animate-[TranslateYDown_1.5s_linear] md:h-12 h-8 lg:h-16 xl:20 flex justify-end items-end z-0 drop-shadow-[0px_0px_10px_#868686]"
             />
-            <div className="animate-[wiggle_1.5s_linear]">
+            <div className={`${animate}`}>
                 <img src="/images/StandingShadowSecond.svg" alt="" />
             </div>
         </div>
@@ -65,13 +79,13 @@ const YouWin = (myimage: string, oppimage: string) => {
                     </Link>
                     <Link
                         className="m-2 w-24 h-8 md:w-36 md:h-12 lg:w-44 lg:h-14 lg:text-xl xl:w-48 xl:h-16 xl:text-2xl md:text-lg bg-gradient-radial from-green-400 to-green-700 rounded-lg lg:rounded-2xl border-t-2 border-b-2 border-gray-600 hover:border-green-300 flex justify-center items-center"
-                        href="#"
+                        href="/game/ranked"
                     >
                         New Game
                     </Link>
                     <Link
                         className="w-24 h-8 md:w-36 md:h-12 lg:w-44 lg:h-14 lg:text-xl xl:w-48 xl:h-16 xl:text-2xl md:text-lg bg-gradient-radial from-inactive-200 to-inactive-500 rounded-lg lg:rounded-2xl border-t-2 border-b-2 border-gray-600 hover:border-white flex justify-center items-center"
-                        href="/dashboard"
+                        href="/home"
                     >
                         Exit
                     </Link>
@@ -101,13 +115,13 @@ const YouLose = (myimage: string, oppimage: string) => {
                     </Link>
                     <Link
                         className="m-2 w-24 h-8 md:w-36 md:h-12 lg:w-44 lg:h-14 lg:text-xl xl:w-48 xl:h-16 xl:text-2xl md:text-lg bg-gradient-radial from-green-400 to-green-700 rounded-lg lg:rounded-2xl border-t-2 border-b-2 border-gray-600 hover:border-green-300 flex justify-center items-center"
-                        href="#"
+                        href="/game/ranked"
                     >
                         New Game
                     </Link>
                     <Link
                         className="w-24 h-8 md:w-36 md:h-12 lg:w-44 lg:h-14 lg:text-xl xl:w-48 xl:h-16 xl:text-2xl md:text-lg bg-gradient-radial from-inactive-200 to-inactive-500 rounded-lg lg:rounded-2xl border-t-2 border-b-2 border-gray-600 hover:border-white flex justify-center items-center"
-                        href="/dashboard"
+                        href="/home"
                     >
                         Exit
                     </Link>
@@ -145,3 +159,4 @@ export default function StandingGame(props: StandingGameResult) {
         </div>
     );
 }
+

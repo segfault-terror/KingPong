@@ -1,10 +1,11 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { BsArrowLeftShort } from 'react-icons/bs';
 import Loading from '../loading';
+import { useSocket } from '@/contexts/SocketContext';
 
 type WelcomeChannelProps = {
     channelName: string;
@@ -18,6 +19,8 @@ type ChannelContentProps = Pick<WelcomeChannelProps, 'channelName'> & {
 };
 
 function PublicChannelContent({ channelName, mutate }: ChannelContentProps) {
+    const { socket } = useSocket();
+
     return (
         <>
             <p className="text-left text-silver font-light font-jost w-1/2">
@@ -25,6 +28,10 @@ function PublicChannelContent({ channelName, mutate }: ChannelContentProps) {
             </p>
             <button
                 onClick={() => {
+                    console.log('ana clickit hna!');
+                    if (socket) {
+                        socket.emit('update-channel-sidebar', channelName);
+                    }
                     mutate({ channelName });
                 }}
                 className="bg-secondary-200
@@ -117,6 +124,8 @@ export default function WelcomeChannel({
 }: WelcomeChannelProps) {
     const [redirectChannel, setRedirectChannel] = useState(false);
     const [wrongPassword, setWrongPassword] = useState(false);
+    const queryClient = useQueryClient();
+    const { socket } = useSocket();
 
     useEffect(() => {
         if (!redirectChannel) return;
@@ -135,6 +144,11 @@ export default function WelcomeChannel({
             } catch (e) {
                 setWrongPassword(true);
             }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['channel', channelName, 'members'], {
+                exact: true,
+            });
         },
     });
 

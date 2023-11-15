@@ -20,6 +20,14 @@ export class UserService {
         });
     }
 
+    async userById(id: string): Promise<User | null> {
+        return this.prisma.user.findUnique({
+            where: {
+                id,
+            },
+        });
+    }
+
     async leaderboard(): Promise<User[]> {
         return this.prisma.user.findMany({
             orderBy: {
@@ -246,6 +254,9 @@ export class UserService {
                     },
                 },
             },
+            orderBy: {
+                createdAt: 'desc',
+            }
         });
     }
 

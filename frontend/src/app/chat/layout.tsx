@@ -59,48 +59,48 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
                     setDotsDropdown,
                 }}
             >
-                {createChannel && (
-                    <Modal
-                        onClose={() => setCreateChannel(false)}
-                        childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%]
-                                        lg:w-2/3 max-w-[600px]"
-                    >
-                        <CreateNewChannel />
-                    </Modal>
-                )}
-                {joinChannel && (
-                    <Modal
-                        onClose={() => setJoinChannel(false)}
-                        childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%] h-[300px]
-                                        lg:w-2/3 max-w-[600px]"
-                    >
-                        <JoinNewChannel />
-                    </Modal>
-                )}
-                {welcomeChannel && (
-                    <Modal
-                        onClose={() => setWelcomeChannel(false)}
-                        childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%] h-[300px]
-                                            lg:w-2/3 max-w-[600px]"
-                    >
-                        <WelcomeChannel
-                            channelName={channel.name}
-                            channelVisibility={channel.visibility}
-                            setWelcomeChannel={setWelcomeChannel}
-                            setJoinChannel={setJoinChannel}
-                        />
-                    </Modal>
-                )}
-                {newConversation && (
-                    <Modal
-                        onClose={() => setNewConversation(false)}
-                        childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%] h-[300px]
-                                        lg:w-2/3 max-w-[600px]"
-                    >
-                        <NewConversation />
-                    </Modal>
-                )}
                 <SocketProvider username={me.username} namespace="chat">
+                    {createChannel && (
+                        <Modal
+                            onClose={() => setCreateChannel(false)}
+                            childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%]
+                                        lg:w-2/3 max-w-[600px]"
+                        >
+                            <CreateNewChannel />
+                        </Modal>
+                    )}
+                    {joinChannel && (
+                        <Modal
+                            onClose={() => setJoinChannel(false)}
+                            childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%] h-[300px]
+                                        lg:w-2/3 max-w-[600px]"
+                        >
+                            <JoinNewChannel />
+                        </Modal>
+                    )}
+                    {welcomeChannel && (
+                        <Modal
+                            onClose={() => setWelcomeChannel(false)}
+                            childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%] h-[300px]
+                                            lg:w-2/3 max-w-[600px]"
+                        >
+                            <WelcomeChannel
+                                channelName={channel.name}
+                                channelVisibility={channel.visibility}
+                                setWelcomeChannel={setWelcomeChannel}
+                                setJoinChannel={setJoinChannel}
+                            />
+                        </Modal>
+                    )}
+                    {newConversation && (
+                        <Modal
+                            onClose={() => setNewConversation(false)}
+                            childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%] h-[300px]
+                                        lg:w-2/3 max-w-[600px]"
+                        >
+                            <NewConversation />
+                        </Modal>
+                    )}
                     {children}
                 </SocketProvider>
             </modalContext.Provider>
