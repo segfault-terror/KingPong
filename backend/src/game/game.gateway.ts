@@ -10,7 +10,6 @@ import { Socket, Namespace } from 'socket.io';
 import { ComputerService } from './computer/computer.service';
 import { RankedService } from './ranked/ranked.service';
 import { GameService } from './game.service';
-import { ConsoleLogger } from '@nestjs/common';
 
 @WebSocketGateway({
     namespace: 'game',
@@ -141,6 +140,14 @@ export class GameGateway implements OnGatewayConnection {
         );
     }
 
+    @SubscribeMessage('join-game')
+    async handlePlayComputer(
+        @MessageBody() data: any,
+        @ConnectedSocket() socket: Socket,
+    ) {
+        this.computerService.startGame(socket);
+    }
+
     @SubscribeMessage('matchmaking')
     async handleGame(@MessageBody() data: any) {
         const user = this.connectedUsers.find(
@@ -160,7 +167,7 @@ export class GameGateway implements OnGatewayConnection {
             const queue = this.queue.filter(
                 (queue) => queue.league === data.league,
             );
-            console.log('queue', queue.length)
+            console.log('queue', queue.length);
             if (queue.length >= 2) {
                 console.log('matchmaking 2 players found');
                 this.server.to(queue[0].socket).emit('matchmakingfound', {

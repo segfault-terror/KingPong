@@ -68,6 +68,7 @@ export default function Page() {
         async function connect() {
             // await delai(1500);
             socket.connect();
+            socket.emit('join-game', { game: 'computer' });
         }
         if (!socket.connected) connect();
 
