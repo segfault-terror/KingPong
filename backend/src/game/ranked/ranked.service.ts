@@ -81,18 +81,30 @@ export class RankedService {
             },
             'canvas',
         );
+
         const interval = setInterval(() => {
             Engine.update(engine, frameRate);
-            // if (ball.body.position.y < 0 || ball.body.position.y > canvas.height)
-            //     ball.body.position.y = canvas.height / 2;
+    
             const ballPos = ball.body.position;
+            const revsBallPos = {
+                x: canvas.width - ballPos.x,
+                y: canvas.height - ballPos.y,
+            };
             const topPaddlePos = topPaddle.body.position;
+            const revTopPaddlePos = {
+                x: canvas.width - topPaddlePos.x,
+                y: canvas.height - topPaddlePos.y,
+            };
             const bottomPaddlePos = bottomPaddle.body.position;
+            const revBottomPaddlePos = {
+                x: canvas.width - bottomPaddlePos.x,
+                y: canvas.height - bottomPaddlePos.y,
+            };
             this.sendToClients(
                 client1,
                 client2,
-                { ballPos, topPaddlePos, bottomPaddlePos },
-                { ballPos, topPaddlePos, bottomPaddlePos },
+                { ballPos, topPaddlePos, bottomPaddlePos, username: player1.username },
+                { ballPos: revsBallPos, topPaddlePos: revBottomPaddlePos , bottomPaddlePos: revTopPaddlePos, username: player2.username },
                 'update-game',
             );
         }, frameRate);
@@ -103,7 +115,7 @@ export class RankedService {
         client2.on('disconnect', () => {
             clearInterval(interval);
         });
-        
+
         client1.on('move-right', (player: string) => {
             console.log(player, ' 1 move right');
             if (player === player1.username) {
@@ -112,17 +124,28 @@ export class RankedService {
                     x: bottomPaddle.body.position.x + 5,
                     y: bottomPaddle.body.position.y,
                 });
+            } else if (player === player2.username) {
+                if (topPaddle.body.position.x < 50) return;
+                Body.setPosition(topPaddle.body, {
+                    x: topPaddle.body.position.x - 5,
+                    y: topPaddle.body.position.y,
+                });
             }
         });
-        
+
         client2.on('move-right', (player: string) => {
             console.log(player, ' 2 move right');
             if (player === player2.username) {
-                if (topPaddle.body.position.x > canvas.width - 50) return;
-                if (topPaddle.body.position.x > canvas.width - 50) return;
+                if (topPaddle.body.position.x < 50) return;
                 Body.setPosition(topPaddle.body, {
-                    x: topPaddle.body.position.x + 5,
+                    x: topPaddle.body.position.x - 5,
                     y: topPaddle.body.position.y,
+                });
+            } else if (player === player1.username) {
+                if (bottomPaddle.body.position.x > canvas.width - 50) return;
+                Body.setPosition(bottomPaddle.body, {
+                    x: bottomPaddle.body.position.x + 5,
+                    y: bottomPaddle.body.position.y,
                 });
             }
         });
@@ -134,16 +157,28 @@ export class RankedService {
                     x: bottomPaddle.body.position.x - 5,
                     y: bottomPaddle.body.position.y,
                 });
+            } else if (player === player2.username) {
+                if (topPaddle.body.position.x > canvas.width - 50) return;
+                Body.setPosition(topPaddle.body, {
+                    x: topPaddle.body.position.x + 5,
+                    y: topPaddle.body.position.y,
+                });
             }
         });
-        
+
         client2.on('move-left', (player: string) => {
             console.log(player, ' 2 move left');
             if (player === player2.username) {
-                if (topPaddle.body.position.x < 50) return;
+                if (topPaddle.body.position.x > canvas.width - 50) return;
                 Body.setPosition(topPaddle.body, {
-                    x: topPaddle.body.position.x - 5,
+                    x: topPaddle.body.position.x + 5,
                     y: topPaddle.body.position.y,
+                });
+            } else if (player === player1.username) {
+                if (bottomPaddle.body.position.x < 50) return;
+                Body.setPosition(bottomPaddle.body, {
+                    x: bottomPaddle.body.position.x - 5,
+                    y: bottomPaddle.body.position.y,
                 });
             }
         });
