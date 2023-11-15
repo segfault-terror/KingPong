@@ -1,14 +1,17 @@
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { modalContext } from '@/contexts/contexts';
+import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import { useContext } from 'react';
 
 export default function UnmuteDialog(props: {
     channelName: string;
     usernameToUnmute: string;
     setShowUnmuteDialog: (val: boolean) => void;
 }) {
-    const queryClient = useQueryClient();
+    const { setDotsDropdown } = useContext(modalContext);
+
     const { mutate: banUser, isLoading } = useMutation({
         mutationFn: async (args: any) => {
             return await axios.post(
@@ -52,6 +55,7 @@ export default function UnmuteDialog(props: {
                             usernameToUnmute: props.usernameToUnmute,
                         });
                         props.setShowUnmuteDialog(false);
+                        setDotsDropdown(false);
                     }}
                 >
                     OK

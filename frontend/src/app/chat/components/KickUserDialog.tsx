@@ -1,8 +1,10 @@
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
 import { useSocket } from '@/contexts/SocketContext';
+import { modalContext } from '@/contexts/contexts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { useContext } from 'react';
 
 export default function KickDialog(props: {
     channelName: string;
@@ -10,7 +12,10 @@ export default function KickDialog(props: {
     setShowKickDialog: (val: boolean) => void;
 }) {
     const queryClient = useQueryClient();
+
     const { socket } = useSocket();
+    const { setDotsDropdown } = useContext(modalContext);
+
     const { mutate: kickUser, isLoading } = useMutation({
         mutationFn: async (args: any) => {
             return await axios.post(
@@ -62,6 +67,7 @@ export default function KickDialog(props: {
                             usernameToKick: props.usernameToKick,
                         });
                         props.setShowKickDialog(false);
+                        setDotsDropdown(false);
                     }}
                 >
                     OK

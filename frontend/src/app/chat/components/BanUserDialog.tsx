@@ -1,13 +1,17 @@
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
+import { modalContext } from '@/contexts/contexts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { useContext } from 'react';
 
 export default function BanDialog(props: {
     channelName: string;
     usernameToBan: string;
     setShowBanDialog: (val: boolean) => void;
 }) {
+    const { setDotsDropdown } = useContext(modalContext);
+
     const queryClient = useQueryClient();
     const { mutate: banUser, isLoading } = useMutation({
         mutationFn: async (args: any) => {
@@ -59,6 +63,7 @@ export default function BanDialog(props: {
                             usernameToBan: props.usernameToBan,
                         });
                         props.setShowBanDialog(false);
+                        setDotsDropdown(false);
                     }}
                 >
                     OK

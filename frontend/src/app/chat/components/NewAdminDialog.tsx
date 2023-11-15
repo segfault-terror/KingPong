@@ -1,8 +1,10 @@
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
 import { useSocket } from '@/contexts/SocketContext';
+import { modalContext } from '@/contexts/contexts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { useContext } from 'react';
 
 export default function SetNewAdminDialog(props: {
     channelName: string;
@@ -10,7 +12,10 @@ export default function SetNewAdminDialog(props: {
     setShowNewAdminDialog: (val: boolean) => void;
 }) {
     const queryClient = useQueryClient();
+
     const { socket } = useSocket();
+    const { setDotsDropdown } = useContext(modalContext);
+
     const { mutate: changeAdmin, isLoading } = useMutation({
         mutationFn: async (args: any) => {
             return await axios.post(
@@ -65,6 +70,7 @@ export default function SetNewAdminDialog(props: {
                             username: props.newAdminUsername,
                         });
                         props.setShowNewAdminDialog(false);
+                        setDotsDropdown(false);
                     }}
                 >
                     OK

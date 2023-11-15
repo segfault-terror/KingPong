@@ -1,14 +1,18 @@
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
 import { useSocket } from '@/contexts/SocketContext';
+import { modalContext } from '@/contexts/contexts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { useContext } from 'react';
 
 export default function SetNewOwnerDialog(props: {
     channelName: string;
     newOwnerUsername: string;
     setShowNewOwnerDialog: (val: boolean) => void;
 }) {
+    const { setDotsDropdown } = useContext(modalContext);
+
     const queryClient = useQueryClient();
     const { socket } = useSocket();
     const { mutate: changeOwner, isLoading } = useMutation({
@@ -63,6 +67,7 @@ export default function SetNewOwnerDialog(props: {
                             newOwner: props.newOwnerUsername,
                         });
                         props.setShowNewOwnerDialog(false);
+                        setDotsDropdown(false);
                     }}
                 >
                     OK
@@ -72,7 +77,9 @@ export default function SetNewOwnerDialog(props: {
                                     border border-white text-red-400
                                     font-jost hover:bg-red-400
                                     hover:text-background"
-                    onClick={() => props.setShowNewOwnerDialog(false)}
+                    onClick={() => {
+                        props.setShowNewOwnerDialog(false);
+                    }}
                 >
                     Cancel
                 </button>

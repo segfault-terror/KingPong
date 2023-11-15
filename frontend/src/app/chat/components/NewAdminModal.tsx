@@ -21,7 +21,7 @@ export default function NewAdminModal(props: NewAdminProps) {
                 `/api/chat/channel/${props.channelName}/members`,
                 { withCredentials: true },
             );
-			data.admins = [];
+            data.admins = [];
             return data;
         },
     });

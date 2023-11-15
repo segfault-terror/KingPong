@@ -1,7 +1,9 @@
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
+import { modalContext } from '@/contexts/contexts';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 
 type MuteUserFormProps = {
@@ -24,6 +26,8 @@ export default function MuteUserForm(props: MuteUserFormProps) {
         },
     });
 
+    const { setDotsDropdown } = useContext(modalContext);
+
     if (isLoading) {
         return (
             <div className="bg-default fixed inset-0 z-50">
@@ -45,6 +49,7 @@ export default function MuteUserForm(props: MuteUserFormProps) {
                         muteDuration: parseInt(watch('duration')),
                     });
                     props.setShowMuteUserForm(false);
+                    setDotsDropdown(false);
                 })}
                 className="text-white accent-secondary-200
                         flex flex-col gap-4 font-jost"
