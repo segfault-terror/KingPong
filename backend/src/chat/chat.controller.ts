@@ -319,4 +319,30 @@ export class ChatController {
     ) {
         return this.chatService.isMuted(channelName, username);
     }
+
+    @Post('/channel/:channel_name/new-admin')
+    async setAdmin(
+        @Param('channel_name') channelName: string,
+        @Req() request: any,
+        @Body() data: { username: string },
+    ) {
+        return this.chatService.setAdmin(
+            channelName,
+            request.user.username,
+            data.username,
+        );
+    }
+
+    @Post('/channel/:channel_name/remove-admin')
+    async removeAdmin(
+        @Param('channel_name') channelName: string,
+        @Req() request: any,
+        @Body() data: { username: string },
+    ) {
+        return this.chatService.removeAdmin(
+            channelName,
+            request.user.username,
+            data.username,
+        );
+    }
 }
