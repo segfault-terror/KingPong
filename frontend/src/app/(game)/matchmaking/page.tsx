@@ -18,7 +18,16 @@ export default function MatchMakingPage({
     setOppData,
 }: Props) {
     const { socket } = useSocket();
-    socket?.emit('matchmaking', me);
+    useEffect(() => {
+        if (socket) socket.emit('matchmaking', me);
+    }, [socket]);
 
-    return <MatchMaking me={me} setMatchmaking={setmatchmaking} oppData={oppData} setOppData={setOppData}/>;
+    return (
+        <MatchMaking
+            me={me}
+            setMatchmaking={setmatchmaking}
+            oppData={oppData}
+            setOppData={setOppData}
+        />
+    );
 }

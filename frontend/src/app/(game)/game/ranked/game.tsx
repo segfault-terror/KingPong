@@ -1,5 +1,5 @@
 'use client';
-import React, { KeyboardEvent, useEffect } from 'react';
+import React, { KeyboardEvent, use, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import p5Types from 'p5';
 
@@ -10,6 +10,9 @@ import { Vector } from 'matter-js';
 import { useSocket } from '@/contexts/SocketContext';
 import { set } from 'react-hook-form';
 import GameOver from '@/app/(game)/game/standing/GameOver';
+import { redirect } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 
 const Sketch = dynamic(() => import('react-p5').then((mod) => mod.default), {
     ssr: false,
@@ -39,6 +42,12 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
     const [init, setInit] = React.useState<any>(null);
     const [winner, setWinner] = React.useState('');
     const { socket } = useSocket();
+
+    const { mutate: updateGame } = useMutation(async (data: any) => {
+        const { data: res } = await axios.post('/api/game/add/match', data);
+        return res;
+    });
+
     useEffect(() => {
         if (socket) {
             console.log('socket exists: ', socket);
@@ -57,10 +66,19 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 setReady(true);
             });
             socket.on('update-game', (data) => {
-                console.log('update-game');
-                pos = data;
+                // console.log(data);
+                if (data.username === me.username) {
+                    pos = data;
+                }
             });
             socket.on('opponentdisconnect', () => {
+                updateGame({
+                    player1: me.username,
+                    player2: opponent,
+                    ranked: true,
+                    player1_score: 11,
+                    player2_score: 1,
+                });
                 setWinner(me.username);
             });
             return () => {
@@ -70,26 +88,29 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
             };
         }
     }, [socket]);
+    useEffect(() => {
+        if (winner !== '') {
+            setWinner('');
+            redirect('/game/standing');
+        }
+    }, [winner]);
+
     if (!ready) return <Loading />;
     return (
         <>
-            {winner !== '' ? (
-                <GameOver winner={winner} loser={opponent} />
-            ) : (
-                <div className="flex justify-center items-center h-screen">
-                    <Sketch
-                        className={
-                            'border border-red-700 rounded-3xl overflow-hidden'
-                        }
-                        setup={(p5: p5Types, canvasParentRef: Element) => {
-                            setup(p5, canvasParentRef, init.width, init.height);
-                        }}
-                        draw={(p5: p5Types) => {
-                            socket && draw(p5, me.username, socket);
-                        }}
-                    />
-                </div>
-            )}
+            <div className="flex justify-center items-center h-screen">
+                <Sketch
+                    className={
+                        'border border-red-700 rounded-3xl overflow-hidden'
+                    }
+                    setup={(p5: p5Types, canvasParentRef: Element) => {
+                        setup(p5, canvasParentRef, init.width, init.height);
+                    }}
+                    draw={(p5: p5Types) => {
+                        socket && draw(p5, me.username, socket);
+                    }}
+                />
+            </div>
         </>
     );
 }
