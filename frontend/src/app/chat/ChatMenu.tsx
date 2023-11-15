@@ -23,6 +23,8 @@ import MuteUserModal from './components/MuteUserModal';
 import MuteUserForm from './components/MuteUserForm';
 import UnmuteUserModal from './components/UnmuteUserModal';
 import UnmuteDialog from './components/UnmuteUserDialog';
+import NewAdminModal from './components/NewAdminModal';
+import SetNewAdminDialog from './components/NewAdminDialog';
 
 export default function ChatMenu() {
     const pathname = usePathname();
@@ -199,6 +201,9 @@ function ChannelMenu(props: { channelName: string }) {
     const [showUnmuteModal, setShowUnmuteModal] = useState(false);
     const [showUnmuteDialog, setShowUnmuteDialog] = useState(false);
     const [usernameToUnmute, setUsernameToUnmute] = useState('');
+    const [showSetNewAdminModal, setShowSetNewAdminModal] = useState(false);
+    const [showNewAdminDialog, setShowNewAdminDialog] = useState(false);
+    const [newAdminUsername, setNewAdminUsername] = useState('');
 
     useEffect(() => {
         if (!redirectChannel) return;
@@ -347,6 +352,21 @@ function ChannelMenu(props: { channelName: string }) {
                     setShowUnmuteDialog={setShowUnmuteDialog}
                 />
             )}
+            {showSetNewAdminModal && (
+                <NewAdminModal
+                    channelName={props.channelName}
+                    setShowNewAdminModal={setShowSetNewAdminModal}
+                    setShowNewAdminDialog={setShowNewAdminDialog}
+                    setNewAdminUsername={setNewAdminUsername}
+                />
+            )}
+            {showNewAdminDialog && (
+                <SetNewAdminDialog
+                    channelName={props.channelName}
+                    newAdminUsername={newAdminUsername}
+                    setShowNewAdminDialog={setShowNewAdminDialog}
+                />
+            )}
 
             {isOwner && (
                 <ChatMenuItem>
@@ -410,6 +430,13 @@ function ChannelMenu(props: { channelName: string }) {
                 <ChatMenuItem>
                     <button onClick={() => setShowUnmuteModal(true)}>
                         Un-mute user
+                    </button>
+                </ChatMenuItem>
+            )}
+            {isOwner && (
+                <ChatMenuItem>
+                    <button onClick={() => setShowSetNewAdminModal(true)}>
+                        Set new admin
                     </button>
                 </ChatMenuItem>
             )}
