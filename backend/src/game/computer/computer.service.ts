@@ -58,6 +58,17 @@ export class ComputerService {
         });
         let counter = 0;
         let randomPos = Common.random(-50, 50);
+        const orPair = (x: number, y: number) => {
+            const random = Common.random(-10, 10);
+            if (random < 0) {
+                return x;
+            }
+            return y;
+        };
+        let randomStart = {
+            x: Common.random(-ballSpeed, ballSpeed),
+            y: orPair(-ballSpeed, ballSpeed),
+        };
         const interval = setInterval(() => {
             Engine.update(engine, frameRate);
             const ballPos = ball.body.position;
@@ -135,13 +146,20 @@ export class ComputerService {
 
             const resetBall = () => {
                 ballSpeed = initialBallSpeed;
+                randomStart = {
+                    x: Common.random(-ballSpeed, ballSpeed),
+                    y: orPair(-ballSpeed, ballSpeed),
+                };
                 Body.setVelocity(ball.body, { x: 0, y: 0 });
                 Body.setPosition(ball.body, {
                     x: canvas.width / 2,
                     y: canvas.height / 2,
                 });
                 setTimeout(() => {
-                    Body.setVelocity(ball.body, { x: 0, y: ballSpeed });
+                    Body.setVelocity(ball.body, {
+                        x: randomStart.x,
+                        y: randomStart.y,
+                    });
                 }, 1000);
             };
 
