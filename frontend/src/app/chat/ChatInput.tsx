@@ -35,11 +35,13 @@ export default function ChatInput({
     });
 
     const [isMuted, setIsMuted] = useState(false);
+    const [muteTime, setMuteTime] = useState('');
 
     useEffect(() => {
         if (!channelName || !data) return;
 
-        let timeoutId: NodeJS.Timeout;
+        let intervalId: NodeJS.Timeout | undefined = undefined;
+        let timeoutId: NodeJS.Timeout | undefined = undefined;
 
         if (data.isMuted) {
             setIsMuted(true);
@@ -51,15 +53,52 @@ export default function ChatInput({
                 () => setIsMuted(false),
                 muteExpire.getTime() - now.getTime(),
             );
+            intervalId = setInterval(() => {
+                const now = new Date();
+                const muteExpire = new Date(data.expiresAt);
+
+                let diff = muteExpire.getTime() - now.getTime();
+                const days = Math.floor(diff / 86400000);
+                diff -= days * 86400000;
+                const hours = Math.floor(diff / 3600000);
+                diff -= hours * 3600000;
+                const minutes = Math.floor(diff / 60000);
+                diff -= minutes * 60000;
+                const seconds = Math.floor(diff / 1000);
+
+                let timeLeft = '';
+                if (days > 0) {
+                    timeLeft += `${days} days, `;
+                }
+                if (hours > 0) {
+                    timeLeft += `${hours} hours, `;
+                }
+                if (minutes > 0) {
+                    timeLeft += `${minutes} minutes and `;
+                }
+                timeLeft += `${seconds} seconds`;
+                setMuteTime(timeLeft);
+            }, 1000);
+        } else {
+            setIsMuted(false);
+            if (timeoutId) clearTimeout(timeoutId);
+            if (intervalId) clearInterval(intervalId);
         }
 
         return () => {
             clearTimeout(timeoutId);
+            clearInterval(intervalId);
         };
     }, [data]);
 
     useEffect(() => {
         socket?.on('typing', (data) => setIsTyping(data.isTyping));
+
+        socket?.on('mute', () => {
+            queryClient.invalidateQueries(['is-muted', username], {
+                exact: true,
+            });
+        });
 
         socket?.on('new-message', () => {
             console.log(`Invalidating query [dm, ${username}]`);
@@ -85,6 +124,7 @@ export default function ChatInput({
             socket?.off('typing');
             socket?.off('new-message');
             socket?.off('new-channel-message');
+            socket?.off('mute');
         };
     });
 
@@ -149,12 +189,20 @@ export default function ChatInput({
                 ref={inputRef}
                 type="text"
                 autoFocus
-                placeholder={isMuted ? 'You are muted' : 'Write a message'}
-                className="px-4 py-2 bg-background rounded-full
-                    text-cube_palette-200 placeholder-cube_palette-200
+                placeholder={
+                    isMuted
+                        ? `You are muted - Time left ${muteTime}`
+                        : 'Write a message'
+                }
+                className={`px-4 py-2 bg-background rounded-full
+                    text-cube_palette-200
                     font-jost
                     flex-grow
-                    outline-none"
+                    outline-none ${
+                        isMuted
+                            ? 'placeholder-secondary-500'
+                            : 'placeholder-cube_palette-200'
+                    }`}
                 onKeyDown={(event) => {
                     if (event.key === 'Enter') {
                         if (event.currentTarget.value.trim() === '') return;
