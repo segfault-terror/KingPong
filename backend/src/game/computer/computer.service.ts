@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import Matter, { Body, Collision, Engine } from 'matter-js';
+import Matter, { Body, Collision, Common, Engine } from 'matter-js';
 import { PongTable } from '../utils/PongTable';
 import { Ball } from '../utils/Ball';
 import { Paddle } from '../utils/Paddle';
@@ -11,8 +11,9 @@ export class ComputerService {
     constructor(private readonly userService: UserService) {}
 
     startGame(client: Socket) {
-        const playerSpeed = 5;
-        const ballSpeed = 5;
+        const playerSpeed = 10;
+        const initialBallSpeed = 5;
+        let ballSpeed = initialBallSpeed;
 
         client.emit('start-game', 'start-game');
         const canvas = { width: 500, height: 800 };
@@ -55,16 +56,38 @@ export class ComputerService {
             bottomPaddle: { width: bottomPaddle.w, height: bottomPaddle.h },
             ball: { radius: ball.r },
         });
+        let counter = 0;
+        let randomPos = Common.random(-50, 50);
         const interval = setInterval(() => {
             Engine.update(engine, frameRate);
             const ballPos = ball.body.position;
             const topPaddlePos = topPaddle.body.position;
             const bottomPaddlePos = bottomPaddle.body.position;
 
-            Body.setPosition(topPaddle.body, {
-                x: ball.body.position.x,
-                y: topPaddle.body.position.y,
-            });
+            const moveBot = () => {
+                const bp = ball.body.position.x - canvas.width / 2;
+                const tp =
+                    topPaddle.body.position.x + randomPos - canvas.width / 2;
+                const dx = Math.abs(bp - tp);
+                if (ballPos.y > canvas.height / 2) return;
+                if (ball.body.velocity.y < 0 && dx > 5) {
+                    if (
+                        ball.body.position.x <
+                        topPaddle.body.position.x + randomPos
+                    ) {
+                        movePaddleLeft(topPaddle);
+                    } else {
+                        movePaddleRight(topPaddle);
+                    }
+                }
+            };
+
+            moveBot();
+
+            if (counter === 3) {
+                counter = 0;
+                ballSpeed += 1;
+            }
 
             const getXVelocity = (xContact: number, paddle: Matter.Body) => {
                 const paddleContact = xContact - paddle.position.x;
@@ -93,6 +116,7 @@ export class ComputerService {
             let col: Collision;
             if ((col = Collision.collides(ball.body, topPaddle.body, null))) {
                 const xContact = col.supports[0].x;
+                randomPos = Common.random(-50, 50);
                 Body.setVelocity(ball.body, {
                     x: getXVelocity(xContact, topPaddle.body),
                     y: ballSpeed + 1,
@@ -102,26 +126,15 @@ export class ComputerService {
                 (col = Collision.collides(ball.body, bottomPaddle.body, null))
             ) {
                 const xContact = col.supports[0].x;
-
+                counter++;
                 Body.setVelocity(ball.body, {
                     x: getXVelocity(xContact, bottomPaddle.body),
                     y: -(ballSpeed + 1),
                 });
             }
-            if (Collision.collides(ball.body, table.leftWall, null)) {
-                Body.setVelocity(ball.body, {
-                    x: ballSpeed,
-                    y: ball.body.velocity.y,
-                });
-            }
-            if (Collision.collides(ball.body, table.rightWall, null)) {
-                Body.setVelocity(ball.body, {
-                    x: -ballSpeed,
-                    y: ball.body.velocity.y,
-                });
-            }
 
             const resetBall = () => {
+                ballSpeed = initialBallSpeed;
                 Body.setVelocity(ball.body, { x: 0, y: 0 });
                 Body.setPosition(ball.body, {
                     x: canvas.width / 2,
@@ -150,24 +163,32 @@ export class ComputerService {
             clearInterval(interval);
         });
 
-        client.on('move-left', () => {
-            if (bottomPaddle.body.position.x < 50) {
+        const movePaddleLeft = (paddle: Paddle) => {
+            if (paddle.body.position.x < paddle.w / 2) {
                 return;
             }
-            Body.setPosition(bottomPaddle.body, {
-                x: bottomPaddle.body.position.x - playerSpeed,
-                y: bottomPaddle.body.position.y,
+            Body.setPosition(paddle.body, {
+                x: paddle.body.position.x - playerSpeed,
+                y: paddle.body.position.y,
             });
+        };
+
+        const movePaddleRight = (paddle: Paddle) => {
+            if (paddle.body.position.x > canvas.width - paddle.w / 2) {
+                return;
+            }
+            Body.setPosition(paddle.body, {
+                x: paddle.body.position.x + playerSpeed,
+                y: paddle.body.position.y,
+            });
+        };
+
+        client.on('move-left', () => {
+            movePaddleLeft(bottomPaddle);
         });
 
         client.on('move-right', () => {
-            if (bottomPaddle.body.position.x > canvas.width - 50) {
-                return;
-            }
-            Body.setPosition(bottomPaddle.body, {
-                x: bottomPaddle.body.position.x + playerSpeed,
-                y: bottomPaddle.body.position.y,
-            });
+            movePaddleRight(bottomPaddle);
         });
     }
 }
