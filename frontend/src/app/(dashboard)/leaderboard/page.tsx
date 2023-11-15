@@ -80,7 +80,8 @@ export default function Leaderboard() {
                 </div>
                 <div className="flex flex-col justify-around itmes-start w-[90%] text-2xl rounded-full bg-black h-3 m-auto">
                     <div
-                        className={`${widthlevel} flex justify-center items-center bg-secondary-200 h-1 rounded-full ml-1`}
+                        className={`flex justify-center items-center bg-secondary-200 h-1 rounded-full ml-1`}
+                        style={{ width: `${percent}%` }}
                     ></div>
                 </div>
             </div>

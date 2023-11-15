@@ -1406,4 +1406,91 @@ export class ChatService {
         this.unmuteUser(channelName, username);
         return { isMuted: false };
     }
+
+    async setAdmin(
+        channelName: string,
+        requestUsername: string,
+        username: string,
+    ) {
+        // Check if channel exists
+        const channel = await this.prisma.channel.findFirst({
+            where: { name: channelName },
+            select: {
+                owner: { select: { username: true } },
+                admins: { select: { username: true } },
+            },
+        });
+        if (!channel) {
+            throw new NotFoundException(`Channel ${channelName} not found`);
+        }
+
+        // Check if request user is owner
+        if (channel.owner.username !== requestUsername) {
+            throw new UnauthorizedException('Only the owner can set admins');
+        }
+
+        // Check if user to set admin is not owner
+        if (channel.owner.username === username) {
+            throw new BadRequestException('You cannot set yourself as admin');
+        }
+
+        // Check if user to set already an admin
+        if (channel.admins.some((a) => a.username === username)) {
+            throw new BadRequestException(
+                `${username} is already an admin in ${channelName}`,
+            );
+        }
+
+        // Set new admin
+        return await this.prisma.channel.update({
+            where: { name: channelName },
+            data: {
+                members: { disconnect: { username } },
+                admins: { connect: { username } },
+            },
+        });
+    }
+
+    async removeAdmin(
+        channelName: string,
+        requestUsername: string,
+        username: string,
+    ) {
+        // Check if channel exists
+        const channel = await this.prisma.channel.findFirst({
+            where: { name: channelName },
+            select: {
+                owner: { select: { username: true } },
+                admins: { select: { username: true } },
+            },
+        });
+        if (!channel) {
+            throw new NotFoundException(`Channel ${channelName} not found`);
+        }
+
+        // Check if request user is owner
+        if (channel.owner.username !== requestUsername) {
+            throw new UnauthorizedException('Only the owner can set admins');
+        }
+
+        if (channel.owner.username === username) {
+            throw new BadRequestException('Owner cannot be an admin');
+        }
+
+        // Check if user to set is not an admin
+        if (channel.admins.every((a) => a.username !== username)) {
+            throw new BadRequestException(
+                `${username} is not an admin in ${channelName}`,
+            );
+        }
+
+        // Remove admin
+        return await this.prisma.channel.update({
+            where: { name: channelName },
+            data: {
+                members: { connect: { username } },
+                admins: { disconnect: { username } },
+            },
+        });
+    }
 }

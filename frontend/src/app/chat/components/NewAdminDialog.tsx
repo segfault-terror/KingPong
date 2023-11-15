@@ -6,21 +6,24 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useContext } from 'react';
 
-export default function KickDialog(props: {
+export default function SetNewAdminDialog(props: {
     channelName: string;
-    usernameToKick: string;
-    setShowKickDialog: (val: boolean) => void;
+    newAdminUsername: string;
+    setShowNewAdminDialog: (val: boolean) => void;
 }) {
     const queryClient = useQueryClient();
 
     const { socket } = useSocket();
     const { setDotsDropdown } = useContext(modalContext);
 
-    const { mutate: kickUser, isLoading } = useMutation({
+    const { mutate: changeAdmin, isLoading } = useMutation({
         mutationFn: async (args: any) => {
             return await axios.post(
-                `/api/chat/channel/${props.channelName}/kick`,
-                { withCredentials: true, ...args },
+                `/api/chat/channel/${props.channelName}/new-admin`,
+                {
+                    withCredentials: true,
+                    ...args,
+                },
             );
         },
         onSuccess: () => {
@@ -43,16 +46,16 @@ export default function KickDialog(props: {
 
     return (
         <Modal
-            onClose={() => props.setShowKickDialog(false)}
+            onClose={() => props.setShowNewAdminDialog(false)}
             childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%]
                     max-w-[400px]"
         >
             <h1 className="text-center text-xl font-jost">
-                Kick user{' '}
+                Set{' '}
                 <span className="text-secondary-200">
-                    @{props.usernameToKick}
-                </span>
-                ?
+                    @{props.newAdminUsername}
+                </span>{' '}
+                as admin?
             </h1>
             <div className="w-full flex justify-center gap-4 pt-4">
                 <button
@@ -63,10 +66,10 @@ export default function KickDialog(props: {
                                     font-jost hover:bg-secondary-200
                                     hover:text-background"
                     onClick={() => {
-                        kickUser({
-                            usernameToKick: props.usernameToKick,
+                        changeAdmin({
+                            username: props.newAdminUsername,
                         });
-                        props.setShowKickDialog(false);
+                        props.setShowNewAdminDialog(false);
                         setDotsDropdown(false);
                     }}
                 >
@@ -77,7 +80,7 @@ export default function KickDialog(props: {
                                     border border-white text-red-400
                                     font-jost hover:bg-red-400
                                     hover:text-background"
-                    onClick={() => props.setShowKickDialog(false)}
+                    onClick={() => props.setShowNewAdminDialog(false)}
                 >
                     Cancel
                 </button>

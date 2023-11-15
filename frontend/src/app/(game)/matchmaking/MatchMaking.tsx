@@ -86,7 +86,7 @@ export default function MatchMaking({
         username: '',
         avatar: '',
     });
-    const { data: opponent, isLoading } = useQuery(
+    const { data: opponent } = useQuery(
         ['opponent', oppData],
         async () => {
             if (!oppData) return null;
@@ -101,7 +101,6 @@ export default function MatchMaking({
             setNewOpponent({ username, avatar });
         }
     }, [opponent]);
-    // if (isLoading) return <div>Loading...</div>;
 
     return (
         <div
@@ -118,7 +117,7 @@ export default function MatchMaking({
             <img
                 src={LeftImg.src}
                 alt="Left Side"
-                className={`hidden lg:inline lg:object-cover lg:w-full ${animations[2]}}`}
+                className={`hidden lg:inline lg:object-cover lg:w-full ${animations[2]}`}
             />
 
             <div className={`self-center ${animations[4]} z-20 absolute`}>

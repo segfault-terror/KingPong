@@ -46,8 +46,7 @@ function Standing({ lastMatch, me }: { lastMatch: any; me: any }) {
     return <GameOver winner={winner} loser={loser} me={me} />;
 }
 
- async function StandingPage({me}: {me: any}) {
-
+async function StandingPage({ me }: { me: any }) {
     console.log('standing : ', me.username);
 
     const {
@@ -67,31 +66,31 @@ function Standing({ lastMatch, me }: { lastMatch: any; me: any }) {
             redirect('/signin');
         }
     });
-    // if (isError || lastMatchError) redirect('/signin');
     if (lastMatchLoading) return <Loading />;
+    if (!lastMatch) redirect('/home');
     console.log('lastMatch: ', lastMatch);
     return <Standing lastMatch={lastMatch} me={me} />;
 
-    // return (<GameOver winner={winner} loser={opponent} />)
 }
 
 export default function Page() {
-	const { data: me, isLoading: meLoading, isError: meError } = useQuery(
-		['me'],
-		async () => {
-			try {
-				const { data } = await axios.get('/api/user/me', {
-					withCredentials: true,
-				});
-				return data;
-			} catch {
-				redirect('/signin');
-			}
-		}
-	);
+    const {
+        data: me,
+        isLoading: meLoading,
+        isError: meError,
+    } = useQuery(['me'], async () => {
+        try {
+            const { data } = await axios.get('/api/user/me', {
+                withCredentials: true,
+            });
+            return data;
+        } catch {
+            redirect('/signin');
+        }
+    });
 
-	if (meLoading) return <Loading />;
-	if (meError) redirect('/signin');
-	
-	return <StandingPage me={me} />;
+    if (meLoading) return <Loading />;
+    if (meError) redirect('/signin');
+
+    return <StandingPage me={me} />;
 }

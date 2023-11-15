@@ -6,23 +6,28 @@ import axios from 'axios';
 import Link from 'next/link';
 import { redirect, usePathname, useRouter } from 'next/navigation';
 import path from 'path';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useContext, useEffect, useState } from 'react';
 import Loading from '../loading';
+import BanDialog from './components/BanUserDialog';
+import BanUserModal from './components/BanUserModal';
 import DeleteChannelModal from './components/DeleteChannelModal';
 import EditChannelModal from './components/EditChannelModal';
+import KickDialog from './components/KickUserDialog';
+import KickUserModal from './components/KickUserModal';
 import LeaveChannelModal from './components/LeaveChannel';
+import MuteUserForm from './components/MuteUserForm';
+import MuteUserModal from './components/MuteUserModal';
+import SetNewAdminDialog from './components/NewAdminDialog';
+import NewAdminModal from './components/NewAdminModal';
 import SetNewOwnerDialog from './components/NewOwnerDialog';
 import NewOwnerModal from './components/NewOwnerModal';
-import BanUserModal from './components/BanUserModal';
-import BanDialog from './components/BanUserDialog';
-import UnbanUserModal from './components/UnbanUserModal';
+import RemoveAdminDialog from './components/RemoveAdminDialog';
+import RemoveAdminModal from './components/RemoveAdminModal';
 import UnbanDialog from './components/UnbanUserDialog';
-import KickUserModal from './components/KickUserModal';
-import KickDialog from './components/KickUserDialog';
-import MuteUserModal from './components/MuteUserModal';
-import MuteUserForm from './components/MuteUserForm';
-import UnmuteUserModal from './components/UnmuteUserModal';
+import UnbanUserModal from './components/UnbanUserModal';
 import UnmuteDialog from './components/UnmuteUserDialog';
+import UnmuteUserModal from './components/UnmuteUserModal';
+import { modalContext } from '@/contexts/contexts';
 
 export default function ChatMenu() {
     const pathname = usePathname();
@@ -32,9 +37,12 @@ export default function ChatMenu() {
 
     return (
         <ul
-            className="w-36 p-2 text-center bg-background
+            className="w-44 p-2 bg-background
                         flex flex-col gap-2
-                        border-[1px] border-secondary-200 rounded-2xl"
+                        text-center
+                        border-[1px] border-secondary-200 rounded-l-2xl
+                        max-h-[290px] overflow-y-auto
+                        scrollbar-thumb-secondary-200 scrollbar-thin"
         >
             {pathname.startsWith('/chat/dm') && (
                 <DmMenu username={currentPage} />
@@ -177,6 +185,28 @@ function ChannelMenu(props: { channelName: string }) {
         },
     });
 
+    const { data: unmuteList, isLoading: unmuteListIsLoading } = useQuery({
+        queryKey: ['channel', props.channelName, 'unmute-list'],
+        queryFn: async () => {
+            const { data } = await axios.get(
+                `/api/chat/channel/${props.channelName}/unmute-list`,
+                { withCredentials: true },
+            );
+            return data;
+        },
+    });
+
+    const { data: banList, isLoading: banListIsLoading } = useQuery({
+        queryKey: ['channel', props.channelName, 'ban-list'],
+        queryFn: async () => {
+            const { data } = await axios.get(
+                `/api/chat/channel/${props.channelName}/ban-list`,
+                { withCredentials: true },
+            );
+            return data;
+        },
+    });
+
     const [redirectChannel, setRedirectChannel] = useState(false);
     const [showLeaveModal, setShowLeaveModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -199,13 +229,24 @@ function ChannelMenu(props: { channelName: string }) {
     const [showUnmuteModal, setShowUnmuteModal] = useState(false);
     const [showUnmuteDialog, setShowUnmuteDialog] = useState(false);
     const [usernameToUnmute, setUsernameToUnmute] = useState('');
+    const [showSetNewAdminModal, setShowSetNewAdminModal] = useState(false);
+    const [showNewAdminDialog, setShowNewAdminDialog] = useState(false);
+    const [newAdminUsername, setNewAdminUsername] = useState('');
+    const [showRemoveAdminModal, setShowRemoveAdminModal] = useState(false);
+    const [showRemoveAdminDialog, setShowRemoveAdminDialog] = useState(false);
+    const [usernameToRemoveAdmin, setUsernameToRemoveAdmin] = useState('');
 
     useEffect(() => {
         if (!redirectChannel) return;
         redirect('/chat');
     }, [redirectChannel]);
 
-    if (channelIsLoading || meIsLoading) {
+    if (
+        channelIsLoading ||
+        meIsLoading ||
+        unmuteListIsLoading ||
+        banListIsLoading
+    ) {
         return (
             <div className="bg-default fixed inset-0 z-50">
                 <Loading />
@@ -347,15 +388,47 @@ function ChannelMenu(props: { channelName: string }) {
                     setShowUnmuteDialog={setShowUnmuteDialog}
                 />
             )}
+            {showSetNewAdminModal && (
+                <NewAdminModal
+                    channelName={props.channelName}
+                    setShowNewAdminModal={setShowSetNewAdminModal}
+                    setShowNewAdminDialog={setShowNewAdminDialog}
+                    setNewAdminUsername={setNewAdminUsername}
+                />
+            )}
+            {showNewAdminDialog && (
+                <SetNewAdminDialog
+                    channelName={props.channelName}
+                    newAdminUsername={newAdminUsername}
+                    setShowNewAdminDialog={setShowNewAdminDialog}
+                />
+            )}
+
+            {showRemoveAdminModal && (
+                <RemoveAdminModal
+                    channelName={props.channelName}
+                    setShowRemoveAdminModal={setShowRemoveAdminModal}
+                    setShowRemoveAdminDialog={setShowRemoveAdminDialog}
+                    setRemoveAdminUsername={setUsernameToRemoveAdmin}
+                />
+            )}
+            {showRemoveAdminDialog && (
+                <RemoveAdminDialog
+                    channelName={props.channelName}
+                    adminUsernameToRemove={usernameToRemoveAdmin}
+                    setShowRemoveAdminDialog={setShowRemoveAdminDialog}
+                />
+            )}
+
+            {/************************** Menu buttons **************************/}
 
             {isOwner && (
                 <ChatMenuItem>
-                    <button onClick={() => setShowDeleteModal(true)}>
-                        Delete channel
+                    <button onClick={() => setShowEditChannelModal(true)}>
+                        Edit channel
                     </button>
                 </ChatMenuItem>
             )}
-
             {!isOwner && (
                 <ChatMenuItem>
                     <button onClick={() => setShowLeaveModal(true)}>
@@ -373,43 +446,72 @@ function ChannelMenu(props: { channelName: string }) {
             )}
             {isOwner && (
                 <ChatMenuItem>
-                    <button onClick={() => setShowEditChannelModal(true)}>
-                        Edit channel
+                    <button onClick={() => setShowSetNewAdminModal(true)}>
+                        Set new admin
                     </button>
                 </ChatMenuItem>
             )}
-            {(isOwner || isAdmin) && (
+            {isOwner && channel.admins.length > 0 && (
                 <ChatMenuItem>
-                    <button onClick={() => setShowBanModal(true)}>
-                        Ban user
+                    <button onClick={() => setShowRemoveAdminModal(true)}>
+                        Remove admin
                     </button>
                 </ChatMenuItem>
             )}
+
             {(isOwner || isAdmin) && (
                 <ChatMenuItem>
-                    <button onClick={() => setShowUnbanModal(true)}>
-                        Un-ban user
-                    </button>
-                </ChatMenuItem>
-            )}
-            {(isOwner || isAdmin) && (
-                <ChatMenuItem>
-                    <button onClick={() => setShowKickModal(true)}>
+                    <button
+                        className="text-secondary-500"
+                        onClick={() => setShowKickModal(true)}
+                    >
                         Kick user
                     </button>
                 </ChatMenuItem>
             )}
             {(isOwner || isAdmin) && (
                 <ChatMenuItem>
-                    <button onClick={() => setShowMuteModal(true)}>
+                    <button
+                        className="text-secondary-500"
+                        onClick={() => setShowMuteModal(true)}
+                    >
                         Mute user
                     </button>
                 </ChatMenuItem>
             )}
+            {(isOwner || isAdmin) &&
+                (unmuteList?.admins.length > 0 ||
+                    unmuteList?.members.length > 0) && (
+                    <ChatMenuItem>
+                        <button onClick={() => setShowUnmuteModal(true)}>
+                            Un-mute user
+                        </button>
+                    </ChatMenuItem>
+                )}
             {(isOwner || isAdmin) && (
                 <ChatMenuItem>
-                    <button onClick={() => setShowUnmuteModal(true)}>
-                        Un-mute user
+                    <button
+                        className="text-[red]"
+                        onClick={() => setShowBanModal(true)}
+                    >
+                        Ban user
+                    </button>
+                </ChatMenuItem>
+            )}
+            {(isOwner || isAdmin) && banList.length > 0 && (
+                <ChatMenuItem>
+                    <button onClick={() => setShowUnbanModal(true)}>
+                        Un-ban user
+                    </button>
+                </ChatMenuItem>
+            )}
+            {isOwner && (
+                <ChatMenuItem>
+                    <button
+                        className="text-[red]"
+                        onClick={() => setShowDeleteModal(true)}
+                    >
+                        Delete channel
                     </button>
                 </ChatMenuItem>
             )}
