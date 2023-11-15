@@ -10,6 +10,8 @@ import ChatInput from './ChatInput';
 import { getStatusColor } from './DirectMessage';
 import Modal from '@/components/Modal';
 import { useSocket } from '@/contexts/SocketContext';
+import DropdownModal from './DropdownModal';
+import ChatMenu from './ChatMenu';
 
 export type DmConversationProps = {
     userName: string;
@@ -69,16 +71,16 @@ export default function DmConversation({ userName }: DmConversationProps) {
                 "
         >
             <div className="absolute inset-0 bg-chatBg rounded-2xl opacity-5 z-0" />
-                <DmConversationHeader userName={userName} isTyping={isTyping} />
-                <div className="flex-grow overflow-y-scroll scrollbar-none pb-2 pt-2 px-2 z-20">
-                    <DmMessageList userName={userName} />
-                </div>
+            <DmConversationHeader userName={userName} isTyping={isTyping} />
+            <div className="flex-grow overflow-y-scroll scrollbar-none pb-2 pt-2 px-2 z-20">
+                <DmMessageList userName={userName} />
+            </div>
 
-                <ChatInput
-                    sendMessage={mutate}
-                    username={userName}
-                    setIsTyping={setIsTyping}
-                />
+            <ChatInput
+                sendMessage={mutate}
+                username={userName}
+                setIsTyping={setIsTyping}
+            />
         </div>
     );
 }
@@ -100,7 +102,7 @@ function DmConversationHeader({
     userName,
     isTyping,
 }: DmConversationHeaderProps) {
-    const { setDotsDropdown } = useContext(modalContext);
+    const { dotsDropdown, setDotsDropdown } = useContext(modalContext);
 
     return (
         <>
@@ -113,6 +115,14 @@ function DmConversationHeader({
                 <button onClick={() => setDotsDropdown(true)}>
                     <HiDotsVertical className="text-secondary-200 h-8 w-8" />
                 </button>
+                {dotsDropdown && (
+                    <DropdownModal
+                        onClose={() => setDotsDropdown(false)}
+                        childrenClassName="top-[246px] md:top-[200px] lg:top-[192px] right-16"
+                    >
+                        <ChatMenu />
+                    </DropdownModal>
+                )}
             </div>
         </>
     );
