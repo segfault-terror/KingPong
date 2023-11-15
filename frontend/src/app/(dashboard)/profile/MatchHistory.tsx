@@ -110,8 +110,8 @@ export default function MatchHistory({ username }: MatchHistoryProps) {
                                             ? player2?.stats.level
                                             : player1.stats.level
                                     }
-                                    playerScore={player1_score}
-                                    opponentScore={player2_score}
+                                    playerScore={isMe ? player1_score: player2_score}
+                                    opponentScore={!isMe ? player1_score: player2_score}
                                 />
                                 {idx < slicedGameResults.length - 1 && (
                                     <hr className="border-1 border-secondary-200 rounded-full" />

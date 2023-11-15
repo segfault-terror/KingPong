@@ -1,5 +1,6 @@
-import { Get, Injectable, Param } from '@nestjs/common';
+import { Body, Get, Injectable, Param } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
+import {getExpectedScore, getKFactor, getNewRating} from '../utils/elo';
 
 @Injectable()
 export class GameService {
@@ -77,5 +78,66 @@ export class GameService {
 			},
 		});
 		return match;
+    }
+
+    async updatePlayerScore(@Body() data: any){
+        const user1 = await this.prisma.user.findUnique({
+            where: {
+                username: data.player1,
+            },
+            include: {
+                stats: true,
+            }
+        });
+        const user2 = await this.prisma.user.findUnique({
+            where: {
+                username: data.player2,
+            },
+            include: {
+                stats: true,
+            }
+        });
+
+        if (!user1 || !user2) {
+            return null;
+        }
+        const elo1 = getNewRating(user1.stats.rank, getExpectedScore(user1.stats.rank, user2.stats.rank), data.player1_score, getKFactor(user1.stats.league));
+        const elo2 = getNewRating(user2.stats.rank, getExpectedScore(user2.stats.rank, user1.stats.rank), data.player2_score, getKFactor(user2.stats.league));
+
+        const league1 = elo1 >= 2000 ? 'GOLD' : elo1 >= 1000 ? 'SILVER' : 'BRONZE';
+        const league2 = elo2 >= 2000 ? 'GOLD' : elo2 >= 1000 ? 'SILVER' : 'BRONZE';
+
+        const updatedUser1 = await this.prisma.user.update({
+            where: {
+                id: user1.id,
+            },
+            data: {
+                stats: {
+                    update: {
+                        rank: elo1,
+                        league: league1,
+                    }
+                }
+            }
+        });
+
+        const updatedUser2 = await this.prisma.user.update({
+            where: {
+                id: user2.id,
+            },
+            data: {
+                stats: {
+                    update: {
+                        rank: elo2,
+                        league: league2,
+                    }
+                }
+            }
+        });
+
+        return {
+            user1: updatedUser1,
+            user2: updatedUser2,
+        }
     }
 }
