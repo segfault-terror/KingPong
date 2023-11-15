@@ -91,14 +91,16 @@ export class ComputerService {
                 return xVelocity - ballXVelocity;
             };
             let col: Collision;
-            if ((col = Collision.collides(ball.body, topPaddle.body))) {
+            if ((col = Collision.collides(ball.body, topPaddle.body, null))) {
                 const xContact = col.supports[0].x;
                 Body.setVelocity(ball.body, {
                     x: getXVelocity(xContact, topPaddle.body),
                     y: ballSpeed + 1,
                 });
             }
-            if ((col = Collision.collides(ball.body, bottomPaddle.body))) {
+            if (
+                (col = Collision.collides(ball.body, bottomPaddle.body, null))
+            ) {
                 const xContact = col.supports[0].x;
 
                 Body.setVelocity(ball.body, {
@@ -106,13 +108,13 @@ export class ComputerService {
                     y: -(ballSpeed + 1),
                 });
             }
-            if (Collision.collides(ball.body, table.leftWall)) {
+            if (Collision.collides(ball.body, table.leftWall, null)) {
                 Body.setVelocity(ball.body, {
                     x: ballSpeed,
                     y: ball.body.velocity.y,
                 });
             }
-            if (Collision.collides(ball.body, table.rightWall)) {
+            if (Collision.collides(ball.body, table.rightWall, null)) {
                 Body.setVelocity(ball.body, {
                     x: -ballSpeed,
                     y: ball.body.velocity.y,
@@ -130,10 +132,10 @@ export class ComputerService {
                 }, 1000);
             };
 
-            if (Collision.collides(ball.body, table.topWall)) {
+            if (Collision.collides(ball.body, table.topWall, null)) {
                 resetBall();
             }
-            if (Collision.collides(ball.body, table.bottomWall)) {
+            if (Collision.collides(ball.body, table.bottomWall, null)) {
                 resetBall();
             }
 
