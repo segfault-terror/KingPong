@@ -25,6 +25,8 @@ import UnmuteUserModal from './components/UnmuteUserModal';
 import UnmuteDialog from './components/UnmuteUserDialog';
 import NewAdminModal from './components/NewAdminModal';
 import SetNewAdminDialog from './components/NewAdminDialog';
+import RemoveAdminModal from './components/RemoveAdminModal';
+import RemoveAdminDialog from './components/RemoveAdminDialog';
 
 export default function ChatMenu() {
     const pathname = usePathname();
@@ -204,6 +206,9 @@ function ChannelMenu(props: { channelName: string }) {
     const [showSetNewAdminModal, setShowSetNewAdminModal] = useState(false);
     const [showNewAdminDialog, setShowNewAdminDialog] = useState(false);
     const [newAdminUsername, setNewAdminUsername] = useState('');
+    const [showRemoveAdminModal, setShowRemoveAdminModal] = useState(false);
+    const [showRemoveAdminDialog, setShowRemoveAdminDialog] = useState(false);
+    const [usernameToRemoveAdmin, setUsernameToRemoveAdmin] = useState('');
 
     useEffect(() => {
         if (!redirectChannel) return;
@@ -368,6 +373,22 @@ function ChannelMenu(props: { channelName: string }) {
                 />
             )}
 
+            {showRemoveAdminModal && (
+                <RemoveAdminModal
+                    channelName={props.channelName}
+                    setShowRemoveAdminModal={setShowRemoveAdminModal}
+                    setShowRemoveAdminDialog={setShowRemoveAdminDialog}
+                    setRemoveAdminUsername={setUsernameToRemoveAdmin}
+                />
+            )}
+            {showRemoveAdminDialog && (
+                <RemoveAdminDialog
+                    channelName={props.channelName}
+                    adminUsernameToRemove={usernameToRemoveAdmin}
+                    setShowRemoveAdminDialog={setShowRemoveAdminDialog}
+                />
+            )}
+
             {isOwner && (
                 <ChatMenuItem>
                     <button onClick={() => setShowDeleteModal(true)}>
@@ -437,6 +458,13 @@ function ChannelMenu(props: { channelName: string }) {
                 <ChatMenuItem>
                     <button onClick={() => setShowSetNewAdminModal(true)}>
                         Set new admin
+                    </button>
+                </ChatMenuItem>
+            )}
+            {isOwner && (
+                <ChatMenuItem>
+                    <button onClick={() => setShowRemoveAdminModal(true)}>
+                        Remove admin
                     </button>
                 </ChatMenuItem>
             )}
