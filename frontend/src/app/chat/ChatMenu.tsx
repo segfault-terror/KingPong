@@ -185,9 +185,15 @@ function ChannelMenu(props: { channelName: string }) {
         },
     });
 
+    const isOwner = channel?.owner.username === me?.username;
+    const isAdmin = channel?.admins.some(
+        (admin: any) => admin.username === me?.username,
+    );
+
     const { data: unmuteList, isLoading: unmuteListIsLoading } = useQuery({
         queryKey: ['channel', props.channelName, 'unmute-list'],
         queryFn: async () => {
+            if (!isAdmin && !isOwner) return [];
             const { data } = await axios.get(
                 `/api/chat/channel/${props.channelName}/unmute-list`,
                 { withCredentials: true },
@@ -199,6 +205,7 @@ function ChannelMenu(props: { channelName: string }) {
     const { data: banList, isLoading: banListIsLoading } = useQuery({
         queryKey: ['channel', props.channelName, 'ban-list'],
         queryFn: async () => {
+            if (!isAdmin && !isOwner) return [];
             const { data } = await axios.get(
                 `/api/chat/channel/${props.channelName}/ban-list`,
                 { withCredentials: true },
@@ -253,11 +260,6 @@ function ChannelMenu(props: { channelName: string }) {
             </div>
         );
     }
-
-    const isOwner = channel?.owner.username === me?.username;
-    const isAdmin = channel?.admins.some(
-        (admin: any) => admin.username === me?.username,
-    );
 
     return (
         <>
