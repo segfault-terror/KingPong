@@ -20,4 +20,9 @@ export class GameController {
 		const match = await this.gameService.getLastMatch(username);
 		return match;
 	}
+
+	@Post('/update')
+	async update(@Body() body: any) {
+		return this.gameService.updatePlayerScore(body);
+	}
 }
