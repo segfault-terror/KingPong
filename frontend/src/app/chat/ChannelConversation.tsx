@@ -21,6 +21,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
     const { dotsDropdown, setDotsDropdown } = useContext(modalContext);
     const { showMembers, setShowMembers } = useContext(channelModalContext);
     const [isTyping, setIsTyping] = useState(false);
+    const [typingUsername, setTypingUsername] = useState('');
 
     const { socket } = useSocket();
 
@@ -105,7 +106,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                 {isTyping && (
                     <p className="text-secondary-500 text-xs">
                         {' '}
-                        someone is typing...{' '}
+                        {typingUsername} is typing...{' '}
                     </p>
                 )}
                 <div className="flex gap-4 text-secondary-200">
@@ -160,6 +161,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                 username={me?.username}
                 channelName={props.channelName}
                 setIsTyping={setIsTyping}
+                setTypingUsername={setTypingUsername}
             />
         </div>
     );

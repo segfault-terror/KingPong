@@ -4,12 +4,14 @@ import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { BiSolidSend } from 'react-icons/bi';
 import Loading from '../loading';
+import { usePathname } from 'next/navigation';
 
 type ChatInputProps = {
     sendMessage: Function;
     username?: string;
     channelName?: string;
     setIsTyping: Function;
+    setTypingUsername?: Function;
 };
 
 export default function ChatInput({
@@ -17,6 +19,7 @@ export default function ChatInput({
     username,
     channelName,
     setIsTyping,
+    setTypingUsername,
 }: ChatInputProps) {
     const inputRef = useRef<HTMLInputElement>(null);
     const { socket } = useSocket();
@@ -91,8 +94,22 @@ export default function ChatInput({
         };
     }, [data]);
 
+    const pathname = usePathname();
+
     useEffect(() => {
-        socket?.on('typing', (data) => setIsTyping(data.isTyping));
+        socket?.on('typing', (data) => {
+            if (pathname.startsWith('/chat/channel') && !data.isChannel) return;
+            if (pathname.startsWith('/chat/dm') && data.isChannel) return;
+            setIsTyping(data.isTyping);
+
+            if (
+                pathname.startsWith('/chat/channel') &&
+                data.isChannel &&
+                setTypingUsername
+            ) {
+                setTypingUsername(data.username);
+            }
+        });
 
         socket?.on('mute', () => {
             queryClient.invalidateQueries(['is-muted', username], {
@@ -212,7 +229,6 @@ export default function ChatInput({
                         event.currentTarget.value = '';
                         event.currentTarget.focus();
                     } else {
-                        console.log(`${username} is typing...}`);
                         onUserTyping();
                     }
                 }}
