@@ -24,6 +24,7 @@ export default function KickDialog(props: {
                 props.channelName,
                 'members',
             ]);
+            socket?.emit('update-channel-sidebar', props.channelName);
         },
     });
 
@@ -61,7 +62,6 @@ export default function KickDialog(props: {
                             usernameToKick: props.usernameToKick,
                         });
                         props.setShowKickDialog(false);
-                        socket?.emit('update-channel-sidebar', props.channelName);
                     }}
                 >
                     OK

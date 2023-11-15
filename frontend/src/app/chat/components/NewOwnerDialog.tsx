@@ -1,5 +1,6 @@
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
+import { useSocket } from '@/contexts/SocketContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -9,6 +10,7 @@ export default function SetNewOwnerDialog(props: {
     setShowNewOwnerDialog: (val: boolean) => void;
 }) {
     const queryClient = useQueryClient();
+    const { socket } = useSocket();
     const { mutate: changeOwner, isLoading } = useMutation({
         mutationFn: async (args: any) => {
             return await axios.post('/api/chat/channel/change-owner', {
@@ -22,6 +24,7 @@ export default function SetNewOwnerDialog(props: {
                 props.channelName,
                 'members',
             ]);
+            socket?.emit('update-channel-sidebar', props.channelName);
         },
     });
 
