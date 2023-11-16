@@ -139,6 +139,18 @@ const YouLose = (myimage: string, oppimage: string) => {
 export default function StandingGame(props: StandingGameResult) {
     const Bg = props.youWin == true ? 'StandingBgWon ' : 'StandingBgLost';
     const color = props.youWin == true ? 'text-[#03CE18]' : 'text-[#F51F3B]';
+    const [counter, setCounter] = useState(10);
+    // add counter 10s
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCounter((prevCounter) => prevCounter - 1);
+            if (counter == 1) {
+                window.location.href = '/home';
+            }
+        }, 1000);
+        return () => clearInterval(timer);
+    }, [counter]);
+
     return (
         <div
             className={`flex flex-col justify-center items-center bg-cover bg-fixed min-h-screen ${Bg}`}
@@ -156,6 +168,7 @@ export default function StandingGame(props: StandingGameResult) {
                     ? YouWin(props.myimage, props.oppimage)
                     : YouLose(props.myimage, props.oppimage)}
             </div>
+            <div className='font-nicomoji text-3xl text-secondary-200 m-1'>{counter}</div>
         </div>
     );
 }

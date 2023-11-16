@@ -5,17 +5,6 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
 
-async function getOpponent(opponent: string) {
-    const { data: opponentData, isLoading: opponentLoading } = useQuery(
-        ['opponent', opponent],
-        async () => {
-            if (!opponent) return null;
-            const { data } = await axios.get(`/api/user/get/${opponent}`);
-            return data;
-        },
-    );
-    return { opponentData, opponentLoading };
-}
 
 function Standing({ lastMatch, me }: { lastMatch: any; me: any }) {
     const idWinner =
@@ -46,7 +35,7 @@ function Standing({ lastMatch, me }: { lastMatch: any; me: any }) {
     return <GameOver winner={winner} loser={loser} me={me} />;
 }
 
-async function StandingPage({ me }: { me: any }) {
+function StandingPage({ me }: { me: any }) {
     console.log('standing : ', me.username);
 
     const {
