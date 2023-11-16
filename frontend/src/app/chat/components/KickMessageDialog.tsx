@@ -2,7 +2,10 @@ import Modal from '@/components/Modal';
 import { redirect } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
-export default function KickMessageDialog(props: { channelName: string }) {
+export default function ExitMessageDialog(props: {
+    channelName: string;
+    reason: 'kick' | 'ban';
+}) {
     const [gotoChat, setGotoChat] = useState(false);
 
     useEffect(() => {
@@ -18,7 +21,8 @@ export default function KickMessageDialog(props: { channelName: string }) {
                     max-w-[400px]"
         >
             <h1 className="text-center text-xl font-jost">
-                You have been kicked from{' '}
+                You have been {props.reason === 'kick' ? 'kicked' : 'banned'}{' '}
+                from{' '}
                 <span className="text-secondary-200">#{props.channelName}</span>
             </h1>
             <div className="w-full flex justify-center gap-4 pt-4">

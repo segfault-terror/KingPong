@@ -13,7 +13,7 @@ import { useSocket } from '@/contexts/SocketContext';
 import DropdownModal from './DropdownModal';
 import ChatMenu from './ChatMenu';
 import { NextResponse } from 'next/server';
-import KickMessageDialog from './components/KickMessageDialog';
+import ExitMessageDialog from './components/KickMessageDialog';
 
 type ChannelConversationProps = {
     channelName: string;
@@ -79,13 +79,18 @@ export default function ChannelConversation(props: ChannelConversationProps) {
     }, [data]);
 
     const [exitChannel, setExitChannel] = useState(false);
+    const [exitReason, setExitReason] = useState<'kick' | 'ban' | null>(null);
 
     useEffect(() => {
         socket?.on(
             'redirect-to-chat',
             (data: { channel: string; reason: 'kick' | 'ban' }) => {
+                console.log(
+                    `redirect-to-chat: ${data.channel} - reason: ${data.reason}`,
+                );
                 if (data.channel === props.channelName) {
                     setExitChannel(true);
+                    setExitReason(data.reason);
                 }
             },
         );
@@ -150,7 +155,10 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                         </DropdownModal>
                     )}
                     {exitChannel && (
-                        <KickMessageDialog channelName={props.channelName} />
+                        <ExitMessageDialog
+                            channelName={props.channelName}
+                            reason={exitReason!}
+                        />
                     )}
                 </div>
             </div>

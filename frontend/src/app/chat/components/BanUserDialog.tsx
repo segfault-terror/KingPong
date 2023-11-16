@@ -1,5 +1,6 @@
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
+import { useSocket } from '@/contexts/SocketContext';
 import { modalContext } from '@/contexts/contexts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -11,6 +12,7 @@ export default function BanDialog(props: {
     setShowBanDialog: (val: boolean) => void;
 }) {
     const { setDotsDropdown } = useContext(modalContext);
+    const { socket } = useSocket();
 
     const queryClient = useQueryClient();
     const { mutate: banUser, isLoading } = useMutation({
@@ -26,6 +28,11 @@ export default function BanDialog(props: {
                 props.channelName,
                 'members',
             ]);
+            socket?.emit('redirect-to-chat', {
+                channel: props.channelName,
+                username: props.usernameToBan,
+                reason: 'ban',
+            });
         },
     });
 
