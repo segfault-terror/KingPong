@@ -6,7 +6,6 @@ import { redirect } from 'next/navigation';
 import Loading from '../loading';
 import { useEffect } from 'react';
 import { io } from 'socket.io-client';
-import { Socket } from 'dgram';
 import { SocketProvider } from '@/contexts/SocketContext';
 import Notif from '@/components/Notif';
 

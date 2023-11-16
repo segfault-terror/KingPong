@@ -1,3 +1,8 @@
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { redirect } from 'next/navigation';
 import React, { ReactNode } from 'react';
 
 type LayoutProps = {
@@ -5,5 +10,20 @@ type LayoutProps = {
 };
 
 export default function Layout({ children }: LayoutProps) {
+    const { error, data } = useQuery({
+        queryKey: ['auth'],
+        queryFn: async () => {
+            try {
+                return await axios.get(`/api/auth/status`, {
+                    withCredentials: true,
+                });
+            } catch {
+                redirect('/signin');
+            }
+        },
+    });
+    if (error || data?.data.status === false) {
+        redirect('/signin');
+    }
     return <>{children}</>;
 }

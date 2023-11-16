@@ -10,6 +10,7 @@ import { Socket, Namespace } from 'socket.io';
 import { ComputerService } from './computer/computer.service';
 import { RankedService } from './ranked/ranked.service';
 import { GameService } from './game.service';
+import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({
     namespace: 'game',
@@ -19,6 +20,7 @@ export class GameGateway implements OnGatewayConnection {
         private readonly computerService: ComputerService,
         private readonly rankedService: RankedService,
         private readonly gameService: GameService,
+        private readonly userService: UserService,
     ) {}
     @WebSocketServer() server: Namespace;
     connectedUsers: { id: string; username: string; sockets: string }[] = [];
@@ -35,8 +37,18 @@ export class GameGateway implements OnGatewayConnection {
         return 'Hello world!';
     }
 
-    handleConnection(client: Socket) {
+    handleConnection(client: any) {
+        if (!client.request.user) {
+            client.disconnect(true);
+            return;
+        }
         const user = this.connectedUsers.find((user) => user.id === client.id);
+        this.userService.updateUser({
+            where: { email: client.request.user.email },
+            data: {
+                status: 'INGAME',
+            },
+        });
 
         if (!user) {
             console.log('new client', client.id);
@@ -46,13 +58,14 @@ export class GameGateway implements OnGatewayConnection {
                 username: '',
             });
         }
+        client.emit('already-ingame', 'You are already connected');
         // else client.disconnect(true);
 
-        console.log('client', client.id);
+        // console.log('client', client.id);
         // this.computerService.startGame(client);
     }
 
-    async handleDisconnect(socket: Socket) {
+    async handleDisconnect(socket: any) {
         const user = this.connectedUsers.find((user) => user.id === socket.id);
         console.log('disconnect', this.connectedUsers);
         if (!user) return;
@@ -87,6 +100,24 @@ export class GameGateway implements OnGatewayConnection {
         this.connectedUsers = this.connectedUsers.filter(
             (users) => user.username !== users.username,
         );
+        const us = await this.userService.user({
+            email: socket.request.user.email,
+        });
+        if ((await this.server.in(us.id).fetchSockets()).length === 0) {
+            await this.userService.updateUser({
+                where: { email: us.email },
+                data: {
+                    status: 'OFFLINE',
+                },
+            });
+        } else {
+            await this.userService.updateUser({
+                where: { email: us.email },
+                data: {
+                    status: 'ONLINE',
+                },
+            });
+        }
     }
 
     @SubscribeMessage('register')
