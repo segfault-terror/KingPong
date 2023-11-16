@@ -101,9 +101,7 @@ export class MinioClientService {
         }
 
         return {
-            url: `http://${this.configService.get(
-                'MINIO_ENDPOINT',
-            )}:9000/${bucketName}/${fileName}`,
+            url: `/${bucketName}/${fileName}`,
         };
     }
 
