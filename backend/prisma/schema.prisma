@@ -53,6 +53,7 @@ model User {
     gamesAsPlayer2 Game[] @relation("player2")
     dms1 DM[] @relation("user1")
     dms2 DM[] @relation("user2")
+    newLevelUp Boolean @default(false)
     sentMessages Message[] @relation("sender")
     ownedChannels Channel[] @relation("owner")
     adminChannels Channel[] @relation("admin")
