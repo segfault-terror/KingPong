@@ -12,6 +12,8 @@ import { redirect } from 'next/navigation';
 import { useSocket } from '@/contexts/SocketContext';
 import DropdownModal from './DropdownModal';
 import ChatMenu from './ChatMenu';
+import { NextResponse } from 'next/server';
+import KickMessageDialog from './components/KickMessageDialog';
 
 type ChannelConversationProps = {
     channelName: string;
@@ -76,6 +78,22 @@ export default function ChannelConversation(props: ChannelConversationProps) {
         scrollToBottom();
     }, [data]);
 
+    const [exitChannel, setExitChannel] = useState(false);
+
+    useEffect(() => {
+        socket?.on(
+            'redirect-to-chat',
+            (data: { channel: string; reason: 'kick' | 'ban' }) => {
+                if (data.channel === props.channelName) {
+                    setExitChannel(true);
+                }
+            },
+        );
+        return () => {
+            socket?.off('redirect-to-chat');
+        };
+    });
+
     if (isLoading || isLoadingMe) {
         return (
             <div className="bg-default fixed inset-0 z-50">
@@ -130,6 +148,9 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                         >
                             <ChatMenu />
                         </DropdownModal>
+                    )}
+                    {exitChannel && (
+                        <KickMessageDialog channelName={props.channelName} />
                     )}
                 </div>
             </div>

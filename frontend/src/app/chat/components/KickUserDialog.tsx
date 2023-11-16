@@ -30,6 +30,11 @@ export default function KickDialog(props: {
                 'members',
             ]);
             socket?.emit('update-channel-sidebar', props.channelName);
+            socket?.emit('redirect-to-chat', {
+                channel: props.channelName,
+                username: props.usernameToKick,
+                reason: 'kick',
+            });
         },
     });
 

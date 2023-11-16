@@ -144,4 +144,27 @@ export class ChatGateway implements OnGatewayDisconnect {
             this.server.to(socketId).emit('mute');
         });
     }
+
+    @SubscribeMessage('redirect-to-chat')
+    async handleRedirectToChat(
+        @MessageBody()
+        data: {
+            username: string;
+            channel: string;
+            reason: 'ban' | 'kick';
+        },
+    ) {
+        const user = this.connectedUsers.find(
+            (user) => user.username === data.username,
+        );
+
+        if (!user) return;
+
+        user.socketsId.forEach((socketId: string) => {
+            this.server.to(socketId).emit('redirect-to-chat', {
+                channel: data.channel,
+                reason: data.reason,
+            });
+        });
+    }
 }
