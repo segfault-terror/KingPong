@@ -8,6 +8,7 @@ import Navbar from './Navbar';
 import Loading from '@/app/loading';
 import SelectMode from './SelectMode';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import LevelUp from '@/components/Levelup';
 
 export interface newData {
     rank: number;
@@ -36,17 +37,13 @@ export default function Page() {
     const isMobile = useMediaQuery('(max-width: 768px)');
 
     const { data, isLoading: myisLoading } = useQuery({
-        queryKey: ['userStats'],
+        queryKey: ['me'],
         queryFn: async () => {
             try {
-                const me = await axios.get(`/api/user/me`, {
+                const {data} = await axios.get('/api/user/get/stats/me', {
                     withCredentials: true,
                 });
-                const stats = await axios.get(
-                    `/api/user/get/${me.data.username}/stats`,
-                    { withCredentials: true },
-                );
-                return stats.data;
+                return data;
             } catch {
                 redirect('/signin');
             }
@@ -68,6 +65,7 @@ export default function Page() {
     }
 
     function MyComponent() {
+        console.log(data);
         const leaderboard = useMemo(() => {
             return leaderboardData?.map(
                 (entry: newData) =>
@@ -89,7 +87,7 @@ export default function Page() {
             return leaderboardData?.find(
                 (entry: newData) => entry.username === data?.username,
             )?.stats?.league;
-        }, [leaderboardData, data]);
+        }, [leaderboardData]);
 
         const Transation = isMobile === false ? '' : 'flex-col';
 
@@ -98,6 +96,9 @@ export default function Page() {
             setPercent((data?.stats.XP / data?.stats.NextLevelXP) * 100);
         }, [data]);
 
+        if (data.newLevelUp && data?.stats !== undefined) {
+            return <LevelUp newLevel={data?.stats.level} data={data} />;
+        }
         return (
             <div className={`flex ${Transation}`}>
                 {useMemo(() => {
