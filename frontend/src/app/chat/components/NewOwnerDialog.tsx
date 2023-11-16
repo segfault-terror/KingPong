@@ -56,7 +56,7 @@ export default function SetNewOwnerDialog(props: {
             <div className="w-full flex justify-center gap-4 pt-4">
                 <button
                     type="button"
-                    title="Leave channel"
+                    title="Set new owner"
                     className="bg-background rounded-2xl px-4
                                     border border-white text-secondary-200
                                     font-jost hover:bg-secondary-200
@@ -73,6 +73,7 @@ export default function SetNewOwnerDialog(props: {
                     OK
                 </button>
                 <button
+                    title="Cancel"
                     className="bg-background rounded-2xl px-4
                                     border border-white text-red-400
                                     font-jost hover:bg-red-400

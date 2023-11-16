@@ -54,6 +54,7 @@ export default function DeleteChannelModal(props: DeleteChannelProps) {
                     OK
                 </button>
                 <button
+                    title="Cancel"
                     className="bg-background rounded-2xl px-4
                                     border border-white text-red-400
                                     font-jost hover:bg-red-400
