@@ -17,9 +17,10 @@ export default function MatchMakingPage({
     oppData,
     setOppData,
 }: Props) {
+    const data = { username: me.username, league: me.league };
     const { socket } = useSocket();
     useEffect(() => {
-        if (socket) socket.emit('matchmaking', me);
+        if (socket) socket.emit('matchmaking', data);
     }, [socket]);
 
     return (
