@@ -118,7 +118,8 @@ export class GameService {
             elo1 >= 2000 ? 'GOLD' : elo1 >= 1000 ? 'SILVER' : 'BRONZE';
         const league2 =
             elo2 >= 2000 ? 'GOLD' : elo2 >= 1000 ? 'SILVER' : 'BRONZE';
-
+        const oldLevelPlayer1 = user1.stats.level;
+        const oldLevelPlayer2 = user2.stats.level;
         const levelPlayer1: { level: number; XP: number; nextLevelXP: number } =
             getExpToLevelUp(
                 user1.stats.NextLevelXP,
@@ -150,6 +151,7 @@ export class GameService {
                         NextLevelXP: levelPlayer1.nextLevelXP,
                     },
                 },
+                newLevelUp: levelPlayer1.level > oldLevelPlayer1,
             },
         });
 
@@ -167,6 +169,7 @@ export class GameService {
                         NextLevelXP: levelPlayer2.nextLevelXP,
                     },
                 },
+                newLevelUp: levelPlayer2.level > oldLevelPlayer2,
             },
         });
 

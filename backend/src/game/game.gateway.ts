@@ -29,6 +29,10 @@ export class GameGateway implements OnGatewayConnection {
         player1: { username: string; socket: string };
         player2: { username: string; socket: string };
     }[] = [];
+    queueChallenge: {
+        Challenger: { username: string; socket: string };
+        Opponent: { username: string; socket: string };
+    }[] = [];
 
     @SubscribeMessage('message')
     handleMessage(client: Socket, payload: any): string {
@@ -273,6 +277,59 @@ export class GameGateway implements OnGatewayConnection {
                     );
                 }, 5000);
             } else return;
+        }
+    }
+
+    @SubscribeMessage('challenge')
+    async handleChallenge(
+        @MessageBody() data: any,
+        @ConnectedSocket() socket: Socket,
+    ) {
+        const user = this.connectedUsers.find(
+            (user) => user.username === data.Challenger,
+        );
+        if (!user) return;
+        const opponent = this.queueChallenge.find((player) => {
+            return (
+                player.Challenger.username === data.Challenger &&
+                player.Opponent.username === data.Opponent
+            );
+        })
+
+        if (!opponent) {
+            this.queueChallenge.push({
+                Challenger: {
+                    username: data.Challenger,
+                    socket: user.sockets,
+                },
+                Opponent: {
+                    username: data.Opponent,
+                    socket: socket.id,
+                },
+            });
+            this.server.to(user.sockets).emit('challenge', {
+                opponent: data.Opponent,
+            });
+        }
+        else {
+            this.queueChallenge = this.queueChallenge.filter(
+                (player) =>
+                    player.Challenger.username !== data.Challenger &&
+                    player.Opponent.username !== data.Opponent,
+            );
+            this.queueInMatch.push({
+                player1: {
+                    username: data.Challenger,
+                    socket: user.sockets,
+                },
+                player2: {
+                    username: data.Opponent,
+                    socket: socket.id,
+                },
+            });
+            const client1 = this.server.sockets.get(user.sockets);
+            const client2 = this.server.sockets.get(socket.id);
+            this.rankedService.startGame(client1, client2, user, socket);
         }
     }
 }

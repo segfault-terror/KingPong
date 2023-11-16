@@ -277,13 +277,17 @@ export class RankedService {
 
         client1.on('move-right', (player: string) => {
             if (player === player1.username) {
-                if (bottomPaddle.body.position.x > canvas.width - 50) return;
+                if (
+                    bottomPaddle.body.position.x + playerSpeed >
+                    canvas.width - 50
+                )
+                    return;
                 Body.setPosition(bottomPaddle.body, {
                     x: bottomPaddle.body.position.x + playerSpeed,
                     y: bottomPaddle.body.position.y,
                 });
             } else if (player === player2.username) {
-                if (topPaddle.body.position.x < 50) return;
+                if (topPaddle.body.position.x - playerSpeed < 50) return;
                 Body.setPosition(topPaddle.body, {
                     x: topPaddle.body.position.x - playerSpeed,
                     y: topPaddle.body.position.y,
@@ -293,13 +297,17 @@ export class RankedService {
 
         client2.on('move-right', (player: string) => {
             if (player === player2.username) {
-                if (topPaddle.body.position.x < 50) return;
+                if (topPaddle.body.position.x - playerSpeed < 50) return;
                 Body.setPosition(topPaddle.body, {
                     x: topPaddle.body.position.x - playerSpeed,
                     y: topPaddle.body.position.y,
                 });
             } else if (player === player1.username) {
-                if (bottomPaddle.body.position.x > canvas.width - 50) return;
+                if (
+                    bottomPaddle.body.position.x + playerSpeed >
+                    canvas.width - 50
+                )
+                    return;
                 Body.setPosition(bottomPaddle.body, {
                     x: bottomPaddle.body.position.x + playerSpeed,
                     y: bottomPaddle.body.position.y,
@@ -308,13 +316,14 @@ export class RankedService {
         });
         client1.on('move-left', (player: string) => {
             if (player === player1.username) {
-                if (bottomPaddle.body.position.x < 50) return;
+                if (bottomPaddle.body.position.x - playerSpeed < 50) return;
                 Body.setPosition(bottomPaddle.body, {
                     x: bottomPaddle.body.position.x - playerSpeed,
                     y: bottomPaddle.body.position.y,
                 });
             } else if (player === player2.username) {
-                if (topPaddle.body.position.x > canvas.width - 50) return;
+                if (topPaddle.body.position.x + playerSpeed > canvas.width - 50)
+                    return;
                 Body.setPosition(topPaddle.body, {
                     x: topPaddle.body.position.x + playerSpeed,
                     y: topPaddle.body.position.y,
@@ -324,13 +333,14 @@ export class RankedService {
 
         client2.on('move-left', (player: string) => {
             if (player === player2.username) {
-                if (topPaddle.body.position.x > canvas.width - 50) return;
+                if (topPaddle.body.position.x + playerSpeed > canvas.width - 50)
+                    return;
                 Body.setPosition(topPaddle.body, {
                     x: topPaddle.body.position.x + playerSpeed,
                     y: topPaddle.body.position.y,
                 });
             } else if (player === player1.username) {
-                if (bottomPaddle.body.position.x < 50) return;
+                if (bottomPaddle.body.position.x - playerSpeed < 50) return;
                 Body.setPosition(bottomPaddle.body, {
                     x: bottomPaddle.body.position.x - playerSpeed,
                     y: bottomPaddle.body.position.y,
