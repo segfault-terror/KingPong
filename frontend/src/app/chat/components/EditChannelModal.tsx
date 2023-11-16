@@ -15,11 +15,6 @@ export default function EditChannelModal(props: {
     const [channelExists, setChannelExists] = useState(false);
     const [redirectChannel, setRedirectChannel] = useState(false);
 
-    useEffect(() => {
-        if (!redirectChannel) return;
-        redirect(`/chat/channel/${watch('name')}`);
-    }, [redirectChannel]);
-
     const {
         register,
         handleSubmit,
@@ -32,6 +27,11 @@ export default function EditChannelModal(props: {
             password: '',
         },
     });
+
+    useEffect(() => {
+        if (!redirectChannel) return;
+        redirect(`/chat/channel/${watch('name')}`);
+    }, [redirectChannel, watch]);
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async (args: any) => {

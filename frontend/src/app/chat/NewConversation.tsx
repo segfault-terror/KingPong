@@ -3,7 +3,7 @@ import { modalContext } from '@/contexts/contexts';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Loading from '../loading';
 import Lottie from 'lottie-react';
 import Ghost from '../../../public/lottie/ghost.json';
@@ -41,6 +41,11 @@ export default function NewConversation() {
     const [results, setResults] = useState<any[]>([]);
     const { setNewConversation } = useContext(modalContext);
 
+    useEffect(() => {
+        if (isLoading) return;
+        setResults(data?.friends);
+    }, [data?.friends, isLoading]);
+
     if (isLoading) {
         return (
             <div className="bg-default fixed inset-0 z-50">
@@ -70,10 +75,6 @@ export default function NewConversation() {
                 onChange={(event) => {
                     event.preventDefault();
                     const query = event.target.value;
-                    if (query === '') {
-                        setResults([]);
-                        return;
-                    }
                     const newResults = filterUsers(data?.friends, query);
                     setResults(newResults);
                 }}

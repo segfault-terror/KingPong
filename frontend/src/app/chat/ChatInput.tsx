@@ -92,7 +92,7 @@ export default function ChatInput({
             clearTimeout(timeoutId);
             clearInterval(intervalId);
         };
-    }, [data]);
+    }, [data, channelName]);
 
     const pathname = usePathname();
 
