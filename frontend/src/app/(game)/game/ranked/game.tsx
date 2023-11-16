@@ -11,7 +11,7 @@ import { useSocket } from '@/contexts/SocketContext';
 import { set } from 'react-hook-form';
 import GameOver from '@/app/(game)/game/standing/GameOver';
 import { redirect } from 'next/navigation';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Modal from '@/components/Modal';
 
@@ -51,6 +51,7 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
         return res;
     });
 
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         if (socket) {
@@ -69,8 +70,10 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 if (data.username === me.username) {
                     pos = data;
                 }
-            }); 
+            });
             socket.on('game-stop', (data) => {
+                queryClient.invalidateQueries(['me']);
+                queryClient.invalidateQueries(['leaderboard']);
                 console.log('opponent disconnected');
                 setGameOver(true);
                 setTimeout(() => {
@@ -85,6 +88,8 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 });
             });
             socket.on('finished', (data) => {
+                queryClient.invalidateQueries(['me']);
+                queryClient.invalidateQueries(['leaderboard']);
                 console.log('finished');
                 setGameOver(true);
                 setTimeout(() => {
