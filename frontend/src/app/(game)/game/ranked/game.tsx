@@ -51,10 +51,6 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
         return res;
     });
 
-    const { mutate: updateRank } = useMutation(async (data: any) => {
-        const { data: res } = await axios.post('/api/game/update', data);
-        return res;
-    });
 
     useEffect(() => {
         if (socket) {
@@ -73,10 +69,7 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 if (data.username === me.username) {
                     pos = data;
                 }
-            });
-            socket.on('finish', (data) => {
-                updateRank(data);
-            });
+            }); 
             socket.on('game-stop', (data) => {
                 console.log('opponent disconnected');
                 setGameOver(true);

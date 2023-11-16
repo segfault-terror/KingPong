@@ -6,6 +6,7 @@ import { Ball } from '../utils/Ball';
 import { Paddle } from '../utils/Paddle';
 import { UserService } from 'src/user/user.service';
 import { emit } from 'process';
+import { GameService } from '../game.service';
 
 enum Direction {
     LEFT = 'left',
@@ -15,7 +16,7 @@ enum Direction {
 
 @Injectable()
 export class RankedService {
-    constructor(private readonly userService: UserService) {}
+    constructor(private readonly gameService: GameService) {}
 
     async sendToClients(
         client1: Socket,
@@ -126,30 +127,45 @@ export class RankedService {
                 ballSpeed += 1;
             }
 
-            if (score1 == 2 || score2 == 2) {
+            if (score1 == 7 || score2 == 7) {
                 this.sendToClients(
                     client1,
                     client2,
                     {
                         winner:
-                            score1 == 2 ? player1.username : player2.username,
+                            score1 == 7 ? player1.username : player2.username,
                         player1: player1.username,
                         player2: player2.username,
                         player1_score: score1,
                         player2_score: score2,
-                        iWin: score1 == 2,
+                        iWin: score1 == 7,
                     },
                     {
                         winner:
-                            score2 == 2 ? player2.username : player1.username,
+                            score2 == 7 ? player2.username : player1.username,
                         player2: player2.username,
                         player1: player1.username,
                         player2_score: score2,
                         player1_score: score1,
-                        iWin: score2 == 2,
+                        iWin: score2 == 7,
                     },
                     'finished',
                 );
+                this.gameService.updatePlayerScore({
+                    player1: player1.username,
+                    player2: player2.username,
+                    ranked: true,
+                    player1_score: score1,
+                    player2_score: score2,
+                });
+                client1.emit('game-over', {
+                    player1: player1.username,
+                    player2: player2.username,
+                });
+                client2.emit('game-over', {
+                    player1: player1.username,
+                    player2: player2.username,
+                });
                 return clearInterval(interval);
             }
 

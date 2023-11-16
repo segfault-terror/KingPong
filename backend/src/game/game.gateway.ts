@@ -69,18 +69,24 @@ export class GameGateway implements OnGatewayConnection {
         const user = this.connectedUsers.find((user) => user.id === socket.id);
         console.log('disconnect', this.connectedUsers);
         if (!user) return;
-        const finishedGame = (data: {user: any, player1: any, player2: any}) => {
-            const winner = data.user.username === data.player1.username ? data.player2 : data.player1;
-            const loser = data.user.username === data.player1.username ? data.player1 : data.player2;
-            this.server.to(winner.socket).emit('game-stop', { opponent: loser.username });
+        const finishedGame = (data: {
+            user: any;
+            player1: any;
+            player2: any;
+        }) => {
+            const winner =
+                data.user.username === data.player1.username
+                    ? data.player2
+                    : data.player1;
+            const loser =
+                data.user.username === data.player1.username
+                    ? data.player1
+                    : data.player2;
+            this.server
+                .to(winner.socket)
+                .emit('game-stop', { opponent: loser.username });
             console.log('winner: ', winner);
             console.log('loser: ', loser);
-            setTimeout(() => {
-                const client = this.server.sockets.get(
-                    winner.socket,
-                );
-                client.disconnect(true);
-            }, 1000);
         };
 
         const player = this.queueInMatch.find((player) => {
@@ -91,13 +97,17 @@ export class GameGateway implements OnGatewayConnection {
         });
         console.log('disconnect player: ', player);
         console.log('the user is: ', user);
-        if (player) {
+        if (player && player !== undefined) {
             this.queueInMatch = this.queueInMatch.filter(
                 (players) =>
                     players.player1.username !== player.player1.username &&
                     players.player2.username !== player.player2.username,
             );
-            finishedGame({user, player1: player.player1, player2: player.player2});
+            finishedGame({
+                user,
+                player1: player.player1,
+                player2: player.player2,
+            });
             // this.server.to(player.player1.socket).emit('gameOver');
             //disconnect the all the plyers sockets in the seem match
         }
@@ -190,6 +200,10 @@ export class GameGateway implements OnGatewayConnection {
                 players.player1.username !== player.player1.username &&
                 players.player2.username !== player.player2.username,
         );
+        const client1 = this.server.sockets.get(player.player1.socket);
+        const client2 = this.server.sockets.get(player.player2.socket);
+        client1.disconnect(true);
+        client2.disconnect(true);
     }
 
     @SubscribeMessage('join-game')
