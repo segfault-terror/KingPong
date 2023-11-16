@@ -75,15 +75,29 @@ export class UserService {
         });
     }
 
+    async updateMyData(username: string): Promise<User> {
+        const user = await this.prisma.user.update({
+            where: {
+                username,
+            },
+            data: {
+                newLevelUp: false,
+            },
+        });
+        console.log(user);
+        return user;
+    }
+
     async updateUser(params: {
         where: Prisma.UserWhereUniqueInput;
         data: Prisma.UserUpdateInput;
     }): Promise<User> {
         const { where, data } = params;
-        return this.prisma.user.update({
+        const res = await this.prisma.user.update({
             data,
             where,
         });
+        return res;
     }
 
     async validateUser(username: string, password: string): Promise<any> {

@@ -86,6 +86,20 @@ export class UserController {
         return this.userService.searchUsers(q);
     }
 
+    @Post('setdata')
+    @UseGuards(AuthGard)
+    async updateUser(
+        @Req() req: any,
+    ) {
+        const username = req.user.username;
+        console.log(username);
+        const userByUsername = await this.userService.user({ username });
+        if (!userByUsername) {
+            throw new NotFoundException('User not found');
+        }
+        return this.userService.updateMyData(username);
+    }
+
     @Post('register')
     @UsePipes(new ValidationPipe())
     async register(@Body() body: CreateUserDto) {
