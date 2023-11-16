@@ -1,5 +1,6 @@
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
+import { useSocket } from '@/contexts/SocketContext';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -10,6 +11,7 @@ type DeleteChannelProps = {
 };
 
 export default function DeleteChannelModal(props: DeleteChannelProps) {
+    const { socket } = useSocket();
     const { mutate: deleteChannel, isLoading } = useMutation({
         mutationFn: async () => {
             await axios.delete(`/api/chat/channel/${props.channelName}`, {
@@ -18,6 +20,7 @@ export default function DeleteChannelModal(props: DeleteChannelProps) {
         },
         onSuccess: () => {
             props.setRedirectChannel(true);
+            socket?.emit('channel-deleted', props.channelName);
         },
     });
 

@@ -79,7 +79,9 @@ export default function ChannelConversation(props: ChannelConversationProps) {
     }, [data]);
 
     const [exitChannel, setExitChannel] = useState(false);
-    const [exitReason, setExitReason] = useState<'kick' | 'ban' | null>(null);
+    const [exitReason, setExitReason] = useState<
+        'kick' | 'ban' | 'delete' | null
+    >(null);
 
     useEffect(() => {
         socket?.on(
@@ -94,8 +96,15 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                 }
             },
         );
+        socket?.on('channel-deleted', (channelName: string) => {
+            if (channelName === props.channelName) {
+                setExitChannel(true);
+                setExitReason('delete');
+            }
+        });
         return () => {
             socket?.off('redirect-to-chat');
+            socket?.off('channel-deleted');
         };
     });
 

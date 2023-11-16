@@ -146,7 +146,7 @@ export class ChatGateway implements OnGatewayDisconnect {
     }
 
     @SubscribeMessage('redirect-to-chat')
-    async handleRedirectToChat(
+    handleRedirectToChat(
         @MessageBody()
         data: {
             username: string;
@@ -166,5 +166,10 @@ export class ChatGateway implements OnGatewayDisconnect {
                 reason: data.reason,
             });
         });
+    }
+
+    @SubscribeMessage('channel-deleted')
+    handleChannelDeleted(@MessageBody() channelName: string) {
+        this.server.to(channelName).emit('channel-deleted', channelName);
     }
 }
