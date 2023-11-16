@@ -256,7 +256,7 @@ export class UserService {
             },
             orderBy: {
                 createdAt: 'desc',
-            }
+            },
         });
     }
 
