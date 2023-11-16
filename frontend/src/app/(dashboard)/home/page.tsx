@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Navbar from './Navbar';
 import Loading from '@/app/loading';
 import SelectMode from './SelectMode';
@@ -39,26 +39,29 @@ export default function Page() {
         queryKey: ['userStats'],
         queryFn: async () => {
             try {
-                const me =  await axios.get(`/api/user/me`, {
+                const me = await axios.get(`/api/user/me`, {
                     withCredentials: true,
                 });
-                const stats = await axios.get(`/api/user/get/${me.data.username}/stats`, {withCredentials: true});
-                return stats.data
+                const stats = await axios.get(
+                    `/api/user/get/${me.data.username}/stats`,
+                    { withCredentials: true },
+                );
+                return stats.data;
             } catch {
                 redirect('/signin');
             }
         },
     });
-    
-        const { data: leaderboardData, isLoading } = useQuery({
-            queryKey: ['leaderboard'],
-            queryFn: async () => {
-                const { data } = await axios.get(`/api/leaderboard`, {
-                    withCredentials: true,
-                });
-                return data;
-            },
-        });
+
+    const { data: leaderboardData, isLoading } = useQuery({
+        queryKey: ['leaderboard'],
+        queryFn: async () => {
+            const { data } = await axios.get(`/api/leaderboard`, {
+                withCredentials: true,
+            });
+            return data;
+        },
+    });
 
     if (isLoading || myisLoading) {
         return <Loading />;
@@ -73,7 +76,12 @@ export default function Page() {
                         rank: entry.stats?.rank,
                         league: entry.stats?.league,
                         avatar: entry.avatar,
-                    }) as { username: string; rank: number; league: string, avatar: string },
+                    }) as {
+                        username: string;
+                        rank: number;
+                        league: string;
+                        avatar: string;
+                    },
             );
         }, [leaderboardData]);
 
@@ -85,19 +93,11 @@ export default function Page() {
 
         const Transation = isMobile === false ? '' : 'flex-col';
 
-        const percent: number = useMemo(() => {
-            return (
-                (data?.stats.XP / data?.stats.NextLevelXP) * 100 || 1
-            );
-        }
-        , [data]);
+        const [percent, setPercent] = useState(0);
+        useEffect(() => {
+            setPercent((data?.stats.XP / data?.stats.NextLevelXP) * 100);
+        }, [data]);
 
-        const widthlevel = useMemo(() => {
-            return `w-[${percent}%]`;
-        }
-        , [percent]);
-
-        console.log(widthlevel);
         return (
             <div className={`flex ${Transation}`}>
                 {useMemo(() => {
@@ -164,7 +164,12 @@ export default function Page() {
                                 <span className="lg:hidden absolute right-0 -top-5 h-4 px-1 rounded-full bg-slate-200 font-extralight text-[10px] text-center text-black group-hover:flex flex justify-center items-center">
                                     {data?.stats.XP}/{data?.stats.NextLevelXP}
                                 </span>
-                                <span className={`${widthlevel} rounded-full h-1 bg-blue-500 ml-1`}></span>
+                                <span
+                                    className={` rounded-full h-1 bg-blue-500 ml-1`}
+                                    style={{
+                                        width: `${percent}%`,
+                                    }}
+                                ></span>
                             </span>
                         </div>
                     </div>

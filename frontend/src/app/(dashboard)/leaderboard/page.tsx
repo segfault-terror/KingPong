@@ -38,9 +38,10 @@ export default function Leaderboard() {
     });
 
     const percent: number = useMemo(() => {
-        return (data?.stats.rank / 2000) * 100 || 1;
+        return (data?.stats.rank / 2000) * 100 > 100
+            ? 99
+            : (data?.stats.rank / 2000) * 100 || 1;
     }, [data]);
-
     const widthlevel = useMemo(() => {
         return `w-[${percent}%]`;
     }, [percent]);
