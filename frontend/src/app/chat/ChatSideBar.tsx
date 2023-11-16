@@ -133,6 +133,19 @@ function ChannelList({ toggle, setToggle }: ChatSideBarProps) {
         },
     });
 
+    const queryClient = useQueryClient();
+    const { socket } = useSocket();
+    useEffect(() => {
+        socket?.on('unban', () => {
+            queryClient.invalidateQueries(['channels', 'brief'], {
+                exact: true,
+            });
+        });
+        return () => {
+            socket?.off('unban');
+        };
+    });
+
     if (isLoading) {
         return (
             <div className="bg-default fixed inset-0 z-50">
