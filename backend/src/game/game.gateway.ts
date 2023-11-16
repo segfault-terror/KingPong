@@ -69,29 +69,38 @@ export class GameGateway implements OnGatewayConnection {
         const user = this.connectedUsers.find((user) => user.id === socket.id);
         console.log('disconnect', this.connectedUsers);
         if (!user) return;
-        // remove user from queue
+        const finishedGame = (data: {user: any, player1: any, player2: any}) => {
+            const winner = data.user.username === data.player1.username ? data.player2 : data.player1;
+            const loser = data.user.username === data.player1.username ? data.player1 : data.player2;
+            this.server.to(winner.socket).emit('game-stop', { opponent: loser.username });
+            console.log('winner: ', winner);
+            console.log('loser: ', loser);
+            setTimeout(() => {
+                const client = this.server.sockets.get(
+                    winner.socket,
+                );
+                client.disconnect(true);
+            }, 1000);
+        };
+
         const player = this.queueInMatch.find((player) => {
             return (
                 player.player1.username === user.username ||
                 player.player2.username === user.username
             );
         });
+        console.log('disconnect player: ', player);
+        console.log('the user is: ', user);
         if (player) {
-            if (player.player1.username === user.username)
-                this.server
-                    .to(player.player2.socket)
-                    .emit('opponentdisconnect');
-            else
-                this.server
-                    .to(player.player1.socket)
-                    .emit('opponentdisconnect');
-            this.server.to(player.player1.socket).emit('gameOver');
+            this.queueInMatch = this.queueInMatch.filter(
+                (players) =>
+                    players.player1.username !== player.player1.username &&
+                    players.player2.username !== player.player2.username,
+            );
+            finishedGame({user, player1: player.player1, player2: player.player2});
+            // this.server.to(player.player1.socket).emit('gameOver');
+            //disconnect the all the plyers sockets in the seem match
         }
-        this.queueInMatch = this.queueInMatch.filter(
-            (players) =>
-                players.player1.username !== player.player1.username &&
-                players.player2.username !== player.player2.username,
-        );
         console.log(`------[Game] Unregistered ${user.username} from one tab`);
         this.queue = this.queue.filter(
             (queue) => queue.username !== user.username,
@@ -125,8 +134,14 @@ export class GameGateway implements OnGatewayConnection {
         @MessageBody() username: string,
         @ConnectedSocket() socket: Socket,
     ) {
+        // remove all the users with '' username
+        this.connectedUsers = this.connectedUsers.filter(
+            (user) => user.username !== '',
+        );
         console.log(`+++++ [Game] Register... ${username}`);
-        const user = this.connectedUsers.find((user) => user.username === '');
+        const user = this.connectedUsers.find(
+            (user) => user.username === username,
+        );
         if (!user) {
             console.log(
                 `++++++[Game] Registered ${username} for the first time`,
@@ -136,34 +151,40 @@ export class GameGateway implements OnGatewayConnection {
                 sockets: socket.id,
                 id: socket.id,
             });
-        } else if (user.username === '') {
+        } else {
             // change username in connected users
             user.username = username;
             user.sockets = socket.id;
+            user.id = socket.id;
             console.log(`++++++[Game] Registered ${username} in another tab`);
             console.log(this.connectedUsers);
-        } else {
-            // disallow multiple connections
-            if (user.sockets !== socket.id) {
-                console.log(
-                    `++++++[Game] ${username} already has a connection`,
-                );
-                socket.disconnect(true);
-            }
         }
     }
 
-    @SubscribeMessage('gameOver')
+    @SubscribeMessage('game-over')
     async handleRemoveMatchMaking(
         @MessageBody()
-        { player1, player2 }: { player1: string; player2: string },
+        {
+            player1,
+            player2,
+            score1,
+            score2,
+        }: {
+            player1: string;
+            player2: string;
+            score1: number;
+            score2: number;
+        },
     ) {
         const player = this.queueInMatch.find((player) => {
             return (
-                player.player1.username === player1 ||
-                player.player2.username === player2
+                (player.player1.username === player1 &&
+                    player.player2.username === player2) ||
+                (player.player1.username === player2 &&
+                    player.player2.username === player1)
             );
         });
+
         this.queueInMatch = this.queueInMatch.filter(
             (players) =>
                 players.player1.username !== player.player1.username &&
@@ -181,9 +202,11 @@ export class GameGateway implements OnGatewayConnection {
 
     @SubscribeMessage('matchmaking')
     async handleGame(@MessageBody() data: any) {
+        console.log('data: ', data);
         const user = this.connectedUsers.find(
             (user) => user.username === data.username,
         );
+        console.log('user: ', user);
         if (!user) return;
         const UserQueue = this.queue.find(
             (queue) => queue.username === data.username,
@@ -198,7 +221,7 @@ export class GameGateway implements OnGatewayConnection {
             const queue = this.queue.filter(
                 (queue) => queue.league === data.league,
             );
-            console.log('queue', queue.length);
+            console.log('queue: ', queue);
             if (queue.length >= 2) {
                 console.log('matchmaking 2 players found');
                 this.server.to(queue[0].socket).emit('matchmakingfound', {
@@ -236,7 +259,6 @@ export class GameGateway implements OnGatewayConnection {
                     );
                 }, 5000);
             } else return;
-            // console.log('matchmaking', data);
         }
     }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { Body, Engine } from 'matter-js';
+import { Body, Collision, Common, Engine } from 'matter-js';
 import { PongTable } from '../utils/PongTable';
 import { Ball } from '../utils/Ball';
 import { Paddle } from '../utils/Paddle';
@@ -24,12 +24,14 @@ export class RankedService {
         data2: any,
         emitedEvent: string,
     ) {
-        if (emitedEvent === 'canvas') console.log('send canvas');
         client1.emit(emitedEvent, data1);
         client2.emit(emitedEvent, data2);
     }
 
     startGame(client1: Socket, client2: Socket, player1: any, player2: any) {
+        const playerSpeed = 10;
+        const initialBallSpeed = 5;
+        let ballSpeed = 5;
         console.log('start game');
         const canvas = { width: 500, height: 800 };
         const engine = Engine.create({ gravity: { x: 0, y: 0 } });
@@ -41,13 +43,14 @@ export class RankedService {
             friction: 0,
             frictionAir: 0,
             frictionStatic: 0,
+            inertia: Infinity,
+            angle: 0,
+            angularSpeed: 0,
+            angularVelocity: 0,
+            velocity: { x: 0, y: 0 },
         });
         setTimeout(() => {
-            Body.applyForce(
-                ball.body,
-                { x: ball.body.position.x, y: ball.body.position.y },
-                { x: 0, y: 0.0155 },
-            );
+            Body.setVelocity(ball.body, { x: 0, y: ballSpeed });
         }, 2000);
 
         const topPaddle = new Paddle(canvas.width / 2, 50, 100, 20, world, {
@@ -82,9 +85,26 @@ export class RankedService {
             'canvas',
         );
 
+        const orPair = (x: number, y: number) => {
+            const random = Common.random(-10, 10);
+            if (random < 0) {
+                return x;
+            }
+            return y;
+        };
+
+        let randomStart = {
+            x: Common.random(-ballSpeed, ballSpeed),
+            y: orPair(-ballSpeed, ballSpeed),
+        };
+
+        let counter = 0;
+        let score1 = 0;
+        let score2 = 0;
+
         const interval = setInterval(() => {
             Engine.update(engine, frameRate);
-    
+
             const ballPos = ball.body.position;
             const revsBallPos = {
                 x: canvas.width - ballPos.x,
@@ -100,11 +120,134 @@ export class RankedService {
                 x: canvas.width - bottomPaddlePos.x,
                 y: canvas.height - bottomPaddlePos.y,
             };
+
+            if (counter === 6 && ballSpeed < 16) {
+                counter = 0;
+                ballSpeed += 1;
+            }
+
+            if (score1 == 2 || score2 == 2) {
+                this.sendToClients(
+                    client1,
+                    client2,
+                    {
+                        winner:
+                            score1 == 2 ? player1.username : player2.username,
+                        player1: player1.username,
+                        player2: player2.username,
+                        player1_score: score1,
+                        player2_score: score2,
+                        iWin: score1 == 2,
+                    },
+                    {
+                        winner:
+                            score2 == 2 ? player2.username : player1.username,
+                        player2: player2.username,
+                        player1: player1.username,
+                        player2_score: score2,
+                        player1_score: score1,
+                        iWin: score2 == 2,
+                    },
+                    'finished',
+                );
+                return clearInterval(interval);
+            }
+
+            const getXVelocity = (xContact: number, paddle: Matter.Body) => {
+                const paddleContact = xContact - paddle.position.x;
+
+                const xVelocity =
+                    (paddleContact / (bottomPaddle.w / 2)) * ballSpeed;
+
+                const ballXVelocity = ball.body.velocity.x;
+
+                if (ballXVelocity * xVelocity >= 0) {
+                    const tot = Math.abs(ballXVelocity) + Math.abs(xVelocity);
+                    if (tot > ballSpeed) {
+                        if (xVelocity < 0) {
+                            return -ballSpeed;
+                        }
+                        return ballSpeed;
+                    }
+                    return xVelocity + ballXVelocity;
+                }
+                const tot = xVelocity - ballXVelocity;
+                if (tot < -ballSpeed) {
+                    return xVelocity;
+                }
+                return xVelocity - ballXVelocity;
+            };
+            let col: Collision;
+            if ((col = Collision.collides(ball.body, topPaddle.body, null))) {
+                const xContact = col.supports[0].x;
+                counter++;
+                Body.setVelocity(ball.body, {
+                    x: getXVelocity(xContact, topPaddle.body),
+                    y: ballSpeed + 1,
+                });
+            }
+            if (
+                (col = Collision.collides(ball.body, bottomPaddle.body, null))
+            ) {
+                const xContact = col.supports[0].x;
+                counter++;
+                Body.setVelocity(ball.body, {
+                    x: getXVelocity(xContact, bottomPaddle.body),
+                    y: -(ballSpeed + 1),
+                });
+            }
+
+            const resetBall = () => {
+                ballSpeed = initialBallSpeed;
+                randomStart = {
+                    x: Common.random(-ballSpeed, ballSpeed),
+                    y: orPair(-ballSpeed, ballSpeed),
+                };
+                Body.setVelocity(ball.body, { x: 0, y: 0 });
+                Body.setPosition(ball.body, {
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                });
+                setTimeout(() => {
+                    Body.setVelocity(ball.body, {
+                        x: randomStart.x,
+                        y: randomStart.y,
+                    });
+                }, 1000);
+            };
+
+            if (Collision.collides(ball.body, table.topWall, null)) {
+                score1++;
+                resetBall();
+            }
+            if (Collision.collides(ball.body, table.bottomWall, null)) {
+                score2++;
+                resetBall();
+            }
+
             this.sendToClients(
                 client1,
                 client2,
-                { ballPos, topPaddlePos, bottomPaddlePos, username: player1.username },
-                { ballPos: revsBallPos, topPaddlePos: revBottomPaddlePos , bottomPaddlePos: revTopPaddlePos, username: player2.username },
+                {
+                    ballPos,
+                    topPaddlePos,
+                    bottomPaddlePos,
+                    username: player1.username,
+                    score: {
+                        top: score2,
+                        bottom: score1,
+                    },
+                },
+                {
+                    ballPos: revsBallPos,
+                    topPaddlePos: revBottomPaddlePos,
+                    bottomPaddlePos: revTopPaddlePos,
+                    username: player2.username,
+                    score: {
+                        top: score1,
+                        bottom: score2,
+                    },
+                },
                 'update-game',
             );
         }, frameRate);
@@ -117,67 +260,63 @@ export class RankedService {
         });
 
         client1.on('move-right', (player: string) => {
-            console.log(player, ' 1 move right');
             if (player === player1.username) {
                 if (bottomPaddle.body.position.x > canvas.width - 50) return;
                 Body.setPosition(bottomPaddle.body, {
-                    x: bottomPaddle.body.position.x + 5,
+                    x: bottomPaddle.body.position.x + playerSpeed,
                     y: bottomPaddle.body.position.y,
                 });
             } else if (player === player2.username) {
                 if (topPaddle.body.position.x < 50) return;
                 Body.setPosition(topPaddle.body, {
-                    x: topPaddle.body.position.x - 5,
+                    x: topPaddle.body.position.x - playerSpeed,
                     y: topPaddle.body.position.y,
                 });
             }
         });
 
         client2.on('move-right', (player: string) => {
-            console.log(player, ' 2 move right');
             if (player === player2.username) {
                 if (topPaddle.body.position.x < 50) return;
                 Body.setPosition(topPaddle.body, {
-                    x: topPaddle.body.position.x - 5,
+                    x: topPaddle.body.position.x - playerSpeed,
                     y: topPaddle.body.position.y,
                 });
             } else if (player === player1.username) {
                 if (bottomPaddle.body.position.x > canvas.width - 50) return;
                 Body.setPosition(bottomPaddle.body, {
-                    x: bottomPaddle.body.position.x + 5,
+                    x: bottomPaddle.body.position.x + playerSpeed,
                     y: bottomPaddle.body.position.y,
                 });
             }
         });
         client1.on('move-left', (player: string) => {
-            console.log(player, ' 1 move left');
             if (player === player1.username) {
                 if (bottomPaddle.body.position.x < 50) return;
                 Body.setPosition(bottomPaddle.body, {
-                    x: bottomPaddle.body.position.x - 5,
+                    x: bottomPaddle.body.position.x - playerSpeed,
                     y: bottomPaddle.body.position.y,
                 });
             } else if (player === player2.username) {
                 if (topPaddle.body.position.x > canvas.width - 50) return;
                 Body.setPosition(topPaddle.body, {
-                    x: topPaddle.body.position.x + 5,
+                    x: topPaddle.body.position.x + playerSpeed,
                     y: topPaddle.body.position.y,
                 });
             }
         });
 
         client2.on('move-left', (player: string) => {
-            console.log(player, ' 2 move left');
             if (player === player2.username) {
                 if (topPaddle.body.position.x > canvas.width - 50) return;
                 Body.setPosition(topPaddle.body, {
-                    x: topPaddle.body.position.x + 5,
+                    x: topPaddle.body.position.x + playerSpeed,
                     y: topPaddle.body.position.y,
                 });
             } else if (player === player1.username) {
                 if (bottomPaddle.body.position.x < 50) return;
                 Body.setPosition(bottomPaddle.body, {
-                    x: bottomPaddle.body.position.x - 5,
+                    x: bottomPaddle.body.position.x - playerSpeed,
                     y: bottomPaddle.body.position.y,
                 });
             }
