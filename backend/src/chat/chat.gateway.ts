@@ -172,4 +172,17 @@ export class ChatGateway implements OnGatewayDisconnect {
     handleChannelDeleted(@MessageBody() channelName: string) {
         this.server.to(channelName).emit('channel-deleted', channelName);
     }
+
+    @SubscribeMessage('unban')
+    handleUnban(@MessageBody() username: string) {
+        const user = this.connectedUsers.find(
+            (user) => user.username === username,
+        );
+
+        if (!user) return;
+
+        user.socketsId.forEach((socketId: string) => {
+            this.server.to(socketId).emit('unban');
+        });
+    }
 }

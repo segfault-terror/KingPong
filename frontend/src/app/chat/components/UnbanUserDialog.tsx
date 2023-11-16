@@ -1,5 +1,6 @@
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
+import { useSocket } from '@/contexts/SocketContext';
 import { modalContext } from '@/contexts/contexts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -13,7 +14,7 @@ export default function UnbanDialog(props: {
     const { setDotsDropdown } = useContext(modalContext);
 
     const queryClient = useQueryClient();
-    const { mutate: banUser, isLoading } = useMutation({
+    const { mutate: unbanUser, isLoading } = useMutation({
         mutationFn: async (args: any) => {
             return await axios.post(
                 `/api/chat/channel/${props.channelName}/unban`,
@@ -28,6 +29,8 @@ export default function UnbanDialog(props: {
             ]);
         },
     });
+
+    const { socket } = useSocket();
 
     if (isLoading) {
         return (
@@ -59,11 +62,12 @@ export default function UnbanDialog(props: {
                                     font-jost hover:bg-secondary-200
                                     hover:text-background"
                     onClick={() => {
-                        banUser({
+                        unbanUser({
                             usernameToUnban: props.usernameToUnban,
                         });
                         props.setShowUnbanDialog(false);
                         setDotsDropdown(false);
+                        socket?.emit('unban', props.usernameToUnban);
                     }}
                 >
                     OK
