@@ -1,7 +1,8 @@
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
+import { useSocket } from '@/contexts/SocketContext';
 import { modalContext } from '@/contexts/contexts';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
@@ -13,6 +14,8 @@ type MuteUserFormProps = {
 };
 
 export default function MuteUserForm(props: MuteUserFormProps) {
+    const queryClient = useQueryClient();
+    const { socket } = useSocket();
     const { register, handleSubmit, watch } = useForm({
         defaultValues: { duration: '60' },
     });
@@ -23,6 +26,10 @@ export default function MuteUserForm(props: MuteUserFormProps) {
                 withCredentials: true,
                 ...args,
             });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['is-muted', props.usernameToMute]);
+            socket?.emit('mute', props.usernameToMute);
         },
     });
 

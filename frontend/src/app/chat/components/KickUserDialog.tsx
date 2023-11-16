@@ -30,6 +30,11 @@ export default function KickDialog(props: {
                 'members',
             ]);
             socket?.emit('update-channel-sidebar', props.channelName);
+            socket?.emit('redirect-to-chat', {
+                channel: props.channelName,
+                username: props.usernameToKick,
+                reason: 'kick',
+            });
         },
     });
 
@@ -57,7 +62,7 @@ export default function KickDialog(props: {
             <div className="w-full flex justify-center gap-4 pt-4">
                 <button
                     type="button"
-                    title="Leave channel"
+                    title="Kick user"
                     className="bg-background rounded-2xl px-4
                                     border border-white text-secondary-200
                                     font-jost hover:bg-secondary-200
@@ -73,6 +78,7 @@ export default function KickDialog(props: {
                     OK
                 </button>
                 <button
+                    title="Cancel"
                     className="bg-background rounded-2xl px-4
                                     border border-white text-red-400
                                     font-jost hover:bg-red-400

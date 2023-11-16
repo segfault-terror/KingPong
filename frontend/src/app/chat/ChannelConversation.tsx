@@ -12,6 +12,8 @@ import { redirect } from 'next/navigation';
 import { useSocket } from '@/contexts/SocketContext';
 import DropdownModal from './DropdownModal';
 import ChatMenu from './ChatMenu';
+import { NextResponse } from 'next/server';
+import ExitMessageDialog from './components/KickMessageDialog';
 
 type ChannelConversationProps = {
     channelName: string;
@@ -21,6 +23,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
     const { dotsDropdown, setDotsDropdown } = useContext(modalContext);
     const { showMembers, setShowMembers } = useContext(channelModalContext);
     const [isTyping, setIsTyping] = useState(false);
+    const [typingUsername, setTypingUsername] = useState('');
 
     const { socket } = useSocket();
 
@@ -75,6 +78,36 @@ export default function ChannelConversation(props: ChannelConversationProps) {
         scrollToBottom();
     }, [data]);
 
+    const [exitChannel, setExitChannel] = useState(false);
+    const [exitReason, setExitReason] = useState<
+        'kick' | 'ban' | 'delete' | null
+    >(null);
+
+    useEffect(() => {
+        socket?.on(
+            'redirect-to-chat',
+            (data: { channel: string; reason: 'kick' | 'ban' }) => {
+                console.log(
+                    `redirect-to-chat: ${data.channel} - reason: ${data.reason}`,
+                );
+                if (data.channel === props.channelName) {
+                    setExitChannel(true);
+                    setExitReason(data.reason);
+                }
+            },
+        );
+        socket?.on('channel-deleted', (channelName: string) => {
+            if (channelName === props.channelName) {
+                setExitChannel(true);
+                setExitReason('delete');
+            }
+        });
+        return () => {
+            socket?.off('redirect-to-chat');
+            socket?.off('channel-deleted');
+        };
+    });
+
     if (isLoading || isLoadingMe) {
         return (
             <div className="bg-default fixed inset-0 z-50">
@@ -105,7 +138,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                 {isTyping && (
                     <p className="text-secondary-500 text-xs">
                         {' '}
-                        someone is typing...{' '}
+                        {typingUsername} is typing...{' '}
                     </p>
                 )}
                 <div className="flex gap-4 text-secondary-200">
@@ -129,6 +162,12 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                         >
                             <ChatMenu />
                         </DropdownModal>
+                    )}
+                    {exitChannel && (
+                        <ExitMessageDialog
+                            channelName={props.channelName}
+                            reason={exitReason!}
+                        />
                     )}
                 </div>
             </div>
@@ -160,6 +199,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                 username={me?.username}
                 channelName={props.channelName}
                 setIsTyping={setIsTyping}
+                setTypingUsername={setTypingUsername}
             />
         </div>
     );

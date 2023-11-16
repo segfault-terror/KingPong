@@ -1,7 +1,8 @@
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
+import { useSocket } from '@/contexts/SocketContext';
 import { modalContext } from '@/contexts/contexts';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useContext } from 'react';
 
@@ -10,6 +11,8 @@ export default function UnmuteDialog(props: {
     usernameToUnmute: string;
     setShowUnmuteDialog: (val: boolean) => void;
 }) {
+    const queryClient = useQueryClient();
+    const { socket } = useSocket();
     const { setDotsDropdown } = useContext(modalContext);
 
     const { mutate: banUser, isLoading } = useMutation({
@@ -18,6 +21,9 @@ export default function UnmuteDialog(props: {
                 `/api/chat/channel/${props.channelName}/unmute`,
                 { withCredentials: true, ...args },
             );
+        },
+        onSuccess: () => {
+            socket?.emit('mute', props.usernameToUnmute);
         },
     });
 
@@ -45,7 +51,7 @@ export default function UnmuteDialog(props: {
             <div className="w-full flex justify-center gap-4 pt-4">
                 <button
                     type="button"
-                    title="Leave channel"
+                    title="Un-mute user"
                     className="bg-background rounded-2xl px-4
                                     border border-white text-secondary-200
                                     font-jost hover:bg-secondary-200
@@ -61,6 +67,7 @@ export default function UnmuteDialog(props: {
                     OK
                 </button>
                 <button
+                    title="Cancel"
                     className="bg-background rounded-2xl px-4
                                     border border-white text-red-400
                                     font-jost hover:bg-red-400
