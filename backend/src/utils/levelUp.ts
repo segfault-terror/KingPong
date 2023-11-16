@@ -28,31 +28,19 @@ function calculateXp(
 ): number {
     const scoreDifference: number = yourScore - opponentScore;
     let scoreBonus: number;
+    scoreBonus = Math.floor(Math.abs(scoreDifference) / 2) * 5;
+    scoreBonus = scoreBonus < 0 ? 1 : scoreBonus;
     if (scoreDifference >= 6) {
-        scoreBonus = 25;
+        scoreBonus += 5;
     } else if (scoreDifference >= 4) {
-        scoreBonus = 20;
+        scoreBonus += 3;
     } else if (scoreDifference >= 2) {
-        scoreBonus = 15;
+        scoreBonus += 1.5;
     } else {
-        scoreBonus = 0;
+        scoreBonus += 0;
     }
 
-    let difficultyModifier: number;
-    switch (difficulty) {
-        case 'easy':
-            difficultyModifier = 0.5;
-            break;
-        case 'medium':
-            difficultyModifier = 1.0;
-            break;
-        case 'hard':
-            difficultyModifier = 1.5;
-            break;
-        default:
-            difficultyModifier = 1.0;
-            break;
-    }
+    let difficultyModifier: number = 4;
 
     let xp: number = baseXp + scoreBonus * difficultyModifier;
 
