@@ -20,6 +20,7 @@ import {
     TbUserX,
     TbUserOff,
 } from 'react-icons/tb';
+import { FaGamepad } from 'react-icons/fa';
 import UserCircleInfo from './UserCircleInfo';
 
 type ProfileCardProps = {
@@ -127,7 +128,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
         },
     });
 
-    if (visitedUserLoading || friendshipLoading || isLoading ) {
+    if (visitedUserLoading || friendshipLoading || isLoading) {
         return (
             <div className="bg-default fixed inset-0 z-50">
                 <Loading />
@@ -249,11 +250,18 @@ export default function ProfileCard({ username }: ProfileCardProps) {
 
                 <div className="flex gap-4 text-secondary-200 items-center md:text-2xl">
                     {/* Not me and my friend - Message */}
-                    {!friendship.isMe && friendship.isFriend && (
-                        <Link href={`/chat/dm/${username}`}>
-                            <TbMessage2 />
-                        </Link>
-                    )}
+                    {!friendship.isMe &&
+                        friendship.isFriend && (
+                            <Link href={`/chat/dm/${username}`}>
+                                <TbMessage2 />
+                            </Link>
+                        ) && (
+                            <Link href={`/game/ranked/${username}`} onClick={() => {
+                                // socket?.emit('challenge', {Challenger: visitedUser?.me.username, Opponent: username})
+                            }}>
+                                <FaGamepad />
+                            </Link>
+                        )}
 
                     {/* Not me and my friend - Remove friend */}
                     {!friendship.isMe && friendship.isFriend && (
