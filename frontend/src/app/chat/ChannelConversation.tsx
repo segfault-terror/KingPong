@@ -12,12 +12,25 @@ import { redirect } from 'next/navigation';
 import { useSocket } from '@/contexts/SocketContext';
 import DropdownModal from './DropdownModal';
 import ChatMenu from './ChatMenu';
-import { NextResponse } from 'next/server';
 import ExitMessageDialog from './components/KickMessageDialog';
+import { FaGlobeAfrica, FaShieldAlt, FaLock } from 'react-icons/fa';
 
 type ChannelConversationProps = {
     channelName: string;
 };
+
+export function ChannelTypeIcon(props: {
+    channelType: 'PUBLIC' | 'PRIVATE' | 'PROTECTED';
+}) {
+    switch (props.channelType) {
+        case 'PUBLIC':
+            return <FaGlobeAfrica className="w-4 h-4" title='Public Channel' />;
+        case 'PRIVATE':
+            return <FaLock className="w-4 h-4" title='Private Channel' />;
+        case 'PROTECTED':
+            return <FaShieldAlt className="w-4 h-4" title='Protected Channel' />;
+    }
+}
 
 export default function ChannelConversation(props: ChannelConversationProps) {
     const { dotsDropdown, setDotsDropdown } = useContext(modalContext);
@@ -134,7 +147,10 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                             p-4 rounded-lg z-20
                             bg-gradient-to-b from-background/60 to-[#330E51]/60"
             >
-                <h1 className="text-cube_palette-200 text-2xl">{data?.name}</h1>
+                <h1 className="text-cube_palette-200 text-2xl flex flex-row items-center gap-2">
+                    <ChannelTypeIcon channelType={data?.type} />
+                    <span>{data?.name}</span>
+                </h1>
                 {isTyping && (
                     <p className="text-secondary-500 text-xs">
                         {' '}

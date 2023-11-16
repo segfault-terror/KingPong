@@ -11,6 +11,7 @@ import DirectMessage from './DirectMessage';
 import EmptyChat from './EmptyChat';
 import ToggleButton from './ToggleButton';
 import { DMList } from './data/ChatData';
+import { ChannelTypeIcon } from './ChannelConversation';
 
 type ChatSideBarProps = {
     toggle: boolean;
@@ -170,10 +171,14 @@ function ChannelList({ toggle, setToggle }: ChatSideBarProps) {
                         <div key={channel.id}>
                             <Link
                                 href={`/chat/channel/${channel.name}`}
-                                className="block w-full text-left overflow-hidden whitespace-nowrap overflow-ellipsis
-                                            hover:bg-background hover:bg-opacity-80 hover:rounded-xl py-1"
+                                className="w-full text-left overflow-hidden whitespace-nowrap overflow-ellipsis
+                                            hover:bg-background hover:bg-opacity-80 hover:rounded-xl py-1
+                                            flex items-center justify-between"
                                 replace={pathname.startsWith('/chat/channel')}
-                            >{`# ${channel.name}`}</Link>
+                            >
+                                <span>{`# ${channel.name}`}</span>
+                                <ChannelTypeIcon channelType={channel.type} />
+                            </Link>
                             <div className="mt-1"></div>
                         </div>
                     );
