@@ -13,6 +13,7 @@ import GameOver from '@/app/(game)/game/standing/GameOver';
 import { redirect } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import Modal from '@/components/Modal';
 
 const Sketch = dynamic(() => import('react-p5').then((mod) => mod.default), {
     ssr: false,
@@ -33,6 +34,7 @@ interface Data {
     ballPos: Vector;
     topPaddlePos: Vector;
     bottomPaddlePos: Vector;
+    score: { top: number; bottom: number };
 }
 
 export let pos: Data;
@@ -41,20 +43,22 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
     const [ready, setReady] = React.useState(false);
     const [init, setInit] = React.useState<any>(null);
     const [winner, setWinner] = React.useState('');
+    const [gameOver, setGameOver] = React.useState(false);
     const { socket } = useSocket();
 
-    const { mutate: updateGame } = useMutation(async (data: any) => {
+    const { mutate: updateGame, isLoading } = useMutation(async (data: any) => {
         const { data: res } = await axios.post('/api/game/add/match', data);
+        return res;
+    });
+
+    const { mutate: updateRank } = useMutation(async (data: any) => {
+        const { data: res } = await axios.post('/api/game/update', data);
         return res;
     });
 
     useEffect(() => {
         if (socket) {
-            console.log('socket exists: ', socket);
             socket.on('canvas', (data) => {
-                console.log('canvas');
-                console.log(me);
-                console.log(opponent);
                 setInit({
                     width: data.canvas.width,
                     height: data.canvas.height,
@@ -66,20 +70,40 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 setReady(true);
             });
             socket.on('update-game', (data) => {
-                // console.log(data);
                 if (data.username === me.username) {
                     pos = data;
                 }
             });
-            socket.on('opponentdisconnect', () => {
+            socket.on('finish', (data) => {
+                updateRank(data);
+            });
+            socket.on('game-stop', (data) => {
+                console.log('opponent disconnected');
+                setGameOver(true);
+                setTimeout(() => {
+                    setWinner(me.username);
+                }, 5000);
                 updateGame({
                     player1: me.username,
-                    player2: opponent,
+                    player2: data.opponent,
                     ranked: true,
                     player1_score: 11,
                     player2_score: 1,
                 });
-                setWinner(me.username);
+            });
+            socket.on('finished', (data) => {
+                console.log('finished');
+                setGameOver(true);
+                setTimeout(() => {
+                    setWinner(data.winner);
+                }, 5000);
+                updateGame({
+                    player1: data.player1,
+                    player2: data.player2,
+                    ranked: true,
+                    player1_score: data.player1_score,
+                    player2_score: data.player2_score,
+                });
             });
             return () => {
                 socket.off('canvas');
@@ -90,7 +114,6 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
     }, [socket]);
     useEffect(() => {
         if (winner !== '') {
-            setWinner('');
             redirect('/game/standing');
         }
     }, [winner]);
@@ -100,9 +123,7 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
         <>
             <div className="flex justify-center items-center h-screen">
                 <Sketch
-                    className={
-                        'border border-red-700 rounded-3xl overflow-hidden'
-                    }
+                    className={'rounded-3xl overflow-hidden'}
                     setup={(p5: p5Types, canvasParentRef: Element) => {
                         setup(p5, canvasParentRef, init.width, init.height);
                     }}
@@ -110,6 +131,14 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                         socket && draw(p5, me.username, socket);
                     }}
                 />
+                {gameOver && (
+                    <Modal
+                        onClose={() => {}}
+                        childrenClassName="text-5xl font-nicomoji text-center font-jost text-2xl flex justify-center items-center rounded-xl backdrop-blur-lg text-transparent bg-clip-text bg-gradient-radial from-secondary-200 from-40% to-red-500"
+                    >
+                        Game Over!
+                    </Modal>
+                )}
             </div>
         </>
     );
