@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { useState } from 'react';
 import StandingGame from './StandingGame';
 import { useQuery } from '@tanstack/react-query';
@@ -13,7 +13,7 @@ export default function GameOver({
 }: {
     winner: string;
     loser: string;
-    me: any
+    me: any;
 }) {
     const [standing, setStanding] = useState(false);
     setTimeout(() => {
@@ -31,15 +31,17 @@ export default function GameOver({
         },
     );
 
-	if (oppLoading) return <Loading />;
+    if (oppLoading) return <Loading />;
 
-    return !standing ? (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 transition-opacity delay-75 duration-500">
-			<div className='h-36 w-56 bg-background/75 border-2 border-secondary-500 text-center font-jost text-2xl flex justify-center items-center rounded-xl backdrop-blur-lg'>
-				Game is Over!
-			</div>
-		</div>
-    ) : (
-        <StandingGame youWin={opp === loser} myimage={me.avatar} oppimage={opponent.avatar} />
+    return (
+        <>
+            {standing && (
+                <StandingGame
+                    youWin={opp === loser}
+                    myimage={me.avatar}
+                    oppimage={opponent.avatar}
+                />
+            )}
+        </>
     );
 }
