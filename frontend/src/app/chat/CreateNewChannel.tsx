@@ -50,6 +50,8 @@ export default function CreateNewChannel() {
         );
     }
 
+    console.log(errors);
+
     return (
         <form
             onSubmit={handleSubmit(() => {
@@ -85,6 +87,11 @@ export default function CreateNewChannel() {
                         maxLength: {
                             value: 20,
                             message: 'Name is too long',
+                        },
+                        pattern: {
+                            value: /^[a-zA-Z0-9_-]+$/,
+                            message:
+                                'Channel names can have letters, digits, hyphends and underscores only',
                         },
                     })}
                     type="text"
