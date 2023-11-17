@@ -12,6 +12,7 @@ type WelcomeChannelProps = {
     channelVisibility: string;
     setWelcomeChannel: (val: boolean) => void;
     setJoinChannel: (val: boolean) => void;
+    notAMember?: boolean;
 };
 
 type ChannelContentProps = Pick<WelcomeChannelProps, 'channelName'> & {
@@ -19,8 +20,6 @@ type ChannelContentProps = Pick<WelcomeChannelProps, 'channelName'> & {
 };
 
 function PublicChannelContent({ channelName, mutate }: ChannelContentProps) {
-    const { socket } = useSocket();
-
     return (
         <>
             <p className="text-left text-silver font-light font-jost w-1/2">
@@ -28,10 +27,6 @@ function PublicChannelContent({ channelName, mutate }: ChannelContentProps) {
             </p>
             <button
                 onClick={() => {
-                    console.log('ana clickit hna!');
-                    if (socket) {
-                        socket.emit('update-channel-sidebar', channelName);
-                    }
                     mutate({ channelName });
                 }}
                 className="bg-secondary-200
@@ -121,6 +116,7 @@ export default function WelcomeChannel({
     channelVisibility,
     setWelcomeChannel,
     setJoinChannel,
+    notAMember,
 }: WelcomeChannelProps) {
     const [redirectChannel, setRedirectChannel] = useState(false);
     const [wrongPassword, setWrongPassword] = useState(false);
@@ -134,21 +130,24 @@ export default function WelcomeChannel({
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async (args: any) => {
-            try {
-                const { data: channel } = await axios.post(
-                    `/api/chat/channel/join`,
-                    { withCredentials: true, ...args },
-                );
-                setRedirectChannel(true);
-                return channel;
-            } catch (e) {
-                setWrongPassword(true);
-            }
+            const { data: channel } = await axios.post(
+                `/api/chat/channel/join`,
+                { withCredentials: true, ...args },
+            );
+            return channel;
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['channel', channelName, 'members'], {
                 exact: true,
             });
+            if (socket) {
+                socket.emit('update-channel-sidebar', channelName);
+            }
+            setRedirectChannel(true);
+            setWelcomeChannel(false);
+        },
+        onError: () => {
+            setWrongPassword(true);
         },
     });
 
@@ -163,14 +162,16 @@ export default function WelcomeChannel({
     return (
         <div>
             <div className="flex flex-row items-center mb-8">
-                <button
-                    onClick={() => {
-                        setWelcomeChannel(false);
-                        setJoinChannel(true);
-                    }}
-                >
-                    <BsArrowLeftShort className="text-secondary-200 text-center text-4xl" />
-                </button>
+                {!notAMember && (
+                    <button
+                        onClick={() => {
+                            setWelcomeChannel(false);
+                            setJoinChannel(true);
+                        }}
+                    >
+                        <BsArrowLeftShort className="text-secondary-200 text-center text-4xl" />
+                    </button>
+                )}
                 <h1 className="text-center text-2xl font-jost inline-block w-full">
                     <span className="text-secondary-200">Join</span>
                     &nbsp;
