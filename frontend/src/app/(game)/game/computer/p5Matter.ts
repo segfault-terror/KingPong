@@ -1,16 +1,14 @@
 import p5Types from 'p5';
 import { Engine, World, Runner, Bodies, Body, Events } from 'matter-js';
 import { Paddle } from './Paddle';
-import { PongTable } from './PongTable';
 import { Ball } from './Ball';
 import { Socket } from 'socket.io-client';
 
-import { pos } from './page';
+import { InitData, pos } from './page';
 
 let engine: Engine;
 export let world: World;
 let balls: Ball[] = [];
-let pongTable: PongTable;
 let topPaddle: Paddle;
 let bottomPaddle: Paddle;
 let ball: Ball;
@@ -18,20 +16,31 @@ let ball: Ball;
 export function setup(
     p5: p5Types,
     canvasParentRef: Element,
-    width: number,
-    height: number,
+    init: InitData,
+    serverClientRatio: { width: number; height: number },
 ) {
-    p5.createCanvas(width, height).parent(canvasParentRef);
+    p5.createCanvas(
+        init.width,
+        init.height,
+    ).parent(canvasParentRef);
     p5.frameRate(60);
-    topPaddle = new Paddle(p5.width / 2, 50, 100, 20);
-    bottomPaddle = new Paddle(p5.width / 2, p5.height - 50, 100, 20);
-
-    engine = Engine.create();
-    engine.gravity.y = 0;
-    world = engine.world;
-    Runner.run(engine);
-    pongTable = new PongTable(p5.width, p5.height);
-    ball = new Ball(p5.width / 2, p5.height / 2, 10);
+    topPaddle = new Paddle(
+        p5.width / 2,
+        p5.height * 0.05,
+        init.topPaddle.width * serverClientRatio.width,
+        init.topPaddle.height * serverClientRatio.height,
+    );
+    bottomPaddle = new Paddle(
+        p5.width / 2,
+        p5.height - p5.height * 0.05,
+        init.bottomPaddle.width * serverClientRatio.width,
+        init.bottomPaddle.height * serverClientRatio.height,
+    );
+    ball = new Ball(
+        p5.width / 2,
+        p5.height / 2,
+        init.ball.radius * serverClientRatio.width,
+    );
 
     // Events.on(engine, 'collisionStart', (event) => {
     //     const pairs = event.pairs;
@@ -50,14 +59,17 @@ export function setup(
     // });
 }
 
-export function draw(p5: p5Types, socket?: Socket) {
+export function draw(
+    p5: p5Types,
+    serverClientRatio: { width: number; height: number },
+    socket?: Socket,
+) {
     if (!socket) return;
     p5.background(51);
-    ball.show(p5, pos?.ballPos);
-    topPaddle.show(p5, pos?.topPaddlePos);
-    bottomPaddle.show(p5, pos?.bottomPaddlePos);
+    ball.show(p5, serverClientRatio, pos?.ballPos);
+    topPaddle.show(p5, serverClientRatio, pos?.topPaddlePos);
+    bottomPaddle.show(p5, serverClientRatio, pos?.bottomPaddlePos);
     move(p5, socket);
-    // pongTable.show(p5);
 }
 
 export function move(p5: p5Types, socket: Socket) {

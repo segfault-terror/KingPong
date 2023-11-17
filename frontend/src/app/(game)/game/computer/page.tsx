@@ -1,5 +1,5 @@
 'use client';
-import React, { KeyboardEvent, useEffect } from 'react';
+import React, { KeyboardEvent, use, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import p5Types from 'p5';
 
@@ -14,7 +14,7 @@ const Sketch = dynamic(() => import('react-p5').then((mod) => mod.default), {
 
 const delai = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-interface InitData {
+export interface InitData {
     width: number;
     height: number;
     frameRate: number;
@@ -30,6 +30,11 @@ interface Data {
 }
 
 export let pos: Data;
+
+let screenDim = {
+    width: 0,
+    height: 0,
+};
 
 export default function Page() {
     const [ready, setReady] = React.useState(false);
@@ -76,7 +81,6 @@ export default function Page() {
         //     window.location.href = '/home';
         // });
 
-
         return () => {
             socket.off('connect');
             socket.off('canvas');
@@ -84,16 +88,51 @@ export default function Page() {
             socket.disconnect();
         };
     }, []);
+    useEffect(() => {
+        screenDim = {
+            width: window.innerWidth,
+            height: window.innerHeight,
+        };
+    });
     if (!ready) return <Loading />;
+
+    let serverClientRatioW = 1;
+    let serverClientRatioH = 1;
+
+    if (screenDim.width < init.width || screenDim.height < init.height) {
+        const w = init.width;
+        const h = init.height;
+        const ratio = init.width / init.height;
+
+        if (screenDim.width < init.width) {
+            console.log(screenDim.width, init.width);
+            init.width = screenDim.width * 0.9;
+            init.height = init.width / ratio;
+        }
+        if (screenDim.height * 0.8 < init.height) {
+            init.height = screenDim.height * 0.8;
+            init.width = init.height * ratio;
+        }
+        serverClientRatioW = init.width / w;
+        serverClientRatioH = init.height / h;
+    }
+
+    const serverClientRatio = {
+        width: serverClientRatioW,
+        height: serverClientRatioH,
+    };
+
+    console.log(serverClientRatio);
+
     return (
         <div className="flex justify-center items-center h-screen">
             <Sketch
-                className={'border border-red-700 rounded-3xl overflow-hidden'}
+                className={'border overflow-hidden'}
                 setup={(p5: p5Types, canvasParentRef: Element) => {
-                    setup(p5, canvasParentRef, init.width, init.height);
+                    setup(p5, canvasParentRef, init, serverClientRatio);
                 }}
                 draw={(p5: p5Types) => {
-                    draw(p5, socket);
+                    draw(p5, serverClientRatio, socket);
                 }}
             />
         </div>

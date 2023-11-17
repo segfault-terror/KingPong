@@ -11,11 +11,16 @@ export class Paddle {
         this.h = h;
     }
 
-    show(p5: p5Types, pos?: Vector) {
+    show(p5: p5Types,
+        serverClientRatio: { width: number; height: number },
+        pos?: Vector) {
         if (!pos) return;
         
         p5.push();
-        p5.translate(pos.x, pos.y);
+        p5.translate(
+            pos.x * serverClientRatio.width,
+            pos.y * serverClientRatio.height,
+        );
         p5.strokeWeight(1);
         p5.stroke(255);
         p5.fill(127);

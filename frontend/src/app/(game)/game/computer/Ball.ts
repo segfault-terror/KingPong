@@ -2,7 +2,6 @@ import p5Types from 'p5';
 import { Bodies, World, Body, Vector } from 'matter-js';
 import { world } from './p5Matter';
 
-
 export class Ball {
     r: number;
 
@@ -10,11 +9,18 @@ export class Ball {
         this.r = r;
     }
 
-    show(p5: p5Types, pos?: Vector) {
+    show(
+        p5: p5Types,
+        clientServerRatio: { width: number; height: number },
+        pos?: Vector,
+    ) {
         if (!pos) return;
 
         p5.push();
-        p5.translate(pos.x, pos.y);
+        p5.translate(
+            pos.x * clientServerRatio.width,
+            pos.y * clientServerRatio.height,
+        );
         p5.strokeWeight(1);
         p5.stroke(255);
         p5.fill(127);
