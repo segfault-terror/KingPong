@@ -5,9 +5,13 @@ import { motion } from 'framer-motion';
 export default function ToggleButton({
     toggle,
     setToggle,
+    message1,
+    message2,
 }: {
     toggle: boolean;
     setToggle: (toggle: boolean) => void;
+    message1: string;
+    message2: string;
 }) {
     return (
         <div
@@ -29,7 +33,7 @@ export default function ToggleButton({
                 className="text-center text-xs select-none text-secondary-200 font-jost
                         flex-grow flex justify-center"
             >
-                {toggle ? 'Channels' : 'Direct Messages'}
+                {toggle ? message1 : message2}
             </p>
         </div>
     );

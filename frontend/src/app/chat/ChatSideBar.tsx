@@ -206,7 +206,7 @@ export default function ChatSideBar({ toggle, setToggle }: ChatSideBarProps) {
 						w-full h-full rounded-2xl py-6 px-8
 						flex flex-col justify-between"
         >
-            <ToggleButton toggle={toggle} setToggle={setToggle} />
+            <ToggleButton toggle={toggle} setToggle={setToggle} message1='Channels' message2='Direct Messages' />
             <div
                 className={`flex flex-col justify-start flex-grow
                             px-4 mt-8

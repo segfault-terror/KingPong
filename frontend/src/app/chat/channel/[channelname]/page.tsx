@@ -46,8 +46,6 @@ export default function Channel({ params }: ChannelProps) {
     useEffect(() => {
         if (isLoading || !data) return;
 
-        console.log(`channel page:`);
-        console.dir(data);
         if (!data?.isMember) {
             if (data?.type === 'PRIVATE') redirect('/not-found');
             else setShowWelcome(true);

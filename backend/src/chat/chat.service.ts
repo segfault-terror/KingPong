@@ -515,13 +515,7 @@ export class ChatService {
             where: { inviteCode },
             select: {
                 name: true,
-                owner: {
-                    select: { username: true },
-                },
-                members: {
-                    select: { username: true },
-                },
-                admins: {
+                bannedUsers: {
                     select: { username: true },
                 },
             },
@@ -531,14 +525,10 @@ export class ChatService {
         }
 
         if (
-            channel.owner.username === requestUsername ||
-            channel.members.some(
-                (member) => member.username === requestUsername,
-            ) ||
-            channel.admins.some((admin) => admin.username === requestUsername)
+            channel.bannedUsers.some((ban) => ban.username === requestUsername)
         ) {
-            throw new BadRequestException(
-                `User ${requestUsername} is already in the channel`,
+            throw new ForbiddenException(
+                `You are baned in the channel ${channel.name}`,
             );
         }
 
