@@ -552,6 +552,7 @@ export class ChatService {
                 members: { connect: { id: user.id } },
             },
         });
+        return { name: channel.name };
     }
 
     async createChannel(
