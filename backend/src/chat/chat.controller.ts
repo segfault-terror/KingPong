@@ -70,11 +70,6 @@ export class ChatController {
 
     @Get('channel/:channel_name')
     async getChannel(@Param('channel_name') channelName: string) {
-        /* TODO: Check if user is not in channel
-         * If a user is not in a channel, they should not be able to see it
-         * but they should be able to enter its name in the URL bar and access it without joining
-         * This is a security issue
-         */
         return this.chatService.getChannel(channelName);
     }
 
