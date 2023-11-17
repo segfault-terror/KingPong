@@ -95,6 +95,22 @@ export class ComputerService {
 
             moveBot();
 
+            const checkBallOutOfBounds = () => {
+                if (ballPos.y > canvas.height) {
+                    return true;
+                }
+                if (ballPos.y < 0) {
+                    return true;
+                }
+                if (ballPos.x > canvas.width) {
+                    return true;
+                }
+                if (ballPos.x < 0) {
+                    return true;
+                }
+                return false;
+            };
+
             if (counter === 3) {
                 counter = 0;
                 ballSpeed += 1;
@@ -167,6 +183,11 @@ export class ComputerService {
                 resetBall();
             }
             if (Collision.collides(ball.body, table.bottomWall, null)) {
+                resetBall();
+            }
+
+            if (checkBallOutOfBounds()) {
+                client.emit('ball-out-of-bounds', 'ball-out-of-bounds');
                 resetBall();
             }
 
