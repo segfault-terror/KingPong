@@ -117,11 +117,13 @@ export class GlobalGateway implements OnGatewayDisconnect {
                 username,
                 type,
                 avatar,
+                ChallengeId,
             }: {
                 sender: string;
                 username: string;
                 type: string;
                 avatar: string;
+                ChallengeId: string;
             },
         ) {
             const result = this.connectedUsers.find(
@@ -130,7 +132,9 @@ export class GlobalGateway implements OnGatewayDisconnect {
             
             if (result)
                 result.sockets.forEach((id) => {
-                    this.server.to(id).emit('notif', { username, type, avatar });
+                    this.server.to(id).emit('notif', { username, type, avatar, ChallengeId: type === "GAME" ? ChallengeId : null });
+                    if (ChallengeId)
+                        console.log(`+++${this.counter} - Notif to ${sender} with ChallengeId ${ChallengeId}`);
                     console.log(`+++${this.counter} - Notif to ${sender}`);
                     this.counter++;
                 });
