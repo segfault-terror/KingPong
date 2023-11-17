@@ -30,6 +30,7 @@ export class GameGateway implements OnGatewayConnection {
         player2: { username: string; socket: string };
     }[] = [];
     queueChallenge: {
+        id: string;
         Challenger: { username: string; socket: string };
         Opponent: { username: string; socket: string };
     }[] = [];
@@ -92,7 +93,24 @@ export class GameGateway implements OnGatewayConnection {
             console.log('winner: ', winner);
             console.log('loser: ', loser);
         };
-
+        const match = this.queueChallenge.find((match) => {
+            return (
+                match.Challenger.username === user.username ||
+                match.Opponent.username === user.username
+            );
+        });
+        if (match) {
+            this.queueChallenge = this.queueChallenge.filter(
+                (matches) =>
+                    matches.Challenger.username !== match.Challenger.username &&
+                    matches.Opponent.username !== match.Opponent.username,
+            );
+            finishedGame({
+                user,
+                player1: match.Challenger,
+                player2: match.Opponent,
+            });
+        }
         const player = this.queueInMatch.find((player) => {
             return (
                 player.player1.username === user.username ||
@@ -289,47 +307,46 @@ export class GameGateway implements OnGatewayConnection {
             (user) => user.username === data.Challenger,
         );
         if (!user) return;
-        const opponent = this.queueChallenge.find((player) => {
-            return (
-                player.Challenger.username === data.Challenger &&
-                player.Opponent.username === data.Opponent
-            );
-        })
-
-        if (!opponent) {
+        const match = this.queueChallenge.find((match) => {
+            return match.id === data.id;
+        });
+        if (!match) {
             this.queueChallenge.push({
+                id: data.id,
                 Challenger: {
                     username: data.Challenger,
                     socket: user.sockets,
                 },
                 Opponent: {
                     username: data.Opponent,
-                    socket: socket.id,
+                    socket: '',
                 },
             });
-            this.server.to(user.sockets).emit('challenge', {
-                opponent: data.Opponent,
+        } else {
+            match.Opponent.socket = user.sockets;
+            match.Opponent.username = data.Challenger;
+            console.log(this.queueChallenge);
+            this.server.to(match.Challenger.socket).emit('matchmakingfound', {
+                matchmaking: true,
+                opponent: match.Opponent.username,
             });
+            this.server.to(match.Opponent.socket).emit('matchmakingfound', {
+                matchmaking: true,
+                opponent: match.Challenger.username,
+            });
+            const client1 = this.server.sockets.get(match.Challenger.socket);
+            const client2 = this.server.sockets.get(match.Opponent.socket);
+            setTimeout(() => {
+                this.rankedService.startGame(
+                    client1,
+                    client2,
+                    match.Challenger,
+                    match.Opponent,
+                );
+            }, 5000);
         }
-        else {
-            this.queueChallenge = this.queueChallenge.filter(
-                (player) =>
-                    player.Challenger.username !== data.Challenger &&
-                    player.Opponent.username !== data.Opponent,
-            );
-            this.queueInMatch.push({
-                player1: {
-                    username: data.Challenger,
-                    socket: user.sockets,
-                },
-                player2: {
-                    username: data.Opponent,
-                    socket: socket.id,
-                },
-            });
-            const client1 = this.server.sockets.get(user.sockets);
-            const client2 = this.server.sockets.get(socket.id);
-            this.rankedService.startGame(client1, client2, user, socket);
-        }
+        // const client1 = this.server.sockets.get(user.sockets);
+        // const client2 = this.server.sockets.get(socket.id);
+        // this.rankedService.startGame(client1, client2, user, socket);
     }
 }
