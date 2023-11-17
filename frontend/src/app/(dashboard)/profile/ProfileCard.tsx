@@ -7,7 +7,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     AiFillTrophy,
     AiOutlineCheckCircle,
@@ -22,6 +22,8 @@ import {
 } from 'react-icons/tb';
 import { FaGamepad } from 'react-icons/fa';
 import UserCircleInfo from './UserCircleInfo';
+import { nanoid } from 'nanoid';
+import { redirect } from 'next/navigation';
 
 type ProfileCardProps = {
     username: string;
@@ -31,6 +33,8 @@ export default function ProfileCard({ username }: ProfileCardProps) {
     const [showModal, setShowModal] = useState(false);
     const [message, setMessage] = useState('');
     const [showNotification, setShowNotification] = useState(false);
+    const [Challenge, setChallenge] = useState(false);
+    const [id, setId] = useState('');
     const { socket } = useSocket();
 
     const { mutate: createNotification } = useInvite();
@@ -127,6 +131,10 @@ export default function ProfileCard({ username }: ProfileCardProps) {
             return { blocked: Blocked, blockedBy: BlockedBy };
         },
     });
+
+    useEffect(() => {
+        if (Challenge) redirect(`/game/ranked/${id}`);
+    }, [Challenge, id]);
 
     if (visitedUserLoading || friendshipLoading || isLoading) {
         return (
@@ -250,18 +258,46 @@ export default function ProfileCard({ username }: ProfileCardProps) {
 
                 <div className="flex gap-4 text-secondary-200 items-center md:text-2xl">
                     {/* Not me and my friend - Message */}
-                    {!friendship.isMe &&
-                        friendship.isFriend && (
+                    {!friendship.isMe && friendship.isFriend && (
+                        <>
                             <Link href={`/chat/dm/${username}`}>
                                 <TbMessage2 />
                             </Link>
-                        ) && (
-                            <Link href={`/game/ranked/${username}`} onClick={() => {
-                                // socket?.emit('challenge', {Challenger: visitedUser?.me.username, Opponent: username})
-                            }}>
+                            <Link
+                                href={`#`}
+                                onClick={() => {
+                                    if (!Challenge) {
+                                        const myId = nanoid();
+                                        setId(myId);
+                                        setTimeout(() => {
+                                            console.log('id: ', myId);
+                                            createNotification({
+                                                id: visitedUser?.data.id,
+                                                type: 'GAME',
+                                                ChallengeId: myId,
+                                            });
+                                            socket?.emit(
+                                                'notifications',
+                                                visitedUser?.data.username,
+                                            );
+                                            socket?.emit('notif', {
+                                                sender: visitedUser?.data
+                                                    .username,
+                                                username:
+                                                    visitedUser?.me.username,
+                                                type: 'GAME',
+                                                avatar: visitedUser?.me.avatar,
+                                                ChallengeId: myId,
+                                            });
+                                            setChallenge(true);
+                                        }, 2000);
+                                    }
+                                }}
+                            >
                                 <FaGamepad />
                             </Link>
-                        )}
+                        </>
+                    )}
 
                     {/* Not me and my friend - Remove friend */}
                     {!friendship.isMe && friendship.isFriend && (

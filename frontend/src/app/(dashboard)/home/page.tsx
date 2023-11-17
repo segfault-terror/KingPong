@@ -96,6 +96,8 @@ export default function Page() {
             setPercent((data?.stats.XP / data?.stats.NextLevelXP) * 100);
         }, [data]);
 
+        if (data?.stats === undefined) return <Loading />;
+
         if (data.newLevelUp && data?.stats !== undefined) {
             return <LevelUp newLevel={data?.stats.level} data={data} />;
         }
