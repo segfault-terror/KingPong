@@ -89,6 +89,7 @@ export class ChatController {
             data.channelName,
             request.user.username,
             data.password,
+            data.inviteCode,
         );
     }
 

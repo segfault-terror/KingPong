@@ -169,6 +169,7 @@ model Channel {
     name String @unique
     type ChannelType
     password String?
+    inviteCode String?
     owner User @relation("owner", fields: [ownerId], references: [id])
     ownerId String
     admins User[] @relation("admin")

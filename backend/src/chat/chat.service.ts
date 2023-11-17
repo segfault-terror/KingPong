@@ -12,6 +12,7 @@ import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'nestjs-prisma';
 import { UserService } from 'src/user/user.service';
 import { UpdateChannelDto } from './dto/update.channel.dto';
+import { nanoid } from 'nanoid';
 
 @Injectable()
 export class ChatService {
@@ -359,6 +360,7 @@ export class ChatService {
                     },
                     orderBy: { createdAt: 'asc' },
                 },
+                inviteCode: true,
             },
         });
 
@@ -443,6 +445,7 @@ export class ChatService {
         channelName: string,
         username: string,
         password?: string,
+        inviteCode?: string,
     ) {
         const channel = await this.prisma.channel.findFirst({
             where: { name: channelName },
@@ -452,6 +455,7 @@ export class ChatService {
                 members: true,
                 admins: true,
                 bannedUsers: true,
+                inviteCode: true,
             },
         });
 
@@ -485,6 +489,16 @@ export class ChatService {
 
             if (!(await bcrypt.compare(password, channel.password))) {
                 throw new UnauthorizedException('Invalid password');
+            }
+        } else if (channel.type === ChannelType.PRIVATE) {
+            if (!inviteCode) {
+                throw new BadRequestException(
+                    `Channel ${channelName} is private, you must provide an invite code`,
+                );
+            }
+
+            if (inviteCode !== channel.inviteCode) {
+                throw new UnauthorizedException('Invalid invite code');
             }
         }
 
@@ -553,6 +567,8 @@ export class ChatService {
                 name,
                 type: channelType,
                 password,
+                inviteCode:
+                    channelType === ChannelType.PRIVATE ? nanoid(10) : null,
                 owner: { connect: { id: owner.id } },
             },
         });
