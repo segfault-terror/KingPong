@@ -92,6 +92,17 @@ export class ChatController {
         );
     }
 
+    @Post('channel/join/private')
+    async joinPrivateChannel(
+        @Body() data: { inviteCode: string },
+        @Req() request: any,
+    ) {
+        return this.chatService.joinPrivateChannel(
+            data.inviteCode,
+            request.user.username,
+        );
+    }
+
     @Post('channel/create')
     async createChannel(@Body() data: CreateChannelDto, @Req() request: any) {
         return this.chatService.createChannel(

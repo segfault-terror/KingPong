@@ -12,6 +12,7 @@ import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'nestjs-prisma';
 import { UserService } from 'src/user/user.service';
 import { UpdateChannelDto } from './dto/update.channel.dto';
+import { nanoid } from 'nanoid';
 
 @Injectable()
 export class ChatService {
@@ -359,6 +360,7 @@ export class ChatService {
                     },
                     orderBy: { createdAt: 'asc' },
                 },
+                inviteCode: true,
             },
         });
 
@@ -452,6 +454,7 @@ export class ChatService {
                 members: true,
                 admins: true,
                 bannedUsers: true,
+                inviteCode: true,
             },
         });
 
@@ -486,6 +489,10 @@ export class ChatService {
             if (!(await bcrypt.compare(password, channel.password))) {
                 throw new UnauthorizedException('Invalid password');
             }
+        } else if (channel.type === ChannelType.PRIVATE) {
+            throw new BadRequestException(
+                'Cannot join private channels through this endpoint',
+            );
         }
 
         const user = await this.prisma.user.findFirst({
@@ -501,6 +508,51 @@ export class ChatService {
                 members: { connect: { id: user.id } },
             },
         });
+    }
+
+    async joinPrivateChannel(inviteCode: string, requestUsername: string) {
+        const channel = await this.prisma.channel.findFirst({
+            where: { inviteCode },
+            select: {
+                name: true,
+                owner: {
+                    select: { username: true },
+                },
+                members: {
+                    select: { username: true },
+                },
+                admins: {
+                    select: { username: true },
+                },
+            },
+        });
+        if (!channel) {
+            throw new NotFoundException('There is no channel with this code');
+        }
+
+        if (
+            channel.owner.username === requestUsername ||
+            channel.members.some(
+                (member) => member.username === requestUsername,
+            ) ||
+            channel.admins.some((admin) => admin.username === requestUsername)
+        ) {
+            throw new BadRequestException(
+                `User ${requestUsername} is already in the channel`,
+            );
+        }
+
+        const user = await this.prisma.user.findFirst({
+            where: { username: requestUsername },
+            select: { id: true },
+        });
+        await this.prisma.channel.update({
+            where: { name: channel.name },
+            data: {
+                members: { connect: { id: user.id } },
+            },
+        });
+        return { name: channel.name };
     }
 
     async createChannel(
@@ -553,6 +605,8 @@ export class ChatService {
                 name,
                 type: channelType,
                 password,
+                inviteCode:
+                    channelType === ChannelType.PRIVATE ? nanoid(10) : null,
                 owner: { connect: { id: owner.id } },
             },
         });

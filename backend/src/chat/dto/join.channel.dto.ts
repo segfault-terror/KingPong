@@ -1,5 +1,5 @@
 import { Optional } from '@nestjs/common';
-import { IsString, MaxLength, MinLength } from 'class-validator';
+import { IsString, Length, MaxLength, MinLength } from 'class-validator';
 
 export class JoinChannelDto {
     @IsString()
@@ -12,4 +12,9 @@ export class JoinChannelDto {
     @MinLength(8, { message: 'Password is too short' })
     @MaxLength(32, { message: 'Password is too long' })
     password: string;
+
+    @IsString()
+    @Optional()
+    @Length(10)
+    inviteCode: string;
 }
