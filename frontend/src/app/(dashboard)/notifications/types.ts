@@ -7,6 +7,7 @@ export type NotificationProps = {
     avatar: string;
     readed: boolean;
     sendToId: string;
+    ChallengeId: string;
 };
 
 export type NotificationState = {

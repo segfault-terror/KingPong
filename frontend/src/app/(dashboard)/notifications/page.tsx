@@ -42,6 +42,7 @@ export default function Page() {
     if (isLoading) {
         return <Loading />;
     }
+    console.log('the notif is:', data);
     const notifications = data.map(
         (notification: any) =>
             ({
@@ -51,6 +52,7 @@ export default function Page() {
                 readed: notification.readed,
                 type: notification.type,
                 sendToId: notification.sendToId,
+                ChallengeId: notification.ChallengeId,
             }) as NotificationProps,
     );
     return (

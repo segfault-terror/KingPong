@@ -30,6 +30,7 @@ const Notife = ({
     avatar,
     readed,
     sendToId,
+    ChallengeId,
     setIsOpen,
     setNotif,
 }: NotificationProps & {
@@ -102,7 +103,7 @@ const Notife = ({
                 onClick={() => {
                     if (readed == false) update({ id, type, readed: true });
                     setIsOpen(true);
-                    setNotif({ id, type, username, avatar, readed, sendToId });
+                    setNotif({ id, type, username, avatar, readed, sendToId, ChallengeId });
                 }}
             >
                 <img
@@ -139,6 +140,7 @@ export default function Notification({ notifications }: NotificationState) {
             return data;
         },
     );
+    console.log('notifications: ', notifications);
     const queryClient = useQueryClient();
     const {
         mutate: clear,
@@ -166,6 +168,7 @@ export default function Notification({ notifications }: NotificationState) {
         username: '',
         avatar: '',
         sendToId: '',
+        ChallengeId: '',
     });
     const [deleteAll, setDeleteAll] = useState(false);
 
@@ -262,6 +265,7 @@ export default function Notification({ notifications }: NotificationState) {
                                           setIsOpen={setIsOpen}
                                           setNotif={setNotif}
                                           sendToId={notifs.sendToId}
+                                          ChallengeId={notifs.ChallengeId}
                                       />
                                       {isOpen && (
                                           <Modal

@@ -5,6 +5,7 @@ import axios from 'axios';
 import LoadingEmpty from './EmptyLoading';
 import { useSocket } from '@/contexts/SocketContext';
 import { set } from 'react-hook-form';
+import { redirect } from 'next/navigation';
 
 const empty: NotificationProps = {
     id: 0,
@@ -13,6 +14,7 @@ const empty: NotificationProps = {
     username: '',
     avatar: '',
     sendToId: '',
+    ChallengeId: '',
 };
 
 export default function PopNotif({
@@ -50,7 +52,11 @@ export default function PopNotif({
         },
     });
 
-    const { mutate: acceptFriend, isLoading: acceptLoading, isSuccess } = useMutation({
+    const {
+        mutate: acceptFriend,
+        isLoading: acceptLoading,
+        isSuccess,
+    } = useMutation({
         mutationFn: async (data: any) => {
             return await axios.post(`/api/friends/add`, data, {
                 withCredentials: true,
@@ -66,14 +72,21 @@ export default function PopNotif({
         },
     });
 
-    const {data: me, isLoading: meLoading} = useQuery(['me'], async () => {
+    const { data: me, isLoading: meLoading } = useQuery(['me'], async () => {
         const res = await axios.get('/api/users/me', {
             withCredentials: true,
         });
         return res.data;
     });
-    const {socket} = useSocket();
+    const { socket } = useSocket();
+    const [redirected, setRedirected] = useState(false);
 
+    useEffect(() => {
+        if (redirected) {
+            console.log('redirecting');
+            redirect(`/game/ranked/${notif.ChallengeId}`);
+        }
+    }, [redirected]);
     if (deleteLoading || acceptLoading || meLoading) return <LoadingEmpty />;
 
     return (
@@ -84,38 +97,47 @@ export default function PopNotif({
             <div className="flex flex-col justify-center items-center absolute inset-0 z-20 opacity-10">
                 <img src={bgImage} alt="" className="w-2/3 h-2/3" />
             </div>
-            <div className="w-full h-full flex flex-col justify-between items-center bg-gradient-radial from-primary to-background rounded-lg border border-secondary-500">
+            <div className="w-full h-full flex flex-col justify-between items-center bg-gradient-radial from-primary to-background rounded-lg border border-secondary-500 p-4">
                 <div className="flex flex-col justify-between items-center m-auto z-30">
                     <img
                         src={notif.avatar}
                         alt=""
                         className="w-24 h-24 md:h-32 md:w-32 lg:h-44 lg:w-44 border-white border rounded-full mr-2 bg-background object-cover"
                     />
-                    <p className="flex justify-center items-center mx-2 text:md lg:text-2xl align-middle text-clip">
+                    <p className="flex justify-center items-center mx-2 text:md lg:text-2xl align-middle text-clip text-center">
                         {message}
                     </p>
                 </div>
                 <div className="grid grid-cols-2 w-full z-30">
                     <button
-                        className="flex justify-center items-center col-span-1 bg-green-400 w-1/2 h-6 m-auto rounded-lg"
+                        className="flex justify-center items-center col-span-1 bg-green-400 w-1/2 h-6 m-auto rounded-lg p-2"
                         type="button"
                         name="Accept"
                         title="Accept"
                         onClick={() => {
                             if (notif.type == 'FRIEND') {
-                                console.log('me: ', me, {sender: notif.username, receiver: me.username});
-                                socket?.emit('profile', {user1: me.username, user2: notif.username});
+                                console.log('me: ', me, {
+                                    sender: notif.username,
+                                    receiver: me.username,
+                                });
+                                socket?.emit('profile', {
+                                    user1: me.username,
+                                    user2: notif.username,
+                                });
                                 acceptFriend({ username: notif.username });
+                                updateModal(false);
+                                updateNotif(empty);
+                            } else if (notif.type == 'GAME') {
+                                console.log('Game found');
+                                setRedirected(true);
                             }
                             deleteNotif({ id: notif.id });
-                            updateModal(false);
-                            updateNotif(empty);
                         }}
                     >
                         <img src="/images/accept.svg" alt="" className="" />
                     </button>
                     <button
-                        className="flex justify-center items-center col-span-1 bg-red-400 w-1/2 h-6 m-auto rounded-lg"
+                        className="flex justify-center items-center col-span-1 bg-red-400 w-1/2 h-6 m-auto rounded-lg p-2"
                         type="button"
                         name="Decline"
                         title="Decline"
