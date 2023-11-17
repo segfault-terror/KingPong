@@ -21,6 +21,7 @@ export default function useInvite() {
                 userId: me.id,
                 sendToId: data.id,
                 type: data.type,
+                ChallengeId: data.type === 'GAME' ? data.ChallengeId : null,
                 withCredentials: true,
             });
         },
