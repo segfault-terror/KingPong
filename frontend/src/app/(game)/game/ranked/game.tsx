@@ -21,7 +21,7 @@ const Sketch = dynamic(() => import('react-p5').then((mod) => mod.default), {
 
 const delai = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-interface InitData {
+export interface InitData {
     width: number;
     height: number;
     frameRate: number;
@@ -36,6 +36,11 @@ interface Data {
     bottomPaddlePos: Vector;
     score: { top: number; bottom: number };
 }
+
+let screenDim = {
+    width: 0,
+    height: 0,
+};
 
 export let pos: Data;
 
@@ -56,6 +61,7 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
     useEffect(() => {
         if (socket) {
             socket.on('canvas', (data) => {
+                console.log('canvas');
                 setInit({
                     width: data.canvas.width,
                     height: data.canvas.height,
@@ -67,6 +73,7 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 setReady(true);
             });
             socket.on('update-game', (data) => {
+                console.log('update-game');
                 if (data.username === me.username) {
                     pos = data;
                 }
@@ -111,22 +118,54 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
         }
     }, [socket]);
     useEffect(() => {
+        screenDim = {
+            width: window.innerWidth,
+            height: window.innerHeight,
+        };
+    });
+    useEffect(() => {
         if (winner !== '') {
             redirect('/game/standing');
         }
     }, [winner]);
-
+    console.log('startGame');
     if (!ready) return <Loading />;
+
+    let serverClientRatioW = 1;
+    let serverClientRatioH = 1;
+
+    if (screenDim.width < init.width || screenDim.height < init.height) {
+        const w = init.width;
+        const h = init.height;
+        const ratio = init.width / init.height;
+
+        if (screenDim.width < init.width) {
+            console.log(screenDim.width, init.width);
+            init.width = screenDim.width * 0.9;
+            init.height = init.width / ratio;
+        }
+        if (screenDim.height * 0.8 < init.height) {
+            init.height = screenDim.height * 0.8;
+            init.width = init.height * ratio;
+        }
+        serverClientRatioW = init.width / w;
+        serverClientRatioH = init.height / h;
+    }
+
+    const serverClientRatio = {
+        width: serverClientRatioW,
+        height: serverClientRatioH,
+    };
     return (
         <>
             <div className="flex justify-center items-center h-screen">
                 <Sketch
-                    className={'rounded-3xl overflow-hidden'}
+                    className={'rounded-sm md:rounded-xl  lg:rounded-3xl overflow-hidden'}
                     setup={(p5: p5Types, canvasParentRef: Element) => {
-                        setup(p5, canvasParentRef, init.width, init.height);
+                        setup(p5, canvasParentRef, init, serverClientRatio);
                     }}
                     draw={(p5: p5Types) => {
-                        socket && draw(p5, me.username, socket);
+                        socket && draw(p5, serverClientRatio, me.username, socket);
                     }}
                 />
                 {gameOver && (
