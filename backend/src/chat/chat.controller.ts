@@ -89,7 +89,17 @@ export class ChatController {
             data.channelName,
             request.user.username,
             data.password,
+        );
+    }
+
+    @Post('channel/join/private')
+    async joinPrivateChannel(
+        @Body() data: { inviteCode: string },
+        @Req() request: any,
+    ) {
+        return this.chatService.joinPrivateChannel(
             data.inviteCode,
+            request.user.username,
         );
     }
 

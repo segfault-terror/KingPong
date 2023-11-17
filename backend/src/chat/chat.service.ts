@@ -445,7 +445,6 @@ export class ChatService {
         channelName: string,
         username: string,
         password?: string,
-        inviteCode?: string,
     ) {
         const channel = await this.prisma.channel.findFirst({
             where: { name: channelName },
@@ -491,15 +490,9 @@ export class ChatService {
                 throw new UnauthorizedException('Invalid password');
             }
         } else if (channel.type === ChannelType.PRIVATE) {
-            if (!inviteCode) {
-                throw new BadRequestException(
-                    `Channel ${channelName} is private, you must provide an invite code`,
-                );
-            }
-
-            if (inviteCode !== channel.inviteCode) {
-                throw new UnauthorizedException('Invalid invite code');
-            }
+            throw new BadRequestException(
+                'Cannot join private channels through this endpoint',
+            );
         }
 
         const user = await this.prisma.user.findFirst({
@@ -511,6 +504,50 @@ export class ChatService {
 
         await this.prisma.channel.update({
             where: { name: channelName },
+            data: {
+                members: { connect: { id: user.id } },
+            },
+        });
+    }
+
+    async joinPrivateChannel(inviteCode: string, requestUsername: string) {
+        const channel = await this.prisma.channel.findFirst({
+            where: { inviteCode },
+            select: {
+                name: true,
+                owner: {
+                    select: { username: true },
+                },
+                members: {
+                    select: { username: true },
+                },
+                admins: {
+                    select: { username: true },
+                },
+            },
+        });
+        if (!channel) {
+            throw new NotFoundException('There is no channel with this code');
+        }
+
+        if (
+            channel.owner.username === requestUsername ||
+            channel.members.some(
+                (member) => member.username === requestUsername,
+            ) ||
+            channel.admins.some((admin) => admin.username === requestUsername)
+        ) {
+            throw new BadRequestException(
+                `User ${requestUsername} is already in the channel`,
+            );
+        }
+
+        const user = await this.prisma.user.findFirst({
+            where: { username: requestUsername },
+            select: { id: true },
+        });
+        await this.prisma.channel.update({
+            where: { name: channel.name },
             data: {
                 members: { connect: { id: user.id } },
             },
