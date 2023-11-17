@@ -103,6 +103,7 @@ model Notification {
   type      NotifType
   sendToId  String
   userId    String
+  ChallengeId String @default("")
   user     User @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
