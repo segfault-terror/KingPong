@@ -17,9 +17,14 @@ type WelcomeChannelProps = {
 
 type ChannelContentProps = Pick<WelcomeChannelProps, 'channelName'> & {
     mutate: Function;
+    setRedirectChannel: Function;
 };
 
-function PublicChannelContent({ channelName, mutate }: ChannelContentProps) {
+function PublicChannelContent({
+    channelName,
+    mutate,
+    setRedirectChannel,
+}: ChannelContentProps) {
     return (
         <>
             <p className="text-left text-silver font-light font-jost w-1/2">
@@ -28,6 +33,7 @@ function PublicChannelContent({ channelName, mutate }: ChannelContentProps) {
             <button
                 onClick={() => {
                     mutate({ channelName });
+                    setRedirectChannel(true);
                 }}
                 className="bg-secondary-200
                             text-background
@@ -57,6 +63,8 @@ function ProtectedChannelContent(props: {
         defaultValues: { password: '' },
     });
 
+    console.log('inside password modal', props.wrongPassword);
+
     return (
         <form
             onSubmit={handleSubmit(() => {
@@ -64,8 +72,6 @@ function ProtectedChannelContent(props: {
                     channelName: props.channelName,
                     password: watch('password'),
                 });
-                props.setWrongPassword(false);
-                props.setRedirectChannel(true);
             })}
             className="flex flex-col items-center justify-center gap-4"
         >
@@ -138,6 +144,7 @@ export default function WelcomeChannel({
             return channel;
         },
         onSuccess: () => {
+            console.log('wach nta hna');
             queryClient.invalidateQueries(['channel', channelName, 'members'], {
                 exact: true,
             });
@@ -145,9 +152,9 @@ export default function WelcomeChannel({
                 socket.emit('update-channel-sidebar', channelName);
             }
             setRedirectChannel(true);
-            setWelcomeChannel(false);
         },
         onError: () => {
+            console.log('you entered a wrong password');
             setWrongPassword(true);
         },
     });
@@ -182,6 +189,7 @@ export default function WelcomeChannel({
             <div className="flex flex-col items-center justify-center gap-4">
                 {channelVisibility === 'public' && (
                     <PublicChannelContent
+                        setRedirectChannel={setRedirectChannel}
                         channelName={channelName}
                         mutate={mutate}
                     />

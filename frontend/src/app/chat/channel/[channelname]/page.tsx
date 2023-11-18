@@ -55,7 +55,7 @@ export default function Channel({ params }: ChannelProps) {
 
     useEffect(() => {
         if (isLoading || !data) return;
-        console.log('isBanned', isBanned);
+
         if (isBanned == null) return;
 
         if (isBanned) {
@@ -84,6 +84,7 @@ export default function Channel({ params }: ChannelProps) {
                     childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%] h-[300px]
                                         lg:w-2/3 max-w-[600px] z-[49]"
                     onClose={() => {}}
+                    blurMore={true}
                 >
                     <WelcomeChannel
                         channelName={params.channelname}
