@@ -1,6 +1,9 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+    ForbiddenException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
-import { BlockList } from 'net';
 
 @Injectable()
 export class FriendsService {
@@ -30,7 +33,35 @@ export class FriendsService {
             throw new NotFoundException('User not found');
         }
 
-       return await this.prisma.user.update({
+        const dm = await this.prisma.dM.findFirst({
+            where: {
+                AND: [
+                    {
+                        OR: [
+                            { user1: { username: friendUsername } },
+                            { user1: { id: userId } },
+                        ],
+                    },
+                    {
+                        OR: [
+                            { user2: { username: friendUsername } },
+                            { user2: { id: userId } },
+                        ],
+                    },
+                ],
+            },
+            select: { id: true },
+        });
+
+        await this.prisma.message.deleteMany({
+            where: { dm_id: dm.id },
+        });
+
+        await this.prisma.dM.delete({
+            where: { id: dm.id },
+        });
+
+        return await this.prisma.user.update({
             where: { id: userId },
             data: {
                 friends: {
@@ -59,7 +90,9 @@ export class FriendsService {
             throw new NotFoundException('User not found');
         }
 
-        const blockedUsers = BlockList.blockedUsers.filter((user) => user.id !== me.id);
+        const blockedUsers = BlockList.blockedUsers.filter(
+            (user) => user.id !== me.id,
+        );
 
         return { blockedUsers };
     }
@@ -70,7 +103,6 @@ export class FriendsService {
         const me = await this.prisma.user.findUnique({
             where: { id: userId },
         });
-
 
         if (me.id === user.id) {
             throw new ForbiddenException('You cannot block yourself');
@@ -124,7 +156,9 @@ export class FriendsService {
             throw new NotFoundException('User not found');
         }
 
-        const blockedUsers = meUser.blockedUsers.filter((user) => user.username === username);
+        const blockedUsers = meUser.blockedUsers.filter(
+            (user) => user.username === username,
+        );
 
         return blockedUsers.length > 0;
     }
@@ -141,7 +175,9 @@ export class FriendsService {
             throw new NotFoundException('User not found');
         }
 
-        const blockedUsers = meUser.blockedBy.filter((user) => user.username === username);
+        const blockedUsers = meUser.blockedBy.filter(
+            (user) => user.username === username,
+        );
 
         return blockedUsers.length > 0;
     }

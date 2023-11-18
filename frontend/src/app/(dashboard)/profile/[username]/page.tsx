@@ -37,7 +37,6 @@ export default function ProfilePage({ params }: ProfilePageProps) {
         socket?.on(
             'profile',
             ({ user1, user2 }: { user1: string; user2: string }) => {
-                console.log('profile on: ', user1);
                 queryClient.invalidateQueries(['profile', user1], {
                     exact: true,
                 });
@@ -50,7 +49,6 @@ export default function ProfilePage({ params }: ProfilePageProps) {
                 queryClient.invalidateQueries(['userFriends', user1], {
                     exact: true,
                 });
-                console.log('profile on: ', user2);
                 queryClient.invalidateQueries(['profile', user2], {
                     exact: true,
                 });
@@ -69,7 +67,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
         return () => {
             socket?.off('profile');
         };
-    }, [socket]);
+    }, [socket, queryClient]);
 
     if (isLoading) {
         return (
