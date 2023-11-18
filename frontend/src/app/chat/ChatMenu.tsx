@@ -6,7 +6,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import { redirect, usePathname, useRouter } from 'next/navigation';
 import path from 'path';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useContext, useEffect, useState } from 'react';
 import Loading from '../loading';
 import BanDialog from './components/BanUserDialog';
 import BanUserModal from './components/BanUserModal';
@@ -27,6 +27,7 @@ import UnbanDialog from './components/UnbanUserDialog';
 import UnbanUserModal from './components/UnbanUserModal';
 import UnmuteDialog from './components/UnmuteUserDialog';
 import UnmuteUserModal from './components/UnmuteUserModal';
+import { modalContext } from '@/contexts/contexts';
 
 export default function ChatMenu() {
     const pathname = usePathname();
@@ -63,6 +64,7 @@ function ChatMenuItem(props: { children: ReactNode }) {
 
 function DmMenu(props: { username: string }) {
     const [showClearConfirm, setShowClearConfirm] = useState(false);
+    const { setDotsDropdown } = useContext(modalContext);
 
     const { data: dm, isLoading: dmIsLoding } = useQuery({
         queryFn: async () => {
@@ -90,6 +92,7 @@ function DmMenu(props: { username: string }) {
                 exact: true,
             });
             queryClient.invalidateQueries(['dms', 'brief'], { exact: true });
+            setDotsDropdown(false);
         },
     });
 
