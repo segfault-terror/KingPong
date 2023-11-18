@@ -66,10 +66,11 @@ export default function ChannelSideBar({ channelName }: ChannelSideBarProps) {
             socket.on('update-channel-sidebar', (channelName: string) => {
                 queryClient.invalidateQueries(
                     ['channel', channelName, 'members'],
-                    {
-                        exact: true,
-                    },
+                    { exact: true },
                 );
+                queryClient.invalidateQueries(['channels', 'brief'], {
+                    exact: true,
+                });
             });
     }, [members, channelName, socket, queryClient]);
 

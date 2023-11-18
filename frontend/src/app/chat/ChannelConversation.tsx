@@ -127,6 +127,9 @@ export default function ChannelConversation(props: ChannelConversationProps) {
             queryClient.invalidateQueries(['channel', channelName], {
                 exact: true,
             });
+            queryClient.invalidateQueries(['channels', 'brief'], {
+                exact: true,
+            });
         });
         return () => {
             socket?.off('redirect-to-chat');
