@@ -10,7 +10,9 @@ export default function Notif() {
     const { socket } = useSocket();
     const [hidden, setHidden] = useState(true);
     const [avatar, setAvatar] = useState('');
-	const [message, setMessage] = useState('');
+    const [message, setMessage] = useState('');
+    const [ChallengeId, setChallengeId] = useState('');
+    const [type, setType] = useState('');
 
     const { data: me, isLoading: myisLoading } = useQuery({
         queryKey: ['mydata'],
@@ -21,7 +23,7 @@ export default function Notif() {
         },
     });
 
-	const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         if (!myisLoading && socket)
@@ -31,14 +33,18 @@ export default function Notif() {
                     username,
                     type,
                     avatar,
+                    ChallengeId,
                 }: {
                     username: string;
                     type: string;
                     avatar: string;
+                    ChallengeId: string;
                 }) => {
                     console.log('notif received');
                     setHidden(false);
                     setAvatar(avatar);
+                    setChallengeId(ChallengeId);
+                    setType(type);
                     console.log('avatar: ', avatar);
                     if (type === 'FRIEND') {
                         setMessage(`${username} sent you a friend request`);
@@ -58,7 +64,14 @@ export default function Notif() {
     return (
         <>
             {!hidden && (
-                <Link href={'/notifications'} className="z-20">
+                <Link
+                    href={
+                        type === 'GAME'
+                            ? `/game/ranked/${ChallengeId}`
+                            : '/notifications'
+                    }
+                    className="z-20"
+                >
                     <motion.div
                         className="absolute
 						top-20 right-0
