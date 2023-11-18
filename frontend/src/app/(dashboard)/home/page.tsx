@@ -40,7 +40,7 @@ export default function Page() {
         queryKey: ['me'],
         queryFn: async () => {
             try {
-                const {data} = await axios.get('/api/user/get/stats/me', {
+                const { data } = await axios.get('/api/user/get/stats/me', {
                     withCredentials: true,
                 });
                 return data;
@@ -65,7 +65,6 @@ export default function Page() {
     }
 
     function MyComponent() {
-        console.log(data);
         const leaderboard = useMemo(() => {
             return leaderboardData?.map(
                 (entry: newData) =>
@@ -93,6 +92,7 @@ export default function Page() {
 
         const [percent, setPercent] = useState(0);
         useEffect(() => {
+            if (data?.stats === undefined) return;
             setPercent((data?.stats.XP / data?.stats.NextLevelXP) * 100);
         }, [data]);
 
@@ -128,7 +128,12 @@ export default function Page() {
                 <main
                     className={`w-full min-h-[80vh] overflow-hidden flex flex-col justify-center items-center lg:justify-normal text-black transition-all duration-500 lg:my-16`}
                 >
-                    <div className=" text-white font-nicomoji text-2xl flex justify-center items-center w-[90%] justify-items-center bg-gradient-to-r from-background via-[#4B086D]  to-[#ACC0FE] bg-cover rounded-full border border-white drop-shadow-[0px_0px_7px_#a24acf] p-2 lg:mx-10  lg:w-[600px] xl:[1000px]">
+                    <div
+                        className=" text-white font-nicomoji text-2xl flex justify-center items-center
+                     w-[90%] justify-items-center bg-gradient-to-r from-background via-[#4B086D]  to-primary
+                    bg-cover rounded-full border border-white
+                    drop-shadow-[0px_0px_7px_#a24acf] p-2 lg:mx-10  lg:w-[600px] xl:[1000px]"
+                    >
                         <div className="flex-none relative w-20 h-20 mx-4 my-auto justify-self-start">
                             <img
                                 src={data?.avatar}
