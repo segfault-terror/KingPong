@@ -1,7 +1,7 @@
-import { use, useEffect } from 'react';
+'use client';
+import { useEffect } from 'react';
 import MatchMaking from './MatchMaking';
 import { useSocket } from '@/contexts/SocketContext';
-import { set } from 'react-hook-form';
 
 type Props = {
     matchmaking: boolean;
