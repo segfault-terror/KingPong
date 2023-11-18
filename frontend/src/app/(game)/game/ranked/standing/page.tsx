@@ -1,10 +1,9 @@
 'use client';
 import Loading from '@/app/loading';
-import GameOver from '@/app/(game)/game/standing/GameOver';
+import GameOver from '@/app/(game)/game/ranked/standing/GameOver';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
-
 
 function Standing({ lastMatch, me }: { lastMatch: any; me: any }) {
     const idWinner =
@@ -59,7 +58,6 @@ function StandingPage({ me }: { me: any }) {
     if (!lastMatch) redirect('/home');
     console.log('lastMatch: ', lastMatch);
     return <Standing lastMatch={lastMatch} me={me} />;
-
 }
 
 export default function Page() {

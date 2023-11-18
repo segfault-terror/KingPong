@@ -38,8 +38,8 @@ export default function GameOver({
             {standing && (
                 <StandingGame
                     youWin={opp === loser}
-                    myimage={me.avatar}
-                    oppimage={opponent.avatar}
+                    me={me}
+                    opponent={opponent}
                 />
             )}
         </>
