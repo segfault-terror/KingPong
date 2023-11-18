@@ -65,6 +65,7 @@ function ProtectedChannelContent(props: {
                     password: watch('password'),
                 });
                 props.setWrongPassword(false);
+                props.setRedirectChannel(true);
             })}
             className="flex flex-col items-center justify-center gap-4"
         >

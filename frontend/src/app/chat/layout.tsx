@@ -63,7 +63,7 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
                     {createChannel && (
                         <Modal
                             onClose={() => setCreateChannel(false)}
-                            childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%]
+                            childrenClassName="bg-gradient-to-br from-primary to-background p-6 rounded-2xl border-r border-l border-secondary-500 w-[90%]
                                         lg:w-2/3 max-w-[600px]"
                         >
                             <CreateNewChannel />
@@ -72,7 +72,7 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
                     {joinChannel && (
                         <Modal
                             onClose={() => setJoinChannel(false)}
-                            childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%] h-[300px]
+                            childrenClassName="bg-gradient-to-br from-primary to-background p-6 rounded-2xl border-r border-l border-secondary-500 w-[90%] h-[300px]
                                         lg:w-2/3 max-w-[600px]"
                         >
                             <JoinNewChannel />
@@ -81,7 +81,7 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
                     {welcomeChannel && (
                         <Modal
                             onClose={() => setWelcomeChannel(false)}
-                            childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%] h-[300px]
+                            childrenClassName="bg-gradient-to-br from-primary to-background p-6 rounded-2xl border-r border-l border-secondary-500 w-[90%] h-[300px]
                                             lg:w-2/3 max-w-[600px]"
                         >
                             <WelcomeChannel
@@ -95,7 +95,7 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
                     {newConversation && (
                         <Modal
                             onClose={() => setNewConversation(false)}
-                            childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%] h-[300px]
+                            childrenClassName="bg-gradient-to-br from-primary to-background p-6 rounded-2xl border-r border-l border-secondary-500 w-[90%] h-[300px]
                                         lg:w-2/3 max-w-[600px]"
                         >
                             <NewConversation />

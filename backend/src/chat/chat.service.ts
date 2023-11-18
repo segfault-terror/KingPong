@@ -1102,6 +1102,12 @@ export class ChatService {
                 bannedUsers: {
                     disconnect: { username: usernameToUnban },
                 },
+                members: {
+                    disconnect: { username: usernameToUnban },
+                },
+                admins: {
+                    disconnect: { username: usernameToUnban },
+                },
             },
         });
     }
