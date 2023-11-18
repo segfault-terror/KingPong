@@ -6,11 +6,14 @@ import { Ball } from '../utils/Ball';
 import { Paddle } from '../utils/Paddle';
 import { UserService } from 'src/user/user.service';
 
+interface GameMode {
+    mode: 'normal' | 'obstacle' | 'reverse';
+}
 @Injectable()
 export class ComputerService {
     constructor(private readonly userService: UserService) {}
 
-    startGame(client: Socket) {
+    startGame(client: Socket, mode: GameMode) {
         const playerSpeed = 10;
         const initialBallSpeed = 5;
         let ballSpeed = initialBallSpeed;
@@ -32,6 +35,48 @@ export class ComputerService {
             angularVelocity: 0,
             velocity: { x: 0, y: 0 },
         });
+        const obstacles: Paddle[] = [];
+        if (mode.mode === 'obstacle') {
+            let obstacle: Paddle;
+            obstacle = new Paddle(
+                canvas.width / 4,
+                canvas.height / 4,
+                100,
+                100,
+                world,
+                {
+                    isStatic: true,
+                },
+            );
+            obstacles.push(obstacle);
+            obstacle = new Paddle(
+                (canvas.width / 4) * 3,
+                (canvas.height / 4) * 3,
+                100,
+                100,
+                world,
+                { isStatic: true },
+            );
+            obstacles.push(obstacle);
+            obstacle = new Paddle(
+                (canvas.width / 4) * 3,
+                canvas.height / 4,
+                100,
+                100,
+                world,
+                { isStatic: true },
+            );
+            obstacles.push(obstacle);
+            obstacle = new Paddle(
+                canvas.width / 4,
+                (canvas.height / 4) * 3,
+                100,
+                100,
+                world,
+                { isStatic: true },
+            );
+            obstacles.push(obstacle);
+        }
         setTimeout(() => {
             Body.setVelocity(ball.body, { x: 0, y: ballSpeed });
         }, 2000);
@@ -55,7 +100,12 @@ export class ComputerService {
             topPaddle: { width: topPaddle.w, height: topPaddle.h },
             bottomPaddle: { width: bottomPaddle.w, height: bottomPaddle.h },
             ball: { radius: ball.r },
+            obstacles: obstacles.map((o) => ({
+                width: o.w,
+                height: o.h,
+            })),
         });
+
         let counter = 0;
         let randomPos = Common.random(-50, 50);
         const orPair = (x: number, y: number) => {
@@ -195,6 +245,7 @@ export class ComputerService {
                 ballPos,
                 topPaddlePos,
                 bottomPaddlePos,
+                obstacles: obstacles.map((o) => o.body.position),
             });
         }, frameRate);
 
