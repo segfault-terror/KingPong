@@ -46,6 +46,14 @@ export default function ChatInput({
         let intervalId: NodeJS.Timeout | undefined = undefined;
         let timeoutId: NodeJS.Timeout | undefined = undefined;
 
+        socket?.on('new-owner', (name) => {
+            if (channelName === name) {
+                clearTimeout(timeoutId);
+                clearInterval(intervalId);
+                setIsMuted(false);
+            }
+        });
+
         if (data.isMuted) {
             setIsMuted(true);
 
@@ -91,8 +99,9 @@ export default function ChatInput({
         return () => {
             clearTimeout(timeoutId);
             clearInterval(intervalId);
+            socket?.off('new-owner');
         };
-    }, [data, channelName]);
+    }, [data, channelName, socket]);
 
     const pathname = usePathname();
 

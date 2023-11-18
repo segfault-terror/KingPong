@@ -172,4 +172,9 @@ export class ChatGateway implements OnGatewayDisconnect {
     handleChannelDeleted(@MessageBody() channelName: string) {
         this.server.to(channelName).emit('channel-deleted', channelName);
     }
+
+    @SubscribeMessage('new-owner')
+    handleNewOwner(@MessageBody() channelName: string) {
+        this.server.to(channelName).emit('new-owner', channelName);
+    }
 }

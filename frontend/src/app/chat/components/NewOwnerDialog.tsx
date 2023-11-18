@@ -32,6 +32,7 @@ export default function SetNewOwnerDialog(props: {
                 exact: true,
             });
             socket?.emit('update-channel-sidebar', props.channelName);
+            socket?.emit('new-owner', props.channelName);
         },
     });
 

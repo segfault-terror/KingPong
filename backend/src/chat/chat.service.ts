@@ -783,6 +783,7 @@ export class ChatService {
                 owner: {
                     select: { id: true },
                 },
+                id: true,
             },
         });
         if (!channel) {
@@ -828,6 +829,13 @@ export class ChatService {
                 `User ${newOwnerUsename} is not a member in channel ${channelName}`,
             );
         }
+
+        await this.prisma.mute.deleteMany({
+            where: {
+                channelId: channel.id,
+                userId: newOwner.id,
+            },
+        });
 
         // Remove current owner and set new owner
         return await this.prisma.channel.update({

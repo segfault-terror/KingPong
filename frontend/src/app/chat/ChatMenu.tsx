@@ -481,8 +481,8 @@ function ChannelMenu(props: { channelName: string }) {
                 </ChatMenuItem>
             )}
             {(isOwner || isAdmin) &&
-                (unmuteList?.admins.length > 0 ||
-                    unmuteList?.members.length > 0) && (
+                ((unmuteList.admins && unmuteList?.admins.length) > 0 ||
+                    (unmuteList.members && unmuteList?.members.length) > 0) && (
                     <ChatMenuItem>
                         <button onClick={() => setShowUnmuteModal(true)}>
                             Un-mute user
