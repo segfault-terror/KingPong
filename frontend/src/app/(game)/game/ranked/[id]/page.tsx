@@ -11,7 +11,7 @@ import Game from '../game';
 import { useRouter } from 'next/router';
 import { set } from 'react-hook-form';
 
-export default function Page({params}: {params: {id: string}}) {
+export default function Page({ params }: { params: { id: string } }) {
     const [matchmaking, setMatchmaking] = useState(true);
     const [oppdata, setData] = useState('');
     const {
@@ -19,24 +19,24 @@ export default function Page({params}: {params: {id: string}}) {
         isLoading: meLoading,
         isError,
     } = useQuery(['me'], async () => {
-        try {
-            const { data } = await axios.get(`/api/user/get/stats/me`, {
-                withCredentials: true,
-            });
-            return data;
-        } catch {
-            redirect('/signin');
-        }
+        const { data } = await axios.get(`/api/user/get/stats/me`, {
+            withCredentials: true,
+        });
+        return data;
     });
 
     const ChallengeId = params.id;
-	useEffect(() => {
-		console.log('oppData: ', oppdata);
-	}, [oppdata]);
+    useEffect(() => {
+        console.log('oppData: ', oppdata);
+    }, [oppdata]);
 
-	if (isError) redirect('/signin');
-	if (meLoading || me.stats === undefined || me.stats.league === undefined) return <Loading />;
-	const data = { username: me.username, league: me?.stats.league, avatar: me.avatar };
+    if (meLoading || me.stats === undefined || me.stats.league === undefined)
+        return <Loading />;
+    const data = {
+        username: me.username,
+        league: me?.stats.league,
+        avatar: me.avatar,
+    };
     return (
         <SocketProvider namespace="game" username={me.username}>
             {matchmaking ? (

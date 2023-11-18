@@ -9,7 +9,7 @@ import Loading from '@/app/loading';
 import { Vector } from 'matter-js';
 import { useSocket } from '@/contexts/SocketContext';
 import { set } from 'react-hook-form';
-import GameOver from '@/app/(game)/game/standing/GameOver';
+import GameOver from '@/app/(game)/game/ranked/standing/GameOver';
 import { redirect } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -153,7 +153,7 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
     }, [ready]);
     useEffect(() => {
         if (winner !== '') {
-            redirect('/game/standing');
+            redirect('/game/ranked/standing');
         }
     }, [winner]);
     if (!ready) return <Loading />;
