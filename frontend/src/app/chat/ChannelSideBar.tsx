@@ -64,7 +64,6 @@ export default function ChannelSideBar({ channelName }: ChannelSideBarProps) {
     useEffect(() => {
         if (socket)
             socket.on('update-channel-sidebar', (channelName: string) => {
-                console.log('update-channel-sidebar');
                 queryClient.invalidateQueries(
                     ['channel', channelName, 'members'],
                     {

@@ -1,19 +1,25 @@
 'use client';
+import { useSocket } from '@/contexts/SocketContext';
 import { channelModalContext, modalContext } from '@/contexts/contexts';
-import Link from 'next/link';
-import { useContext, useEffect, useRef, useState } from 'react';
-import { FaUserFriends } from 'react-icons/fa';
-import { HiDotsVertical } from 'react-icons/hi';
-import ChatInput from './ChatInput';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import Loading from '../loading';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { useSocket } from '@/contexts/SocketContext';
-import DropdownModal from './DropdownModal';
+import { useContext, useEffect, useRef, useState } from 'react';
+import {
+    FaGlobeAfrica,
+    FaLock,
+    FaShieldAlt,
+    FaUserFriends,
+} from 'react-icons/fa';
+import { HiDotsVertical } from 'react-icons/hi';
+import { MdGroupAdd } from 'react-icons/md';
+import Loading from '../loading';
+import ChatInput from './ChatInput';
 import ChatMenu from './ChatMenu';
+import DropdownModal from './DropdownModal';
+import InviteModal from './components/InviteModal';
 import ExitMessageDialog from './components/KickMessageDialog';
-import { FaGlobeAfrica, FaShieldAlt, FaLock } from 'react-icons/fa';
 
 type ChannelConversationProps = {
     channelName: string;
@@ -24,11 +30,13 @@ export function ChannelTypeIcon(props: {
 }) {
     switch (props.channelType) {
         case 'PUBLIC':
-            return <FaGlobeAfrica className="w-4 h-4" title='Public Channel' />;
+            return <FaGlobeAfrica className="w-4 h-4" title="Public Channel" />;
         case 'PRIVATE':
-            return <FaLock className="w-4 h-4" title='Private Channel' />;
+            return <FaLock className="w-4 h-4" title="Private Channel" />;
         case 'PROTECTED':
-            return <FaShieldAlt className="w-4 h-4" title='Protected Channel' />;
+            return (
+                <FaShieldAlt className="w-4 h-4" title="Protected Channel" />
+            );
     }
 }
 
@@ -115,11 +123,18 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                 setExitReason('delete');
             }
         });
+        socket?.on('update-channel-sidebar', (channelName: string) => {
+            queryClient.invalidateQueries(['channel', channelName], {
+                exact: true,
+            });
+        });
         return () => {
             socket?.off('redirect-to-chat');
             socket?.off('channel-deleted');
         };
     });
+
+    const [inviteModal, setInviteModal] = useState(false);
 
     if (isLoading || isLoadingMe) {
         return (
@@ -132,6 +147,11 @@ export default function ChannelConversation(props: ChannelConversationProps) {
     if (isError) {
         redirect('/not-found');
     }
+
+    const isOwner = data.owner.username === me.username;
+    const isAdmin = data.admins.some(
+        (admin: any) => admin.username === me.username,
+    );
 
     return (
         <div
@@ -158,6 +178,21 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                     </p>
                 )}
                 <div className="flex gap-4 text-secondary-200">
+                    {data.type === 'PRIVATE' && (isOwner || isAdmin) && (
+                        <button
+                            onClick={() => {
+                                setInviteModal(true);
+                            }}
+                        >
+                            <MdGroupAdd className="w-8 h-8 text-secondary-500" />
+                        </button>
+                    )}
+                    {inviteModal && (
+                        <InviteModal
+                            inviteCode={data.inviteCode}
+                            onClose={() => setInviteModal(false)}
+                        />
+                    )}
                     <button onClick={() => setShowMembers(!showMembers)}>
                         <FaUserFriends className="w-8 h-8" />
                     </button>

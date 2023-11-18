@@ -28,6 +28,9 @@ export default function SetNewOwnerDialog(props: {
                 props.channelName,
                 'members',
             ]);
+            queryClient.invalidateQueries(['channel', props.channelName], {
+                exact: true,
+            });
             socket?.emit('update-channel-sidebar', props.channelName);
         },
     });

@@ -6,7 +6,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import { redirect, usePathname, useRouter } from 'next/navigation';
 import path from 'path';
-import { ReactNode, useContext, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import Loading from '../loading';
 import BanDialog from './components/BanUserDialog';
 import BanUserModal from './components/BanUserModal';
@@ -27,7 +27,6 @@ import UnbanDialog from './components/UnbanUserDialog';
 import UnbanUserModal from './components/UnbanUserModal';
 import UnmuteDialog from './components/UnmuteUserDialog';
 import UnmuteUserModal from './components/UnmuteUserModal';
-import { modalContext } from '@/contexts/contexts';
 
 export default function ChatMenu() {
     const pathname = usePathname();
