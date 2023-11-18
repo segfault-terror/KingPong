@@ -47,6 +47,10 @@ export default function Page() {
         bottomPaddle: { width: 0, height: 0 },
         ball: { radius: 0 },
     });
+    const [serverClientRatio, setServerClientRatio] = React.useState({
+        width: 1,
+        height: 1,
+    });
 
     useEffect(() => {
         const socket = io(`/game`, {
@@ -93,36 +97,33 @@ export default function Page() {
             width: window.innerWidth,
             height: window.innerHeight,
         };
-    });
+        if (!ready) return;
+        let serverClientRatioW = 1;
+        let serverClientRatioH = 1;
+        if (screenDim.width < init.width || screenDim.height < init.height) {
+            const w = init.width;
+            const h = init.height;
+            const ratio = init.width / init.height;
+
+            if (screenDim.width < init.width) {
+                console.log(screenDim.width, init.width);
+                init.width = screenDim.width * 0.9;
+                init.height = init.width / ratio;
+            }
+            if (screenDim.height * 0.8 < init.height) {
+                init.height = screenDim.height * 0.8;
+                init.width = init.height * ratio;
+            }
+            serverClientRatioW = init.width / w;
+            serverClientRatioH = init.height / h;
+        }
+
+        setServerClientRatio({
+            width: serverClientRatioW,
+            height: serverClientRatioH,
+        });
+    }, [ready]);
     if (!ready) return <Loading />;
-
-    let serverClientRatioW = 1;
-    let serverClientRatioH = 1;
-
-    if (screenDim.width < init.width || screenDim.height < init.height) {
-        const w = init.width;
-        const h = init.height;
-        const ratio = init.width / init.height;
-
-        if (screenDim.width < init.width) {
-            console.log(screenDim.width, init.width);
-            init.width = screenDim.width * 0.9;
-            init.height = init.width / ratio;
-        }
-        if (screenDim.height * 0.8 < init.height) {
-            init.height = screenDim.height * 0.8;
-            init.width = init.height * ratio;
-        }
-        serverClientRatioW = init.width / w;
-        serverClientRatioH = init.height / h;
-    }
-
-    const serverClientRatio = {
-        width: serverClientRatioW,
-        height: serverClientRatioH,
-    };
-
-    console.log(serverClientRatio);
 
     return (
         <div className="flex justify-center items-center h-screen">
