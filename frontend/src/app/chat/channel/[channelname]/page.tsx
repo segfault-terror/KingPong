@@ -15,6 +15,8 @@ type ChannelProps = {
 };
 
 export default function Channel({ params }: ChannelProps) {
+    const [isBanned, setIsBanned] = useState<boolean | null>(null);
+
     const { data, isLoading } = useQuery({
         queryKey: [],
         queryFn: async () => {
@@ -34,23 +36,38 @@ export default function Channel({ params }: ChannelProps) {
                 (channel: any) => channel.name === params.channelname,
             );
 
+            setIsBanned(
+                channel.bannedUsers.some(
+                    (user: any) => user.username === me.username,
+                ),
+            );
+            console.log('isBanned', isBanned);
+
             return {
                 isMember,
                 type: channel.type,
             };
         },
+        refetchOnWindowFocus: false,
     });
 
     const [showWelcome, setShowWelcome] = useState(false);
 
     useEffect(() => {
         if (isLoading || !data) return;
+        console.log('isBanned', isBanned);
+        if (isBanned == null) return;
 
-        if (!data?.isMember) {
-            if (data?.type === 'PRIVATE') redirect('/not-found');
-            else setShowWelcome(true);
+        if (isBanned) {
+            redirect('/not-found');
         }
-    }, [data, isLoading]);
+
+        if (!data?.isMember && data?.type === 'PRIVATE') {
+            redirect('/not-found');
+        }
+
+        if (!data?.isMember) setShowWelcome(true);
+    }, [data, isLoading, isBanned]);
 
     if (isLoading) {
         return (
