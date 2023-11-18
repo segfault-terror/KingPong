@@ -1,6 +1,5 @@
 import p5Types from 'p5';
-import { Bodies, World, Body, Vector } from 'matter-js';
-import { world } from './p5Matter';
+import { Vector } from 'matter-js';
 
 export class Paddle {
     w: number;
@@ -11,11 +10,13 @@ export class Paddle {
         this.h = h;
     }
 
-    show(p5: p5Types,
+    show(
+        p5: p5Types,
         serverClientRatio: { width: number; height: number },
-        pos?: Vector) {
+        pos?: Vector,
+    ) {
         if (!pos) return;
-        
+
         p5.push();
         p5.translate(
             pos.x * serverClientRatio.width,

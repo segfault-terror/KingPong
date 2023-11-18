@@ -1,6 +1,5 @@
 import p5Types from 'p5';
-import { Bodies, World, Body, Vector } from 'matter-js';
-import { world } from './p5Matter';
+import { Vector } from 'matter-js';
 
 export class Ball {
     r: number;
@@ -22,8 +21,8 @@ export class Ball {
             pos.y * clientServerRatio.height,
         );
         p5.strokeWeight(1);
-        p5.stroke(255);
-        p5.fill(127);
+        p5.stroke(224,198,0);
+        p5.fill(255,231,45);
         p5.ellipseMode(p5.CENTER);
         p5.circle(0, 0, this.r * 2);
         p5.pop();

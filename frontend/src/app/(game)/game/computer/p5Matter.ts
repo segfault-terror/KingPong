@@ -13,17 +13,52 @@ let topPaddle: Paddle;
 let bottomPaddle: Paddle;
 let ball: Ball;
 
+let img : any;
+function preload(p5: p5Types) {
+    img = p5.loadImage('/images/bordgame.svg');
+}
+
+function dashedLine(
+    p5: p5Types,
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    dashLength: number,
+    serverClientRatio: { width: number; height: number },
+) {
+    const dashLen = dashLength === undefined ? 5 : dashLength,
+        xpos = x2 - x1, //calculates delta between points
+        ypos = y2 - y1,
+        numDashes = Math.floor(Math.sqrt(xpos * xpos + ypos * ypos) / dashLen); //num dashes to insert
+
+    p5.noStroke(); // remove outline
+
+    for (let i = 0; i < numDashes; i++) {
+        p5.push();
+        p5.translate((x1 += xpos / numDashes), (y1 += ypos / numDashes));
+        p5.fill(96,46,101);
+        p5.rectMode(p5.CENTER);
+        p5.rect(
+            0,
+            0,
+            20 * serverClientRatio.width,
+            10 * serverClientRatio.height,
+        );
+        p5.pop();
+    }
+}
+
 export function setup(
     p5: p5Types,
     canvasParentRef: Element,
     init: InitData,
     serverClientRatio: { width: number; height: number },
 ) {
-    p5.createCanvas(
-        init.width,
-        init.height,
-    ).parent(canvasParentRef);
+    p5.createCanvas(init.width, init.height).parent(canvasParentRef);
     p5.frameRate(60);
+    
+    preload(p5);
     topPaddle = new Paddle(
         p5.width / 2,
         p5.height * 0.05,
@@ -41,22 +76,6 @@ export function setup(
         p5.height / 2,
         init.ball.radius * serverClientRatio.width,
     );
-
-    // Events.on(engine, 'collisionStart', (event) => {
-    //     const pairs = event.pairs;
-    //     //console.log(pairs);
-    //     for (let i = 0; i < pairs.length; i++) {
-    //         const pair = pairs[i];
-    //         if (pair.bodyA === ball.body) {
-    //             //console.log('The ball has hit something!');
-    //             Body.applyForce(
-    //                 ball.body,
-    //                 { x: ball.body.position.x, y: ball.body.position.y },
-    //                 { x: 0, y: 0.025 },
-    //             );
-    //         }
-    //     }
-    // });
 }
 
 export function draw(
@@ -65,7 +84,17 @@ export function draw(
     socket?: Socket,
 ) {
     if (!socket) return;
-    p5.background(51);
+    p5.background(50);
+    p5.image(img, 0, 0,p5.width, p5.height, 0, 0, img.width, img.height, p5.COVER);
+    dashedLine(
+        p5,
+        -20 * serverClientRatio.width,
+        p5.height / 2,
+        p5.width,
+        p5.height / 2,
+        40 * serverClientRatio.width,
+        serverClientRatio,
+    );
     ball.show(p5, serverClientRatio, pos?.ballPos);
     topPaddle.show(p5, serverClientRatio, pos?.topPaddlePos);
     bottomPaddle.show(p5, serverClientRatio, pos?.bottomPaddlePos);

@@ -126,9 +126,14 @@ export default function Page() {
     if (!ready) return <Loading />;
 
     return (
-        <div className="flex justify-center items-center h-screen">
+        <div className="flex justify-around items-center h-screen backdrop-blur-[1px]">
+            <div className='self-start my-28 h-48 w-32 rounded-t-full rounded-b-xl bg-secondary-500 flex flex-col justify-between items-center'>
+                <img src="/images/bot.png" alt="" className='h-28 w-28 rounded-full' />
+                <h1 className="text-3xl text-black font-jockey font-bold text-center flex justify-center items-center rounded-b-x">dr.bot</h1>
+            </div>
             <Sketch
-                className={'border overflow-hidden'}
+                className="border-4 border-secondary-500 rounded-lg overflow-hidden bg-gradient-to-br from-primary to-background
+                 drop-shadow-[0px_0px_15px_#ffa62a] backdrop-blur-md"
                 setup={(p5: p5Types, canvasParentRef: Element) => {
                     setup(p5, canvasParentRef, init, serverClientRatio);
                 }}
@@ -136,6 +141,7 @@ export default function Page() {
                     draw(p5, serverClientRatio, socket);
                 }}
             />
+            <div></div>
         </div>
     );
 }
