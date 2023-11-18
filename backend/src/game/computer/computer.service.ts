@@ -203,7 +203,7 @@ export class ComputerService {
         });
 
         const movePaddleLeft = (paddle: Paddle) => {
-            if (paddle.body.position.x < paddle.w / 2) {
+            if (paddle.body.position.x - playerSpeed < paddle.w / 2) {
                 return;
             }
             Body.setPosition(paddle.body, {
@@ -213,7 +213,10 @@ export class ComputerService {
         };
 
         const movePaddleRight = (paddle: Paddle) => {
-            if (paddle.body.position.x > canvas.width - paddle.w / 2) {
+            if (
+                paddle.body.position.x + playerSpeed >
+                canvas.width - paddle.w / 2
+            ) {
                 return;
             }
             Body.setPosition(paddle.body, {
