@@ -1,6 +1,5 @@
-import { Vector } from 'matter-js';
 import p5Types from 'p5';
-
+import { Vector } from 'matter-js';
 
 export class Paddle {
     w: number;

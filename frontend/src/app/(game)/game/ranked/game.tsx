@@ -49,6 +49,10 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
     const [init, setInit] = React.useState<any>(null);
     const [winner, setWinner] = React.useState('');
     const [gameOver, setGameOver] = React.useState(false);
+    const [serverClientRatio, setServerClientRatio] = React.useState({
+        width: 1,
+        height: 1,
+    });
     const { socket } = useSocket();
 
     const { mutate: updateGame, isLoading } = useMutation(async (data: any) => {
@@ -73,7 +77,6 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 setReady(true);
             });
             socket.on('update-game', (data) => {
-                console.log('update-game');
                 if (data.username === me.username) {
                     pos = data;
                 }
@@ -116,56 +119,58 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 socket.off('disconnect');
             };
         }
-    }, [socket]);
+    }, []);
     useEffect(() => {
         screenDim = {
             width: window.innerWidth,
             height: window.innerHeight,
         };
-    });
+        if (!ready) return;
+        let serverClientRatioW = 1;
+        let serverClientRatioH = 1;
+        if (screenDim.width < init.width || screenDim.height < init.height) {
+            const w = init.width;
+            const h = init.height;
+            const ratio = init.width / init.height;
+
+            if (screenDim.width < init.width) {
+                console.log(screenDim.width, init.width);
+                init.width = screenDim.width * 0.9;
+                init.height = init.width / ratio;
+            }
+            if (screenDim.height * 0.8 < init.height) {
+                init.height = screenDim.height * 0.8;
+                init.width = init.height * ratio;
+            }
+            serverClientRatioW = init.width / w;
+            serverClientRatioH = init.height / h;
+        }
+
+        setServerClientRatio({
+            width: serverClientRatioW,
+            height: serverClientRatioH,
+        });
+    }, [ready]);
     useEffect(() => {
         if (winner !== '') {
             redirect('/game/standing');
         }
     }, [winner]);
-    console.log('startGame');
     if (!ready) return <Loading />;
 
-    let serverClientRatioW = 1;
-    let serverClientRatioH = 1;
-
-    if (screenDim.width < init.width || screenDim.height < init.height) {
-        const w = init.width;
-        const h = init.height;
-        const ratio = init.width / init.height;
-
-        if (screenDim.width < init.width) {
-            console.log(screenDim.width, init.width);
-            init.width = screenDim.width * 0.9;
-            init.height = init.width / ratio;
-        }
-        if (screenDim.height * 0.8 < init.height) {
-            init.height = screenDim.height * 0.8;
-            init.width = init.height * ratio;
-        }
-        serverClientRatioW = init.width / w;
-        serverClientRatioH = init.height / h;
-    }
-
-    const serverClientRatio = {
-        width: serverClientRatioW,
-        height: serverClientRatioH,
-    };
     return (
         <>
             <div className="flex justify-center items-center h-screen">
                 <Sketch
-                    className={'rounded-sm md:rounded-xl  lg:rounded-3xl overflow-hidden'}
+                    className={
+                        'rounded-sm md:rounded-xl  lg:rounded-3xl overflow-hidden'
+                    }
                     setup={(p5: p5Types, canvasParentRef: Element) => {
                         setup(p5, canvasParentRef, init, serverClientRatio);
                     }}
                     draw={(p5: p5Types) => {
-                        socket && draw(p5, serverClientRatio, me.username, socket);
+                        socket &&
+                            draw(p5, serverClientRatio, me.username, socket);
                     }}
                 />
                 {gameOver && (
