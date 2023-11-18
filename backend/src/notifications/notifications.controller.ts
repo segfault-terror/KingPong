@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { AuthGard } from '../auth/auth.guard';
 import { use } from 'passport';
@@ -42,5 +42,14 @@ export class NotificationsController {
     async notreaded(@Req() data: any) {
         const readed =  await this.NotificationsService.notificationNotRead(data.user.id);
         return readed.length > 0;
+    }
+
+    @Get('/existnotif/:username')
+    async notifExist(@Req() data: any,  @Query() query: any) {
+        // console.log("user: ",data.params.username, "body: ", data);
+        console.log("user: ",data.params.username, "body: ", query);
+        const user = await this.NotificationsService.getUserByUsername(data.params.username);
+        const exist = await this.NotificationsService.notificationExist(user.id, query);
+        return exist;
     }
 }

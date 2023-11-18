@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
+import { async } from 'rxjs';
 
 
 @Injectable()
@@ -15,7 +16,7 @@ export class NotificationsService {
     }
 
     async getmyAll(id: string) {
-        return this.prisma.notification.findMany({
+        const notification = await this.prisma.notification.findMany({
             where: {
                 sendToId: id,
             },
@@ -23,6 +24,8 @@ export class NotificationsService {
                 user: true,
             },
         });
+        console.log(notification);
+        return notification;
     }
 
     async update(id: string, data: any) {
@@ -66,10 +69,14 @@ export class NotificationsService {
         if (me.Notifications.some((notification) => notification.sendToId === data.sendToId && notification.type === data.type)) {
             throw new NotFoundException('Notification already exists');
         }
+        const ChallengeId = data.type === 'GAME' ? data.ChallengeId : "";
+
+
         return this.prisma.notification.create({
             data: {
                 sendToId: data.sendToId,
                 type: data.type,
+                ChallengeId: ChallengeId,
                 user: {
                     connect: {
                         id: data.userId,
@@ -84,6 +91,27 @@ export class NotificationsService {
             where: {
                 sendToId: id,
                 readed: false,
+            },
+        });
+    }
+
+    async notificationExist(id: string, data: any) {
+        const notif = await this.prisma.notification.findMany({
+            where: {
+                sendToId: id,
+            },
+        });
+        if (notif.length == 0) {
+            return false;
+        }
+
+        return notif.some((notification) => notification.userId === data.userId && notification.type === data.type);
+    }
+
+    async getUserByUsername(username: string) {
+        return await this.prisma.user.findUnique({
+            where: {
+                username,
             },
         });
     }

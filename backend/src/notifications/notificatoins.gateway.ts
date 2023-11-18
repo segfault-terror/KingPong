@@ -51,25 +51,36 @@ export class NotificationsGateway implements OnGatewayDisconnect {
             console.log(
                 `[notifications] Unregistered ${user.username} from all tabs`,
             );
-        }
-        else {
+        } else {
             console.log(
                 `[notifications] Unregistered ${user.username} from one tab`,
             );
         }
     }
 
-    @SubscribeMessage('notifications')
-    async handleNotification(@MessageBody() username: string) {
+    @SubscribeMessage('notif')
+    async handleNotif(
+        @MessageBody()
+        {
+            username,
+            type,
+            avatar,
+            sender,
+        }: {
+            sender: string;
+            username: string;
+            type: string;
+            avatar: string;
+        },
+    ) {
         const result = this.connectedUsers.find(
             (user) => user.username === username,
         );
-
-        if (!result) return;
-        result.sockets.forEach((id) => {
-            this.server.to(id).emit('notifications', username);
-            console.log(`#${this.counter} - Notification to ${username}`);
-            this.counter++;
-        });
+        if (result)
+            result.sockets.forEach((id) => {
+                this.server.to(id).emit('notif', { sender, type, avatar });
+                console.log(`+++${this.counter} - Notif to ${username}`);
+                this.counter++;
+            });
     }
 }
