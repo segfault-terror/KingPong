@@ -24,10 +24,90 @@ import { FaGamepad } from 'react-icons/fa';
 import UserCircleInfo from './UserCircleInfo';
 import { nanoid } from 'nanoid';
 import { redirect } from 'next/navigation';
+import { set } from 'react-hook-form';
 
 type ProfileCardProps = {
     username: string;
 };
+
+function InviteGameModal({
+    username,
+    avatar,
+    id,
+    setHidden,
+}: {
+    username: string;
+    avatar: string;
+    id: string;
+    setHidden: any;
+}) {
+    const { socket } = useSocket();
+    const { mutate: createNotification } = useInvite();
+    const [Challenge, setChallenge] = useState(false);
+    const [myId, setId] = useState('');
+
+    const queryClient = useQueryClient();
+
+    useEffect(() => {
+        if (Challenge) redirect(`/game/ranked/${id}`);
+    }, [Challenge, id]);
+
+    return (
+        <Modal
+            onClose={() => setHidden(false)}
+            childrenClassName="bg-gradient-to-br from-primary to-background p-6 rounded-2xl border-r-2 border-l-2 border-secondary-500 w-[90%]
+                    max-w-[400px] h-44 flex flex-col justify-evenly"
+        >
+            <h1 className="text-center text-xl font-jost">
+                Invite <span className="text-secondary-200">@{username}</span>{' '}to a game?
+                <p className='text-lg font-jockey text-red-500'> you will redirect to the game page !</p>
+            </h1>
+            <div className="w-full flex justify-center gap-4 pt-4">
+                <button
+                    type="button"
+                    title="Invite"
+                    className="bg-background rounded-2xl px-4
+                                    border border-white text-secondary-200
+                                    font-jost hover:bg-secondary-200
+                                    hover:text-background"
+                    onClick={() => {
+                        if (!Challenge) {
+                            setId(myId);
+                            setTimeout(() => {
+                                console.log('id: ', myId);
+                                createNotification({
+                                    id: username,
+                                    type: 'GAME',
+                                    ChallengeId: myId,
+                                });
+                                socket?.emit('notifications', username);
+                                socket?.emit('notif', {
+                                    sender: username,
+                                    username: username,
+                                    type: 'GAME',
+                                    avatar: avatar,
+                                    ChallengeId: myId,
+                                });
+                                setChallenge(true);
+                            }, 2000);
+                        }
+                    }}
+                >
+                    OK
+                </button>
+                <button
+                    className="bg-background rounded-2xl px-4
+                                    border border-white text-red-400
+                                    font-jost hover:bg-red-400
+                                    hover:text-background"
+                    onClick={() => setHidden(false)}
+                >
+                    Cancel
+                </button>
+            </div>
+        </Modal>
+    );
+}
 
 export default function ProfileCard({ username }: ProfileCardProps) {
     const [showModal, setShowModal] = useState(false);
@@ -132,6 +212,8 @@ export default function ProfileCard({ username }: ProfileCardProps) {
         },
     });
 
+    const [hidden, setHidden] = useState(false);
+
     useEffect(() => {
         if (Challenge) redirect(`/game/ranked/${id}`);
     }, [Challenge, id]);
@@ -198,6 +280,14 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                     </div>
                 </Modal>
             )}
+            {hidden && (
+                <InviteGameModal
+                    username={username}
+                    avatar={visitedUser?.me.avatar}
+                    id={id}
+                    setHidden={setHidden}
+                />
+            )}
 
             {/* Notification modal */}
             {showNotification && (
@@ -260,41 +350,17 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                     {/* Not me and my friend - Message */}
                     {!friendship.isMe && friendship.isFriend && (
                         <>
-                            <Link href={`/chat/dm/${username}`}>
-                                <TbMessage2 />
-                            </Link>
                             <Link
                                 href={`#`}
                                 onClick={() => {
-                                    if (!Challenge) {
-                                        const myId = nanoid();
-                                        setId(myId);
-                                        setTimeout(() => {
-                                            console.log('id: ', myId);
-                                            createNotification({
-                                                id: visitedUser?.data.id,
-                                                type: 'GAME',
-                                                ChallengeId: myId,
-                                            });
-                                            socket?.emit(
-                                                'notifications',
-                                                visitedUser?.data.username,
-                                            );
-                                            socket?.emit('notif', {
-                                                sender: visitedUser?.data
-                                                    .username,
-                                                username:
-                                                    visitedUser?.me.username,
-                                                type: 'GAME',
-                                                avatar: visitedUser?.me.avatar,
-                                                ChallengeId: myId,
-                                            });
-                                            setChallenge(true);
-                                        }, 2000);
-                                    }
+                                    setId(nanoid());
+                                    setHidden(true);
                                 }}
                             >
                                 <FaGamepad />
+                            </Link>
+                            <Link href={`/chat/dm/${username}`}>
+                                <TbMessage2 />
                             </Link>
                         </>
                     )}
