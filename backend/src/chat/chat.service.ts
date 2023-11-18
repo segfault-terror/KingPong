@@ -361,6 +361,9 @@ export class ChatService {
                     orderBy: { createdAt: 'asc' },
                 },
                 inviteCode: true,
+                bannedUsers: {
+                    select: { username: true },
+                },
             },
         });
 
