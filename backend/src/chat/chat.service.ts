@@ -190,6 +190,7 @@ export class ChatService {
                                 username: true,
                             },
                         },
+                        createdAt: true,
                     },
                     orderBy: {
                         createdAt: 'desc',
@@ -208,7 +209,18 @@ export class ChatService {
             return slicedMessages.length > 0;
         });
 
-        return filteredResult;
+        function sortDMs(dm1, dm2) {
+            const dm1_lastMessage = dm1.messages[0];
+            const dm2_lastMessage = dm2.messages[0];
+
+            if (dm1_lastMessage.createdAt > dm2_lastMessage.createdAt)
+                return -1;
+            else if (dm1_lastMessage.createdAt < dm2_lastMessage.createdAt)
+                return 1;
+            else return 0;
+        }
+
+        return filteredResult.sort(sortDMs);
     }
 
     async createMessage(
@@ -1444,7 +1456,7 @@ export class ChatService {
         }
 
         if (channel.owner.username === username) {
-            throw new BadRequestException('Owner cannot be muted');
+            return { isMuted: false };
         }
 
         if (
