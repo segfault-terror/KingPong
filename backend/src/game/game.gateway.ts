@@ -199,7 +199,9 @@ export class GameGateway implements OnGatewayConnection {
         {
             player1,
             player2,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             score1,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             score2,
         }: {
             player1: string;
@@ -233,7 +235,7 @@ export class GameGateway implements OnGatewayConnection {
         @MessageBody() data: any,
         @ConnectedSocket() socket: Socket,
     ) {
-        this.computerService.startGame(socket);
+        this.computerService.startGame(socket, 'obstacle');
     }
 
     @SubscribeMessage('matchmaking')
@@ -301,6 +303,7 @@ export class GameGateway implements OnGatewayConnection {
     @SubscribeMessage('challenge')
     async handleChallenge(
         @MessageBody() data: any,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         @ConnectedSocket() socket: Socket,
     ) {
         const user = this.connectedUsers.find(

@@ -21,12 +21,14 @@ export interface InitData {
     topPaddle: { width: number; height: number };
     bottomPaddle: { width: number; height: number };
     ball: { radius: number };
+    obstacles: { x: number; y: number; width: number; height: number }[];
 }
 
 interface Data {
     ballPos: Vector;
     topPaddlePos: Vector;
     bottomPaddlePos: Vector;
+    obstaclesPos: Vector[];
 }
 
 export let pos: Data;
@@ -46,6 +48,7 @@ export default function Page() {
         topPaddle: { width: 0, height: 0 },
         bottomPaddle: { width: 0, height: 0 },
         ball: { radius: 0 },
+        obstacles: [],
     });
     const [serverClientRatio, setServerClientRatio] = React.useState({
         width: 1,
@@ -67,6 +70,7 @@ export default function Page() {
                 topPaddle: data.topPaddle,
                 bottomPaddle: data.bottomPaddle,
                 ball: data.ball,
+                obstacles: data.obstacles,
             });
             setReady(true);
         });
@@ -127,9 +131,15 @@ export default function Page() {
 
     return (
         <div className="flex justify-around items-center h-screen backdrop-blur-[1px]">
-            <div className='self-start my-28 h-48 w-32 rounded-t-full rounded-b-xl bg-secondary-500 flex flex-col justify-between items-center'>
-                <img src="/images/bot.png" alt="" className='h-28 w-28 rounded-full' />
-                <h1 className="text-3xl text-black font-jockey font-bold text-center flex justify-center items-center rounded-b-x">dr.bot</h1>
+            <div className="self-start my-28 h-48 w-32 rounded-t-full rounded-b-xl bg-secondary-500 flex flex-col justify-between items-center">
+                <img
+                    src="/images/bot.png"
+                    alt=""
+                    className="h-28 w-28 rounded-full"
+                />
+                <h1 className="text-3xl text-black font-jockey font-bold text-center flex justify-center items-center rounded-b-x">
+                    dr.bot
+                </h1>
             </div>
             <Sketch
                 className="border-4 border-secondary-500 rounded-lg overflow-hidden bg-gradient-to-br from-primary to-background

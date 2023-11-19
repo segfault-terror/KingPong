@@ -1,5 +1,6 @@
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
+import { useSocket } from '@/contexts/SocketContext';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
@@ -33,6 +34,8 @@ export default function EditChannelModal(props: {
         redirect(`/chat/channel/${watch('name')}`);
     }, [redirectChannel, watch]);
 
+    const { socket } = useSocket();
+
     const { mutate, isLoading } = useMutation({
         mutationFn: async (args: any) => {
             await axios.post(`/api/chat/channel/${props.channelName}/edit`, {
@@ -42,6 +45,10 @@ export default function EditChannelModal(props: {
         },
         onSuccess: () => {
             setRedirectChannel(true);
+            socket?.emit('channel-edited', {
+                oldName: props.channelName,
+                newName: watch('name'),
+            });
         },
         onError: () => {
             setChannelExists(true);
