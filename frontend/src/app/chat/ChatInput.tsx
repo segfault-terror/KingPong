@@ -24,10 +24,14 @@ export default function ChatInput({
     const inputRef = useRef<HTMLInputElement>(null);
     const { socket } = useSocket();
     const queryClient = useQueryClient();
+    const pathname = usePathname();
 
     const { data, isLoading } = useQuery({
         queryKey: ['is-muted', username],
         queryFn: async () => {
+            if (pathname.startsWith('/chat/dm')) {
+                return { isMuted: false };
+            }
             const { data } = await axios.get(
                 `/api/chat/channel/${channelName}/is-muted/${username}`,
                 { withCredentials: true },
@@ -102,8 +106,6 @@ export default function ChatInput({
             socket?.off('new-owner');
         };
     }, [data, channelName, socket]);
-
-    const pathname = usePathname();
 
     useEffect(() => {
         socket?.on('typing', (data) => {

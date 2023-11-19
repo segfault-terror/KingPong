@@ -1456,7 +1456,7 @@ export class ChatService {
         }
 
         if (channel.owner.username === username) {
-            throw new BadRequestException('Owner cannot be muted');
+            return { isMuted: false };
         }
 
         if (
