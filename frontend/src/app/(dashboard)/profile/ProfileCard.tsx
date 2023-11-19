@@ -394,9 +394,10 @@ export default function ProfileCard({ username }: ProfileCardProps) {
                     )}
 
                     {/* Not me and not my friend - Add friend */}
-                    {!isBlocked?.blocked &&
-                        !friendship.isMe &&
-                        !friendship.isFriend && (
+                    {!friendship.isMe &&
+                        !friendship.isFriend &&
+                        !isBlocked?.blockedBy &&
+                        !isBlocked?.blocked && (
                             <button
                                 type="button"
                                 title="Send a friend request"
