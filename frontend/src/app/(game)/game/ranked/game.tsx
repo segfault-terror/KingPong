@@ -55,10 +55,7 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
     });
     const { socket } = useSocket();
 
-    const { mutate: updateGame, isLoading } = useMutation(async (data: any) => {
-        const { data: res } = await axios.post('/api/game/add/match', data);
-        return res;
-    });
+
 
     const queryClient = useQueryClient();
 
@@ -89,13 +86,6 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 setTimeout(() => {
                     setWinner(me.username);
                 }, 5000);
-                updateGame({
-                    player1: me.username,
-                    player2: data.opponent,
-                    ranked: true,
-                    player1_score: 11,
-                    player2_score: 1,
-                });
             });
             socket.on('finished', (data) => {
                 queryClient.invalidateQueries(['me']);
@@ -105,13 +95,6 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 setTimeout(() => {
                     setWinner(data.winner);
                 }, 5000);
-                updateGame({
-                    player1: data.player1,
-                    player2: data.player2,
-                    ranked: true,
-                    player1_score: data.player1_score,
-                    player2_score: data.player2_score,
-                });
             });
             return () => {
                 socket.off('canvas');

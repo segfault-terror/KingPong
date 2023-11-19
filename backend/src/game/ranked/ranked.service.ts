@@ -151,6 +151,13 @@ export class RankedService {
                     },
                     'finished',
                 );
+                this.gameService.AddMatch(
+                    player1.username,
+                    player2.username,
+                    true,
+                    score1,
+                    score2,
+                );
                 this.gameService.updatePlayerScore({
                     player1: player1.username,
                     player2: player2.username,
