@@ -5,10 +5,10 @@ import { PongTable } from '../utils/PongTable';
 import { Ball } from '../utils/Ball';
 import { Paddle } from '../utils/Paddle';
 import { UserService } from 'src/user/user.service';
+import { Obstacle } from '../utils/Obstacle';
 
-interface GameMode {
-    mode: 'normal' | 'obstacle' | 'reverse';
-}
+type GameMode = 'normal' | 'obstacle' | 'reverse';
+
 @Injectable()
 export class ComputerService {
     constructor(private readonly userService: UserService) {}
@@ -35,46 +35,32 @@ export class ComputerService {
             angularVelocity: 0,
             velocity: { x: 0, y: 0 },
         });
-        const obstacles: Paddle[] = [];
-        if (mode.mode === 'obstacle') {
-            let obstacle: Paddle;
-            obstacle = new Paddle(
-                canvas.width / 4,
-                canvas.height / 4,
-                100,
-                100,
-                world,
-                {
-                    isStatic: true,
-                },
-            );
+        const obstacles: Obstacle[] = [];
+        if (mode === 'obstacle') {
+            let obstacle: Obstacle;
+
+            let randomX = Common.random(0, 200);
+            let randomY = Common.random(150, 300);
+            let randomR = Common.random(10, 50);
+            obstacle = new Obstacle(randomX, randomY, randomR, world);
             obstacles.push(obstacle);
-            obstacle = new Paddle(
-                (canvas.width / 4) * 3,
-                (canvas.height / 4) * 3,
-                100,
-                100,
-                world,
-                { isStatic: true },
-            );
+
+            randomX = Common.random(300, 400);
+            randomY = Common.random(150, 300);
+            randomR = Common.random(10, 50);
+            obstacle = new Obstacle(randomX, randomY, randomR, world);
             obstacles.push(obstacle);
-            obstacle = new Paddle(
-                (canvas.width / 4) * 3,
-                canvas.height / 4,
-                100,
-                100,
-                world,
-                { isStatic: true },
-            );
+
+            randomX = Common.random(0, 200);
+            randomY = Common.random(500, 650);
+            randomR = Common.random(10, 50);
+            obstacle = new Obstacle(randomX, randomY, randomR, world);
             obstacles.push(obstacle);
-            obstacle = new Paddle(
-                canvas.width / 4,
-                (canvas.height / 4) * 3,
-                100,
-                100,
-                world,
-                { isStatic: true },
-            );
+
+            randomX = Common.random(300, 400);
+            randomY = Common.random(500, 650);
+            randomR = Common.random(10, 50);
+            obstacle = new Obstacle(randomX, randomY, randomR, world);
             obstacles.push(obstacle);
         }
         setTimeout(() => {
@@ -101,8 +87,10 @@ export class ComputerService {
             bottomPaddle: { width: bottomPaddle.w, height: bottomPaddle.h },
             ball: { radius: ball.r },
             obstacles: obstacles.map((o) => ({
-                width: o.w,
-                height: o.h,
+                x: o.body.position.x,
+                y: o.body.position.y,
+                width: o.r * 2,
+                height: o.r * 2,
             })),
         });
 
@@ -245,7 +233,7 @@ export class ComputerService {
                 ballPos,
                 topPaddlePos,
                 bottomPaddlePos,
-                obstacles: obstacles.map((o) => o.body.position),
+                obstaclesPos: obstacles.map((o) => o.body.position),
             });
         }, frameRate);
 

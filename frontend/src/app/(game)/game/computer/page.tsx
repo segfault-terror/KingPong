@@ -130,20 +130,20 @@ export default function Page() {
     if (!ready) return <Loading />;
 
     return (
-        <div className="flex justify-around items-center h-screen backdrop-blur-[1px]">
-            <div className="self-start my-28 h-48 w-32 rounded-t-full rounded-b-xl bg-secondary-500 flex flex-col justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-center items-center h-screen backdrop-blur-[1px] m-auto">
+            <div className="self-start rounded-l-full w-1/2 p-2 bg-primary border-2 border-secondary-500 flex  justify-between items-center px-2 mx-3 drop-shadow-[0px_0px_10px_#FF0B0B]">
                 <img
                     src="/images/bot.png"
                     alt=""
-                    className="h-28 w-28 rounded-full"
+                    className="h-10 w-10 md:h-24 md:w-24 rounded-full place-items-start"
                 />
-                <h1 className="text-3xl text-black font-jockey font-bold text-center flex justify-center items-center rounded-b-x">
+                <h1 className="text-2xl md:text-3xl text-black font-jockey font-bold text-center">
                     dr.bot
                 </h1>
             </div>
             <Sketch
                 className="border-4 border-secondary-500 rounded-lg overflow-hidden bg-gradient-to-br from-primary to-background
-                 drop-shadow-[0px_0px_15px_#ffa62a] backdrop-blur-md"
+                 drop-shadow-[0px_0px_15px_#ffa62a] backdrop-blur-md my-1 z-20"
                 setup={(p5: p5Types, canvasParentRef: Element) => {
                     setup(p5, canvasParentRef, init, serverClientRatio);
                 }}
@@ -151,7 +151,16 @@ export default function Page() {
                     draw(p5, serverClientRatio, socket);
                 }}
             />
-            <div></div>
+            <div className="self-end rounded-r-full w-1/2 p-2 bg-primary border-2 border-secondary-500 flex  justify-between items-center px-2 mx-3 drop-shadow-[0px_0px_10px_#03CE18]">
+                <h1 className="text-2xl md:text-3xl text-black font-jockey font-bold text-center">
+                    Akashi
+                </h1>
+                <img
+                    src="/images/bot.png"
+                    alt=""
+                    className="h-10 w-10 md:h-24 md:w-24 rounded-full place-items-start"
+                />
+            </div>
         </div>
     );
 }

@@ -23,8 +23,8 @@ export class Obstacle {
         p5.strokeWeight(1);
         p5.stroke(255);
         p5.fill(127);
-        p5.rectMode(p5.CENTER);
-        p5.rect(0, 0, this.w, this.h);
+        p5.ellipseMode(p5.CENTER);
+        p5.ellipse(0, 0, this.w, this.h);
         p5.pop();
     }
 }

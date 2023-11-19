@@ -1,17 +1,14 @@
 import p5Types from 'p5';
-import { Engine, World, Runner, Bodies, Body, Events } from 'matter-js';
 import { Paddle } from './Paddle';
 import { Ball } from './Ball';
 import { Socket } from 'socket.io-client';
-
 import { InitData, pos } from './page';
+import { Obstacle } from './Obstacle';
 
-let engine: Engine;
-export let world: World;
-let balls: Ball[] = [];
 let topPaddle: Paddle;
 let bottomPaddle: Paddle;
 let ball: Ball;
+const obstacles: Obstacle[] = [];
 
 let img : any;
 function preload(p5: p5Types) {
@@ -76,6 +73,16 @@ export function setup(
         p5.height / 2,
         init.ball.radius * serverClientRatio.width,
     );
+    for (const obstacle of init.obstacles) {
+        obstacles.push(
+            new Obstacle(
+                obstacle.x * serverClientRatio.width,
+                obstacle.y * serverClientRatio.height,
+                obstacle.width * serverClientRatio.width,
+                obstacle.height * serverClientRatio.height,
+            ),
+        );
+    }
 }
 
 export function draw(
@@ -84,8 +91,8 @@ export function draw(
     socket?: Socket,
 ) {
     if (!socket) return;
-    p5.background(50);
-    p5.image(img, 0, 0,p5.width, p5.height, 0, 0, img.width, img.height, p5.COVER);
+    // p5.image(img, 0, 0,p5.width, p5.height, 0, 0, img.width, img.height, p5.COVER);
+    p5.background(51);
     dashedLine(
         p5,
         -20 * serverClientRatio.width,
@@ -98,6 +105,9 @@ export function draw(
     ball.show(p5, serverClientRatio, pos?.ballPos);
     topPaddle.show(p5, serverClientRatio, pos?.topPaddlePos);
     bottomPaddle.show(p5, serverClientRatio, pos?.bottomPaddlePos);
+    for (let i = 0; i < obstacles.length; i++) {
+        obstacles[i].show(p5, serverClientRatio, pos.obstaclesPos[i]);
+    }
     move(p5, socket);
 }
 
