@@ -16,7 +16,9 @@ import { useEffect, useState } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { set } from 'react-hook-form';
 import { useQueries, useQuery } from '@tanstack/react-query';
+import { IoIosExit } from 'react-icons/io';
 import axios from 'axios';
+import { redirect } from 'next/navigation';
 
 type Props = {
     me: any;
@@ -54,6 +56,7 @@ export default function MatchMaking({
     const isDesktop = useMediaQuery('(min-width: 1024px)');
     const [animations, setAnimations] = useState(['', '', '', '', '', '']);
     const { socket } = useSocket();
+    const [CancelMatchmaking, setCancelMatchmaking] = useState(false);
     useEffect(() => {
         if (socket) {
             socket?.on(
@@ -75,25 +78,37 @@ export default function MatchMaking({
                     }
                 },
             );
-            
             return () => {
                 socket?.off('matchmakingfound');
             };
         }
     }, [socket]);
 
+    useEffect(() => {
+        if (CancelMatchmaking) {
+            console.log('cancel matchmaking');
+            socket?.emit('cancel-matchmaking', { username: me.username });
+            redirect('/home');
+        }
+    }, [CancelMatchmaking]);
+
     const [newOpponent, setNewOpponent] = useState({
         username: '',
         avatar: '',
     });
-    const { data: opponent } = useQuery(
-        ['opponent', oppData],
-        async () => {
-            if (!oppData) return null;
-            const { data } = await axios.get(`/api/user/get/${oppData}`);
-            return data;
-        },
-    );
+    const { data: opponent } = useQuery(['opponent', oppData], async () => {
+        if (!oppData) return null;
+        const { data } = await axios.get(`/api/user/get/${oppData}`);
+        return data;
+    });
+
+    const [timer, setTimer] = useState(0);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTimer((prev) => prev + 1);
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [timer]);
 
     useEffect(() => {
         if (opponent) {
@@ -109,6 +124,18 @@ export default function MatchMaking({
                 overflow-hidden
                 flex flex-col lg:flex-row justify-center"
         >
+            <button
+                type="button"
+                title="return to dashboard"
+                className="w-16 h-16 rounded-full absolute left-1 bottom-2"
+            >
+                <IoIosExit
+                    className="text-3xl text-secondary-200 w-16 h-16 rounded-full bg-secondary-100 hover:text-background hover:bg-secondary-200 transition-all duration-300 ease-in-out"
+                    onClick={() => {
+                        setCancelMatchmaking(true);
+                    }}
+                />
+            </button>
             <img
                 src={TopImg.src}
                 alt="Top Side"
@@ -150,23 +177,16 @@ export default function MatchMaking({
                 alt="Right Side"
                 className={`hidden lg:inline lg:object-cover lg:w-full ${animations[3]}`}
             />
-            <p className="absolute bottom-4 right-4 text-2xl">
-                <img
-                    src={Ball.src}
-                    alt="Ball"
-                    className="inline-block w-2 h-2 lg:w-4 lg:h-4 animate-first-dot"
-                />
-                <img
-                    src={Ball.src}
-                    alt="Ball"
-                    className="inline-block w-2 h-2 lg:w-4 lg:h-4 mx-2 animate-second-dot"
-                />
-                <img
-                    src={Ball.src}
-                    alt="Ball"
-                    className="inline-block w-2 h-2 lg:w-4 lg:h-4 animate-third-dot"
-                />
-            </p>
+            {animations[0] === '' && (
+                <p className="absolute bottom-4 right-4 text-2xl">
+                    <span className="text-secondary-200 font-jockey text-center text-4xl underline-offset-1">
+                        waiting {timer} {'s  '}
+                    </span>
+                    <div className="inline-block w-4 h-4 rounded-full bg-secondary-200 lg:w-4 lg:h-4 animate-first-dot" />
+                    <div className="inline-block w-4 h-4 mx-1 rounded-full bg-secondary-200 lg:w-4 lg:h-4 animate-second-dot" />
+                    <div className="inline-block w-4 h-4 rounded-full bg-secondary-200 lg:w-4 lg:h-4 animate-third-dot" />
+                </p>
+            )}
         </div>
     );
 }
