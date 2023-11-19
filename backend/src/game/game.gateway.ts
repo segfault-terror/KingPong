@@ -235,7 +235,7 @@ export class GameGateway implements OnGatewayConnection {
         @MessageBody() data: any,
         @ConnectedSocket() socket: Socket,
     ) {
-        this.computerService.startGame(socket, 'obstacle');
+        this.computerService.startGame(socket, 'normal');
     }
 
     @SubscribeMessage('matchmaking')
@@ -298,6 +298,21 @@ export class GameGateway implements OnGatewayConnection {
                 }, 5000);
             } else return;
         }
+    }
+
+    @SubscribeMessage('cancel-matchmaking')
+    async handleCancelMatchmaking(@MessageBody() data: any) {
+        const user = this.connectedUsers.find(
+            (user) => user.username === data.username,
+        );
+        if (!user) return;
+        const UserQueue = this.queue.find(
+            (queue) => queue.username === data.username,
+        );
+        if (!UserQueue) return;
+        this.queue = this.queue.filter(
+            (queue) => queue.username !== data.username,
+        );
     }
 
     @SubscribeMessage('challenge')
