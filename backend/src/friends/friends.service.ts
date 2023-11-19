@@ -52,15 +52,15 @@ export class FriendsService {
             },
             select: { id: true },
         });
+        if (dm) {
+            await this.prisma.message.deleteMany({
+                where: { dm_id: dm.id },
+            });
 
-        await this.prisma.message.deleteMany({
-            where: { dm_id: dm.id },
-        });
-
-        await this.prisma.dM.delete({
-            where: { id: dm.id },
-        });
-
+            await this.prisma.dM.delete({
+                where: { id: dm.id },
+            });
+        }
         return await this.prisma.user.update({
             where: { id: userId },
             data: {
