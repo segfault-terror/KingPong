@@ -21,9 +21,10 @@ export default function Layout({ children }: LayoutProps) {
                 redirect('/signin');
             }
         },
+        refetchOnWindowFocus: false,
     });
     if (error || data?.data.status === false) {
         redirect('/signin');
     }
-    return <>{children}</>;
+    return <div className='bg-gameBg bg-cover bg-fix'>{children}</div>;
 }
