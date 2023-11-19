@@ -86,6 +86,11 @@ export class ChatGateway implements OnGatewayDisconnect {
                 (user) => user.username === data.username,
             );
 
+            if (!result) {
+                console.log('no user registered');
+                return;
+            }
+
             this.server
                 .to(data.channelName)
                 .except(result.socketsId)
@@ -176,5 +181,31 @@ export class ChatGateway implements OnGatewayDisconnect {
     @SubscribeMessage('new-owner')
     handleNewOwner(@MessageBody() channelName: string) {
         this.server.to(channelName).emit('new-owner', channelName);
+    }
+
+    @SubscribeMessage('channel-edited')
+    async handleChannelEdited(
+        @MessageBody()
+        data: {
+            oldName: string;
+            newName: string;
+        },
+    ) {
+        this.server.to(data.oldName).emit('channel-edited', data);
+
+        this.connectedUsers.forEach(async (connectedUser) => {
+            const channels = await this.chatService.getUserChannels(
+                connectedUser.username,
+            );
+
+            if (channels.some((channel) => channel.name === data.newName)) {
+                connectedUser.socketsId.forEach((socketId) => {
+                    const socket = this.server.sockets.get(socketId);
+
+                    socket.leave(data.oldName);
+                    socket.join(data.newName);
+                });
+            }
+        });
     }
 }
