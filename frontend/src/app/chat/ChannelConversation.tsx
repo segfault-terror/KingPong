@@ -104,6 +104,13 @@ export default function ChannelConversation(props: ChannelConversationProps) {
         'kick' | 'ban' | 'delete' | null
     >(null);
 
+    const [newChannelName, setNewChannelName] = useState('');
+    useEffect(() => {
+        if (!newChannelName) return;
+        console.log(`Redirecting to /chat/channel/${newChannelName}`);
+        redirect(`/chat/channel/${newChannelName}`);
+    }, [newChannelName]);
+
     useEffect(() => {
         socket?.on(
             'redirect-to-chat',
@@ -131,9 +138,19 @@ export default function ChannelConversation(props: ChannelConversationProps) {
                 exact: true,
             });
         });
+        socket?.on('channel-edited', (data: any) => {
+            console.log(`channel-edited: ${data.oldName}`);
+            setNewChannelName(data.newName);
+            socket?.emit('change-room', {
+                oldRoom: data.oldName,
+                newRoom: data.newName,
+            });
+        });
         return () => {
             socket?.off('redirect-to-chat');
             socket?.off('channel-deleted');
+            socket?.off('update-channel-sidebar');
+            socket?.off('channel-edited');
         };
     });
 
