@@ -7,6 +7,11 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { stat } from 'fs';
 import Loading from '@/app/loading';
+import { use, useEffect, useState } from 'react';
+import { Socket, io } from 'socket.io-client';
+import { set } from 'react-hook-form';
+import { InviteGameModal } from '@/components/ModalGame';
+import { nanoid } from 'nanoid';
 
 const EmptyFriendsList = () => {
     return (
@@ -35,62 +40,144 @@ const FriendCard = ({
     const bgStatus =
         status === UserStatus.Offline ? 'bg-inactive-500 opacity-50' : '';
     const SendGameReq = status === UserStatus.Online ? true : false;
+    const [hidden, setHidden] = useState(false);
+    const [socket, setSocket] = useState<Socket | null>(null);
+    const [ChallengeId, setChallengeId] = useState('');
+    // fetch data of me and my friends
+    const { data: user, isLoading: myloading } = useQuery({
+        queryKey: ['me'],
+        queryFn: async () => {
+            const { data } = await axios.get(`/api/user/me`, {
+                withCredentials: true,
+            });
+            return data;
+        },
+        refetchOnWindowFocus: false,
+    });
+
+    const { data: friend, isLoading: friendLoading } = useQuery({
+        queryKey: ['friend', id],
+        queryFn: async () => {
+            const { data } = await axios.get(`/api/user/get/${username}`, {
+                withCredentials: true,
+            });
+            return data;
+        },
+        refetchOnWindowFocus: false,
+    });
+
+    useEffect(() => {
+        const newSocket = io(`/game`, {
+            withCredentials: true,
+            path: '/api/socket',
+            autoConnect: false,
+        });
+
+        async function connect() {
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            newSocket.connect();
+        }
+
+        connect();
+        newSocket.emit('register', username);
+
+        setSocket(newSocket);
+        return () => {
+            setTimeout(() => newSocket.close(), 0);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (socket) {
+            socket.on('challenge', (data: any) => {
+                console.log(data);
+            });
+        }
+    }, [socket]);
+
+    if (myloading || friendLoading) {
+        return <EmptyFriendsList />;
+    }
 
     return (
-        <div
-            className={`flex items-center justify-center w-full h-full p-3 z-10 rounded-xl ${bgStatus}  hover:bg-background hover:border-r hover:border-l delay-75 duration-75 transition border`}
-            key={id}
-        >
-            <Link className="flex items-center justify-start w-3/4 h-full "
-            href={`/profile/${username}`}>
-                <img
-                    src={avatar}
-                    alt="avatar"
-                    className="w-28 h-28 rounded-full bg-background border-white border-2 object-cover"
+        <>
+            {hidden ? (
+                <InviteGameModal
+                    username={username}
+                    sender={user.username}
+                    avatar={avatar}
+                    id={ChallengeId}
+                    senderId={friend.id}
+                    setHidden={setHidden}
+                    socket={socket}
                 />
-                <div className="flex flex-col items-start justify-center ml-3">
-                    <span className="text-lg font-medium">{fullname}</span>
-                    <span
-                        className={`text-xs rounded-full px-2 py-1 ${colorStus} text-white`}
+            ) : (
+                <div
+                    className={`flex items-center justify-center w-full h-full p-3 z-10 rounded-xl ${bgStatus}  hover:bg-background hover:border-r hover:border-l delay-75 duration-75 transition border`}
+                    key={id}
+                >
+                    <Link
+                        className="flex items-center justify-start w-3/4 h-full "
+                        href={`/profile/${username}`}
                     >
-                        {status}
-                    </span>
-                </div>
-            </Link>
-            <div className="flex flex-col justify-between w-1/4 h-full  z-30">
-                {!isme && (
-                    <>
-                        {isYourFriend ? (
+                        <img
+                            src={avatar}
+                            alt="avatar"
+                            className="w-28 h-28 rounded-full bg-background border-white border-2 object-cover"
+                        />
+                        <div className="flex flex-col items-start justify-center ml-3">
+                            <span className="text-lg font-medium">
+                                {fullname}
+                            </span>
+                            <span
+                                className={`text-xs rounded-full px-2 py-1 ${colorStus} text-white`}
+                            >
+                                {status}
+                            </span>
+                        </div>
+                    </Link>
+                    <div className="flex flex-col justify-between w-1/4 h-full  z-30">
+                        {!isme && (
                             <>
-                                <Link
-                                    className="bg-background z-20 text-white rounded-full text-center px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black my-2"
-                                    type="submit"
-                                    href={`/chat/dm/${username}`}
-                                >
-                                    Message
-                                </Link>
-                                {SendGameReq && (
+                                {isYourFriend ? (
+                                    <>
+                                        <Link
+                                            className="bg-background z-20 text-white rounded-full text-center px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black my-2"
+                                            type="submit"
+                                            href={`/chat/dm/${username}`}
+                                        >
+                                            Message
+                                        </Link>
+                                        {SendGameReq && (
+                                            <button
+                                                className="bg-background text-white z-20 rounded-full px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black"
+                                                type="button"
+                                                onClick={() => {
+                                                    setChallengeId(nanoid());
+                                                    setTimeout(() => {
+                                                        setHidden(true);
+                                                    }, 500);
+                                                }}
+                                            >
+                                                Challenge
+                                            </button>
+                                        )}
+                                    </>
+                                ) : (
+                                    //button invite friend
                                     <button
-                                        className="bg-background text-white z-20 rounded-full px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black"
+                                        className="bg-background z-20 text-white rounded-full px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black"
                                         type="button"
                                     >
-                                        Challenge
+                                        Invite
                                     </button>
                                 )}
                             </>
-                        ) : (
-                            //button invite friend
-                            <button
-                                className="bg-background z-20 text-white rounded-full px-3 py-1 text-sm font-medium hover:bg-secondary-200 hover:text-black"
-                                type="button"
-                            >
-                                Invite
-                            </button>
                         )}
-                    </>
-                )}
-            </div>
-        </div>
+                    </div>
+                </div>
+            )}
+        </>
     );
 };
 
