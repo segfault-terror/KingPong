@@ -209,7 +209,7 @@ export class ChatService {
             return slicedMessages.length > 0;
         });
 
-        function sortDMs(dm1, dm2) {
+        function sortDMs(dm1: any, dm2: any) {
             const dm1_lastMessage = dm1.messages[0];
             const dm2_lastMessage = dm2.messages[0];
 
@@ -310,7 +310,7 @@ export class ChatService {
 
     async getUserChannels(username: string) {
         // Not banned AND joined the channel (Owner, Admin or Member)
-        return this.prisma.channel.findMany({
+        const channels = await this.prisma.channel.findMany({
             where: {
                 AND: [
                     {
@@ -339,6 +339,31 @@ export class ChatService {
                     },
                 ],
             },
+            select: {
+                id: true,
+                name: true,
+                type: true,
+                inviteCode: true,
+                ownerId: true,
+                createdAt: true,
+                messages: true,
+            },
+        });
+
+        const sortedChannels = channels.sort((c1: any, c2: any) => {
+            const c1_lastMessage = c1.messages[c1.messages.length - 1];
+            const c2_lastMessage = c2.messages[c2.messages.length - 1];
+
+            if (c1_lastMessage.createdAt > c2_lastMessage.createdAt) {
+                return -1;
+            } else if (c1_lastMessage.createdAt < c2_lastMessage.createdAt) {
+                return 1;
+            } else return 0;
+        });
+
+        return sortedChannels.map((channel) => {
+            delete channel.messages;
+            return channel;
         });
     }
 
