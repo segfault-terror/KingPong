@@ -9,6 +9,7 @@ const config: Config = {
     ],
     theme: {
         extend: {
+            scrollbar: ['rounded'],
             screens: {
                 sm: '375px',
                 md: '650px',
@@ -28,6 +29,7 @@ const config: Config = {
                 borderLinear:
                     'linear-gradient(var(--gradient-angle)), var(--tw-gradient-from-position),var(--tw-gradient-to-position),var(--tw-gradient-to))',
                 chatBg: 'url("/images/chat-background.svg")',
+                gameBg: 'url("/images/bg-game.svg")',
             },
             colors: {
                 primary: '#4F1754',
@@ -326,7 +328,7 @@ const config: Config = {
                     '100%': {
                         top: '34%',
                         left: '52%',
-                    }
+                    },
                 },
                 Ping: {
                     '0%': {
