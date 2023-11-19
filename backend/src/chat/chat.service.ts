@@ -346,13 +346,21 @@ export class ChatService {
                 inviteCode: true,
                 ownerId: true,
                 createdAt: true,
-                messages: true,
+                messages: {
+                    select: {
+                        createdAt: true,
+                    },
+                },
             },
         });
 
-        const sortedChannels = channels.sort((c1: any, c2: any) => {
+        const sortedChannels = channels.sort((c1, c2) => {
             const c1_lastMessage = c1.messages[c1.messages.length - 1];
             const c2_lastMessage = c2.messages[c2.messages.length - 1];
+
+            if (!c1_lastMessage || !c2_lastMessage) {
+                return 0;
+            }
 
             if (c1_lastMessage.createdAt > c2_lastMessage.createdAt) {
                 return -1;
