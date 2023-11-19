@@ -35,16 +35,20 @@ function InviteGameModal({
     avatar,
     id,
     setHidden,
+    sender,
+    senderId,
 }: {
     username: string;
+    sender: string;
     avatar: string;
     id: string;
     setHidden: any;
+    senderId: string;
 }) {
     const { socket } = useSocket();
     const { mutate: createNotification } = useInvite();
     const [Challenge, setChallenge] = useState(false);
-    const [myId, setId] = useState('');
+    const [myId, setId] = useState(id);
 
     const queryClient = useQueryClient();
 
@@ -59,8 +63,12 @@ function InviteGameModal({
                     max-w-[400px] h-44 flex flex-col justify-evenly"
         >
             <h1 className="text-center text-xl font-jost">
-                Invite <span className="text-secondary-200">@{username}</span>{' '}to a game?
-                <p className='text-lg font-jockey text-red-500'> you will redirect to the game page !</p>
+                Invite <span className="text-secondary-200">@{username}</span>{' '}
+                to a game?
+                <p className="text-lg font-jockey text-red-500">
+                    {' '}
+                    you will redirect to the game page !
+                </p>
             </h1>
             <div className="w-full flex justify-center gap-4 pt-4">
                 <button
@@ -76,13 +84,13 @@ function InviteGameModal({
                             setTimeout(() => {
                                 console.log('id: ', myId);
                                 createNotification({
-                                    id: username,
+                                    id: senderId,
                                     type: 'GAME',
                                     ChallengeId: myId,
                                 });
                                 socket?.emit('notifications', username);
                                 socket?.emit('notif', {
-                                    sender: username,
+                                    sender: sender,
                                     username: username,
                                     type: 'GAME',
                                     avatar: avatar,
@@ -282,10 +290,12 @@ export default function ProfileCard({ username }: ProfileCardProps) {
             )}
             {hidden && (
                 <InviteGameModal
-                    username={username}
+                    sender={visitedUser?.data.username}
+                    username={visitedUser?.me.username}
                     avatar={visitedUser?.me.avatar}
                     id={id}
                     setHidden={setHidden}
+                    senderId={visitedUser?.data.id}
                 />
             )}
 
