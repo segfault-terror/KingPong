@@ -2,6 +2,7 @@
 import Loading from '@/app/loading';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -43,6 +44,7 @@ export default function LevelUp({ newLevel, data }: LevelUpProps) {
     useEffect(() => {
         if (counter === 0) {
             updateUser();
+            redirect('/home');
         }
         const timer = setTimeout(() => {
             setCounter(counter - 1);
