@@ -127,21 +127,26 @@ export class FriendsService {
             where: { username },
         });
 
+        const isBlocked = await this.isUserBlocked(userId, username);
+
+        if (!isBlocked) {
+            throw new ForbiddenException('User is not blocked');
+        }
         if (!user) {
             throw new NotFoundException('User not found');
         }
 
-        return await this.prisma.user.update({
-            where: { id: userId },
-            data: {
-                blockedUsers: {
-                    disconnect: { id: user.id },
+        if (isBlocked) {
+            return this.prisma.user.update({
+                where: { id: userId },
+                data: {
+                    blockedUsers: {
+                        disconnect: { id: user.id },
+                    },
                 },
-                blockedBy: {
-                    disconnect: { id: user.id },
-                },
-            },
-        });
+            });
+        }
+        return;
     }
 
     async isUserBlocked(myId: string, username: string) {
