@@ -31,6 +31,7 @@ export default function FriendListContent({
     const [showNotification, setShowNotification] = useState(false);
 
     const { mutate: InviteFriend } = useInvite();
+    const { socket } = useSocket();
 
     if (isLoading) {
         return (
@@ -53,8 +54,6 @@ export default function FriendListContent({
         statusBg = 'bg-ingame';
         statusText = 'text-ingame';
     }
-
-    const { socket } = useSocket();
 
     return (
         <>
@@ -126,10 +125,7 @@ export default function FriendListContent({
                                     id: data.friendId,
                                     type: 'FRIEND',
                                 });
-                                socket?.emit(
-                                    'notifications',
-                                    username,
-                                );
+                                socket?.emit('notifications', username);
                                 setShowNotification(true);
                                 setTimeout(
                                     () => setShowNotification(false),

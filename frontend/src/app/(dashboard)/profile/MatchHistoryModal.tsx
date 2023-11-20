@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import GameResult from './GameResult';
-import { Users, UsersMatchHistory, UsersStats } from './data/ProfileData';
 import axios from 'axios';
 import Loading from '@/app/loading';
-
 
 type GameResultModalProps = {
     userName: string;

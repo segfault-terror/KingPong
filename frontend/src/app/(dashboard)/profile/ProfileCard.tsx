@@ -24,7 +24,6 @@ import { FaGamepad } from 'react-icons/fa';
 import UserCircleInfo from './UserCircleInfo';
 import { nanoid } from 'nanoid';
 import { redirect } from 'next/navigation';
-import { set } from 'react-hook-form';
 import { InviteGameModal } from '@/components/ModalGame';
 
 type ProfileCardProps = {

@@ -4,9 +4,7 @@ import localFont from 'next/font/local';
 import { Jost, Mulish, Jockey_One } from 'next/font/google';
 
 import { Suspense } from 'react';
-import Loading from '@/app/loading';
 import QueryProvider from './QueryProvider';
-import { usePathname } from 'next/navigation';
 
 const nicoMoji = localFont({
     src: [

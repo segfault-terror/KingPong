@@ -51,12 +51,6 @@ function DirectMessage({
     );
 }
 
-export enum UserStatus {
-    Online = 'online',
-    Offline = 'offline',
-    InGame = 'in-game',
-}
-
 export function getStatusColor(status: string) {
     switch (status) {
         case 'ONLINE':
@@ -72,5 +66,5 @@ export type DirectMessageProps = {
     username: string;
     avatar: string;
     lastMessage: any;
-    status: UserStatus;
+    status: 'ONLINE' | 'OFFLINE' | 'INGAME';
 };

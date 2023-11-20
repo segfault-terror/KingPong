@@ -20,7 +20,7 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
     const [createChannel, setCreateChannel] = useState(false);
     const [joinChannel, setJoinChannel] = useState(false);
     const [welcomeChannel, setWelcomeChannel] = useState(false);
-    const [channel, setChannel] = useState<Channel>({} as Channel);
+    const [channel, setChannel] = useState({} as any);
     const [newConversation, setNewConversation] = useState(false);
     const [dotsDropdown, setDotsDropdown] = useState(false);
 

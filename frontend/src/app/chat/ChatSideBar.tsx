@@ -10,7 +10,6 @@ import Loading from '../loading';
 import DirectMessage from './DirectMessage';
 import EmptyChat from './EmptyChat';
 import ToggleButton from './ToggleButton';
-import { DMList } from './data/ChatData';
 import { ChannelTypeIcon } from './ChannelConversation';
 
 type ChatSideBarProps = {

@@ -23,6 +23,7 @@ type ModalContextProps = {
     setNewConversation: (val: boolean) => void;
     dotsDropdown: boolean;
     setDotsDropdown: (val: boolean) => void;
+    setChannel: Function;
 };
 
 type ChannelModalContextProps = {
