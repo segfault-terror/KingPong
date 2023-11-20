@@ -10,6 +10,7 @@ import Loading from '../loading';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { SocketProvider } from '@/contexts/SocketContext';
+import { redirect } from 'next/navigation';
 
 type MainChatLayoutProps = {
     children: React.ReactNode;
@@ -23,6 +24,22 @@ export default function MainChatLayout({ children }: MainChatLayoutProps) {
     const [channel, setChannel] = useState({} as any);
     const [newConversation, setNewConversation] = useState(false);
     const [dotsDropdown, setDotsDropdown] = useState(false);
+
+    const { error, data } = useQuery({
+        queryKey: ['auth'],
+        queryFn: async () => {
+            try {
+                return await axios.get(`/api/auth/status`, {
+                    withCredentials: true,
+                });
+            } catch {
+                redirect('/signin');
+            }
+        },
+    });
+    if (error || data?.data.status === false) {
+        redirect('/signin');
+    }
 
     const { data: me, isLoading } = useQuery({
         queryKey: ['user', 'me'],
