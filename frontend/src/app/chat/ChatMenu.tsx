@@ -28,6 +28,7 @@ import UnbanUserModal from './components/UnbanUserModal';
 import UnmuteDialog from './components/UnmuteUserDialog';
 import UnmuteUserModal from './components/UnmuteUserModal';
 import { modalContext } from '@/contexts/contexts';
+import BlockConfirm from './components/BlockConfirm';
 
 export default function ChatMenu() {
     const pathname = usePathname();
@@ -65,6 +66,7 @@ function ChatMenuItem(props: { children: ReactNode }) {
 function DmMenu(props: { username: string }) {
     const [showClearConfirm, setShowClearConfirm] = useState(false);
     const { setDotsDropdown } = useContext(modalContext);
+    const [showBlockConfirm, setShowBlockConfirm] = useState(false);
 
     const { data: dm, isLoading: dmIsLoding } = useQuery({
         queryFn: async () => {
@@ -151,7 +153,19 @@ function DmMenu(props: { username: string }) {
                 <button>Invite to Game</button>
             </ChatMenuItem>
             <ChatMenuItem>
-                <button>Block</button>
+                <button onClick={() => setShowBlockConfirm(true)}>Block</button>
+                {showBlockConfirm && (
+                    <Modal
+                        onClose={() => setShowBlockConfirm(false)}
+                        childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%]
+                        max-w-[400px]"
+                    >
+                        <BlockConfirm
+                            username={props.username}
+                            setShowBlockConfirm={setShowBlockConfirm}
+                        />
+                    </Modal>
+                )}
             </ChatMenuItem>
             <ChatMenuItem>
                 <button
