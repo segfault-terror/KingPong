@@ -26,5 +26,5 @@ export default function Layout({ children }: LayoutProps) {
     if (error || data?.data.status === false) {
         redirect('/signin');
     }
-    return <div className='bg-gameBg h-screen bg-cover bg-fix'>{children}</div>;
+    return <div className='bg-gameBg h-screen bg-cover bg-fix overflow-y-auto'>{children}</div>;
 }
