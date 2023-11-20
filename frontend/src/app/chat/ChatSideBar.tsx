@@ -19,7 +19,6 @@ type ChatSideBarProps = {
 };
 
 function DmList({ toggle }: ChatSideBarProps) {
-    const { setNewConversation } = useContext(modalContext);
     const { socket } = useSocket();
     const queryClient = useQueryClient();
 
@@ -84,27 +83,10 @@ function DmList({ toggle }: ChatSideBarProps) {
                                 status={status}
                                 lastMessage={dm.messages[0]}
                             />
-                            {idx < DMList.length - 1 && (
-                                <div className="mt-4"></div>
-                            )}
+                            <div className="mt-3"></div>
                         </div>
                     );
                 })}
-            </div>
-            <div>
-                <div
-                    className="flex items-center justify-center
-                                font-jost
-                                py-2 px-4"
-                >
-                    <button onClick={() => setNewConversation(true)}>
-                        <AiOutlinePlusCircle className="mr-2 text-4xl text-secondary-200" />
-                    </button>
-                    {/* TODO: Handle small size (desktop) */}
-                    <p className="text-lg text-silver select-none">
-                        Start Conversation
-                    </p>
-                </div>
             </div>
         </>
     );
@@ -112,7 +94,6 @@ function DmList({ toggle }: ChatSideBarProps) {
 
 function ChannelList({ toggle, setToggle }: ChatSideBarProps) {
     const pathname = usePathname();
-    const { setCreateChannel, setJoinChannel } = useContext(modalContext);
 
     useEffect(() => {
         setToggle(true);
@@ -171,22 +152,14 @@ function ChannelList({ toggle, setToggle }: ChatSideBarProps) {
                     );
                 })}
             </div>
-            <div
-                className="flex justify-between
-                    text-secondary-200 font-jost"
-            >
-                <button onClick={() => setJoinChannel(true)}>
-                    Join channel
-                </button>
-                <button onClick={() => setCreateChannel(true)}>
-                    Create new channel
-                </button>
-            </div>
         </>
     );
 }
 
 export default function ChatSideBar({ toggle, setToggle }: ChatSideBarProps) {
+    const { setCreateChannel, setJoinChannel } = useContext(modalContext);
+    const { setNewConversation } = useContext(modalContext);
+
     return (
         <div
             className="bg-primary border-secondary-200 border-[1px]
@@ -201,8 +174,8 @@ export default function ChatSideBar({ toggle, setToggle }: ChatSideBarProps) {
             />
             <div
                 className={`flex flex-col justify-start flex-grow
-                            px-4 mt-8
-                            overflow-auto scrollbar-thumb-secondary-200 scrollbar-thin`}
+                    px-4 mt-8
+                    overflow-auto scrollbar-thumb-secondary-200 scrollbar-thin`}
             >
                 {toggle ? (
                     <ChannelList {...{ toggle, setToggle }} />
@@ -210,6 +183,34 @@ export default function ChatSideBar({ toggle, setToggle }: ChatSideBarProps) {
                     <DmList {...{ toggle, setToggle }} />
                 )}
             </div>
+            {toggle ? (
+                <div
+                    className="flex justify-between
+                text-secondary-200 font-jost pt-4"
+                >
+                    <button onClick={() => setJoinChannel(true)}>
+                        Join channel
+                    </button>
+                    <button onClick={() => setCreateChannel(true)}>
+                        Create new channel
+                    </button>
+                </div>
+            ) : (
+                <div>
+                    <div
+                        className="flex items-center justify-center
+                            font-jost
+                            py-2 px-4"
+                    >
+                        <button onClick={() => setNewConversation(true)}>
+                            <AiOutlinePlusCircle className="mr-2 text-4xl text-secondary-200" />
+                        </button>
+                        <p className="text-lg text-silver select-none">
+                            Start Conversation
+                        </p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
