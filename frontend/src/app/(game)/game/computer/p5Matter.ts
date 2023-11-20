@@ -93,8 +93,7 @@ export function draw(
     socket?: Socket,
 ) {
     if (!socket) return;
-    // p5.image(img, 0, 0,p5.width, p5.height, 0, 0, img.width, img.height, p5.COVER);
-    p5.background(51);
+    p5.image(img, 0, 0,p5.width, p5.height, 0, 0, img.width, img.height, p5.COVER);
     dashedLine(
         p5,
         -20 * serverClientRatio.width,
@@ -127,10 +126,10 @@ export function move(p5: p5Types, socket: Socket) {
         const mx = p5.mouseX;
         const my = p5.mouseY;
         const p = pos.bottomPaddlePos;
-        if (mx < p.x) {
+        if (mx < p.x - (bottomPaddle.w / 2)) {
             socket.emit('move-left');
         }
-        if (mx > p.x) {
+        if (mx > p.x + (bottomPaddle.w / 2)) {
             socket.emit('move-right');
         }
     }
