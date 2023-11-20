@@ -64,14 +64,7 @@ export default function Notif() {
     return (
         <>
             {!hidden && (
-                <Link
-                    href={
-                        type === 'GAME'
-                            ? `/game/ranked/${ChallengeId}`
-                            : '/notifications'
-                    }
-                    className="z-20"
-                >
+                <Link href={'/notifications'} className="z-20">
                     <motion.div
                         className="absolute
 						top-20 right-0
