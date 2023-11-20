@@ -6,6 +6,9 @@ import LoadingEmpty from './EmptyLoading';
 import { useSocket } from '@/contexts/SocketContext';
 import { set } from 'react-hook-form';
 import { redirect } from 'next/navigation';
+import { GiCancel } from 'react-icons/gi';
+import { FaUserFriends } from 'react-icons/fa';
+import { FaGamepad } from 'react-icons/fa';
 
 const empty: NotificationProps = {
     id: 0,
@@ -94,23 +97,27 @@ export default function PopNotif({
             key={notif.id}
             className="flex justify-center items-center relative w-full h-full"
         >
-            <div className="flex flex-col justify-center items-center absolute inset-0 z-20 opacity-10">
-                <img src={bgImage} alt="" className="w-2/3 h-2/3" />
+            <div className="flex flex-col justify-center items-center absolute inset-0 right-[50%] z-20 opacity-20">
+                {notif.type === 'GAME' ? (
+                    <FaGamepad className="w-full h-full text-black" />
+                ) : (
+                    <FaUserFriends className="w-full h-full text-black" />
+                )}
             </div>
-            <div className="w-full h-full flex flex-col justify-between items-center bg-gradient-radial from-primary to-background rounded-lg border border-secondary-500 p-4">
+            <div className="w-full h-full flex flex-col justify-around items-center bg-gradient-to-tl from-primary to-background rounded-lg border-t border-b border-secondary-500 p-4">
                 <div className="flex flex-col justify-between items-center m-auto z-30">
                     <img
                         src={notif.avatar}
                         alt=""
                         className="w-24 h-24 md:h-32 md:w-32 lg:h-44 lg:w-44 border-white border rounded-full mr-2 bg-background object-cover"
                     />
-                    <p className="flex justify-center items-center mx-2 text:md lg:text-2xl align-middle text-clip text-center">
+                    <p className="flex justify-center font-jockey items-center mx-2 text:md lg:text-2xl align-middle text-clip text-center">
                         {message}
                     </p>
                 </div>
                 <div className="grid grid-cols-2 w-full z-30">
                     <button
-                        className="flex justify-center items-center col-span-1 bg-green-400 w-1/2 h-6 m-auto rounded-lg p-2"
+                        className="flex justify-center items-center col-span-1 bg-green-400 w-1/2 h-6 m-auto rounded-full "
                         type="button"
                         name="Accept"
                         title="Accept"
@@ -134,10 +141,10 @@ export default function PopNotif({
                             deleteNotif({ id: notif.id });
                         }}
                     >
-                        <img src="/images/accept.svg" alt="" className="" />
+                        <img src="/images/accept.svg" alt="" className="w-6 h-6" />
                     </button>
                     <button
-                        className="flex justify-center items-center col-span-1 bg-red-400 w-1/2 h-6 m-auto rounded-lg p-2"
+                        className="flex justify-center items-center col-span-1 bg-red-400 w-1/2 h-6 m-auto rounded-full "
                         type="button"
                         name="Decline"
                         title="Decline"
@@ -149,13 +156,13 @@ export default function PopNotif({
                             updateNotif(empty);
                         }}
                     >
-                        <img src="/images/decline.svg" alt="" className="" />
+                        <img src="/images/decline.svg" alt="" className="w-4 h-4" />
                     </button>
                 </div>
             </div>
             <button
                 key={notif.id}
-                className="w-10 h-10 rounded-full absolute right-0 top-0 z-20 flex justify-center items-center"
+                className="w-8 h-8 rounded-full absolute right-1 top-1 z-20 flex justify-center items-center"
                 onClick={() => {
                     updateModal(false);
                     updateNotif(empty);
@@ -164,7 +171,7 @@ export default function PopNotif({
                 name="Decline"
                 title="Decline"
             >
-                <img src="/images/decline.svg" alt="Decline"></img>
+                <GiCancel className="w-full h-full text-red-500" />
             </button>
         </div>
     );
