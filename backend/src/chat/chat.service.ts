@@ -623,13 +623,6 @@ export class ChatService {
             );
         }
 
-        // Public and private channels cannot have a password
-        if (type !== 'PROTECTED' && password) {
-            throw new BadRequestException(
-                'You cannot provide a password for a public or private channel',
-            );
-        }
-
         // Check if channel already exists
         const channel = await this.prisma.channel.findFirst({
             where: { name },
@@ -645,8 +638,6 @@ export class ChatService {
             where: { username: ownerName },
             select: { id: true },
         });
-        if (!owner)
-            throw new NotFoundException(`User ${ownerName} does not exist`);
 
         const channelType =
             type === 'PUBLIC'
