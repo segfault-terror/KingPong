@@ -212,51 +212,57 @@ export default function ChatInput({
             className="flex justify-between items-center relative
                 bg-background rounded-full pr-2"
         >
-            <input
-                disabled={isMuted}
-                ref={inputRef}
-                type="text"
-                autoFocus
-                placeholder={
-                    isMuted
-                        ? `You are muted - Time left ${muteTime}`
-                        : 'Write a message'
-                }
-                className={`px-4 py-2 bg-background rounded-full
-                    text-cube_palette-200
-                    font-jost
-                    flex-grow
-                    outline-none ${
-                        isMuted
-                            ? 'placeholder-secondary-500'
-                            : 'placeholder-cube_palette-200'
-                    }`}
-                onKeyDown={(event) => {
-                    if (event.key === 'Enter') {
-                        if (event.currentTarget.value.trim() === '') return;
+            {isMuted ? (
+                <input
+                    disabled
+                    placeholder={`You are muted - Time left ${muteTime}`}
+                    className="px-4 py-2 bg-background rounded-full
+                                text-cube_palette-200
+                                font-jost
+                                flex-grow
+                                outline-none
+                                placeholder-secondary-500"
+                />
+            ) : (
+                <>
+                    <input
+                        disabled={isMuted}
+                        ref={inputRef}
+                        type="text"
+                        autoFocus
+                        placeholder="Write a message"
+                        className="px-4 py-2 bg-background rounded-full
+                                text-cube_palette-200
+                                font-jost
+                                flex-grow
+                                outline-none placeholder-cube_palette-200"
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                                if (event.currentTarget.value.trim() === '')
+                                    return;
 
-                        sendMessage(event.currentTarget.value);
+                                sendMessage(event.currentTarget.value);
 
-                        event.currentTarget.value = '';
-                        event.currentTarget.focus();
-                    } else {
-                        onUserTyping();
-                    }
-                }}
-            />
-            {!isMuted && (
-                <button
-                    onClick={() => {
-                        if (inputRef.current == null) return;
-                        if (inputRef.current.value.trim() === '') return;
+                                event.currentTarget.value = '';
+                                event.currentTarget.focus();
+                            } else {
+                                onUserTyping();
+                            }
+                        }}
+                    />
+                    <button
+                        onClick={() => {
+                            if (inputRef.current == null) return;
+                            if (inputRef.current.value.trim() === '') return;
 
-                        sendMessage(inputRef.current.value);
-                        inputRef.current.value = '';
-                        inputRef.current.focus();
-                    }}
-                >
-                    <BiSolidSend className="text-secondary-200 text-3xl" />
-                </button>
+                            sendMessage(inputRef.current.value);
+                            inputRef.current.value = '';
+                            inputRef.current.focus();
+                        }}
+                    >
+                        <BiSolidSend className="text-secondary-200 text-3xl" />
+                    </button>
+                </>
             )}
         </div>
     );
