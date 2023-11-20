@@ -82,7 +82,7 @@ export default function Page() {
         async function connect() {
             // await delai(1500);
             socket.connect();
-            socket.emit('join-game', { game: 'computer', mode: 'normal' });
+            socket.emit('join-game', { game: 'computer', mode: 'obstacle' });
         }
         if (!socket.connected) connect();
 
@@ -129,9 +129,9 @@ export default function Page() {
         });
     }, [ready]);
     if (!ready) return <Loading />;
-
+    let isPaused = false;
     return (
-        <>
+        <div className="">
             <header className="p-3 w-full">
                 <div className="grid grid-cols-1 md:grid-cols-3 items-center">
                     <Link href="/home" className="block w-56">
@@ -143,8 +143,8 @@ export default function Page() {
                     </Link>
                 </div>
             </header>
-            <div className="flex flex-col md:flex-row justify-center items-center h-screen backdrop-blur-[1px] m-auto">
-                <div className="self-start rounded-l-full w-1/2 p-2 bg-primary border-2 border-secondary-500 flex  justify-between items-center px-2 mx-3 drop-shadow-[0px_0px_10px_#FF0B0B]">
+            <div className="flex flex-col md:flex-row justify-center items-center h-full backdrop-blur-[1px] m-auto">
+                {/* <div className="self-start rounded-l-full w-1/2 p-2 bg-primary border-2 border-secondary-500 flex  justify-between items-center px-2 mx-3 drop-shadow-[0px_0px_10px_#FF0B0B]">
                     <img
                         src="/images/bot.png"
                         alt=""
@@ -153,7 +153,7 @@ export default function Page() {
                     <h1 className="text-2xl md:text-3xl text-black font-jockey font-bold text-center">
                         dr.bot
                     </h1>
-                </div>
+                </div> */}
                 <Sketch
                     className="border-4 border-secondary-500 rounded-lg overflow-hidden bg-gradient-to-br from-primary to-background
                      drop-shadow-[0px_0px_15px_#ffa62a] backdrop-blur-md my-1 z-20"
@@ -169,8 +169,22 @@ export default function Page() {
                     mouseReleased={(p5: p5Types) => {
                         mouseReleased(p5);
                     }}
+                    keyPressed={(p5: p5Types) => {
+                        const SPACE_KEY = 32;
+                        if (p5.keyCode === SPACE_KEY) {
+                            if (isPaused) {
+                                p5.loop();
+                                isPaused = false;
+                                socket?.emit('resume-game');
+                            } else {
+                                p5.noLoop();
+                                isPaused = true;
+                                socket?.emit('pause-game');
+                            }
+                        }
+                    }}
                 />
-                <div className="self-end rounded-r-full w-1/2 p-2 bg-primary border-2 border-secondary-500 flex  justify-between items-center px-2 mx-3 drop-shadow-[0px_0px_10px_#03CE18]">
+                {/* <div className="self-end rounded-r-full w-1/2 p-2 bg-primary border-2 border-secondary-500 flex  justify-between items-center px-2 mx-3 drop-shadow-[0px_0px_10px_#03CE18]">
                     <h1 className="text-2xl md:text-3xl text-black font-jockey font-bold text-center">
                         Akashi
                     </h1>
@@ -179,8 +193,8 @@ export default function Page() {
                         alt=""
                         className="h-10 w-10 md:h-24 md:w-24 rounded-full place-items-start"
                     />
-                </div>
+                </div> */}
             </div>
-        </>
+        </div>
     );
 }

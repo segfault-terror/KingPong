@@ -235,7 +235,7 @@ export class GameGateway implements OnGatewayConnection {
         @MessageBody() data: any,
         @ConnectedSocket() socket: Socket,
     ) {
-        this.computerService.startGame(socket, 'normal');
+        this.computerService.startGame(socket, data.mode);
     }
 
     @SubscribeMessage('matchmaking')

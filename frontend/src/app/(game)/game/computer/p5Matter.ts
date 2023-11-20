@@ -136,6 +136,25 @@ export function move(p5: p5Types, socket: Socket) {
     }
 }
 
+let isPause = false;
+
+function controleGame(p5: p5Types, socket: Socket) {
+    const R_KEY = 82;
+    const SPACE_KEY = 32;
+    if (p5.keyIsDown(R_KEY)) {
+        socket.emit('restart-game');
+    }
+    if (p5.keyIsDown(SPACE_KEY)) {
+        if (!isPause) {
+            socket.emit('pause-game');
+            isPause = true;
+        } else {
+            socket.emit('resume-game');
+            isPause = false;
+        }
+    }
+}
+
 export function mousePressed(p5: p5Types) {
     isMousePressed = true;
 }

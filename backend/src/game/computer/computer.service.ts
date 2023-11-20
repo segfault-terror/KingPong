@@ -107,7 +107,8 @@ export class ComputerService {
             x: Common.random(-ballSpeed, ballSpeed),
             y: orPair(-ballSpeed, ballSpeed),
         };
-        const interval = setInterval(() => {
+
+        const gameLogic = () => {
             Engine.update(engine, frameRate);
             const ballPos = ball.body.position;
             const topPaddlePos = topPaddle.body.position;
@@ -235,10 +236,29 @@ export class ComputerService {
                 bottomPaddlePos,
                 obstaclesPos: obstacles.map((o) => o.body.position),
             });
-        }, frameRate);
+        };
+        let interval = setInterval(gameLogic, frameRate);
 
         client.on('disconnect', () => {
             clearInterval(interval);
+        });
+
+        client.on('stop-game', () => {
+            clearInterval(interval);
+        });
+
+        client.on('restart-game', () => {
+            clearInterval(interval);
+            this.startGame(client, mode);
+        });
+
+        client.on('pause-game', () => {
+            clearInterval(interval);
+        });
+
+        client.on('resume-game', () => {
+            clearInterval(interval);
+            interval = setInterval(gameLogic, frameRate);
         });
 
         const movePaddleLeft = (paddle: Paddle) => {
