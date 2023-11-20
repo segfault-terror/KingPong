@@ -3,10 +3,11 @@ import React, { KeyboardEvent, use, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import p5Types from 'p5';
 
-import { setup, draw } from './p5Matter';
+import { setup, draw, mousePressed, mouseReleased } from './p5Matter';
 import { Socket, io } from 'socket.io-client';
 import Loading from '@/app/loading';
 import { Vector } from 'matter-js';
+import Link from 'next/link';
 
 const Sketch = dynamic(() => import('react-p5').then((mod) => mod.default), {
     ssr: false,
@@ -81,7 +82,7 @@ export default function Page() {
         async function connect() {
             // await delai(1500);
             socket.connect();
-            socket.emit('join-game', { game: 'computer' });
+            socket.emit('join-game', { game: 'computer', mode: 'normal' });
         }
         if (!socket.connected) connect();
 
@@ -130,37 +131,56 @@ export default function Page() {
     if (!ready) return <Loading />;
 
     return (
-        <div className="flex flex-col md:flex-row justify-center items-center h-screen backdrop-blur-[1px] m-auto">
-            <div className="self-start rounded-l-full w-1/2 p-2 bg-primary border-2 border-secondary-500 flex  justify-between items-center px-2 mx-3 drop-shadow-[0px_0px_10px_#FF0B0B]">
-                <img
-                    src="/images/bot.png"
-                    alt=""
-                    className="h-10 w-10 md:h-24 md:w-24 rounded-full place-items-start"
+        <>
+            <header className="p-3 w-full">
+                <div className="grid grid-cols-1 md:grid-cols-3 items-center">
+                    <Link href="/home" className="block w-56">
+                        <img
+                            src="/images/logo.svg"
+                            className="w-56 h-auto md:w-56"
+                            alt="logo"
+                        />
+                    </Link>
+                </div>
+            </header>
+            <div className="flex flex-col md:flex-row justify-center items-center h-screen backdrop-blur-[1px] m-auto">
+                <div className="self-start rounded-l-full w-1/2 p-2 bg-primary border-2 border-secondary-500 flex  justify-between items-center px-2 mx-3 drop-shadow-[0px_0px_10px_#FF0B0B]">
+                    <img
+                        src="/images/bot.png"
+                        alt=""
+                        className="h-10 w-10 md:h-24 md:w-24 rounded-full place-items-start"
+                    />
+                    <h1 className="text-2xl md:text-3xl text-black font-jockey font-bold text-center">
+                        dr.bot
+                    </h1>
+                </div>
+                <Sketch
+                    className="border-4 border-secondary-500 rounded-lg overflow-hidden bg-gradient-to-br from-primary to-background
+                     drop-shadow-[0px_0px_15px_#ffa62a] backdrop-blur-md my-1 z-20"
+                    setup={(p5: p5Types, canvasParentRef: Element) => {
+                        setup(p5, canvasParentRef, init, serverClientRatio);
+                    }}
+                    draw={(p5: p5Types) => {
+                        draw(p5, serverClientRatio, socket);
+                    }}
+                    mousePressed={(p5: p5Types) => {
+                        mousePressed(p5);
+                    }}
+                    mouseReleased={(p5: p5Types) => {
+                        mouseReleased(p5);
+                    }}
                 />
-                <h1 className="text-2xl md:text-3xl text-black font-jockey font-bold text-center">
-                    dr.bot
-                </h1>
+                <div className="self-end rounded-r-full w-1/2 p-2 bg-primary border-2 border-secondary-500 flex  justify-between items-center px-2 mx-3 drop-shadow-[0px_0px_10px_#03CE18]">
+                    <h1 className="text-2xl md:text-3xl text-black font-jockey font-bold text-center">
+                        Akashi
+                    </h1>
+                    <img
+                        src="/images/bot.png"
+                        alt=""
+                        className="h-10 w-10 md:h-24 md:w-24 rounded-full place-items-start"
+                    />
+                </div>
             </div>
-            <Sketch
-                className="border-4 border-secondary-500 rounded-lg overflow-hidden bg-gradient-to-br from-primary to-background
-                 drop-shadow-[0px_0px_15px_#ffa62a] backdrop-blur-md my-1 z-20"
-                setup={(p5: p5Types, canvasParentRef: Element) => {
-                    setup(p5, canvasParentRef, init, serverClientRatio);
-                }}
-                draw={(p5: p5Types) => {
-                    draw(p5, serverClientRatio, socket);
-                }}
-            />
-            <div className="self-end rounded-r-full w-1/2 p-2 bg-primary border-2 border-secondary-500 flex  justify-between items-center px-2 mx-3 drop-shadow-[0px_0px_10px_#03CE18]">
-                <h1 className="text-2xl md:text-3xl text-black font-jockey font-bold text-center">
-                    Akashi
-                </h1>
-                <img
-                    src="/images/bot.png"
-                    alt=""
-                    className="h-10 w-10 md:h-24 md:w-24 rounded-full place-items-start"
-                />
-            </div>
-        </div>
+        </>
     );
 }

@@ -10,7 +10,7 @@ let bottomPaddle: Paddle;
 let ball: Ball;
 const obstacles: Obstacle[] = [];
 
-let img : any;
+let img: any;
 function preload(p5: p5Types) {
     img = p5.loadImage('/images/bordgame.svg');
 }
@@ -34,7 +34,7 @@ function dashedLine(
     for (let i = 0; i < numDashes; i++) {
         p5.push();
         p5.translate((x1 += xpos / numDashes), (y1 += ypos / numDashes));
-        p5.fill(96,46,101);
+        p5.fill(96, 46, 101);
         p5.rectMode(p5.CENTER);
         p5.rect(
             0,
@@ -54,7 +54,7 @@ export function setup(
 ) {
     p5.createCanvas(init.width, init.height).parent(canvasParentRef);
     p5.frameRate(60);
-    
+
     preload(p5);
     topPaddle = new Paddle(
         p5.width / 2,
@@ -84,6 +84,8 @@ export function setup(
         );
     }
 }
+
+let isMousePressed = false;
 
 export function draw(
     p5: p5Types,
@@ -120,4 +122,24 @@ export function move(p5: p5Types, socket: Socket) {
     } else if (p5.keyIsDown(RIGHT_ARROW)) {
         socket.emit('move-right');
     }
+
+    if (isMousePressed) {
+        const mx = p5.mouseX;
+        const my = p5.mouseY;
+        const p = pos.bottomPaddlePos;
+        if (mx < p.x) {
+            socket.emit('move-left');
+        }
+        if (mx > p.x) {
+            socket.emit('move-right');
+        }
+    }
+}
+
+export function mousePressed(p5: p5Types) {
+    isMousePressed = true;
+}
+
+export function mouseReleased(p5: p5Types) {
+    isMousePressed = false;
 }
