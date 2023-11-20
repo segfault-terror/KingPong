@@ -7,6 +7,7 @@ import {
     WebSocketGateway,
     WebSocketServer,
 } from '@nestjs/websockets';
+import { PrismaService } from 'nestjs-prisma';
 import { Namespace, Socket } from 'socket.io';
 import { WsAuthGuard } from 'src/auth/ws.auth.guard';
 import { ChatService } from './chat.service';
@@ -30,7 +31,10 @@ export class ChatGateway implements OnGatewayDisconnect {
     counter = 0;
 
     @WebSocketServer() server: Namespace;
-    constructor(private readonly chatService: ChatService) {}
+    constructor(
+        private readonly chatService: ChatService,
+        private readonly prisma: PrismaService,
+    ) {}
 
     @SubscribeMessage('register')
     async handleRegister(
@@ -80,7 +84,7 @@ export class ChatGateway implements OnGatewayDisconnect {
     }
 
     @SubscribeMessage('typing')
-    handleTyping(@MessageBody() data: IsTypingData) {
+    async handleTyping(@MessageBody() data: IsTypingData) {
         if (data.isChannel) {
             const result = this.connectedUsers.find(
                 (user) => user.username === data.username,
@@ -91,9 +95,27 @@ export class ChatGateway implements OnGatewayDisconnect {
                 return;
             }
 
+            const { blockedBy: blockedByList } =
+                await this.prisma.user.findFirst({
+                    where: { username: data.username },
+                    select: {
+                        blockedBy: {
+                            select: { username: true },
+                        },
+                    },
+                });
+
+            // Don't send typing event to users who blocked the sender
+            const blocks = this.connectedUsers.filter((user) => {
+                return blockedByList.some(
+                    (blockedBy) => blockedBy.username === user.username,
+                );
+            });
+
             this.server
                 .to(data.channelName)
                 .except(result.socketsId)
+                .except(blocks.map((user) => user.socketsId).flat())
                 .emit('typing', data);
         } else {
             const result = this.connectedUsers.find(

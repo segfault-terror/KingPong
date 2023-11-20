@@ -375,7 +375,16 @@ export class ChatService {
         });
     }
 
-    async getChannel(channelName: string) {
+    async getChannel(channelName: string, requestUserId: string) {
+        const { blockedUsers: blockList } = await this.prisma.user.findUnique({
+            where: { id: requestUserId },
+            select: {
+                blockedUsers: {
+                    select: { username: true },
+                },
+            },
+        });
+
         const channel = await this.prisma.channel.findFirst({
             where: { name: channelName },
             select: {
@@ -415,6 +424,14 @@ export class ChatService {
         if (!channel) {
             throw new NotFoundException(`Channel ${channelName} not found`);
         }
+
+        // Filter out messages from blocked users
+        channel.messages = channel.messages.filter((message) => {
+            return blockList.every(
+                (block) => block.username !== message.sender.username,
+            );
+        });
+
         return channel;
     }
 
