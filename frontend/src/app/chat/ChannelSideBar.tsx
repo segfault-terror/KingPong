@@ -32,7 +32,7 @@ function Member({
                 <img
                     src={avatarPath}
                     alt={`${username}'s avatar`}
-                    className="border-[1px] border-secondary-200
+                    className="border-2 border-secondary-200
                         rounded-full object-cover
                         w-10 h-10
                         flex-shrink-0 select-none"

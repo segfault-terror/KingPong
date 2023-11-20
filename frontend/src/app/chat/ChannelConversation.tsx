@@ -175,7 +175,7 @@ export default function ChannelConversation(props: ChannelConversationProps) {
 
     return (
         <div
-            className="flex flex-col items-stretch gap-8 h-full w-full
+            className="flex flex-col items-stretch h-full w-full
                 bg-primary
                 rounded-2xl
                 px-4 py-3
@@ -306,7 +306,7 @@ function ChannelMessage(props: ChannelMessageProps) {
                     title={`${props.senderName}'s avatar`}
                     className={`w-8 h-8
                             object-cover
-                            border-[1px] border-secondary-200 rounded-full
+                            border-2 border-secondary-200 rounded-full
                             absolute select-none ${
                                 props.isMe ? myImgStyles : otherImgStyles
                             }`}
