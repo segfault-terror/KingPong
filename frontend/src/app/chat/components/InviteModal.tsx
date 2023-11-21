@@ -8,13 +8,22 @@ export default function InviteModal(props: {
     onClose: () => void;
 }) {
     const [copied, setCopied] = useState(false);
+    const [copyFailed, setCopyFailed] = useState(false);
 
     function copyInviteCode() {
         let timeout: NodeJS.Timeout;
 
         return () => {
             clearTimeout(timeout);
-            navigator.clipboard.writeText(props.inviteCode);
+            try {
+                navigator.clipboard.writeText(props.inviteCode);
+            } catch {
+                console.info('set copy failed');
+                setCopyFailed(true);
+                timeout = setTimeout(() => setCopyFailed(false), 3000);
+                return;
+            }
+            console.info('set copied');
             setCopied(true);
             timeout = setTimeout(() => setCopied(false), 1000);
         };
@@ -41,14 +50,15 @@ export default function InviteModal(props: {
                         rounded-xl border border-secondary-500
                         flex flex-row justify-between items-center"
             >
-                <button
-                    title="Copy to clipboard"
-                    className="flex flex-row justify-between items-center w-full"
-                    onClick={copyInviteCode()}
-                >
-                    <p className="select-none text-white">{props.inviteCode}</p>
-                    <FaRegClipboard className="text-secondary-500 w-6 h-6" />
-                </button>
+                <div className="flex flex-row justify-between items-center w-full">
+                    <p className="text-white">{props.inviteCode}</p>
+                    <button
+                        title="Copy to clipboard"
+                        onClick={copyInviteCode()}
+                    >
+                        <FaRegClipboard className="text-secondary-500 w-6 h-6" />
+                    </button>
+                </div>
             </div>
             {copied && (
                 <motion.div
@@ -56,13 +66,28 @@ export default function InviteModal(props: {
                                 px-4 py-2
                                 w-2/5 mx-auto
                                 text-center
-                                border border-online rounded-xl
+                                rounded-xl
                                 transition duration-1000"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1, delay: 0 }}
                 >
                     Copied!
+                </motion.div>
+            )}
+            {copyFailed && (
+                <motion.div
+                    className="bg-red-500
+                                px-4 py-2
+                                w-[70%] mx-auto
+                                text-center
+                                rounded-xl
+                                transition duration-1000"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 3, delay: 0 }}
+                >
+                    Clipboard access denied, please copy manually
                 </motion.div>
             )}
         </Modal>
