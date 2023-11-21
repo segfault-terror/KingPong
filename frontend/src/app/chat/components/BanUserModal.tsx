@@ -82,8 +82,9 @@ export default function BanUserModal({
         <>
             <Modal
                 onClose={() => setShowBanModal(false)}
-                childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%] h-[300px]
-                                        lg:w-2/3 max-w-[600px]"
+                childrenClassName="bg-gradient-to-br from-primary to-background p-6 rounded-2xl
+                                    border-r border-l border-secondary-500 w-[90%] h-[300px]
+                                    lg:w-2/3 max-w-[600px]"
             >
                 <div
                     className="text-white accent-secondary-200

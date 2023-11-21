@@ -35,8 +35,9 @@ export default function DeleteChannelModal(props: DeleteChannelProps) {
     return (
         <Modal
             onClose={() => props.setShowDeleteModal(false)}
-            childrenClassName="bg-background p-6 rounded-2xl border-2 border-white w-[90%]
-                    max-w-[400px]"
+            childrenClassName="bg-gradient-to-br from-primary to-background p-6 rounded-2xl
+                                border-r border-l border-secondary-500
+                                w-[90%] max-w-[400px]"
         >
             <h1 className="text-center text-xl font-jost">
                 Delete channel{' '}
