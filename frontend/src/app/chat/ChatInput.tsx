@@ -111,13 +111,14 @@ export default function ChatInput({
         socket?.on('typing', (data) => {
             if (pathname.startsWith('/chat/channel') && !data.isChannel) return;
             if (pathname.startsWith('/chat/dm') && data.isChannel) return;
-            setIsTyping(data.isTyping);
+            if (data.sender === username) setIsTyping(data.isTyping);
 
             if (
                 pathname.startsWith('/chat/channel') &&
                 data.isChannel &&
                 setTypingUsername
             ) {
+                setIsTyping(data.isTyping);
                 setTypingUsername(data.username);
             }
         });

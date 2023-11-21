@@ -28,7 +28,6 @@ type ConnectedUser = {
 @UseGuards(WsAuthGuard)
 export class ChatGateway implements OnGatewayDisconnect {
     connectedUsers: ConnectedUser[] = [];
-    counter = 0;
 
     @WebSocketServer() server: Namespace;
     constructor(
@@ -84,7 +83,10 @@ export class ChatGateway implements OnGatewayDisconnect {
     }
 
     @SubscribeMessage('typing')
-    async handleTyping(@MessageBody() data: IsTypingData) {
+    async handleTyping(
+        @MessageBody() data: IsTypingData,
+        @ConnectedSocket() socket: Socket,
+    ) {
         if (data.isChannel) {
             const result = this.connectedUsers.find(
                 (user) => user.username === data.username,
@@ -118,17 +120,21 @@ export class ChatGateway implements OnGatewayDisconnect {
                 .except(blocks.map((user) => user.socketsId).flat())
                 .emit('typing', data);
         } else {
-            const result = this.connectedUsers.find(
+            const receiver = this.connectedUsers.find(
                 (user) => user.username === data.username,
             );
 
-            if (!result) return;
+            if (!receiver) return;
 
-            result.socketsId.forEach((socketId: string) => {
-                this.server.to(socketId).emit('typing', data);
+            const sender = this.connectedUsers.find((user) =>
+                user.socketsId.includes(socket.id),
+            );
+
+            receiver.socketsId.forEach((socketId: string) => {
+                this.server
+                    .to(socketId)
+                    .emit('typing', { ...data, sender: sender.username });
             });
-
-            ++this.counter;
         }
     }
 
