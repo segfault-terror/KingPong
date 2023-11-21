@@ -1,6 +1,6 @@
 'use client';
 import Loading from '@/app/loading';
-import GameOver from '@/app/(game)/game/ranked/standing/GameOver';
+import GameOver from '@/app/(game)/game/standing/GameOver';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
