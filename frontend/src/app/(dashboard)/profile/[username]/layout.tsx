@@ -21,7 +21,8 @@ export default function ProfileLayout({ children }: ProfileLayoutProps) {
             {achievements && (
                 <Modal
                     onClose={() => setAchievements(false)}
-                    childrenClassName="bg-background p-6 border-2 border-white w-[90%]
+                    childrenClassName="bg-gradient-to-br from-primary to-background p-6 rounded-2xl
+                                        border-t border-b border-secondary-500 w-[90%]
                                         lg:w-2/3 max-w-[600px] max-h-[635px]
                                         overflow-y-auto
                                         scrollbar-thumb-secondary-200 scrollbar-thin"
@@ -32,8 +33,9 @@ export default function ProfileLayout({ children }: ProfileLayoutProps) {
             {matches && (
                 <Modal
                     onClose={() => setMatches(false)}
-                    childrenClassName="bg-background p-6 border-2 border-white w-[90%]
-                                        lg:w-2/3 max-w-[400px] max-h-[635px]
+                    childrenClassName="bg-gradient-to-br from-primary to-background p-6 rounded-2xl
+                                        border-t border-b border-secondary-500 w-[90%]
+                                        lg:w-2/3 max-w-[400px] max-h-[655px]
                                         overflow-y-auto
                                         scrollbar-thumb-secondary-200 scrollbar-thin"
                 >
