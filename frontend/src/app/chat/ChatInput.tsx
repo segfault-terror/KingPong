@@ -216,6 +216,7 @@ export default function ChatInput({
             {isMuted ? (
                 <input
                     disabled
+                    value=""
                     placeholder={`You are muted - Time left ${muteTime}`}
                     className="px-4 py-2 bg-background rounded-full
                                 text-cube_palette-200

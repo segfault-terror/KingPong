@@ -1298,11 +1298,13 @@ export class ChatService {
 
         // Check if the user was muted, but the mute has expired
         if (mute && mute.expiresAt > new Date()) {
-            this.unmuteUser(channelName, usernameToMute);
-        } else if (mute && mute.expiresAt < new Date()) {
             throw new BadRequestException(
                 `User ${usernameToMute} is already muted`,
             );
+        }
+
+        if (mute && mute.expiresAt < new Date()) {
+            this.unmuteUser(channelName, usernameToMute);
         }
 
         // Mute the user
