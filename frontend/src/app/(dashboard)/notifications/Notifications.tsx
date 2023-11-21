@@ -9,8 +9,11 @@ import PopNotif from './PopNotif';
 import { NotificationProps, NotificationState } from './types';
 import axios from 'axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { FaGamepad } from 'react-icons/fa';
 import LoadingEmpty from './EmptyLoading';
 import { useSocket } from '@/contexts/SocketContext';
+import { GiCancel } from 'react-icons/gi';
+import { FaUserFriends } from 'react-icons/fa';
 
 const Empty = () => {
     return (
@@ -91,19 +94,28 @@ const Notife = ({
         type == 'GAME'
             ? `${username} has invited you to a game!`
             : `${username} has sent you a friend request!`;
-    const image =
-        type == 'GAME' ? '/images/fight.svg' : '/images/add-friend.svg';
-    const color = readed == true ? 'bg-background' : 'bg-amber-500';
+    const color =
+        readed == true
+            ? 'bg-gradient-to-l from-[#6D1D4F]/50 to-background/50'
+            : 'hover:bg-gradient-to-l hover:from-orange-500  hover:to-background bg-gradient-to-l from-secondary-200 to-amber-500 transition-all duration-1000 delay-750';
     return (
         <div
             className={`flex justify-between items-center h-24 w-full my-1 ${color} rounded-2xl relative`}
         >
             <div
-                className="flex justify-stretch items-center w-full h-full cursor-pointer"
+                className="flex justify-stretch items-center w-full h-full cursor-pointer z-10 "
                 onClick={() => {
                     if (readed == false) update({ id, type, readed: true });
                     setIsOpen(true);
-                    setNotif({ id, type, username, avatar, readed, sendToId, ChallengeId });
+                    setNotif({
+                        id,
+                        type,
+                        username,
+                        avatar,
+                        readed,
+                        sendToId,
+                        ChallengeId,
+                    });
                 }}
             >
                 <img
@@ -111,11 +123,15 @@ const Notife = ({
                     alt="image"
                     className="w-20 h-20 rounded-full border-white border m-2 object-cover self-start"
                 />
-                <div className="font-jost text-white text-md sm:text-lg md:text-xl m-auto">
+                <div className="font-jockey text-white text-md sm:text-lg md:text-xl m-auto">
                     {message}
                 </div>
             </div>
-            <img src={image} alt="fight" className="w-12 px-1" />
+            {type === 'GAME' ? (
+                <FaGamepad className="w-16 h-16 absolute -rotate-45  right-[10%] z-0 opacity-25  text-white" />
+            ) : (
+                <FaUserFriends className="w-16 h-16 absolute -rotate-45  right-[10%] z-0 opacity-25  text-white" />
+            )}
             <button
                 className="px-2"
                 type="button"
@@ -157,7 +173,7 @@ export default function Notification({ notifications }: NotificationState) {
         },
     });
     const { socket } = useSocket();
-    
+
     const [isOpen, setIsOpen] = useState(false);
     const [deleteNotif, setDeleteNotif] = useState(false);
     const [acceptNewFriend, setAcceptNewFriend] = useState(false);
@@ -176,8 +192,7 @@ export default function Notification({ notifications }: NotificationState) {
         if (!isloadingMe)
             console.log('useEffect: notifications', meData.username);
         if (!isloadingMe) socket?.emit('notifications', meData.username);
-        if (!isloadingMe && acceptNewFriend)
-        {
+        if (!isloadingMe && acceptNewFriend) {
             console.log('acceptNewFriend: ', meData.username);
             socket?.emit('friends', meData.username);
             setAcceptNewFriend(false);
@@ -192,15 +207,17 @@ export default function Notification({ notifications }: NotificationState) {
                     setDeleteAll(false);
                 }}
             >
-                <div className="w-64 h-40 bg-background rounded-2xl flex flex-col justify-start items-center">
+                <div className="w-64 h-40 bg-gradient-to-tl from-background border-r border-l border-secondary-500 to-primary rounded-2xl flex flex-col justify-start items-center">
                     <div className="text-center p-7 font-jost">
                         <p>Are sure you want remove all</p>
-                        <p className="text-red-500">&nbsp; notifications</p>
+                        <p className="text-red-500 font-jockey">
+                            &nbsp; notifications
+                        </p>
                     </div>
                     <button
                         type="button"
                         title="clear"
-                        className="w-20 h-6 border text-center bg-red-500 border-secondary-500 rounded-lg self-center"
+                        className="w-20 h-6 border text-center bg-red-500 hover:bg-red-400 hover:text-black transition-all delay-75 border-secondary-500 rounded-lg self-center"
                         onClick={() => {
                             setDeleteAll(false);
                             clear();
@@ -216,7 +233,7 @@ export default function Notification({ notifications }: NotificationState) {
                             setDeleteAll(false);
                         }}
                     >
-                        <Image src={Decline} alt="Decline"></Image>
+                        <GiCancel className="w-full h-full text-red-500 hover:text-secondary-500 transition-all delay-75" />
                     </button>
                 </div>
             </Modal>
@@ -240,7 +257,7 @@ export default function Notification({ notifications }: NotificationState) {
                         <button
                             type="button"
                             title="clear"
-                            className="w-20 h-6 border text-center bg-background border-secondary-500 rounded-lg self-end mr-3"
+                            className="w-20 h-6 border text-center bg-background border-secondary-500 hover:border-secondary-500 hover:bg-red-500 transition-all delay-75 duration-100 rounded-lg self-end mr-3"
                             onClick={() => {
                                 setDeleteAll(true);
                             }}
@@ -269,7 +286,7 @@ export default function Notification({ notifications }: NotificationState) {
                                       />
                                       {isOpen && (
                                           <Modal
-                                              childrenClassName="flex flex-col justify-center items-center w-72 h-56 md:w-[400px]  lg:w-[500px] lg:h-96"
+                                              childrenClassName="flex flex-col justify-center bg-gradient-tl from-primary to-background items-center w-72 h-48 md:w-[400px] lg:w-[500px] lg:h-80"
                                               onClose={() => {
                                                   setIsOpen(false);
                                               }}
@@ -279,7 +296,9 @@ export default function Notification({ notifications }: NotificationState) {
                                                   updateModal={setIsOpen}
                                                   updateNotif={setNotif}
                                                   declineNotif={setDeleteNotif}
-                                                  acceptNewFriend={setAcceptNewFriend}
+                                                  acceptNewFriend={
+                                                      setAcceptNewFriend
+                                                  }
                                               />
                                           </Modal>
                                       )}
