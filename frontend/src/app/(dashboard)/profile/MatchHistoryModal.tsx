@@ -71,8 +71,12 @@ export default function MatchHistoryModal({ userName }: GameResultModalProps) {
                                         ? player2?.stats.level
                                         : player1.stats.level
                                 }
-                                playerScore={player1_score}
-                                opponentScore={player2_score}
+                                playerScore={
+                                    isMe ? player1_score : player2_score
+                                }
+                                opponentScore={
+                                    isMe ? player2_score : player1_score
+                                }
                             />
                             {idx < gameResults.length - 1 && (
                                 <hr className="border-1 border-secondary-200 rounded-full" />
