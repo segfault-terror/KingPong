@@ -966,6 +966,8 @@ export class ChatService {
             data: {
                 name: channel.name,
                 type: channel.type,
+                inviteCode:
+                    data.newType === ChannelType.PRIVATE ? nanoid(10) : null,
                 password: channel.password,
             },
         });
