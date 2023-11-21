@@ -74,10 +74,14 @@ export default function MatchMaking({
                         setOppData(opponent);
                         setTimeout(() => {
                             setMatchmaking(false);
-                        }, 3000);
+                        }, 4000);
                     }
                 },
             );
+            socket.on('game-stop', (data) => {
+                console.log('finished:', data);
+                window.location.href = '/game/standing';
+            });
             return () => {
                 socket?.off('matchmakingfound');
             };

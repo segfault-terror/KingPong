@@ -9,11 +9,13 @@ import Loading from '@/app/loading';
 import { Vector } from 'matter-js';
 import { useSocket } from '@/contexts/SocketContext';
 import { set } from 'react-hook-form';
-import GameOver from '@/app/(game)/game/ranked/standing/GameOver';
+import GameOver from '@/app/(game)/game/standing/GameOver';
 import { redirect } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Modal from '@/components/Modal';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const Sketch = dynamic(() => import('react-p5').then((mod) => mod.default), {
     ssr: false,
@@ -55,8 +57,6 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
     });
     const { socket } = useSocket();
 
-
-
     const queryClient = useQueryClient();
 
     useEffect(() => {
@@ -85,7 +85,7 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 setGameOver(true);
                 setTimeout(() => {
                     setWinner(me.username);
-                }, 5000);
+                }, 500);
             });
             socket.on('finished', (data) => {
                 queryClient.invalidateQueries(['me']);
@@ -94,7 +94,17 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 setGameOver(true);
                 setTimeout(() => {
                     setWinner(data.winner);
-                }, 5000);
+                    socket.disconnect();
+                }, 500);
+            });
+            socket.on('disconnect', () => {
+                console.log('disconnected');
+                queryClient.invalidateQueries(['me']);
+                queryClient.invalidateQueries(['leaderboard']);
+                setGameOver(true);
+                setTimeout(() => {
+                    setWinner(me.username);
+                }, 500);
             });
             return () => {
                 socket.off('canvas');
@@ -136,9 +146,10 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
     }, [ready]);
     useEffect(() => {
         if (winner !== '') {
-            redirect('/game/ranked/standing');
+            redirect('/game/standing');
         }
     }, [winner]);
+
     if (!ready) return <Loading />;
 
     return (
