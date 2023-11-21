@@ -136,6 +136,13 @@ export class GameService {
                 data.player2_score,
                 data.player1_score,
             );
+        const winner1 = data.player1_score > data.player2_score ? user1.stats.wins + 1 : user1.stats.wins ;
+        const losses1 = data.player1_score < data.player2_score ? user1.stats.losses + 1 : user1.stats.losses ;
+
+        const winner2 = data.player2_score > data.player1_score ? user2.stats.wins + 1 : user2.stats.wins ;
+        const losses2 = data.player2_score < data.player1_score ? user2.stats.losses + 1 : user2.stats.losses ;
+
+
 
         const updatedUser1 = await this.prisma.user.update({
             where: {
@@ -149,6 +156,8 @@ export class GameService {
                         level: levelPlayer1.level,
                         XP: levelPlayer1.XP,
                         NextLevelXP: levelPlayer1.nextLevelXP,
+                        wins: winner1,
+                        losses: losses1,
                     },
                 },
                 newLevelUp: levelPlayer1.level > oldLevelPlayer1,
@@ -167,6 +176,8 @@ export class GameService {
                         level: levelPlayer2.level,
                         XP: levelPlayer2.XP,
                         NextLevelXP: levelPlayer2.nextLevelXP,
+                        wins: winner2,
+                        losses: losses2,
                     },
                 },
                 newLevelUp: levelPlayer2.level > oldLevelPlayer2,

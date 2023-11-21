@@ -11,6 +11,7 @@ import { ComputerService } from './computer/computer.service';
 import { RankedService } from './ranked/ranked.service';
 import { GameService } from './game.service';
 import { UserService } from 'src/user/user.service';
+import { status } from './game.enum';
 
 @WebSocketGateway({
     namespace: 'game',
@@ -26,14 +27,71 @@ export class GameGateway implements OnGatewayConnection {
     connectedUsers: { id: string; username: string; sockets: string }[] = [];
     queue: { username: string; league: string; socket: string }[] = [];
     queueInMatch: {
-        player1: { username: string; socket: string };
-        player2: { username: string; socket: string };
+        player1: { username: string; score1: number; socket: string };
+        player2: { username: string; score2: number; socket: string };
+        status: status;
     }[] = [];
     queueChallenge: {
         id: string;
         Challenger: { username: string; socket: string };
         Opponent: { username: string; socket: string };
     }[] = [];
+
+    async sendToClients(
+        client1: string,
+        client2: string,
+        data1: any,
+        data2: any,
+        emitedEvent: string,
+    ) {
+        this.server.to(client1).emit(emitedEvent, data1);
+        this.server.to(client2).emit(emitedEvent, data2);
+    }
+    async updataData(matchQueue: any) {
+        this.sendToClients(
+            matchQueue.player1.socket,
+            matchQueue.player2.socket,
+            {
+                winner:
+                    matchQueue.player1.score1 == 7
+                        ? matchQueue.player1.username
+                        : matchQueue.player2.username,
+                player1: matchQueue.player1.username,
+                player2: matchQueue.player2.username,
+                player1_score: matchQueue.player1.score1,
+                player2_score: matchQueue.player2.score2,
+                iWin: matchQueue.player1.score1 == 7,
+            },
+            {
+                winner:
+                    matchQueue.player2.score2 == 7
+                        ? matchQueue.player2.username
+                        : matchQueue.player1.username,
+                player2: matchQueue.player2.username,
+                player1: matchQueue.player1.username,
+                player2_score: matchQueue.player2.score2,
+                player1_score: matchQueue.player1.score1,
+                iWin: matchQueue.player2.score2 == 7,
+            },
+            'finished',
+        );
+        // add the match to the database
+        this.gameService.AddMatch(
+            matchQueue.player1.username,
+            matchQueue.player2.username,
+            true,
+            matchQueue.player1.score1,
+            matchQueue.player2.score2,
+        );
+        // update the database
+        this.gameService.updatePlayerScore({
+            player1: matchQueue.player1.username,
+            player2: matchQueue.player2.username,
+            ranked: true,
+            player1_score: matchQueue.player1.score1,
+            player2_score: matchQueue.player2.score2,
+        });
+    }
 
     @SubscribeMessage('message')
     handleMessage(client: Socket, payload: any): string {
@@ -74,25 +132,7 @@ export class GameGateway implements OnGatewayConnection {
         const user = this.connectedUsers.find((user) => user.id === socket.id);
         console.log('disconnect', this.connectedUsers);
         if (!user) return;
-        const finishedGame = (data: {
-            user: any;
-            player1: any;
-            player2: any;
-        }) => {
-            const winner =
-                data.user.username === data.player1.username
-                    ? data.player2
-                    : data.player1;
-            const loser =
-                data.user.username === data.player1.username
-                    ? data.player1
-                    : data.player2;
-            this.server
-                .to(winner.socket)
-                .emit('game-stop', { opponent: loser.username });
-            console.log('winner: ', winner);
-            console.log('loser: ', loser);
-        };
+
         const match = this.queueChallenge.find((match) => {
             return (
                 match.Challenger.username === user.username ||
@@ -105,33 +145,49 @@ export class GameGateway implements OnGatewayConnection {
                     matches.Challenger.username !== match.Challenger.username &&
                     matches.Opponent.username !== match.Opponent.username,
             );
-            finishedGame({
-                user,
-                player1: match.Challenger,
-                player2: match.Opponent,
-            });
         }
-        const player = this.queueInMatch.find((player) => {
+        const matchQueue = this.queueInMatch.find((player) => {
             return (
                 player.player1.username === user.username ||
                 player.player2.username === user.username
             );
         });
-        console.log('disconnect player: ', player);
-        console.log('the user is: ', user);
-        if (player && player !== undefined) {
+        if (matchQueue) {
+            if (matchQueue.status === 'BEGIN') {
+                matchQueue.player1.score1 = 0;
+                matchQueue.player2.score2 = 0;
+                const match = this.queueInMatch.find((player) => {
+                    return (
+                        player.player1.username === user.username ||
+                        player.player2.username === user.username
+                    );
+                });
+                if (match) {
+                    this.updataData(matchQueue);
+                }
+            } else if (matchQueue.status === 'PLAYING') {
+                matchQueue.status = 'CANCEL';
+                const match = this.queueInMatch.find((player) => {
+                    return (
+                        player.player1.username === user.username ||
+                        player.player2.username === user.username
+                    );
+                });
+                match.player1.score1 =
+                    match.player1.username === user.username ? 1 : 7;
+                match.player2.score2 =
+                    match.player2.username === user.username ? 1 : 7;
+                if (match) {
+                    this.updataData(matchQueue);
+                }
+            }
+            matchQueue.status = 'CANCEL';
             this.queueInMatch = this.queueInMatch.filter(
-                (players) =>
-                    players.player1.username !== player.player1.username &&
-                    players.player2.username !== player.player2.username,
+                (player) =>
+                    player.player1.username !== user.username &&
+                    player.player2.username !== user.username,
             );
-            finishedGame({
-                user,
-                player1: player.player1,
-                player2: player.player2,
-            });
-            // this.server.to(player.player1.socket).emit('gameOver');
-            //disconnect the all the plyers sockets in the seem match
+            console.log('queueInMatch', this.queueInMatch);
         }
         console.log(`------[Game] Unregistered ${user.username} from one tab`);
         this.queue = this.queue.filter(
@@ -274,11 +330,20 @@ export class GameGateway implements OnGatewayConnection {
                     player1: {
                         username: queue[0].username,
                         socket: queue[0].socket,
+                        score1: 0,
                     },
                     player2: {
                         username: queue[1].username,
                         socket: queue[1].socket,
+                        score2: 0,
                     },
+                    status: 'BEGIN',
+                });
+                let matchQueue = this.queueInMatch.find((match) => {
+                    return (
+                        match.player1.username === queue[0].username ||
+                        match.player2.username === queue[1].username
+                    );
                 });
                 this.queue = this.queue.filter(
                     (queues) =>
@@ -294,8 +359,9 @@ export class GameGateway implements OnGatewayConnection {
                         client2,
                         queue[0],
                         queue[1],
+                        matchQueue,
                     );
-                }, 5000);
+                }, 4200);
             } else return;
         }
     }
@@ -352,6 +418,30 @@ export class GameGateway implements OnGatewayConnection {
                 matchmaking: true,
                 opponent: match.Challenger.username,
             });
+            this.queueInMatch.push({
+                player1: {
+                    username: match.Challenger.username,
+                    socket: match.Challenger.socket,
+                    score1: 0,
+                },
+                player2: {
+                    username: match.Opponent.username,
+                    socket: match.Opponent.socket,
+                    score2: 0,
+                },
+                status: 'BEGIN',
+            });
+            let matchQueue = this.queueInMatch.find((matchs) => {
+                return (
+                    matchs.player1.username === match.Challenger.username ||
+                    matchs.player2.username === match.Opponent.username
+                );
+            });
+            this.queueChallenge = this.queueChallenge.filter(
+                (matches) =>
+                    matches.Challenger.username !== match.Challenger.username &&
+                    matches.Opponent.username !== match.Opponent.username,
+            );
             const client1 = this.server.sockets.get(match.Challenger.socket);
             const client2 = this.server.sockets.get(match.Opponent.socket);
             setTimeout(() => {
@@ -360,6 +450,7 @@ export class GameGateway implements OnGatewayConnection {
                     client2,
                     match.Challenger,
                     match.Opponent,
+                    matchQueue,
                 );
             }, 5000);
         }

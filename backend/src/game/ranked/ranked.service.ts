@@ -7,12 +7,27 @@ import { Paddle } from '../utils/Paddle';
 import { UserService } from 'src/user/user.service';
 import { emit } from 'process';
 import { GameService } from '../game.service';
+import { status } from '../game.enum';
 
 enum Direction {
     LEFT = 'left',
     RIGHT = 'right',
     NONE = 'none',
 }
+
+type matchQueueProps = {
+    player1: {
+        username: string;
+        socket: string;
+        score1: number;
+    };
+    player2: {
+        username: string;
+        socket: string;
+        score2: number;
+    };
+    status: status;
+};
 
 @Injectable()
 export class RankedService {
@@ -29,7 +44,59 @@ export class RankedService {
         client2.emit(emitedEvent, data2);
     }
 
-    startGame(client1: Socket, client2: Socket, player1: any, player2: any) {
+    async updataData(matchQueue: any, client1?: Socket, client2?: Socket) {
+        this.sendToClients(
+            client1,
+            client2,
+            {
+                winner:
+                    matchQueue.player1.score1 == 7
+                        ? matchQueue.player1.username
+                        : matchQueue.player2.username,
+                player1: matchQueue.player1.username,
+                player2: matchQueue.player2.username,
+                player1_score: matchQueue.player1.score1,
+                player2_score: matchQueue.player2.score2,
+                iWin: matchQueue.player1.score1 == 7,
+            },
+            {
+                winner:
+                    matchQueue.player2.score2 == 7
+                        ? matchQueue.player2.username
+                        : matchQueue.player1.username,
+                player2: matchQueue.player2.username,
+                player1: matchQueue.player1.username,
+                player2_score: matchQueue.player2.score2,
+                player1_score: matchQueue.player1.score1,
+                iWin: matchQueue.player2.score2 == 7,
+            },
+            'finished',
+        );
+        // add the match to the database
+        this.gameService.AddMatch(
+            matchQueue.player1.username,
+            matchQueue.player2.username,
+            true,
+            matchQueue.player1.score1,
+            matchQueue.player2.score2,
+        );
+        // update the database
+        this.gameService.updatePlayerScore({
+            player1: matchQueue.player1.username,
+            player2: matchQueue.player2.username,
+            ranked: true,
+            player1_score: matchQueue.player1.score1,
+            player2_score: matchQueue.player2.score2,
+        });
+    }
+
+    startGame(
+        client1: Socket,
+        client2: Socket,
+        player1: any,
+        player2: any,
+        matchQueue: matchQueueProps,
+    ) {
         const playerSpeed = 10;
         const initialBallSpeed = 5;
         let ballSpeed = 5;
@@ -66,6 +133,7 @@ export class RankedService {
             { isStatic: true },
         );
         const frameRate = 1000 / 60;
+        matchQueue.status = 'PLAYING';
         this.sendToClients(
             client1,
             client2,
@@ -100,8 +168,6 @@ export class RankedService {
         };
 
         let counter = 0;
-        let score1 = 0;
-        let score2 = 0;
 
         const interval = setInterval(() => {
             Engine.update(engine, frameRate);
@@ -127,52 +193,16 @@ export class RankedService {
                 ballSpeed += 1;
             }
 
-            if (score1 == 7 || score2 == 7) {
-                this.sendToClients(
-                    client1,
-                    client2,
-                    {
-                        winner:
-                            score1 == 7 ? player1.username : player2.username,
-                        player1: player1.username,
-                        player2: player2.username,
-                        player1_score: score1,
-                        player2_score: score2,
-                        iWin: score1 == 7,
-                    },
-                    {
-                        winner:
-                            score2 == 7 ? player2.username : player1.username,
-                        player2: player2.username,
-                        player1: player1.username,
-                        player2_score: score2,
-                        player1_score: score1,
-                        iWin: score2 == 7,
-                    },
-                    'finished',
-                );
-                this.gameService.AddMatch(
-                    player1.username,
-                    player2.username,
-                    true,
-                    score1,
-                    score2,
-                );
-                this.gameService.updatePlayerScore({
-                    player1: player1.username,
-                    player2: player2.username,
-                    ranked: true,
-                    player1_score: score1,
-                    player2_score: score2,
-                });
-                client1.emit('game-over', {
-                    player1: player1.username,
-                    player2: player2.username,
-                });
-                client2.emit('game-over', {
-                    player1: player1.username,
-                    player2: player2.username,
-                });
+            if (matchQueue.status === 'CANCEL') {
+                return clearInterval(interval);
+            }
+            if (
+                matchQueue.player1.score1 == 7 ||
+                matchQueue.player2.score2 == 7
+            ) {
+                matchQueue.status = 'END';
+                this.updataData(matchQueue, client1, client2);
+                console.log('game ended');
                 return clearInterval(interval);
             }
 
@@ -240,11 +270,11 @@ export class RankedService {
             };
 
             if (Collision.collides(ball.body, table.topWall, null)) {
-                score1++;
+                matchQueue.player1.score1++;
                 resetBall();
             }
             if (Collision.collides(ball.body, table.bottomWall, null)) {
-                score2++;
+                matchQueue.player2.score2++;
                 resetBall();
             }
 
@@ -257,8 +287,8 @@ export class RankedService {
                     bottomPaddlePos,
                     username: player1.username,
                     score: {
-                        top: score2,
-                        bottom: score1,
+                        top: matchQueue.player2.score2,
+                        bottom: matchQueue.player1.score1,
                     },
                 },
                 {
@@ -267,8 +297,8 @@ export class RankedService {
                     bottomPaddlePos: revTopPaddlePos,
                     username: player2.username,
                     score: {
-                        top: score1,
-                        bottom: score2,
+                        top: matchQueue.player1.score1,
+                        bottom: matchQueue.player2.score2,
                     },
                 },
                 'update-game',
@@ -276,9 +306,13 @@ export class RankedService {
         }, frameRate);
 
         client1.on('disconnect', () => {
+            console.log('client1 disconnected');
+            matchQueue.status = 'CANCEL';
             clearInterval(interval);
         });
         client2.on('disconnect', () => {
+            console.log('client2 disconnected');
+            matchQueue.status = 'CANCEL';
             clearInterval(interval);
         });
 
