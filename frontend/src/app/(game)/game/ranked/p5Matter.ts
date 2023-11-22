@@ -1,7 +1,9 @@
 import p5Types from 'p5';
-import { Paddle } from './Paddle';
-import { Ball } from './Ball';
+import { Paddle } from '../types/Paddle';
+import { Ball } from '../types/Ball';
 import { Socket } from 'socket.io-client';
+import { Score } from '../types/Score';
+import { InitData } from './game';
 
 import { pos } from './game';
 
@@ -10,37 +12,11 @@ let bottomPaddle: Paddle;
 let ball: Ball;
 let score: Score;
 
-class Score {
-    top: number;
-    bottom: number;
-    constructor(top: number, bottom: number) {
-        this.top = top;
-        this.bottom = bottom;
-    }
-
-    show(
-        p5: p5Types,
-        top: number,
-        bottom: number,
-        serverClientRatio: { width: number; height: number },
-    ) {
-        p5.push();
-        p5.textSize(40 * serverClientRatio.width);
-        p5.fill(80);
-        p5.textStyle(p5.BOLD);
-        p5.text(
-            top,
-            30 * serverClientRatio.width,
-            p5.height / 2 - 30 * serverClientRatio.height,
-        );
-        p5.text(
-            bottom,
-            p5.width - 60 * serverClientRatio.width,
-            p5.height / 2 + 70 * serverClientRatio.height,
-        );
-        p5.pop();
-    }
+let img: any;
+function preload(p5: p5Types) {
+    img = p5.loadImage('/images/bordgame.svg');
 }
+
 //dashed line with rectangls herezontally
 function dashedLine(
     p5: p5Types,
@@ -73,8 +49,6 @@ function dashedLine(
     }
 }
 
-import { InitData } from './game';
-
 export function setup(
     p5: p5Types,
     canvasParentRef: Element,
@@ -84,24 +58,20 @@ export function setup(
     p5.createCanvas(init.width, init.height).parent(canvasParentRef);
     p5.frameRate(60);
     topPaddle = new Paddle(
-        p5.width / 2,
-        p5.height * 0.05,
         init.topPaddle.width * serverClientRatio.width,
         init.topPaddle.height * serverClientRatio.height,
+        p5.loadImage('/images/paddleTop.svg'),
     );
     bottomPaddle = new Paddle(
-        p5.width / 2,
-        p5.height - p5.height * 0.05,
         init.bottomPaddle.width * serverClientRatio.width,
         init.bottomPaddle.height * serverClientRatio.height,
+        p5.loadImage('/images/paddleBottom.svg'),
     );
-    ball = new Ball(
-        p5.width / 2,
-        p5.height / 2,
-        init.ball.radius * serverClientRatio.width,
-    );
+    ball = new Ball(init.ball.radius * serverClientRatio.width);
     score = new Score(0, 0);
+    preload(p5);
 }
+let isMousePressed = false;
 
 export function draw(
     p5: p5Types,
@@ -110,7 +80,18 @@ export function draw(
     socket?: Socket,
 ) {
     if (!socket) return;
-    p5.background(51);
+    p5.image(
+        img,
+        0,
+        0,
+        p5.width,
+        p5.height,
+        0,
+        0,
+        img.width,
+        img.height,
+        p5.COVER,
+    );
     dashedLine(
         p5,
         -10 * serverClientRatio.width,
@@ -122,15 +103,19 @@ export function draw(
     );
     score.show(p5, pos.score.top, pos.score.bottom, serverClientRatio);
     ball.show(p5, serverClientRatio, pos?.ballPos);
-    topPaddle.show(p5, serverClientRatio, pos?.topPaddlePos);
-    bottomPaddle.show(p5, serverClientRatio, pos?.bottomPaddlePos);
+    topPaddle.show(p5, serverClientRatio, true, pos?.topPaddlePos);
+    bottomPaddle.show(p5, serverClientRatio, false, pos?.bottomPaddlePos);
+    if (isMousePressed) {
+        const mx = p5.mouseX;
+        const p = pos.bottomPaddlePos;
+        if (mx < p.x * serverClientRatio.width - bottomPaddle.w / 2) {
+            socket.emit('move-left');
+        }
+        if (mx > p.x * serverClientRatio.width + bottomPaddle.w / 2) {
+            socket.emit('move-right');
+        }
+    }
     move(p5, socket, player);
-}
-
-export function mousePressed(p5: p5Types) {
-    // balls.push(new Ball(p5.mouseX, p5.mouseY, 10, { friction: 0, frictionAir: 0, frictionStatic: 0, restitution: 1 }));
-    // balls[balls.length - 1].body.force.x = p5.random(-0.05, 0.05);
-    // balls[balls.length - 1].body.force.y = p5.random(-0.05, 0.05);
 }
 
 export function move(p5: p5Types, socket: Socket, player: string) {
@@ -142,4 +127,12 @@ export function move(p5: p5Types, socket: Socket, player: string) {
     } else if (p5.keyIsDown(RIGHT_ARROW)) {
         socket.emit('move-right', player);
     }
+}
+
+export function mousePressed(p5: p5Types) {
+    isMousePressed = true;
+}
+
+export function mouseReleased(p5: p5Types) {
+    isMousePressed = false;
 }

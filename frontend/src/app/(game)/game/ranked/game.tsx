@@ -1,21 +1,20 @@
 'use client';
-import React, { KeyboardEvent, use, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import p5Types from 'p5';
 
-import { setup, draw, mousePressed } from './p5Matter';
-import { Socket, io } from 'socket.io-client';
+import { setup, draw, mousePressed, mouseReleased } from './p5Matter';
 import Loading from '@/app/loading';
 import { Vector } from 'matter-js';
 import { useSocket } from '@/contexts/SocketContext';
-import { set } from 'react-hook-form';
-import GameOver from '@/app/(game)/game/standing/GameOver';
 import { redirect } from 'next/navigation';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Modal from '@/components/Modal';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { IoIosExit } from 'react-icons/io';
+import { CardPlayerBottom, CardPlayerTop } from '@/components/CardPlayer';
+import ExitGameModal from '@/components/ExitGameModal';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import axios from 'axios';
 
 const Sketch = dynamic(() => import('react-p5').then((mod) => mod.default), {
     ssr: false,
@@ -51,6 +50,10 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
     const [init, setInit] = React.useState<any>(null);
     const [winner, setWinner] = React.useState('');
     const [gameOver, setGameOver] = React.useState(false);
+    const [matchCancel, setMatchCancel] = React.useState(false);
+    const [exitGameModal, setExitGameModal] = React.useState(false);
+    const isSmartWatch = useMediaQuery('(max-width: 300px)');
+    const [isMobile, setIsMobile] = React.useState('');
     const [serverClientRatio, setServerClientRatio] = React.useState({
         width: 1,
         height: 1,
@@ -58,6 +61,21 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
     const { socket } = useSocket();
 
     const queryClient = useQueryClient();
+
+    const { data: opponentData, isLoading } = useQuery({
+        queryKey: ['profile', opponent, 'me'],
+        queryFn: async () => {
+            const { data } = await axios.get(
+                `/api/user/get/${opponent}`,
+                {
+                    withCredentials: true,
+                },
+            );
+
+            return data;
+        },
+    });
+
 
     useEffect(() => {
         if (socket) {
@@ -85,7 +103,7 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 setGameOver(true);
                 setTimeout(() => {
                     setWinner(me.username);
-                }, 500);
+                }, 2000);
             });
             socket.on('finished', (data) => {
                 queryClient.invalidateQueries(['me']);
@@ -95,7 +113,7 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 setTimeout(() => {
                     setWinner(data.winner);
                     socket.disconnect();
-                }, 500);
+                }, 2000);
             });
             socket.on('disconnect', () => {
                 console.log('disconnected');
@@ -104,7 +122,7 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 setGameOver(true);
                 setTimeout(() => {
                     setWinner(me.username);
-                }, 500);
+                }, 2000);
             });
             return () => {
                 socket.off('canvas');
@@ -138,7 +156,7 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
             serverClientRatioW = init.width / w;
             serverClientRatioH = init.height / h;
         }
-
+        if (isSmartWatch) setIsMobile('hidden');
         setServerClientRatio({
             width: serverClientRatioW,
             height: serverClientRatioH,
@@ -148,34 +166,76 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
         if (winner !== '') {
             redirect('/game/standing');
         }
-    }, [winner]);
+        if (matchCancel) redirect('/home');
+    }, [winner, matchCancel]);
 
-    if (!ready) return <Loading />;
+    if (!ready || isLoading) return <Loading />;
 
     return (
         <>
-            <div className="flex justify-center items-center h-screen">
-                <Sketch
-                    className={
-                        'rounded-sm md:rounded-xl  lg:rounded-3xl overflow-hidden'
-                    }
-                    setup={(p5: p5Types, canvasParentRef: Element) => {
-                        setup(p5, canvasParentRef, init, serverClientRatio);
-                    }}
-                    draw={(p5: p5Types) => {
-                        socket &&
-                            draw(p5, serverClientRatio, me.username, socket);
-                    }}
+            {exitGameModal ? (
+                <ExitGameModal
+                    setExitGameModal={setExitGameModal}
+                    setMatchCancel={setMatchCancel}
                 />
-                {gameOver && (
-                    <Modal
-                        onClose={() => {}}
-                        childrenClassName="text-5xl font-nicomoji text-center font-jost text-2xl flex justify-center items-center rounded-xl backdrop-blur-lg text-transparent bg-clip-text bg-gradient-radial from-secondary-200 from-40% to-red-500"
-                    >
-                        Game Over!
-                    </Modal>
-                )}
-            </div>
+            ) : (
+                <div className="flex flex-col justify-evenly h-full items-center backdrop-blur-[1px] m-auto">
+                    <div className="flex justify-between items-center w-full">
+                        <CardPlayerTop
+                            isMobile={isMobile}
+                            username={opponentData.username}
+                            avatar={opponentData.avatar}
+                        />
+                        <button
+                            type="button"
+                            title="return to dashboard"
+                            className="w-16 h-16 rounded-full"
+                        >
+                            <IoIosExit
+                                className="text-3xl text-secondary-200 w-16 h-16 rounded-full bg-secondary-100 hover:text-background hover:bg-secondary-200 transition-all duration-300 ease-in-out"
+                                onClick={() => {
+                                    setExitGameModal(true);
+                                }}
+                            />
+                        </button>
+                    </div>
+                    <Sketch
+                        className="border-4 border-secondary-500 rounded-lg overflow-hidden bg-gradient-to-br from-primary to-background ${w} ${h}
+                        drop-shadow-[0px_0px_15px_#ffa62a] backdrop-blur-md my-1 z-20"
+                        setup={(p5: p5Types, canvasParentRef: Element) => {
+                            setup(p5, canvasParentRef, init, serverClientRatio);
+                        }}
+                        mousePressed={(p5: p5Types) => {
+                            mousePressed(p5);
+                        }}
+                        mouseReleased={(p5: p5Types) => {
+                            mouseReleased(p5);
+                        }}
+                        draw={(p5: p5Types) => {
+                            socket &&
+                                draw(
+                                    p5,
+                                    serverClientRatio,
+                                    me.username,
+                                    socket,
+                                );
+                        }}
+                    />
+                    <CardPlayerBottom
+                        isMobile={isMobile}
+                        username={me.username}
+                        avatar={me.avatar}
+                    />
+                    {gameOver && (
+                        <Modal
+                            onClose={() => {}}
+                            childrenClassName="text-5xl font-nicomoji text-center font-jost text-2xl flex justify-center items-center rounded-xl backdrop-blur-lg text-transparent bg-clip-text bg-gradient-radial from-secondary-200 from-40% to-red-500"
+                        >
+                            Game Over!
+                        </Modal>
+                    )}
+                </div>
+            )}
         </>
     );
 }

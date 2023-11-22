@@ -139,7 +139,6 @@ export function move(
 
     if (isMousePressed) {
         const mx = p5.mouseX;
-        const my = p5.mouseY;
         const p = pos.bottomPaddlePos;
         if (mx < p.x * serverClientRatio.width - bottomPaddle.w / 2) {
             socket.emit('move-left');
@@ -150,24 +149,6 @@ export function move(
     }
 }
 
-let isPause = false;
-
-function controleGame(p5: p5Types, socket: Socket) {
-    const R_KEY = 82;
-    const SPACE_KEY = 32;
-    if (p5.keyIsDown(R_KEY)) {
-        socket.emit('restart-game');
-    }
-    if (p5.keyIsDown(SPACE_KEY)) {
-        if (!isPause) {
-            socket.emit('pause-game');
-            isPause = true;
-        } else {
-            socket.emit('resume-game');
-            isPause = false;
-        }
-    }
-}
 
 export function mousePressed(p5: p5Types) {
     isMousePressed = true;
