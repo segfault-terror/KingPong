@@ -56,6 +56,22 @@ export class ChatController {
         return await this.chatService.deleteDM(id, request.user.id);
     }
 
+    @Post('dm/read/:username')
+    async readMessages(
+        @Param('username') username: string,
+        @Req() request: any,
+    ) {
+        return await this.chatService.readMessages(
+            request.user.username,
+            username,
+        );
+    }
+
+    @Get('is-unread')
+    async isUnread(@Req() request: any) {
+        return await this.chatService.isUnread(request.user.username);
+    }
+
     @Get('channels/:username')
     async getUserChannels(@Param('username') username: string) {
         const user = await this.prismaService.user.findFirst({

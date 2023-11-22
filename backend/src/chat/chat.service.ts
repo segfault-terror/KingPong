@@ -251,7 +251,13 @@ export class ChatService {
                     },
                 ],
             },
-            select: { id: true },
+            select: {
+                id: true,
+                user1: { select: { id: true } },
+                user2: { select: { id: true } },
+                user1_readed: true,
+                user2_readed: true,
+            },
         });
 
         if (dm == null) {
@@ -260,8 +266,26 @@ export class ChatService {
                     user1: { connect: { id: sender.id } },
                     user2: { connect: { id: receiver.id } },
                 },
+                select: {
+                    id: true,
+                    user1: { select: { id: true } },
+                    user2: { select: { id: true } },
+                    user1_readed: true,
+                    user2_readed: true,
+                },
             });
         }
+
+        dm.user1_readed = sender.id === dm.user1.id;
+        dm.user2_readed = sender.id === dm.user2.id;
+
+        await this.prisma.dM.update({
+            where: { id: dm.id },
+            data: {
+                user1_readed: dm.user1_readed,
+                user2_readed: dm.user2_readed,
+            },
+        });
 
         await this.prisma.message.create({
             data: {
@@ -1610,5 +1634,65 @@ export class ChatService {
                 admins: { disconnect: { username } },
             },
         });
+    }
+
+    async readMessages(me: string, username: string) {
+        const dm = await this.prisma.dM.findFirst({
+            where: {
+                OR: [
+                    {
+                        user1: { username: me },
+                        user2: { username },
+                    },
+                    {
+                        user1: { username },
+                        user2: { username: me },
+                    },
+                ],
+            },
+            select: {
+                id: true,
+                user1_readed: true,
+                user2_readed: true,
+                user1: { select: { username: true } },
+                user2: { select: { username: true } },
+            },
+        });
+
+        if (!dm) {
+            throw new NotFoundException(
+                `DM between ${me} and ${username} not found`,
+            );
+        }
+
+        dm.user1_readed = dm.user1.username === me ? true : dm.user1_readed;
+        dm.user2_readed = dm.user2.username === me ? true : dm.user2_readed;
+
+        return await this.prisma.dM.update({
+            where: { id: dm.id },
+            data: {
+                user1_readed: dm.user1_readed,
+                user2_readed: dm.user2_readed,
+            },
+        });
+    }
+
+    async isUnread(me: string) {
+        const dms = await this.prisma.dM.findMany({
+            where: {
+                OR: [
+                    {
+                        user1: { username: me },
+                        user1_readed: false,
+                    },
+                    {
+                        user2: { username: me },
+                        user2_readed: false,
+                    },
+                ],
+            },
+        });
+
+        return { readAll: dms.length === 0 };
     }
 }

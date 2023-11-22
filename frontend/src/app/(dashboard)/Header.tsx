@@ -1,18 +1,12 @@
 'use client';
 
-import {
-    MdChatBubbleOutline,
-    MdOutlineNotificationsNone,
-    MdOutlinePeopleAlt,
-} from 'react-icons/md';
+import { MdChatBubbleOutline, MdOutlinePeopleAlt } from 'react-icons/md';
 import LinkIcon from './LinkIcon';
 import Link from 'next/link';
 import SearchBar from './SearchBar';
 import DropdownMenu from './Dropdown';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { useEffect } from 'react';
-import { useSocket } from '@/contexts/SocketContext';
 import Loading from '../loading';
 
 function NavItem({
@@ -51,7 +45,23 @@ export default function Header() {
         },
     });
 
-    if (isLoadingme || isLoading) return <Loading />;
+    const { data: chatNotif, isLoading: isLoadingChatNotif } = useQuery({
+        queryKey: ['notifications', 'chat'],
+        queryFn: async () => {
+            const { data } = await axios.get(`/api/chat/is-unread`, {
+                withCredentials: true,
+            });
+            return data.readAll;
+        },
+    });
+
+    if (isLoadingme || isLoading || isLoadingChatNotif) {
+        return (
+            <div className="bg-default fixed inset-0 z-50">
+                <Loading />
+            </div>
+        );
+    }
 
     return (
         <header className="p-3 w-full">
@@ -70,12 +80,23 @@ export default function Header() {
                             <MdOutlinePeopleAlt />
                         </NavItem>
                         <NavItem href="/chat">
-                            <MdChatBubbleOutline />
+                            <div className="w-full h-full realtive">
+                                {!chatNotif && (
+                                    <>
+                                        <div className="absolute bottom-0 right-0 p-[5px] rounded-full bg-red-500 animate-ping" />
+                                        <div className="absolute bottom-0 right-0 p-[5px] rounded-full bg-red-500" />
+                                    </>
+                                )}
+                                <MdChatBubbleOutline className="w-full h-full" />
+                            </div>
                         </NavItem>
                         <NavItem href="/notifications">
                             <div className="w-full h-full relative">
                                 {notreadedNotif && (
-                                    <div className="absolute bottom-0 right-0 p-[5px] rounded-full bg-red-500"></div>
+                                    <>
+                                        <div className="absolute bottom-0 right-0 p-[5px] rounded-full bg-red-500 animate-ping" />
+                                        <div className="absolute bottom-0 right-0 p-[5px] rounded-full bg-red-500" />
+                                    </>
                                 )}
                                 <img
                                     src="/images/notification.svg"
