@@ -4,15 +4,22 @@ import { Vector } from 'matter-js';
 export class Paddle {
     w: number;
     h: number;
+    paddleimage: p5Types.Image;
 
-    constructor(x: number, y: number, w: number, h: number) {
+    constructor(
+        w: number,
+        h: number,
+        paddleimage: p5Types.Image,
+    ) {
         this.w = w;
         this.h = h;
+        this.paddleimage = paddleimage;
     }
 
     show(
         p5: p5Types,
         serverClientRatio: { width: number; height: number },
+        topPaddle: boolean,
         pos?: Vector,
     ) {
         if (!pos) return;
@@ -22,11 +29,13 @@ export class Paddle {
             pos.x * serverClientRatio.width,
             pos.y * serverClientRatio.height,
         );
-        p5.strokeWeight(1);
-        p5.stroke(255);
-        p5.fill(127);
-        p5.rectMode(p5.CENTER);
-        p5.rect(0, 0, this.w, this.h);
+        p5.image(
+            this.paddleimage,
+            -(this.w / 2),
+            topPaddle === true ? -2 : -(this.h / 2),
+            this.w,
+            this.h,
+        );
         p5.pop();
     }
 }
