@@ -8,6 +8,11 @@ import { Socket, io } from 'socket.io-client';
 import Loading from '@/app/loading';
 import { Vector } from 'matter-js';
 import Link from 'next/link';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { IoIosExit } from 'react-icons/io';
+import ExitGameModal from '@/components/ExitGameModal';
+import { CardPlayerBottom, CardPlayerTop } from '@/components/CardPlayer';
+import useMyData from '@/hooks/useMyData';
 
 const Sketch = dynamic(() => import('react-p5').then((mod) => mod.default), {
     ssr: false,
@@ -30,6 +35,8 @@ interface Data {
     topPaddlePos: Vector;
     bottomPaddlePos: Vector;
     obstaclesPos: Vector[];
+    yourScore: number;
+    opponentScore: number;
 }
 
 export let pos: Data;
@@ -39,8 +46,16 @@ let screenDim = {
     height: 0,
 };
 
-export default function Page() {
+export default function Page({
+    pramas,
+}: {
+    pramas: { username: string; avatar: string };
+}) {
+    const isSmartWatch = useMediaQuery('(max-width: 300px)');
+    const [isMobile, setIsMobile] = React.useState('');
     const [ready, setReady] = React.useState(false);
+    const [matchCancel, setMatchCancel] = React.useState(false);
+    const [exitGameModal, setExitGameModal] = React.useState(false);
     const [socket, setSocket] = React.useState<Socket | undefined>(undefined);
     const [init, setInit] = React.useState<InitData>({
         width: 0,
@@ -55,7 +70,7 @@ export default function Page() {
         width: 1,
         height: 1,
     });
-
+    const { me } = useMyData();
     useEffect(() => {
         const socket = io(`/game`, {
             withCredentials: true,
@@ -97,7 +112,9 @@ export default function Page() {
             socket.disconnect();
         };
     }, []);
+    const [{ w, h }, setDim] = React.useState({ w: '', h: '' });
     useEffect(() => {
+        if (isSmartWatch) setIsMobile('hidden');
         screenDim = {
             width: window.innerWidth,
             height: window.innerHeight,
@@ -105,18 +122,20 @@ export default function Page() {
         if (!ready) return;
         let serverClientRatioW = 1;
         let serverClientRatioH = 1;
-        if (screenDim.width < init.width || screenDim.height < init.height) {
+        if (
+            screenDim.width < init.width ||
+            screenDim.height - 48 < init.height
+        ) {
             const w = init.width;
             const h = init.height;
             const ratio = init.width / init.height;
 
-            if (screenDim.width < init.width) {
-                console.log(screenDim.width, init.width);
+            if (screenDim.width - 48 < init.width) {
                 init.width = screenDim.width * 0.9;
                 init.height = init.width / ratio;
             }
             if (screenDim.height * 0.8 < init.height) {
-                init.height = screenDim.height * 0.8;
+                init.height = (screenDim.height - 48) * 0.8;
                 init.width = init.height * ratio;
             }
             serverClientRatioW = init.width / w;
@@ -127,74 +146,82 @@ export default function Page() {
             width: serverClientRatioW,
             height: serverClientRatioH,
         });
+        const w = 600 * serverClientRatioW;
+        const h = 800 * serverClientRatioH;
+        setDim({ w: `w-[${w}px]`, h: `h-[${h}px]` });
     }, [ready]);
+
+    useEffect(() => {
+        if (matchCancel) window.location.href = `/home`;
+    });
     if (!ready) return <Loading />;
     let isPaused = false;
     return (
-        <div className="">
-            <header className="p-3 w-full">
-                <div className="grid grid-cols-1 md:grid-cols-3 items-center">
-                    <Link href="/home" className="block w-56">
-                        <img
-                            src="/images/logo.svg"
-                            className="w-56 h-auto md:w-56"
-                            alt="logo"
-                        />
-                    </Link>
-                </div>
-            </header>
-            <div className="flex flex-col md:flex-row justify-center items-center h-full backdrop-blur-[1px] m-auto">
-                {/* <div className="self-start rounded-l-full w-1/2 p-2 bg-primary border-2 border-secondary-500 flex  justify-between items-center px-2 mx-3 drop-shadow-[0px_0px_10px_#FF0B0B]">
-                    <img
-                        src="/images/bot.png"
-                        alt=""
-                        className="h-10 w-10 md:h-24 md:w-24 rounded-full place-items-start"
-                    />
-                    <h1 className="text-2xl md:text-3xl text-black font-jockey font-bold text-center">
-                        dr.bot
-                    </h1>
-                </div> */}
-                <Sketch
-                    className="border-4 border-secondary-500 rounded-lg overflow-hidden bg-gradient-to-br from-primary to-background
-                     drop-shadow-[0px_0px_15px_#ffa62a] backdrop-blur-md my-1 z-20"
-                    setup={(p5: p5Types, canvasParentRef: Element) => {
-                        setup(p5, canvasParentRef, init, serverClientRatio);
-                    }}
-                    draw={(p5: p5Types) => {
-                        draw(p5, serverClientRatio, socket);
-                    }}
-                    mousePressed={(p5: p5Types) => {
-                        mousePressed(p5);
-                    }}
-                    mouseReleased={(p5: p5Types) => {
-                        mouseReleased(p5);
-                    }}
-                    keyPressed={(p5: p5Types) => {
-                        const SPACE_KEY = 32;
-                        if (p5.keyCode === SPACE_KEY) {
-                            if (isPaused) {
-                                p5.loop();
-                                isPaused = false;
-                                socket?.emit('resume-game');
-                            } else {
-                                p5.noLoop();
-                                isPaused = true;
-                                socket?.emit('pause-game');
-                            }
-                        }
-                    }}
+        <>
+            {exitGameModal ? (
+                <ExitGameModal
+                    setExitGameModal={setExitGameModal}
+                    setMatchCancel={setMatchCancel}
                 />
-                {/* <div className="self-end rounded-r-full w-1/2 p-2 bg-primary border-2 border-secondary-500 flex  justify-between items-center px-2 mx-3 drop-shadow-[0px_0px_10px_#03CE18]">
-                    <h1 className="text-2xl md:text-3xl text-black font-jockey font-bold text-center">
-                        Akashi
-                    </h1>
-                    <img
-                        src="/images/bot.png"
-                        alt=""
-                        className="h-10 w-10 md:h-24 md:w-24 rounded-full place-items-start"
+            ) : (
+                <div className="flex flex-col justify-evenly h-full items-center backdrop-blur-[1px] m-auto">
+                    <div className="flex justify-between items-center w-full">
+                        <CardPlayerTop
+                            isMobile={isMobile}
+                            username={'Dr. Boot'}
+                            avatar={'/images/bot.png'}
+                        />
+                        <button
+                            type="button"
+                            title="return to dashboard"
+                            className="w-16 h-16 rounded-full"
+                        >
+                            <IoIosExit
+                                className="text-3xl text-secondary-200 w-16 h-16 rounded-full bg-secondary-100 hover:text-background hover:bg-secondary-200 transition-all duration-300 ease-in-out"
+                                onClick={() => {
+                                    setExitGameModal(true);
+                                }}
+                            />
+                        </button>
+                    </div>
+                    <Sketch
+                        className={`border-4 border-secondary-500 rounded-lg overflow-hidden bg-gradient-to-br from-primary to-background ${w} ${h}
+                     drop-shadow-[0px_0px_15px_#ffa62a] backdrop-blur-md my-1 z-20`}
+                        setup={(p5: p5Types, canvasParentRef: Element) => {
+                            setup(p5, canvasParentRef, init, serverClientRatio);
+                        }}
+                        draw={(p5: p5Types) => {
+                            draw(p5, serverClientRatio, socket);
+                        }}
+                        mousePressed={(p5: p5Types) => {
+                            mousePressed(p5);
+                        }}
+                        mouseReleased={(p5: p5Types) => {
+                            mouseReleased(p5);
+                        }}
+                        keyPressed={(p5: p5Types) => {
+                            const SPACE_KEY = 32;
+                            if (p5.keyCode === SPACE_KEY) {
+                                if (isPaused) {
+                                    p5.loop();
+                                    isPaused = false;
+                                    socket?.emit('resume-game');
+                                } else {
+                                    p5.noLoop();
+                                    isPaused = true;
+                                    socket?.emit('pause-game');
+                                }
+                            }
+                        }}
                     />
-                </div> */}
-            </div>
-        </div>
+
+                    <CardPlayerBottom
+                        isMobile={isMobile}
+                        username={me.username}
+                        avatar={me.avatar}
+                    />
+                </div>
+            )}
+        </>
     );
 }

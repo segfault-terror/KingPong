@@ -1,13 +1,15 @@
 import p5Types from 'p5';
-import { Paddle } from './Paddle';
-import { Ball } from './Ball';
+import { Paddle } from '../types/Paddle';
+import { Ball } from '../types/Ball';
 import { Socket } from 'socket.io-client';
 import { InitData, pos } from './page';
-import { Obstacle } from './Obstacle';
+import { Obstacle } from '../types/Obstacle';
+import { Score } from '../types/Score';
 
 let topPaddle: Paddle;
 let bottomPaddle: Paddle;
 let ball: Ball;
+let score: Score;
 const obstacles: Obstacle[] = [];
 
 let img: any;
@@ -57,22 +59,19 @@ export function setup(
 
     preload(p5);
     topPaddle = new Paddle(
-        p5.width / 2,
-        p5.height * 0.05,
         init.topPaddle.width * serverClientRatio.width,
         init.topPaddle.height * serverClientRatio.height,
+        p5.loadImage('/images/paddleTop.svg'),
     );
     bottomPaddle = new Paddle(
-        p5.width / 2,
-        p5.height - p5.height * 0.05,
         init.bottomPaddle.width * serverClientRatio.width,
         init.bottomPaddle.height * serverClientRatio.height,
+        p5.loadImage('/images/paddleBottom.svg'),
     );
     ball = new Ball(
-        p5.width / 2,
-        p5.height / 2,
         init.ball.radius * serverClientRatio.width,
     );
+    score = new Score(0, 0);
     for (const obstacle of init.obstacles) {
         obstacles.push(
             new Obstacle(
@@ -93,7 +92,18 @@ export function draw(
     socket?: Socket,
 ) {
     if (!socket) return;
-    p5.image(img, 0, 0,p5.width, p5.height, 0, 0, img.width, img.height, p5.COVER);
+    p5.image(
+        img,
+        0,
+        0,
+        p5.width,
+        p5.height,
+        0,
+        0,
+        img.width,
+        img.height,
+        p5.COVER,
+    );
     dashedLine(
         p5,
         -20 * serverClientRatio.width,
@@ -103,16 +113,21 @@ export function draw(
         40 * serverClientRatio.width,
         serverClientRatio,
     );
+    score.show(p5, pos.opponentScore, pos.yourScore, serverClientRatio);
     ball.show(p5, serverClientRatio, pos?.ballPos);
-    topPaddle.show(p5, serverClientRatio, pos?.topPaddlePos);
-    bottomPaddle.show(p5, serverClientRatio, pos?.bottomPaddlePos);
+    topPaddle.show(p5, serverClientRatio, true, pos?.topPaddlePos);
+    bottomPaddle.show(p5, serverClientRatio, false, pos?.bottomPaddlePos);
     for (let i = 0; i < obstacles.length; i++) {
         obstacles[i].show(p5, serverClientRatio, pos.obstaclesPos[i]);
     }
-    move(p5, socket);
+    move(p5, socket, serverClientRatio);
 }
 
-export function move(p5: p5Types, socket: Socket) {
+export function move(
+    p5: p5Types,
+    socket: Socket,
+    serverClientRatio: { width: number; height: number },
+) {
     const LEFT_ARROW = 37;
     const RIGHT_ARROW = 39;
 
@@ -126,10 +141,10 @@ export function move(p5: p5Types, socket: Socket) {
         const mx = p5.mouseX;
         const my = p5.mouseY;
         const p = pos.bottomPaddlePos;
-        if (mx < p.x - (bottomPaddle.w / 2)) {
+        if (mx < p.x * serverClientRatio.width - bottomPaddle.w / 2) {
             socket.emit('move-left');
         }
-        if (mx > p.x + (bottomPaddle.w / 2)) {
+        if (mx > p.x * serverClientRatio.width + bottomPaddle.w / 2) {
             socket.emit('move-right');
         }
     }
