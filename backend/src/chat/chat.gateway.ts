@@ -51,7 +51,6 @@ export class ChatGateway implements OnGatewayDisconnect {
         userChannels.forEach((channel) => {
             socket.join(channel.name);
         });
-        console.log('register', socket.id);
     }
 
     async handleDisconnect(socket: Socket) {
@@ -92,10 +91,7 @@ export class ChatGateway implements OnGatewayDisconnect {
                 (user) => user.username === data.username,
             );
 
-            if (!result) {
-                console.log('no user registered');
-                return;
-            }
+            if (!result) return;
 
             const { blockedBy: blockedByList } =
                 await this.prisma.user.findFirst({
@@ -129,6 +125,8 @@ export class ChatGateway implements OnGatewayDisconnect {
             const sender = this.connectedUsers.find((user) =>
                 user.socketsId.includes(socket.id),
             );
+
+            if (!sender) return;
 
             receiver.socketsId.forEach((socketId: string) => {
                 this.server

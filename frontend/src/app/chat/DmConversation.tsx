@@ -1,17 +1,18 @@
 'use client';
+import Modal from '@/components/Modal';
+import { useSocket } from '@/contexts/SocketContext';
 import { modalContext } from '@/contexts/contexts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
-import { ReactNode, use, useContext, useEffect, useRef, useState } from 'react';
+import { ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { HiDotsVertical } from 'react-icons/hi';
+import { Socket, io } from 'socket.io-client';
 import Loading from '../loading';
 import ChatInput from './ChatInput';
-import { getStatusColor } from './DirectMessage';
-import Modal from '@/components/Modal';
-import { useSocket } from '@/contexts/SocketContext';
-import DropdownModal from './DropdownModal';
 import ChatMenu from './ChatMenu';
+import { getStatusColor } from './DirectMessage';
+import DropdownModal from './DropdownModal';
 
 export type DmConversationProps = {
     userName: string;
@@ -26,6 +27,29 @@ export default function DmConversation({ userName }: DmConversationProps) {
     const [isTyping, setIsTyping] = useState(false);
     const { socket } = useSocket();
 
+    const [globalSocket, setGlobalSocket] = useState<Socket | null>(null);
+
+    useEffect(() => {
+        const socket = io('/Global', {
+            withCredentials: true,
+            path: '/api/socket',
+            autoConnect: false,
+        });
+
+        async function connect() {
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            socket.connect();
+        }
+
+        connect();
+        socket.emit('register', userName);
+
+        setGlobalSocket(socket);
+        return () => {
+            setTimeout(() => socket.close(), 0);
+        };
+    }, [userName]);
+
     const { mutate } = useMutation({
         mutationFn: async (content: string) => {
             return await axios.post('/api/chat/dm/message', {
@@ -39,6 +63,7 @@ export default function DmConversation({ userName }: DmConversationProps) {
             queryClient.invalidateQueries(['dm', userName], { exact: true });
             queryClient.invalidateQueries(['dms', 'brief'], { exact: true });
             socket?.emit('new-message', userName);
+            globalSocket?.emit('chat-notif', { receiverUsername: userName });
         },
     });
 

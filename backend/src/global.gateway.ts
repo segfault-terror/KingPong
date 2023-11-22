@@ -14,7 +14,6 @@ import { WsAuthGuard } from 'src/auth/ws.auth.guard';
 @UseGuards(WsAuthGuard)
 export class GlobalGateway implements OnGatewayDisconnect {
     connectedUsers: { username: string; sockets: string[] }[] = [];
-    counter = 0;
     @WebSocketServer() server: Namespace;
 
     @SubscribeMessage('register')
@@ -22,15 +21,12 @@ export class GlobalGateway implements OnGatewayDisconnect {
         @MessageBody() username: string,
         @ConnectedSocket() socket: Socket,
     ) {
-        console.log(`Register... ${username}`);
         const user = this.connectedUsers.find(
             (user) => user.username === username,
         );
         if (!user) {
-            console.log(`[Global] Registered ${username} for the first time`);
             this.connectedUsers.push({ username, sockets: [socket.id] });
         } else {
-            console.log(`[Global] Registered ${username} in another tab`);
             user.sockets.push(socket.id);
         }
     }
@@ -42,12 +38,6 @@ export class GlobalGateway implements OnGatewayDisconnect {
 
         if (!user) return;
         user.sockets = user.sockets.filter((id) => id !== socket.id);
-
-        if (user.sockets.length === 0) {
-            console.log(`[Global] Unregistered ${user.username} from all tabs`);
-        } else {
-            console.log(`[Global] Unregistered ${user.username} from one tab`);
-        }
     }
 
     @SubscribeMessage('friends')
@@ -56,12 +46,9 @@ export class GlobalGateway implements OnGatewayDisconnect {
             (user) => user.username === username,
         );
 
-        console.log('friends ', result);
         if (!result) return;
         result.sockets.forEach((id) => {
             this.server.to(id).emit('friends', username);
-            console.log(`#${this.counter} - friends to ${username}`);
-            this.counter++;
         });
     }
     @SubscribeMessage('notifications')
@@ -73,8 +60,6 @@ export class GlobalGateway implements OnGatewayDisconnect {
         if (!result) return;
         result.sockets.forEach((id) => {
             this.server.to(id).emit('notifications', username);
-            console.log(`---${this.counter} - Notification to ${username}`);
-            this.counter++;
         });
     }
 
@@ -82,7 +67,6 @@ export class GlobalGateway implements OnGatewayDisconnect {
     async handleProfile(
         @MessageBody() { user1, user2 }: { user1: string; user2: string },
     ) {
-        console.log(`Profile to ${user1} and ${user2}`);
         const result1 = this.connectedUsers.find(
             (user) => user.username === user1,
         );
@@ -94,49 +78,60 @@ export class GlobalGateway implements OnGatewayDisconnect {
         if (result1)
             result1.sockets.forEach((id) => {
                 this.server.to(id).emit('profile', { user1, user2 });
-                console.log(
-                    `+++${this.counter} - Profile to ${user1} and ${user2}`,
-                );
-                this.counter++;
             });
         if (result2)
             result2.sockets.forEach((id) => {
                 this.server.to(id).emit('profile', { user2, user1 });
-                console.log(
-                    `+++${this.counter} - Profile to ${user2} and ${user1}`,
-                );
-                this.counter++;
             });
-        }
+    }
 
-        @SubscribeMessage('notif')
-        async handleNotif(
-            @MessageBody()
-            {
-                sender,
-                username,
-                type,
-                avatar,
-                ChallengeId,
-            }: {
-                sender: string;
-                username: string;
-                type: string;
-                avatar: string;
-                ChallengeId: string;
-            },
-        ) {
-            const result = this.connectedUsers.find(
-                (user) => user.username === sender,
-            );
-            
-            if (result)
-                result.sockets.forEach((id) => {
-                    this.server.to(id).emit('notif', { username, type, avatar, ChallengeId: type === "GAME" ? ChallengeId : null });
-                    if (ChallengeId)
-                        console.log(`+++${this.counter} - Notif to ${sender} with ChallengeId ${ChallengeId}`);
-                    console.log(`+++${this.counter} - Notif to ${sender}`);
-                    this.counter++;
+    @SubscribeMessage('notif')
+    async handleNotif(
+        @MessageBody()
+        {
+            sender,
+            username,
+            type,
+            avatar,
+            ChallengeId,
+        }: {
+            sender: string;
+            username: string;
+            type: string;
+            avatar: string;
+            ChallengeId: string;
+        },
+    ) {
+        const result = this.connectedUsers.find(
+            (user) => user.username === sender,
+        );
+
+        if (result)
+            result.sockets.forEach((id) => {
+                this.server.to(id).emit('notif', {
+                    username,
+                    type,
+                    avatar,
+                    ChallengeId: type === 'GAME' ? ChallengeId : null,
                 });
-        }
+            });
+    }
+
+    @SubscribeMessage('chat-notif')
+    handleChatNotif(
+        @MessageBody() { receiverUsername }: { receiverUsername: string },
+        @ConnectedSocket() socket: Socket,
+    ) {
+        const receiver = this.connectedUsers.find(
+            (user) => user.username === receiverUsername,
+        );
+
+        if (!receiver) return;
+
+        receiver.sockets.forEach((socketId) => {
+            this.server.to(socketId).emit('chat-notif', {
+                sender: (socket as any).request.user.username,
+            });
+        });
+    }
 }

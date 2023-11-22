@@ -1,13 +1,16 @@
 'use client';
 
-import { MdChatBubbleOutline, MdOutlinePeopleAlt } from 'react-icons/md';
-import LinkIcon from './LinkIcon';
-import Link from 'next/link';
-import SearchBar from './SearchBar';
-import DropdownMenu from './Dropdown';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
+import { MdChatBubbleOutline, MdOutlinePeopleAlt } from 'react-icons/md';
+import { io } from 'socket.io-client';
 import Loading from '../loading';
+import DropdownMenu from './Dropdown';
+import LinkIcon from './LinkIcon';
+import SearchBar from './SearchBar';
 
 function NavItem({
     href,
@@ -34,13 +37,50 @@ export default function Header() {
         },
     });
 
+    const queryClient = useQueryClient();
+    const pathname = usePathname();
+
+    useEffect(() => {
+        if (!currentUser) return;
+
+        const socket = io('/Global', {
+            withCredentials: true,
+            path: '/api/socket',
+            autoConnect: false,
+        });
+
+        async function connect() {
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            socket.connect();
+        }
+
+        connect();
+        socket.emit('register', currentUser.username);
+
+        socket.on('chat-notif', ({ sender }: { sender: string }) => {
+            if (pathname === `/chat/dm/${sender}`) {
+                axios.post(`/api/chat/dm/read/${sender}`, {
+                    withCredentials: true,
+                });
+                return;
+            }
+
+            queryClient.invalidateQueries(['notifications', 'chat'], {
+                exact: true,
+            });
+        });
+
+        return () => {
+            setTimeout(() => socket.close(), 0);
+        };
+    }, [currentUser, pathname, queryClient]);
+
     const { data: notreadedNotif, isLoading } = useQuery({
         queryKey: ['notifications', 'notreaded'],
         queryFn: async () => {
             const { data } = await axios.get(`/api/notifications/notreaded`, {
                 withCredentials: true,
             });
-            console.log('fetching not readed: ', data);
             return data;
         },
     });
@@ -53,6 +93,7 @@ export default function Header() {
             });
             return data.readAll;
         },
+        refetchOnWindowFocus: false,
     });
 
     if (isLoadingme || isLoading || isLoadingChatNotif) {
