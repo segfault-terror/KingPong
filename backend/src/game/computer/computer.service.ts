@@ -107,6 +107,8 @@ export class ComputerService {
             x: Common.random(-ballSpeed, ballSpeed),
             y: orPair(-ballSpeed, ballSpeed),
         };
+        let yourScore = 0;
+        let opponentScore = 0;
 
         const gameLogic = () => {
             Engine.update(engine, frameRate);
@@ -220,9 +222,11 @@ export class ComputerService {
 
             if (Collision.collides(ball.body, table.topWall, null)) {
                 resetBall();
+                yourScore++;
             }
             if (Collision.collides(ball.body, table.bottomWall, null)) {
                 resetBall();
+                opponentScore++;
             }
 
             if (checkBallOutOfBounds()) {
@@ -235,6 +239,8 @@ export class ComputerService {
                 topPaddlePos,
                 bottomPaddlePos,
                 obstaclesPos: obstacles.map((o) => o.body.position),
+                yourScore,
+                opponentScore,
             });
         };
         let interval = setInterval(gameLogic, frameRate);
