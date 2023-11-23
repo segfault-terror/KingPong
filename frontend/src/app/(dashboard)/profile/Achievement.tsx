@@ -9,7 +9,16 @@ export default function Achievement({
     description,
     type,
 }: AchievementProps) {
-    const imagePath = `/images/${type.toLowerCase()}-achievement.svg`;
+    let imagePath = '';
+    if (type === 'empty') {
+        imagePath = `/images/achievements/empty.svg`;
+    } else {
+        imagePath = `/images/achievements/${title
+            .toLocaleLowerCase()
+            .split(' ')
+            .join('-')}.svg`;
+    }
+
     return (
         <div className="flex justify-between items-center">
             <div className="flex flex-col gap-2 max-w-sm">
