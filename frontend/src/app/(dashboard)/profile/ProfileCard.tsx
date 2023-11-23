@@ -136,7 +136,7 @@ export default function ProfileCard({ username }: ProfileCardProps) {
     const [hidden, setHidden] = useState(false);
 
     useEffect(() => {
-        if (Challenge) redirect(`/game/ranked/${id}`);
+        if (Challenge) redirect(`/game/ranked/normal/${id}`);
     }, [Challenge, id]);
 
     if (visitedUserLoading || friendshipLoading || isLoading) {

@@ -11,6 +11,7 @@ import { redirect } from 'next/navigation';
 import { useSocket } from '@/contexts/SocketContext';
 import { set } from 'react-hook-form';
 import { motion } from 'framer-motion';
+import Modal from '@/components/Modal';
 
 type StandingGameResult = {
     me: any;
@@ -19,20 +20,70 @@ type StandingGameResult = {
 };
 
 const Buttons = () => {
+    const [showGameMode, setShowGameMode] = useState(false);
+
     return (
         <div className="absolute bg-grad top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col justify-between items-center font-nicomoji text-center text-black text-sm">
-            <Link
+            <button
                 className="m-2 w-24 h-8 md:w-36 md:h-12 lg:w-44 lg:h-14 lg:text-xl xl:w-48 xl:h-16 xl:text-2xl md:text-lg bg-gradient-radial from-green-400 to-green-700 rounded-lg lg:rounded-2xl border-t-2 border-b-2 border-gray-600 hover:border-green-300 flex justify-center items-center"
-                href="/game/ranked"
+                onClick={() => {
+                    setShowGameMode(true);
+                }}
             >
                 New Game
-            </Link>
+            </button>
             <Link
                 className="w-24 h-8 md:w-36 md:h-12 lg:w-44 lg:h-14 lg:text-xl xl:w-48 xl:h-16 xl:text-2xl md:text-lg bg-gradient-radial from-inactive-200 to-inactive-500 rounded-lg lg:rounded-2xl border-t-2 border-b-2 border-gray-600 hover:border-white flex justify-center items-center"
                 href="/home"
             >
                 Exit
             </Link>
+            {showGameMode && (
+                <Modal
+                    onClose={() => setShowGameMode(false)}
+                    childrenClassName="bg-gradient-to-br from-primary to-background p-6 rounded-2xl border-r-2 border-l-2 border-secondary-500 w-[90%]
+                max-w-[900px] flex flex-col justify-evenly"
+                >
+                    <div className="w-full flex justify-around">
+                        <div className="flex flex-col items-center gap-3">
+                            <Link
+                                href={`/game/ranked/normal`}
+                                className="hover:drop-shadow-neon-white"
+                            >
+                                <img
+                                    src={`/images/normal.png`}
+                                    alt=""
+                                    className="w-[80%] md:w-[400px] rounded-3xl overflow-hidden"
+                                />
+                            </Link>
+                            <Link
+                                href={`/game/ranked/normal`}
+                                className="flex items-center justify-center w-32 h-12 lg:w-36 lg:h-14 border-t-4 border-b-4 rounded-3xl border-opponent bg-secondary-500 text-black font-nicomoji group-hover:opacity-100  hover:bg-secondary-200 hover:border-white"
+                            >
+                                Normal
+                            </Link>
+                        </div>
+                        <div className="flex flex-col items-center gap-3">
+                            <Link
+                                href={`/game/ranked/obstacle`}
+                                className="hover:drop-shadow-neon-white"
+                            >
+                                <img
+                                    src={`/images/obstacle.png`}
+                                    alt=""
+                                    className="w-[80%] md:w-[400px] rounded-3xl overflow-hidden"
+                                />
+                            </Link>
+                            <Link
+                                href={`/game/ranked/obstacle`}
+                                className="flex items-center justify-center w-32 h-12 lg:w-36 lg:h-14 border-t-4 border-b-4 rounded-3xl border-opponent bg-secondary-500 text-black font-nicomoji group-hover:opacity-100  hover:bg-secondary-200 hover:border-white"
+                            >
+                                Obstacle
+                            </Link>
+                        </div>
+                    </div>
+                </Modal>
+            )}
         </div>
     );
 };

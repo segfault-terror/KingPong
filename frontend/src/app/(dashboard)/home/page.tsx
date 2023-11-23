@@ -103,10 +103,7 @@ export default function Page() {
         }
         return (
             <div className={`flex ${Transation}`}>
-                {useMemo(() => {
-                    return (
-                        <>
-                            {isMobile ? (
+                {isMobile ? (
                                 <Link
                                     href={'/leaderboard'}
                                     className="h-12 w-12  mt-4"
@@ -122,9 +119,6 @@ export default function Page() {
                             ) : (
                                 <>{Navbar(myleague, leaderboard)}</>
                             )}
-                        </>
-                    );
-                }, [leaderboard, myleague])}
                 <main
                     className={`w-full min-h-[80vh] overflow-hidden flex flex-col justify-center items-center lg:justify-normal text-black transition-all duration-500 lg:my-16`}
                 >

@@ -27,7 +27,7 @@ export function InviteGameModal({
     const [myId, setId] = useState(id);
 
     useEffect(() => {
-        if (Challenge) redirect(`/game/ranked/${id}`);
+        if (Challenge) redirect(`/game/ranked/normal/${id}`);
     }, [Challenge, id]);
 
     return (

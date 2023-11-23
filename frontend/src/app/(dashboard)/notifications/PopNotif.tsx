@@ -87,7 +87,7 @@ export default function PopNotif({
     useEffect(() => {
         if (redirected) {
             console.log('redirecting');
-            redirect(`/game/ranked/${notif.ChallengeId}`);
+            redirect(`/game/ranked/normal/${notif.ChallengeId}`);
         }
     }, [redirected]);
     if (deleteLoading || acceptLoading || meLoading) return <LoadingEmpty />;
