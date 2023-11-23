@@ -34,25 +34,30 @@ const levelStars = (newLevel: string) => {
 };
 
 export default function LevelUp({ newLevel, data }: LevelUpProps) {
-    const { mutate: updateUser, isLoading } = useMutation(async () => {
+    const {
+        mutate: updateUser,
+        isLoading,
+        isSuccess,
+    } = useMutation(async () => {
         return await axios.post(`/api/user/setdata`, {
             withCredentials: true,
         });
     });
     //counter 10s
     const [counter, setCounter] = useState(10);
+    const queryClient = useQueryClient();
     useEffect(() => {
         if (counter === 0) {
             updateUser();
-            redirect('/home');
+            queryClient.invalidateQueries(['me'], {
+                exact: true,
+            });
         }
         const timer = setTimeout(() => {
             setCounter(counter - 1);
         }, 1000);
         return () => clearTimeout(timer);
-    }, [counter, data, updateUser]);
-
-    if (isLoading) return <Loading />;
+    }, [counter, data, updateUser, isSuccess]);
 
     return (
         <div className="min-h-screen bg-center bg-cover flex flex-col items-center justify-center relative overflow-hidden backdrop-blur-[1px]">
@@ -71,9 +76,7 @@ export default function LevelUp({ newLevel, data }: LevelUpProps) {
                     }}
                     onClick={() => {
                         console.log('clicked');
-                        updateUser();
-                        const queryClient = useQueryClient();
-                        queryClient.invalidateQueries(['me']);
+                        setCounter(10);
                     }}
                 >
                     continue
