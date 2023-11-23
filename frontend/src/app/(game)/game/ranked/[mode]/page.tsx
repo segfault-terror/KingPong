@@ -5,7 +5,7 @@ import Loading from '../../../../loading';
 import { SocketProvider } from '@/contexts/SocketContext';
 
 import React, { useEffect, useState } from 'react';
-import MatchMaking from '../../../matchmaking/page';
+import MatchMaking from '../../../matchmaking/MatchMakingPage';
 import { match } from 'assert';
 import { redirect } from 'next/navigation';
 import PongApp from './game';

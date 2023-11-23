@@ -5,13 +5,17 @@ import Loading from '@/app/loading';
 import { SocketProvider } from '@/contexts/SocketContext';
 
 import React, { useEffect, useState } from 'react';
-import MatchMaking from '@/app/(game)/matchmaking/page';
+import MatchMaking from '@/app/(game)/matchmaking/MatchMakingPage';
 import { redirect } from 'next/navigation';
 import Game from '../game';
 import { useRouter } from 'next/router';
 import { set } from 'react-hook-form';
 
-export default function Page({ params }: { params: { id: string, mode: string } }) {
+export default function Page({
+    params,
+}: {
+    params: { id: string; mode: string };
+}) {
     const [matchmaking, setMatchmaking] = useState(true);
     const [oppdata, setData] = useState('');
     const {
