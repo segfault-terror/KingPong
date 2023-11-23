@@ -2,7 +2,7 @@ import p5Types from 'p5';
 import { Paddle } from '../types/Paddle';
 import { Ball } from '../types/Ball';
 import { Socket } from 'socket.io-client';
-import { InitData, pos } from './page';
+import { Data, InitData } from './page';
 import { Obstacle } from '../types/Obstacle';
 import { Score } from '../types/Score';
 
@@ -11,6 +11,12 @@ let bottomPaddle: Paddle;
 let ball: Ball;
 let score: Score;
 const obstacles: Obstacle[] = [];
+
+let pos: Data;
+
+export function updatePos(newPos: Data) {
+    pos = newPos;
+}
 
 let img: any;
 function preload(p5: p5Types) {

@@ -3,7 +3,7 @@ import React, { KeyboardEvent, use, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import p5Types from 'p5';
 
-import { setup, draw, mousePressed, mouseReleased } from './p5Matter';
+import { setup, draw, mousePressed, mouseReleased, updatePos } from './p5Matter';
 import { Socket, io } from 'socket.io-client';
 import Loading from '@/app/loading';
 import { Vector } from 'matter-js';
@@ -30,7 +30,7 @@ export interface InitData {
     obstacles: { x: number; y: number; width: number; height: number }[];
 }
 
-interface Data {
+export interface Data {
     ballPos: Vector;
     topPaddlePos: Vector;
     bottomPaddlePos: Vector;
@@ -39,18 +39,13 @@ interface Data {
     opponentScore: number;
 }
 
-export let pos: Data;
 
 let screenDim = {
     width: 0,
     height: 0,
 };
 
-export default function Page({
-    pramas,
-}: {
-    pramas: { username: string; avatar: string };
-}) {
+export default function Page() {
     const isSmartWatch = useMediaQuery('(max-width: 300px)');
     const [isMobile, setIsMobile] = React.useState('');
     const [ready, setReady] = React.useState(false);
@@ -91,7 +86,7 @@ export default function Page({
             setReady(true);
         });
         socket.on('update-game', (data) => {
-            pos = data;
+            updatePos(data);
         });
 
         async function connect() {
