@@ -1,6 +1,6 @@
 import Modal from '@/components/Modal';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type SelectModeProps = {
     mode: string;
@@ -16,16 +16,46 @@ export default function SelectMode({
     title,
 }: SelectModeProps) {
     const [showGameMode, setShowGameMode] = useState(false);
+    const [{ imageObs, imageNormal }, setImages] = useState({
+        imageObs: 'obstacle',
+        imageNormal: 'normal',
+    });
+
     return (
         <div className=" h-72 md:h-96  flex flex-col justify-center items-center group">
             <button
+                title={title}
+                type='button'
                 // href={link}
                 onClick={() => {
                     setShowGameMode(true);
+                    if (title === 'Ranked')
+                        setImages({
+                            imageObs: 'RankedGame-obstacle.svg',
+                            imageNormal: 'RankedGame.svg',
+                        });
+                    else
+                        setImages({
+                            imageObs: 'Computer-obstacle.svg',
+                            imageNormal: 'Computer.svg',
+                        });
                 }}
                 className="w-full rounded-xl flex justify-center items-center opacity-80 group-hover:opacity-100 hover:drop-shadow-neon-white"
             >
                 <img
+                    onClick={() => {
+                        setShowGameMode(true);
+                        if (title === 'Ranked')
+                            setImages({
+                                imageObs: 'RankedGame-obstacle.svg',
+                                imageNormal: 'RankedGame.svg',
+                            });
+                        else
+                            setImages({
+                                imageObs: 'Computer-obstacle.svg',
+                                imageNormal: 'Computer.svg',
+                            });
+                    }}
                     src={`/images/${images}.svg`}
                     alt=""
                     className="w-[80%] xl:w-[600px]"
@@ -35,6 +65,16 @@ export default function SelectMode({
                 // href={link}
                 onClick={() => {
                     setShowGameMode(true);
+                    if (title === 'Ranked')
+                        setImages({
+                            imageObs: 'RankedGame-obstacle.svg',
+                            imageNormal: 'RankedGame.svg',
+                        });
+                    else
+                        setImages({
+                            imageObs: 'Computer-obstacle.svg',
+                            imageNormal: 'Computer.svg',
+                        });
                 }}
                 type="button"
                 title={title}
@@ -55,7 +95,7 @@ export default function SelectMode({
                                 className="hover:drop-shadow-neon-white"
                             >
                                 <img
-                                    src={`/images/normal.png`}
+                                    src={`/images/${imageNormal}`}
                                     alt=""
                                     className="w-[80%] md:w-[400px] rounded-3xl overflow-hidden"
                                 />
@@ -73,7 +113,7 @@ export default function SelectMode({
                                 className="hover:drop-shadow-neon-white"
                             >
                                 <img
-                                    src={`/images/obstacle.png`}
+                                    src={`/images/${imageObs}`}
                                     alt=""
                                     className="w-[80%] md:w-[400px] rounded-3xl overflow-hidden"
                                 />
