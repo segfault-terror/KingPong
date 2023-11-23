@@ -84,6 +84,7 @@ export function setup(
         );
     }
     preload(p5);
+    p5.disableFriendlyErrors = true;
 }
 let isMousePressed = false;
 
@@ -122,6 +123,12 @@ export function draw(
     for (let i = 0; i < obstacles.length; i++) {
         obstacles[i].show(p5, serverClientRatio, pos.obstaclesPos[i]);
     }
+    let fps = p5.frameRate();
+    p5.push();
+    p5.fill(255);
+    p5.stroke(0);
+    p5.text('FPS: ' + fps.toFixed(2), 10, p5.height - 10);
+    p5.pop();
     if (isMousePressed) {
         const mx = p5.mouseX;
         const p = pos.bottomPaddlePos;

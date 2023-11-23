@@ -6,11 +6,7 @@ export class Paddle {
     h: number;
     paddleimage: p5Types.Image;
 
-    constructor(
-        w: number,
-        h: number,
-        paddleimage: p5Types.Image,
-    ) {
+    constructor(w: number, h: number, paddleimage: p5Types.Image) {
         this.w = w;
         this.h = h;
         this.paddleimage = paddleimage;

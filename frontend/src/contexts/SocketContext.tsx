@@ -33,7 +33,6 @@ export function SocketProvider(props: {
         }
 
         connect();
-        newSocket.emit('register', props.username);
 
         setSocket(newSocket);
         return () => {
