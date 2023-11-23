@@ -1,13 +1,18 @@
 'use client';
-import React, { KeyboardEvent, use, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import p5Types from 'p5';
 
-import { setup, draw, mousePressed, mouseReleased, updatePos } from './p5Matter';
+import {
+    setup,
+    draw,
+    mousePressed,
+    mouseReleased,
+    updatePos,
+} from './p5Matter';
 import { Socket, io } from 'socket.io-client';
 import Loading from '@/app/loading';
 import { Vector } from 'matter-js';
-import Link from 'next/link';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { IoIosExit } from 'react-icons/io';
 import ExitGameModal from '@/components/ExitGameModal';
@@ -27,7 +32,7 @@ export interface InitData {
     topPaddle: { width: number; height: number };
     bottomPaddle: { width: number; height: number };
     ball: { radius: number };
-    obstacles: { x: number; y: number; width: number; height: number }[];
+    obstacles: {width: number; height: number }[];
 }
 
 export interface Data {
@@ -39,13 +44,12 @@ export interface Data {
     opponentScore: number;
 }
 
-
 let screenDim = {
     width: 0,
     height: 0,
 };
 
-export default function Page() {
+export default function Page({params}: { params: {mode: string} }) {
     const isSmartWatch = useMediaQuery('(max-width: 300px)');
     const [isMobile, setIsMobile] = React.useState('');
     const [ready, setReady] = React.useState(false);
@@ -92,7 +96,7 @@ export default function Page() {
         async function connect() {
             // await delai(1500);
             socket.connect();
-            socket.emit('join-game', { game: 'computer', mode: 'obstacle' });
+            socket.emit('join-game', { game: 'computer', mode: params.mode });
         }
         if (!socket.connected) connect();
 

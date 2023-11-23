@@ -87,8 +87,6 @@ export class ComputerService {
             bottomPaddle: { width: bottomPaddle.w, height: bottomPaddle.h },
             ball: { radius: ball.r },
             obstacles: obstacles.map((o) => ({
-                x: o.body.position.x,
-                y: o.body.position.y,
                 width: o.r * 2,
                 height: o.r * 2,
             })),

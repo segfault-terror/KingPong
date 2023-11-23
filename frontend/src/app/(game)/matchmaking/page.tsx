@@ -9,6 +9,7 @@ type Props = {
     me: any;
     oppData: any;
     setOppData: (data: any) => void;
+    mode:string;
     ChallengeId?: string;
 };
 export default function MatchMakingPage({
@@ -17,9 +18,10 @@ export default function MatchMakingPage({
     me,
     oppData,
     setOppData,
+    mode,
     ChallengeId,
 }: Props) {
-    const data = { username: me.username, league: me.league };
+    const data = { username: me.username, league: me.league, mode: mode };
     const { socket } = useSocket();
     useEffect(() => {
         if (socket && ChallengeId) {

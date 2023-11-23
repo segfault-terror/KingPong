@@ -25,7 +25,12 @@ export class GameGateway implements OnGatewayConnection {
     ) {}
     @WebSocketServer() server: Namespace;
     connectedUsers: { id: string; username: string; sockets: string }[] = [];
-    queue: { username: string; league: string; socket: string }[] = [];
+    queue: {
+        username: string;
+        league: string;
+        socket: string;
+        mode: string;
+    }[] = [];
     queueInMatch: {
         player1: { username: string; score1: number; socket: string };
         player2: { username: string; score2: number; socket: string };
@@ -293,10 +298,12 @@ export class GameGateway implements OnGatewayConnection {
                 username: data.username,
                 league: data.league,
                 socket: user.sockets,
+                mode: data.mode,
             });
             //filter queue by league if possible to match 2 players in the seem league
             const queue = this.queue.filter(
-                (queue) => queue.league === data.league,
+                (queue) =>
+                    queue.league === data.league && queue.mode === data.mode,
             );
             console.log('queue: ', queue);
             if (queue.length >= 2) {
@@ -322,7 +329,7 @@ export class GameGateway implements OnGatewayConnection {
                     },
                     status: 'BEGIN',
                 });
-                let matchQueue = this.queueInMatch.find((match) => {
+                const matchQueue = this.queueInMatch.find((match) => {
                     return (
                         match.player1.username === queue[0].username ||
                         match.player2.username === queue[1].username
@@ -343,6 +350,7 @@ export class GameGateway implements OnGatewayConnection {
                         queue[0],
                         queue[1],
                         matchQueue,
+                        data.mode,
                     );
                 }, 4200);
             } else return;
@@ -414,7 +422,7 @@ export class GameGateway implements OnGatewayConnection {
                 },
                 status: 'BEGIN',
             });
-            let matchQueue = this.queueInMatch.find((matchs) => {
+            const matchQueue = this.queueInMatch.find((matchs) => {
                 return (
                     matchs.player1.username === match.Challenger.username ||
                     matchs.player2.username === match.Opponent.username
@@ -434,6 +442,7 @@ export class GameGateway implements OnGatewayConnection {
                     match.Challenger,
                     match.Opponent,
                     matchQueue,
+                    data.mode,
                 );
             }, 5000);
         }

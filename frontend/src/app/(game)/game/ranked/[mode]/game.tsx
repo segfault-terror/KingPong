@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import p5Types from 'p5';
 
-import { setup, draw, mousePressed, mouseReleased } from './p5Matter';
+import { setup, draw, mousePressed, mouseReleased, setPos } from './p5Matter';
 import Loading from '@/app/loading';
 import { Vector } from 'matter-js';
 import { useSocket } from '@/contexts/SocketContext';
@@ -29,12 +29,14 @@ export interface InitData {
     topPaddle: { width: number; height: number };
     bottomPaddle: { width: number; height: number };
     ball: { radius: number };
+    obstacles: { width: number; height: number }[];
 }
 
-interface Data {
+export interface Data {
     ballPos: Vector;
     topPaddlePos: Vector;
     bottomPaddlePos: Vector;
+    obstaclesPos: Vector[];
     score: { top: number; bottom: number };
 }
 
@@ -42,8 +44,6 @@ let screenDim = {
     width: 0,
     height: 0,
 };
-
-export let pos: Data;
 
 export default function Game({ me, opponent }: { me: any; opponent: string }) {
     const [ready, setReady] = React.useState(false);
@@ -65,17 +65,13 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
     const { data: opponentData, isLoading } = useQuery({
         queryKey: ['profile', opponent, 'me'],
         queryFn: async () => {
-            const { data } = await axios.get(
-                `/api/user/get/${opponent}`,
-                {
-                    withCredentials: true,
-                },
-            );
+            const { data } = await axios.get(`/api/user/get/${opponent}`, {
+                withCredentials: true,
+            });
 
             return data;
         },
     });
-
 
     useEffect(() => {
         if (socket) {
@@ -88,12 +84,13 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                     topPaddle: data.topPaddle,
                     bottomPaddle: data.bottomPaddle,
                     ball: data.ball,
+                    obstacles: data.obstacles,
                 });
                 setReady(true);
             });
             socket.on('update-game', (data) => {
                 if (data.username === me.username) {
-                    pos = data;
+                    setPos(data);
                 }
             });
             socket.on('game-stop', (data) => {

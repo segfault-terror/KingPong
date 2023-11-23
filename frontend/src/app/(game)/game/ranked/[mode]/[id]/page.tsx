@@ -1,17 +1,17 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import Loading from '../../../loading';
+import Loading from '@/app/loading';
 import { SocketProvider } from '@/contexts/SocketContext';
 
 import React, { useEffect, useState } from 'react';
-import MatchMaking from '../../matchmaking/page';
-import { match } from 'assert';
+import MatchMaking from '@/app/(game)/matchmaking/page';
 import { redirect } from 'next/navigation';
-import PongApp from './game';
-import Game from './game';
+import Game from '../game';
+import { useRouter } from 'next/router';
+import { set } from 'react-hook-form';
 
-export default function Page() {
+export default function Page({ params }: { params: { id: string, mode: string } }) {
     const [matchmaking, setMatchmaking] = useState(true);
     const [oppdata, setData] = useState('');
     const {
@@ -19,21 +19,17 @@ export default function Page() {
         isLoading: meLoading,
         isError,
     } = useQuery(['me'], async () => {
-        try {
-            const { data } = await axios.get(`/api/user/get/stats/me`, {
-                withCredentials: true,
-            });
-            return data;
-        } catch {
-            redirect('/signin');
-        }
+        const { data } = await axios.get(`/api/user/get/stats/me`, {
+            withCredentials: true,
+        });
+        return data;
     });
 
+    const ChallengeId = params.id;
     useEffect(() => {
         console.log('oppData: ', oppdata);
     }, [oppdata]);
 
-    if (isError) redirect('/signin');
     if (meLoading || me.stats === undefined || me.stats.league === undefined)
         return <Loading />;
     const data = {
@@ -42,7 +38,7 @@ export default function Page() {
         avatar: me.avatar,
     };
     return (
-        <>
+        <SocketProvider namespace="game" username={me.username}>
             {matchmaking ? (
                 <MatchMaking
                     matchmaking={matchmaking}
@@ -50,10 +46,12 @@ export default function Page() {
                     setmatchmaking={setMatchmaking}
                     oppData={oppdata}
                     setOppData={setData}
+                    ChallengeId={ChallengeId}
+                    mode={params.mode}
                 />
             ) : (
                 <Game me={me} opponent={oppdata} />
             )}
-        </>
+        </SocketProvider>
     );
 }

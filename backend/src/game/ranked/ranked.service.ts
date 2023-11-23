@@ -4,16 +4,9 @@ import { Body, Collision, Common, Engine } from 'matter-js';
 import { PongTable } from '../utils/PongTable';
 import { Ball } from '../utils/Ball';
 import { Paddle } from '../utils/Paddle';
-import { UserService } from 'src/user/user.service';
-import { emit } from 'process';
 import { GameService } from '../game.service';
 import { status } from '../game.enum';
-
-enum Direction {
-    LEFT = 'left',
-    RIGHT = 'right',
-    NONE = 'none',
-}
+import { Obstacle } from '../utils/Obstacle';
 
 type matchQueueProps = {
     player1: {
@@ -28,6 +21,8 @@ type matchQueueProps = {
     };
     status: status;
 };
+
+type GameMode = 'normal' | 'obstacle' | 'reverse';
 
 @Injectable()
 export class RankedService {
@@ -96,6 +91,7 @@ export class RankedService {
         player1: any,
         player2: any,
         matchQueue: matchQueueProps,
+        mode: GameMode,
     ) {
         const playerSpeed = 10;
         const initialBallSpeed = 5;
@@ -117,6 +113,34 @@ export class RankedService {
             angularVelocity: 0,
             velocity: { x: 0, y: 0 },
         });
+        const obstacles: Obstacle[] = [];
+        if (mode === 'obstacle') {
+            let obstacle: Obstacle;
+
+            let randomX = Common.random(0, 200);
+            let randomY = Common.random(150, 300);
+            let randomR = Common.random(10, 50);
+            obstacle = new Obstacle(randomX, randomY, randomR, world);
+            obstacles.push(obstacle);
+
+            randomX = Common.random(300, 400);
+            randomY = Common.random(150, 300);
+            randomR = Common.random(10, 50);
+            obstacle = new Obstacle(randomX, randomY, randomR, world);
+            obstacles.push(obstacle);
+
+            randomX = Common.random(0, 200);
+            randomY = Common.random(500, 650);
+            randomR = Common.random(10, 50);
+            obstacle = new Obstacle(randomX, randomY, randomR, world);
+            obstacles.push(obstacle);
+
+            randomX = Common.random(300, 400);
+            randomY = Common.random(500, 650);
+            randomR = Common.random(10, 50);
+            obstacle = new Obstacle(randomX, randomY, randomR, world);
+            obstacles.push(obstacle);
+        }
         setTimeout(() => {
             Body.setVelocity(ball.body, { x: 0, y: ballSpeed });
         }, 2000);
@@ -143,6 +167,10 @@ export class RankedService {
                 topPaddle: { width: topPaddle.w, height: topPaddle.h },
                 bottomPaddle: { width: bottomPaddle.w, height: bottomPaddle.h },
                 ball: { radius: ball.r },
+                obstacles: obstacles.map((o) => ({
+                    width: o.r * 2,
+                    height: o.r * 2,
+                })),
             },
             {
                 canvas,
@@ -150,6 +178,10 @@ export class RankedService {
                 topPaddle: { width: topPaddle.w, height: topPaddle.h },
                 bottomPaddle: { width: bottomPaddle.w, height: bottomPaddle.h },
                 ball: { radius: ball.r },
+                obstacles: obstacles.map((o) => ({
+                    width: o.r * 2,
+                    height: o.r * 2,
+                })),
             },
             'canvas',
         );
@@ -187,6 +219,16 @@ export class RankedService {
                 x: canvas.width - bottomPaddlePos.x,
                 y: canvas.height - bottomPaddlePos.y,
             };
+
+            const obstaclesPos = obstacles.map((o) => ({
+                x: o.body.position.x,
+                y: o.body.position.y,
+            }));
+
+            const revObstaclesPos = obstaclesPos.map((o) => ({
+                x: canvas.width - o.x,
+                y: canvas.height - o.y,
+            }));
 
             if (counter === 6 && ballSpeed < 16) {
                 counter = 0;
@@ -286,6 +328,7 @@ export class RankedService {
                     topPaddlePos,
                     bottomPaddlePos,
                     username: player1.username,
+                    obstaclesPos,
                     score: {
                         top: matchQueue.player2.score2,
                         bottom: matchQueue.player1.score1,
@@ -296,6 +339,7 @@ export class RankedService {
                     topPaddlePos: revBottomPaddlePos,
                     bottomPaddlePos: revTopPaddlePos,
                     username: player2.username,
+                    obstaclesPos: revObstaclesPos,
                     score: {
                         top: matchQueue.player1.score1,
                         bottom: matchQueue.player2.score2,
