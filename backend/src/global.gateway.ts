@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import {
     ConnectedSocket,
     MessageBody,
+    OnGatewayConnection,
     OnGatewayDisconnect,
     SubscribeMessage,
     WebSocketGateway,
@@ -12,15 +13,12 @@ import { WsAuthGuard } from 'src/auth/ws.auth.guard';
 
 @WebSocketGateway({ namespace: 'Global' })
 @UseGuards(WsAuthGuard)
-export class GlobalGateway implements OnGatewayDisconnect {
+export class GlobalGateway implements OnGatewayDisconnect, OnGatewayConnection {
     connectedUsers: { username: string; sockets: string[] }[] = [];
     @WebSocketServer() server: Namespace;
 
-    @SubscribeMessage('register')
-    handleRegister(
-        @MessageBody() username: string,
-        @ConnectedSocket() socket: Socket,
-    ) {
+    async handleConnection(socket: any) {
+        const username = socket.request.user.username;
         const user = this.connectedUsers.find(
             (user) => user.username === username,
         );

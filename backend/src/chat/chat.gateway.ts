@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import {
     ConnectedSocket,
     MessageBody,
+    OnGatewayConnection,
     OnGatewayDisconnect,
     SubscribeMessage,
     WebSocketGateway,
@@ -26,7 +27,7 @@ type ConnectedUser = {
 
 @WebSocketGateway({ namespace: 'chat' })
 @UseGuards(WsAuthGuard)
-export class ChatGateway implements OnGatewayDisconnect {
+export class ChatGateway implements OnGatewayDisconnect, OnGatewayConnection {
     connectedUsers: ConnectedUser[] = [];
 
     @WebSocketServer() server: Namespace;
@@ -35,11 +36,8 @@ export class ChatGateway implements OnGatewayDisconnect {
         private readonly prisma: PrismaService,
     ) {}
 
-    @SubscribeMessage('register')
-    async handleRegister(
-        @MessageBody() username: string,
-        @ConnectedSocket() socket: Socket,
-    ) {
+    async handleConnection(socket: any) {
+        const username = socket.request.user.username;
         const user = this.connectedUsers.find(
             (user) => user.username === username,
         );
