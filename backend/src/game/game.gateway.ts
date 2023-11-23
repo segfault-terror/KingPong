@@ -12,6 +12,10 @@ import { RankedService } from './ranked/ranked.service';
 import { GameService } from './game.service';
 import { UserService } from 'src/user/user.service';
 import { status } from './game.enum';
+import {
+    AchievementsService,
+    dataAchived,
+} from 'src/achievements/achievements.service';
 
 @WebSocketGateway({
     namespace: 'game',
@@ -22,9 +26,10 @@ export class GameGateway implements OnGatewayConnection {
         private readonly rankedService: RankedService,
         private readonly gameService: GameService,
         private readonly userService: UserService,
+        private readonly achievement: AchievementsService,
     ) {}
     @WebSocketServer() server: Namespace;
-    connectedUsers: { id: string; username: string; sockets: string }[] = [];
+    connectedUsers: { username: string; sockets: string }[] = [];
     queue: {
         username: string;
         league: string;
@@ -34,6 +39,7 @@ export class GameGateway implements OnGatewayConnection {
     queueInMatch: {
         player1: { username: string; score1: number; socket: string };
         player2: { username: string; score2: number; socket: string };
+        dataAchieved: dataAchived;
         status: status;
     }[] = [];
     queueChallenge: {
@@ -80,6 +86,8 @@ export class GameGateway implements OnGatewayConnection {
             },
             'finished',
         );
+        console.log('AchievementsService');
+        this.achievement.GenerateAchievements(matchQueue.dataAchieved);
         // add the match to the database
         this.gameService.AddMatch(
             matchQueue.player1.username,
@@ -110,8 +118,30 @@ export class GameGateway implements OnGatewayConnection {
             client.disconnect(true);
             return;
         }
+        const username = client.request.user.username;
         client.request.user;
-        const user = this.connectedUsers.find((user) => user.id === client.id);
+        this.connectedUsers = this.connectedUsers.filter(
+            (user) => user.username !== '',
+        );
+        console.log(`+++++ [Game] Register... ${username}`);
+        const user = this.connectedUsers.find(
+            (user) => user.username === username,
+        );
+        if (!user) {
+            console.log(
+                `++++++[Game] Registered ${username} for the first time`,
+            );
+            this.connectedUsers.push({
+                username: username,
+                sockets: client.id,
+            });
+        } else {
+            // change username in connected users
+            user.username = username;
+            user.sockets = client.id;
+            console.log(`++++++[Game] Registered ${username} in another tab`);
+            console.log(this.connectedUsers);
+        }
         this.userService.updateUser({
             where: { email: client.request.user.email },
             data: {
@@ -122,9 +152,8 @@ export class GameGateway implements OnGatewayConnection {
         if (!user) {
             console.log('new client:', client.id);
             this.connectedUsers.push({
-                id: client.id,
                 sockets: client.id,
-                username: '',
+                username: client.request.user.username,
             });
         }
         client.emit('already-ingame', 'You are already connected');
@@ -135,7 +164,9 @@ export class GameGateway implements OnGatewayConnection {
     }
 
     async handleDisconnect(socket: any) {
-        const user = this.connectedUsers.find((user) => user.id === socket.id);
+        const user = this.connectedUsers.find(
+            (user) => user.sockets === socket.id,
+        );
         console.log('disconnect', this.connectedUsers);
         if (!user) return;
 
@@ -203,37 +234,6 @@ export class GameGateway implements OnGatewayConnection {
                     status: 'ONLINE',
                 },
             });
-        }
-    }
-
-    @SubscribeMessage('register')
-    async handleRegister(
-        @MessageBody() username: string,
-        @ConnectedSocket() socket: Socket,
-    ) {
-        this.connectedUsers = this.connectedUsers.filter(
-            (user) => user.username !== '',
-        );
-        console.log(`+++++ [Game] Register... ${username}`);
-        const user = this.connectedUsers.find(
-            (user) => user.username === username,
-        );
-        if (!user) {
-            console.log(
-                `++++++[Game] Registered ${username} for the first time`,
-            );
-            this.connectedUsers.push({
-                username: username,
-                sockets: socket.id,
-                id: socket.id,
-            });
-        } else {
-            // change username in connected users
-            user.username = username;
-            user.sockets = socket.id;
-            user.id = socket.id;
-            console.log(`++++++[Game] Registered ${username} in another tab`);
-            console.log(this.connectedUsers);
         }
     }
 
@@ -327,6 +327,20 @@ export class GameGateway implements OnGatewayConnection {
                         socket: queue[1].socket,
                         score2: 0,
                     },
+                    dataAchieved: {
+                        player1: {
+                            username: queue[0].username,
+                            MaxTimeRound: 0,
+                            MinTimeRound: Infinity,
+                            TimeTouchPaddle: 0,
+                        },
+                        player2: {
+                            username: queue[1].username,
+                            MaxTimeRound: 0,
+                            MinTimeRound: Infinity,
+                            TimeTouchPaddle: 0,
+                        },
+                    },
                     status: 'BEGIN',
                 });
                 const matchQueue = this.queueInMatch.find((match) => {
@@ -419,6 +433,20 @@ export class GameGateway implements OnGatewayConnection {
                     username: match.Opponent.username,
                     socket: match.Opponent.socket,
                     score2: 0,
+                },
+                dataAchieved: {
+                    player1: {
+                        username: match.Challenger.username,
+                        MaxTimeRound: 0,
+                        MinTimeRound: Infinity,
+                        TimeTouchPaddle: 0,
+                    },
+                    player2: {
+                        username: match.Opponent.username,
+                        MaxTimeRound: 0,
+                        MinTimeRound: Infinity,
+                        TimeTouchPaddle: 0,
+                    },
                 },
                 status: 'BEGIN',
             });
