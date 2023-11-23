@@ -6,6 +6,12 @@ import { Ball } from '../utils/Ball';
 import { Paddle } from '../utils/Paddle';
 import { GameService } from '../game.service';
 import { status } from '../game.enum';
+import { timer } from 'rxjs';
+import {
+    AchievementsService,
+    dataAchived,
+} from 'src/achievements/achievements.service';
+
 import { Obstacle } from '../utils/Obstacle';
 
 type matchQueueProps = {
@@ -20,13 +26,17 @@ type matchQueueProps = {
         score2: number;
     };
     status: status;
+    dataAchieved: dataAchived;
 };
 
 type GameMode = 'normal' | 'obstacle' | 'reverse';
 
 @Injectable()
 export class RankedService {
-    constructor(private readonly gameService: GameService) {}
+    constructor(
+        private readonly gameService: GameService,
+        private readonly achievement: AchievementsService,
+    ) {}
 
     async sendToClients(
         client1: Socket,
@@ -83,6 +93,8 @@ export class RankedService {
             player1_score: matchQueue.player1.score1,
             player2_score: matchQueue.player2.score2,
         });
+        console.log('AchievementsService');
+        this.achievement.GenerateAchievements(matchQueue.dataAchieved);
     }
 
     startGame(
@@ -95,13 +107,14 @@ export class RankedService {
     ) {
         const playerSpeed = 10;
         const initialBallSpeed = 5;
-        let ballSpeed = 5;
+        let ballSpeed = initialBallSpeed;
         console.log('start game');
         const canvas = { width: 500, height: 800 };
         const engine = Engine.create({ gravity: { x: 0, y: 0 } });
         const world = engine.world;
         const table = new PongTable(canvas.width, canvas.height, world);
         table;
+
         const ball = new Ball(canvas.width / 2, canvas.height / 2, 10, world, {
             restitution: 1,
             friction: 0,
@@ -199,11 +212,19 @@ export class RankedService {
             y: orPair(-ballSpeed, ballSpeed),
         };
 
-        let counter = 0;
-
-        const interval = setInterval(() => {
+        let counterSpeed = 0;
+        let Timer = 0;
+        let MaxTimeRound = 0;
+        let Seconds = 0;
+        const GameHook = () => {
             Engine.update(engine, frameRate);
-
+            if (Timer % 60 === 0) {
+                Seconds++;
+            }
+            if (Seconds > MaxTimeRound) {
+                MaxTimeRound = Seconds;
+            }
+            Timer++;
             const ballPos = ball.body.position;
             const revsBallPos = {
                 x: canvas.width - ballPos.x,
@@ -230,8 +251,8 @@ export class RankedService {
                 y: canvas.height - o.y,
             }));
 
-            if (counter === 6 && ballSpeed < 16) {
-                counter = 0;
+            if (counterSpeed === 6 && ballSpeed < 16) {
+                counterSpeed = 0;
                 ballSpeed += 1;
             }
 
@@ -275,7 +296,8 @@ export class RankedService {
             let col: Collision;
             if ((col = Collision.collides(ball.body, topPaddle.body, null))) {
                 const xContact = col.supports[0].x;
-                counter++;
+                counterSpeed++;
+                matchQueue.dataAchieved.player2.TimeTouchPaddle++;
                 Body.setVelocity(ball.body, {
                     x: getXVelocity(xContact, topPaddle.body),
                     y: ballSpeed + 1,
@@ -285,12 +307,29 @@ export class RankedService {
                 (col = Collision.collides(ball.body, bottomPaddle.body, null))
             ) {
                 const xContact = col.supports[0].x;
-                counter++;
+                counterSpeed++;
+                matchQueue.dataAchieved.player1.TimeTouchPaddle++;
                 Body.setVelocity(ball.body, {
                     x: getXVelocity(xContact, bottomPaddle.body),
                     y: -(ballSpeed + 1),
                 });
             }
+
+            const checkBallOutOfBounds = () => {
+                if (ballPos.y > canvas.height) {
+                    return true;
+                }
+                if (ballPos.y < 0) {
+                    return true;
+                }
+                if (ballPos.x > canvas.width) {
+                    return true;
+                }
+                if (ballPos.x < 0) {
+                    return true;
+                }
+                return false;
+            };
 
             const resetBall = () => {
                 ballSpeed = initialBallSpeed;
@@ -313,10 +352,34 @@ export class RankedService {
 
             if (Collision.collides(ball.body, table.topWall, null)) {
                 matchQueue.player1.score1++;
+                matchQueue.dataAchieved.player1.MinTimeRound = Math.min(
+                    matchQueue.dataAchieved.player1.MinTimeRound,
+                    Seconds,
+                );
+                matchQueue.dataAchieved.player1.MaxTimeRound = Math.max(
+                    matchQueue.dataAchieved.player1.MaxTimeRound,
+                    Seconds,
+                );
+                console.log('Seconds 1 : ', Seconds);
+                Seconds = 0;
                 resetBall();
             }
             if (Collision.collides(ball.body, table.bottomWall, null)) {
                 matchQueue.player2.score2++;
+                matchQueue.dataAchieved.player2.MinTimeRound = Math.min(
+                    matchQueue.dataAchieved.player2.MinTimeRound,
+                    Seconds,
+                );
+                matchQueue.dataAchieved.player2.MaxTimeRound = Math.max(
+                    matchQueue.dataAchieved.player2.MaxTimeRound,
+                    Seconds,
+                );
+                console.log('Seconds 2 : ', Seconds);
+                Seconds = 0;
+                resetBall();
+            }
+
+            if (checkBallOutOfBounds()) {
                 resetBall();
             }
 
@@ -347,7 +410,8 @@ export class RankedService {
                 },
                 'update-game',
             );
-        }, frameRate);
+        };
+        const interval = setInterval(GameHook, frameRate);
 
         client1.on('disconnect', () => {
             console.log('client1 disconnected');
