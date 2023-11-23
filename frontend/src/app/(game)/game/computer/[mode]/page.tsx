@@ -123,7 +123,7 @@ export default function Page({params}: { params: {mode: string} }) {
         let serverClientRatioH = 1;
         if (
             screenDim.width < init.width ||
-            screenDim.height - 48 < init.height
+            screenDim.height * 0.7 < init.height
         ) {
             const w = init.width;
             const h = init.height;
@@ -133,8 +133,8 @@ export default function Page({params}: { params: {mode: string} }) {
                 init.width = screenDim.width * 0.9;
                 init.height = init.width / ratio;
             }
-            if (screenDim.height * 0.8 < init.height) {
-                init.height = (screenDim.height - 48) * 0.8;
+            if (screenDim.height * 0.7 < init.height) {
+                init.height = (screenDim.height - 48) * 0.7;
                 init.width = init.height * ratio;
             }
             serverClientRatioW = init.width / w;
