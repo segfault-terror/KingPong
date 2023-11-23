@@ -1,7 +1,7 @@
 import Loading from '@/app/loading';
 import Modal from '@/components/Modal';
 import { useSocket } from '@/contexts/SocketContext';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -15,6 +15,7 @@ export default function EditChannelModal(props: {
     const [errorMessage, setErrorMessage] = useState('');
     const [channelExists, setChannelExists] = useState(false);
     const [redirectChannel, setRedirectChannel] = useState(false);
+    const queryClient = useQueryClient();
 
     const {
         register,
@@ -45,6 +46,9 @@ export default function EditChannelModal(props: {
         },
         onSuccess: () => {
             setRedirectChannel(true);
+            queryClient.invalidateQueries(['channels', 'brief'], {
+                exact: true,
+            });
             socket?.emit('channel-edited', {
                 oldName: props.channelName,
                 newName: watch('name'),

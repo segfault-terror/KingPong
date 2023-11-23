@@ -107,7 +107,6 @@ export default function ChannelConversation(props: ChannelConversationProps) {
     const [newChannelName, setNewChannelName] = useState('');
     useEffect(() => {
         if (!newChannelName) return;
-        console.log(`Redirecting to /chat/channel/${newChannelName}`);
         redirect(`/chat/channel/${newChannelName}`);
     }, [newChannelName]);
 
@@ -115,9 +114,6 @@ export default function ChannelConversation(props: ChannelConversationProps) {
         socket?.on(
             'redirect-to-chat',
             (data: { channel: string; reason: 'kick' | 'ban' }) => {
-                console.log(
-                    `redirect-to-chat: ${data.channel} - reason: ${data.reason}`,
-                );
                 if (data.channel === props.channelName) {
                     setExitChannel(true);
                     setExitReason(data.reason);
@@ -139,7 +135,9 @@ export default function ChannelConversation(props: ChannelConversationProps) {
             });
         });
         socket?.on('channel-edited', (data: any) => {
-            console.log(`channel-edited: ${data.oldName}`);
+            queryClient.invalidateQueries(['channels', 'brief'], {
+                exact: true,
+            });
             setNewChannelName(data.newName);
             socket?.emit('change-room', {
                 oldRoom: data.oldName,
