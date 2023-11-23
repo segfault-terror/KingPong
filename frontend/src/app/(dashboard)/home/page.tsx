@@ -181,7 +181,7 @@ export default function Page() {
                             </span>
                         </div>
                     </div>
-                    <div className="flex flex-col lg:flex-row lg:w-full justify-between items-stretch my-auto w-full">
+                    <div className="flex flex-col lg:flex-row lg:w-full justify-evenly items-stretch my-auto w-full">
                         <SelectMode
                             mode="Ranked"
                             images="RankedGame"

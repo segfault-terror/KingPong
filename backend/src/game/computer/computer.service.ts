@@ -249,15 +249,6 @@ export class ComputerService {
             clearInterval(interval);
         });
 
-        client.on('stop-game', () => {
-            clearInterval(interval);
-        });
-
-        client.on('restart-game', () => {
-            clearInterval(interval);
-            this.startGame(client, mode);
-        });
-
         client.on('pause-game', () => {
             clearInterval(interval);
         });

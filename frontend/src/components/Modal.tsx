@@ -29,3 +29,14 @@ export default function Modal({
         document.body,
     );
 }
+
+/*
+const [x, setX] = useState(false);
+
+<button onClick={() => setX(true)}>Open</button>
+{x && 
+    <Modal onClose={() => setX(false)}>
+        ...
+    </Modal>
+}
+ */
