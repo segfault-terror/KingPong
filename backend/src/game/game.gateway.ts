@@ -105,6 +105,7 @@ export class GameGateway implements OnGatewayConnection {
             client.disconnect(true);
             return;
         }
+        client.request.user;
         const user = this.connectedUsers.find((user) => user.id === client.id);
         this.userService.updateUser({
             where: { email: client.request.user.email },
@@ -114,7 +115,7 @@ export class GameGateway implements OnGatewayConnection {
         });
 
         if (!user) {
-            console.log('new client', client.id);
+            console.log('new client:', client.id);
             this.connectedUsers.push({
                 id: client.id,
                 sockets: client.id,
@@ -156,36 +157,19 @@ export class GameGateway implements OnGatewayConnection {
             if (matchQueue.status === 'BEGIN') {
                 matchQueue.player1.score1 = 0;
                 matchQueue.player2.score2 = 0;
-                const match = this.queueInMatch.find((player) => {
-                    return (
-                        player.player1.username === user.username ||
-                        player.player2.username === user.username
-                    );
-                });
-                if (match) {
-                    this.updataData(matchQueue);
-                }
+                this.updataData(matchQueue);
             } else if (matchQueue.status === 'PLAYING') {
-                matchQueue.status = 'CANCEL';
-                const match = this.queueInMatch.find((player) => {
-                    return (
-                        player.player1.username === user.username ||
-                        player.player2.username === user.username
-                    );
-                });
-                match.player1.score1 =
-                    match.player1.username === user.username ? 1 : 7;
-                match.player2.score2 =
-                    match.player2.username === user.username ? 1 : 7;
-                if (match) {
-                    this.updataData(matchQueue);
-                }
+                matchQueue.player1.score1 =
+                    matchQueue.player1.username === user.username ? 1 : 7;
+                matchQueue.player2.score2 =
+                    matchQueue.player2.username === user.username ? 1 : 7;
+                this.updataData(matchQueue);
             }
             matchQueue.status = 'CANCEL';
             this.queueInMatch = this.queueInMatch.filter(
                 (player) =>
-                    player.player1.username !== user.username &&
-                    player.player2.username !== user.username,
+                    player.player1.username !== matchQueue.player1.username &&
+                    player.player2.username !== matchQueue.player2.username,
             );
             console.log('queueInMatch', this.queueInMatch);
         }
@@ -222,7 +206,6 @@ export class GameGateway implements OnGatewayConnection {
         @MessageBody() username: string,
         @ConnectedSocket() socket: Socket,
     ) {
-        // remove all the users with '' username
         this.connectedUsers = this.connectedUsers.filter(
             (user) => user.username !== '',
         );
