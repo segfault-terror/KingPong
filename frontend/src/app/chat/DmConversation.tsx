@@ -237,10 +237,7 @@ function InvalidDm(props: { children: ReactNode }) {
 function DmMessageList({ userName }: DmConversationProps) {
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['dm', userName],
-        refetchOnWindowFocus: () => {
-            if (isError) return false;
-            return true;
-        },
+        refetchOnWindowFocus: false,
         queryFn: async () => {
             const { data: me } = await axios.get('/api/user/me', {
                 withCredentials: true,
