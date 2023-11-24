@@ -57,7 +57,7 @@ export default function LevelUp({ newLevel, data }: LevelUpProps) {
             setCounter(counter - 1);
         }, 1000);
         return () => clearTimeout(timer);
-    }, [counter, data, updateUser, isSuccess]);
+    }, [counter, data]);
 
     return (
         <div className="min-h-screen bg-center bg-cover flex flex-col items-center justify-center relative overflow-hidden backdrop-blur-[1px]">
@@ -76,7 +76,7 @@ export default function LevelUp({ newLevel, data }: LevelUpProps) {
                     }}
                     onClick={() => {
                         console.log('clicked');
-                        setCounter(10);
+                        setCounter(0);
                     }}
                 >
                     continue
