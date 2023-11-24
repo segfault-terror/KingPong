@@ -1682,11 +1682,7 @@ export class ChatService {
             },
         });
 
-        if (!dm) {
-            throw new NotFoundException(
-                `DM between ${me} and ${username} not found`,
-            );
-        }
+        if (!dm) return;
 
         dm.user1_readed = dm.user1.username === me ? true : dm.user1_readed;
         dm.user2_readed = dm.user2.username === me ? true : dm.user2_readed;
