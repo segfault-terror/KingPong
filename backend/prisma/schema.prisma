@@ -37,6 +37,7 @@ model User {
     password  String?
     avatar    String
     status    Status   @default(OFFLINE)
+    firstLogin Boolean  @default(true)
     stats     Stats?
     achievements Achievement[]
     Notifications Notification[]

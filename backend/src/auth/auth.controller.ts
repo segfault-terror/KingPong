@@ -2,12 +2,9 @@ import {
     Body,
     Controller,
     Get,
-    Headers,
-    HttpCode,
     Post,
     Redirect,
     Req,
-    Res,
     UseGuards,
     UsePipes,
     ValidationPipe,
@@ -18,12 +15,14 @@ import { GoogleAuthGuard } from './utils/google.auth.guard';
 import { LocalGuard } from './utils/local.guard';
 import { AuthService } from './auth.service';
 import { TfaDto } from './utils/tfa.dto';
-import { Prisma } from '@prisma/client';
 import { UserService } from 'src/user/user.service';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService, private userService: UserService) {}
+    constructor(
+        private authService: AuthService,
+        private userService: UserService,
+    ) {}
     @Get('intra/login')
     @UseGuards(IntraAuthGuard)
     async intraLogin() {
@@ -60,7 +59,7 @@ export class AuthController {
     @Get('status')
     async status(@Req() req: any) {
         if (req.isAuthenticated()) {
-            const {needOtp, twoFactorEnabled} = req.user;
+            const { needOtp, twoFactorEnabled } = req.user;
             if (twoFactorEnabled && needOtp) {
                 return {
                     message: 'You are authenticated.',
@@ -68,15 +67,36 @@ export class AuthController {
                     needOtp,
                 };
             }
-            return { message: 'You are authenticated.', status: true, needOtp: false };
+            const user = await this.userService.user({ email: req.user.email });
+            return {
+                message: 'You are authenticated.',
+                status: true,
+                needOtp: false,
+                firstLogin: user.firstLogin,
+            };
         }
-        return { message: 'You are not authenticated.', status: false, needOtp: false };
+        return {
+            message: 'You are not authenticated.',
+            status: false,
+            needOtp: false,
+        };
+    }
+
+    @Get('firstLogin')
+    @UseGuards(AuthGard)
+    async firstLogin(@Req() req: any) {
+        console.log(req.user);
+        await this.userService.updateUser({
+            where: { email: req.user.email },
+            data: { firstLogin: false },
+        });
+        return { message: 'First login done.', status: true };
     }
 
     @Get('logout')
     @UseGuards(AuthGard)
     @Redirect()
-    async logout(@Req() req: any, @Headers('referer') referer: string) {
+    async logout(@Req() req: any) {
         const user = req.user;
         if (user && user.twoFactorEnabled) {
             await this.authService.turnOffOtp(user);

@@ -18,9 +18,13 @@ export default function DashboardLayout({
         queryKey: ['auth'],
         queryFn: async () => {
             try {
-                return await axios.get(`/api/auth/status`, {
+                const data = await axios.get(`/api/auth/status`, {
                     withCredentials: true,
                 });
+                await axios.get('/api/auth/firstLogin', {
+                    withCredentials: true,
+                });
+                return data;
             } catch {
                 redirect('/signin');
             }
@@ -54,7 +58,7 @@ export default function DashboardLayout({
             socket.off('disconnect');
             socket.disconnect();
         };
-    });
+    }, []);
 
     const { data: me, isLoading: myisLoading } = useQuery({
         queryKey: ['mydata'],
@@ -75,12 +79,19 @@ export default function DashboardLayout({
         }
     }, [me]);
 
+    useEffect(() => {
+        if (data?.data.firstLogin === true) {
+            redirect('/settings');
+        }
+    }, [data]);
+
     if (isLoading || myisLoading) {
         return <Loading />;
     }
     if (error || data?.data.status === false) {
         redirect('/signin');
     }
+
 
     return (
         <SocketProvider username={me?.data.username} namespace="Global">
