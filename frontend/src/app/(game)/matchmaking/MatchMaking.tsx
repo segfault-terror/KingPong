@@ -2,23 +2,19 @@
 
 import PlayerCard from './PlayerCard';
 
-import VsMobile from '@/../public/images/VS-Mobile.svg';
-import VsDesktop from '@/../public/images/VS-Desktop.svg';
-import Ball from '@/../public/images/ball-noshadow.svg';
-import TopImg from '@/../public/images/MatchMacking_t.svg';
 import BottomImg from '@/../public/images/MatchMacking_b.svg';
 import LeftImg from '@/../public/images/MatchMacking_l.svg';
 import RightImg from '@/../public/images/MatchMacking_r.svg';
-import Tommy from '@/../public/images/1.jpeg';
-import Archer from '@/../public/images/2.jpeg';
+import TopImg from '@/../public/images/MatchMacking_t.svg';
+import VsDesktop from '@/../public/images/VS-Desktop.svg';
+import VsMobile from '@/../public/images/VS-Mobile.svg';
 import { useSocket } from '@/contexts/SocketContext';
-import { useEffect, useState } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { set } from 'react-hook-form';
-import { useQueries, useQuery } from '@tanstack/react-query';
-import { IoIosExit } from 'react-icons/io';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { IoIosExit } from 'react-icons/io';
 
 type Props = {
     me: any;
@@ -57,9 +53,10 @@ export default function MatchMaking({
     const [animations, setAnimations] = useState(['', '', '', '', '', '']);
     const { socket } = useSocket();
     const [CancelMatchmaking, setCancelMatchmaking] = useState(false);
+    const clientquery = useQueryClient();
     useEffect(() => {
         if (socket) {
-            socket?.on(
+            socket.on(
                 'matchmakingfound',
                 ({
                     matchmaking,
@@ -72,6 +69,9 @@ export default function MatchMaking({
                         console.log('matchmaking found');
                         setAnimations(getAnimations(isDesktop));
                         setOppData(opponent);
+                        clientquery.invalidateQueries(['opponent']);
+                        clientquery.invalidateQueries([opponent]);
+                        clientquery.invalidateQueries(['me']);
                         setTimeout(() => {
                             setMatchmaking(false);
                         }, 4000);
@@ -83,10 +83,10 @@ export default function MatchMaking({
                 window.location.href = '/game/standing';
             });
             return () => {
-                socket?.off('matchmakingfound');
+                socket.off('matchmakingfound');
             };
         }
-    }, [socket]);
+    }, [isDesktop, setMatchmaking, setOppData, socket, clientquery]);
 
     useEffect(() => {
         if (CancelMatchmaking) {
@@ -94,7 +94,7 @@ export default function MatchMaking({
             socket?.emit('cancel-matchmaking', { username: me.username });
             redirect('/home');
         }
-    }, [CancelMatchmaking]);
+    }, [CancelMatchmaking, me.username, socket]);
 
     const [newOpponent, setNewOpponent] = useState({
         username: '',

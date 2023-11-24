@@ -1,13 +1,13 @@
 'use client';
+import Notif from '@/components/Notif';
+import { SocketProvider } from '@/contexts/SocketContext';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import Header from './Header';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
-import Loading from '../loading';
 import { useEffect } from 'react';
 import { io } from 'socket.io-client';
-import { SocketProvider } from '@/contexts/SocketContext';
-import Notif from '@/components/Notif';
+import Loading from '../loading';
+import Header from './Header';
 
 export default function DashboardLayout({
     children,
@@ -59,7 +59,7 @@ export default function DashboardLayout({
             socket.off('disconnect');
             socket.disconnect();
         };
-    }, []);
+    }, [queryClient]);
 
     const { data: me, isLoading: myisLoading } = useQuery({
         queryKey: ['mydata'],
@@ -92,7 +92,6 @@ export default function DashboardLayout({
     if (error || data?.data.status === false) {
         redirect('/signin');
     }
-
 
     return (
         <SocketProvider username={me?.data.username} namespace="Global">

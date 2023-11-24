@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Get,
@@ -114,7 +115,7 @@ export class AuthController {
             req.user,
         );
         if (!is2FAEnabled) {
-            return { message: 'Invalid code.', status: false };
+            return { message: 'Invalid code.', status: false }
         }
         await this.authService.turnOn2FA(req.user);
     }
@@ -128,7 +129,7 @@ export class AuthController {
             req.user,
         );
         if (!is2FAEnabled) {
-            return { message: 'Invalid code.', status: false };
+            throw new BadRequestException('Invalid code.');
         }
 
         return this.authService.loginWith2FA(req.user);

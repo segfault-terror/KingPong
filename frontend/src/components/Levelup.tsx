@@ -1,8 +1,6 @@
 'use client';
-import Loading from '@/app/loading';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -34,11 +32,7 @@ const levelStars = (newLevel: string) => {
 };
 
 export default function LevelUp({ newLevel, data }: LevelUpProps) {
-    const {
-        mutate: updateUser,
-        isLoading,
-        isSuccess,
-    } = useMutation(async () => {
+    const { mutate: updateUser } = useMutation(async () => {
         return await axios.post(`/api/user/setdata`, {
             withCredentials: true,
         });
@@ -57,7 +51,7 @@ export default function LevelUp({ newLevel, data }: LevelUpProps) {
             setCounter(counter - 1);
         }, 1000);
         return () => clearTimeout(timer);
-    }, [counter, data]);
+    }, [counter, data, queryClient, updateUser]);
 
     return (
         <div className="min-h-screen bg-center bg-cover flex flex-col items-center justify-center relative overflow-hidden backdrop-blur-[1px]">

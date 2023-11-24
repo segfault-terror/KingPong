@@ -1,11 +1,10 @@
 'use client';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import FriendsList from './FriendsList';
-import axios from 'axios';
-import Headers from '@/app/(dashboard)/Header';
 import Loading from '@/app/loading';
-import { useEffect } from 'react';
 import { useSocket } from '@/contexts/SocketContext';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import { useEffect } from 'react';
+import FriendsList from './FriendsList';
 
 export default function FriendsPage({
     params,
@@ -39,7 +38,7 @@ export default function FriendsPage({
             socket?.off('friends');
             console.log('friends disconnect');
         };
-    }, [socket]);
+    }, [queryClient, socket]);
 
     if (friendsLoading) {
         return (
@@ -49,7 +48,7 @@ export default function FriendsPage({
         );
     }
 
-    console.log("hello from friends page");
+    console.log('hello from friends page');
     return (
         <main className="flex flex-col">
             <FriendsList friends={friends.friends} />

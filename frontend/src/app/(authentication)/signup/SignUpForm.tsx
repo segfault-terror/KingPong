@@ -211,7 +211,8 @@ export default function SignUpForm() {
                 type="submit"
                 disabled={isLoading}
                 className="text-primary bg-secondary-200 font-jost font-bold w-full h-10 rounded-3xl group relative
-                        disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300
+                        ease-in-out delay-75 hover:bg-secondary-500 hover:border-r-2 hover:border-l-2 hover:border-white hover:scale-90 hover:text-white"
             >
                 Sign up
             </button>

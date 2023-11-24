@@ -12,7 +12,7 @@ export default function SignInPage(): JSX.Element {
                     Sign in
                 </Link>
                 <span className="text-inactive-500"> / </span>
-                <Link className="text-inactive-200" href="/signup">
+                <Link className="text-inactive-200 hover:scale-105 hover:text-gray-400 transition-all duration-100 ease-in-out delay-75" href="/signup">
                     Sign up
                 </Link>
             </div>

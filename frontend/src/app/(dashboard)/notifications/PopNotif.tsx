@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { NotificationProps } from './types';
+import { useSocket } from '@/contexts/SocketContext';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import LoadingEmpty from './EmptyLoading';
-import { useSocket } from '@/contexts/SocketContext';
-import { set } from 'react-hook-form';
 import { redirect } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { FaGamepad, FaUserFriends } from 'react-icons/fa';
 import { GiCancel } from 'react-icons/gi';
-import { FaUserFriends } from 'react-icons/fa';
-import { FaGamepad } from 'react-icons/fa';
+import LoadingEmpty from './EmptyLoading';
+import { NotificationProps } from './types';
 
 const empty: NotificationProps = {
     id: 0,
@@ -37,8 +35,6 @@ export default function PopNotif({
         notif.type == 'GAME'
             ? `${notif.username} has invited you to a game!`
             : `${notif.username} has sent you a friend request!`;
-    const bgImage =
-        notif.type == 'GAME' ? '/images/fight.svg' : '/images/add-friend.svg';
     const queryClient = useQueryClient();
     const { mutate: deleteNotif, isLoading: deleteLoading } = useMutation({
         mutationFn: async (data: any) => {
@@ -55,11 +51,7 @@ export default function PopNotif({
         },
     });
 
-    const {
-        mutate: acceptFriend,
-        isLoading: acceptLoading,
-        isSuccess,
-    } = useMutation({
+    const { mutate: acceptFriend, isLoading: acceptLoading } = useMutation({
         mutationFn: async (data: any) => {
             return await axios.post(`/api/friends/add`, data, {
                 withCredentials: true,
@@ -89,7 +81,7 @@ export default function PopNotif({
             console.log('redirecting');
             redirect(`/game/ranked/normal/${notif.ChallengeId}`);
         }
-    }, [redirected]);
+    }, [notif.ChallengeId, redirected]);
     if (deleteLoading || acceptLoading || meLoading) return <LoadingEmpty />;
 
     return (

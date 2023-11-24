@@ -86,7 +86,7 @@ const Notife = ({
     const { socket } = useSocket();
     useEffect(() => {
         if (!isloadingMe) socket?.emit('notifications', meData.username);
-    }, [SuccessDelete, SuccessUpdate]);
+    }, [SuccessDelete, SuccessUpdate, isloadingMe, meData.username, socket]);
 
     if (deleteLoading || updateLoading) return <LoadingEmpty />;
 
@@ -197,7 +197,14 @@ export default function Notification({ notifications }: NotificationState) {
             socket?.emit('friends', meData.username);
             setAcceptNewFriend(false);
         }
-    }, [isSuccess, deleteNotif, acceptNewFriend]);
+    }, [
+        isSuccess,
+        deleteNotif,
+        acceptNewFriend,
+        isloadingMe,
+        meData.username,
+        socket,
+    ]);
 
     const modal = () => {
         return (

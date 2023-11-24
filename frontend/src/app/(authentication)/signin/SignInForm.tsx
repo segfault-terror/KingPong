@@ -83,7 +83,7 @@ export default function SignInForm() {
         <>
             <button
                 className="text-white bg-primary font-jost font-bold 
-                        w-full h-10 rounded-3xl my-4 flex items-center justify-center gap-2"
+                        w-full h-10 rounded-3xl my-4 flex items-center justify-center gap-2 hover:scale-90 hover:bg-purple-900 hover:border-l-2 hover:border-r-2 hover:border-secondary-200 transition-all duration-300 ease-in-out delay-75"
                 onClick={onSignInWith42}
             >
                 <svg
@@ -114,7 +114,8 @@ export default function SignInForm() {
             </button>
             <button
                 className="text-white bg-primary font-jost font-bold 
-                        w-full h-10 rounded-3xl mb-6 flex items-center justify-center"
+                        w-full h-10 rounded-3xl mb-6 flex items-center justify-center hover:scale-90
+                         hover:bg-purple-900 hover:border-l-2 hover:border-r-2 hover:border-secondary-200 transition-all duration-300 ease-in-out delay-75"
                 onClick={onSignInWithGoogle}
             >
                 <IoLogoGoogle className="inline-block mr-2 w-5 h-5" />
@@ -212,7 +213,8 @@ export default function SignInForm() {
                     type="submit"
                     disabled={isLoading}
                     className="text-primary bg-secondary-200 font-jost font-bold w-full h-10 rounded-3xl
-                        disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300
+                        ease-in-out delay-75 hover:bg-secondary-500 hover:border-r-2 hover:border-l-2 hover:border-white hover:scale-90 hover:text-white"
                 >
                     Sign in
                 </button>

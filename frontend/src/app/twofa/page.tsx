@@ -44,6 +44,7 @@ const Page: React.FC = () => {
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors },
     } = useForm<TwoFAFormData>();
 
@@ -53,14 +54,16 @@ const Page: React.FC = () => {
         console.log('pincode: ', data.pincode);
         verify({ twofactorAuthenticationCode: data.pincode });
         try {
-            if (error != "") throw 'Invalid pincode';
+            if (error != '') throw 'Invalid pincode';
             console.log('2FA code verified successfully', error);
         } catch (error) {
-            console.log(
-                '2FA code verification failed:',
-            );
+            console.log('2FA code verification failed:');
             // setError('Invalid pincode');
         }
+    };
+
+    const handleOnChange = (e: any) => {
+        setValue('pincode', e.target.value);
     };
 
     const updateTfa = async (data: any) => {
@@ -146,7 +149,7 @@ const Page: React.FC = () => {
             <form
                 id="form"
                 onSubmit={handleSubmit(onSubmit)}
-                className="w-300px h-[200px] bg-gradient-to-tl from-secondary-500 to-purple-800 m-auto flex flex-col justify-around items-center rounded-lg shadow-lg"
+                className="w-300px h-[260px] bg-gradient-to-tl from-primary to-[#005248] border-r-2 border-l-2 border-secondary-500 m-auto flex flex-col justify-around items-center rounded-lg shadow-lg"
             >
                 <h1
                     className={`text-2xl font-jost flex justify-center items-center h-12 w-[90%] rounded-full self-auto`}
@@ -185,10 +188,7 @@ const Page: React.FC = () => {
                                 minLength: 6,
                                 maxLength: 6,
                             })}
-                            onChange={(e) => {
-                                if (e.target.value && error != '')
-                                    setError('');
-                            }}
+                            onChange={handleOnChange}
                         />
                     </label>
                     {errors.pincode && (
@@ -197,7 +197,7 @@ const Page: React.FC = () => {
                         </span>
                     )}
                 </div>
-                <div className='flex flex-col justify-start items-center'>
+                <div className="flex flex-col justify-start items-center">
                     <button
                         type="submit"
                         className="px-4 py-1 rounded-md bg-primary hover:bg-secondary-200 hover:text-black transition duration-300 ease-in-out"

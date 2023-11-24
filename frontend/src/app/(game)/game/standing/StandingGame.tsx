@@ -44,14 +44,14 @@ const Buttons = () => {
                     childrenClassName="bg-gradient-to-br from-primary to-background p-6 rounded-2xl border-r-2 border-l-2 border-secondary-500 w-[90%]
                 max-w-[900px] flex flex-col justify-evenly"
                 >
-                    <div className="w-full flex justify-around">
+                    <div className="w-full flex justify-around gap-1">
                         <div className="flex flex-col items-center gap-3">
                             <Link
                                 href={`/game/ranked/normal`}
                                 className="hover:drop-shadow-neon-white"
                             >
                                 <img
-                                    src={`/images/normal.png`}
+                                    src={`/images/RankedGame.svg`}
                                     alt=""
                                     className="w-[80%] md:w-[400px] rounded-3xl overflow-hidden"
                                 />
@@ -69,7 +69,7 @@ const Buttons = () => {
                                 className="hover:drop-shadow-neon-white"
                             >
                                 <img
-                                    src={`/images/obstacle.png`}
+                                    src={`/images/RankedGame-obstacle.svg`}
                                     alt=""
                                     className="w-[80%] md:w-[400px] rounded-3xl overflow-hidden"
                                 />
