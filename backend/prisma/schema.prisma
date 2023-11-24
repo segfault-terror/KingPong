@@ -73,7 +73,7 @@ model Stats {
     NextLevelXP Int @default(100)
     league League @default(BRONZE)
     rank Int @default(500)
-    winnderStreak Int @default(0)
+    winnerStreak Int @default(0)
     cleanSheets Int @default(0)
     user User @relation(fields: [userId], references: [id])
     userId String @unique
