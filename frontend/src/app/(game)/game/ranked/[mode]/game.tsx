@@ -20,8 +20,6 @@ const Sketch = dynamic(() => import('react-p5').then((mod) => mod.default), {
     ssr: false,
 });
 
-const delai = (ms: number) => new Promise((res) => setTimeout(res, ms));
-
 export interface InitData {
     width: number;
     height: number;
@@ -93,7 +91,7 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                     setPos(data);
                 }
             });
-            socket.on('game-stop', (data) => {
+            socket.on('game-stop', () => {
                 queryClient.invalidateQueries(['me']);
                 queryClient.invalidateQueries(['leaderboard']);
                 console.log('opponent disconnected');
@@ -127,7 +125,7 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 socket.off('disconnect');
             };
         }
-    }, []);
+    }, [me.username, queryClient, socket]);
     useEffect(() => {
         screenDim = {
             width: window.innerWidth,
@@ -158,7 +156,7 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
             width: serverClientRatioW,
             height: serverClientRatioH,
         });
-    }, [ready]);
+    }, [init, isSmartWatch, ready]);
     useEffect(() => {
         if (winner !== '') {
             redirect('/game/standing');

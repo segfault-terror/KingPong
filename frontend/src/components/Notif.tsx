@@ -1,7 +1,6 @@
 'use client';
 import { useSocket } from '@/contexts/SocketContext';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -11,29 +10,17 @@ export default function Notif() {
     const [hidden, setHidden] = useState(true);
     const [avatar, setAvatar] = useState('');
     const [message, setMessage] = useState('');
-    const [ChallengeId, setChallengeId] = useState('');
-    const [type, setType] = useState('');
-
-    const { data: me, isLoading: myisLoading } = useQuery({
-        queryKey: ['mydata'],
-        queryFn: async () => {
-            return await axios.get(`/api/user/me`, {
-                withCredentials: true,
-            });
-        },
-    });
 
     const queryClient = useQueryClient();
 
     useEffect(() => {
-        if (!myisLoading && socket)
+        if (socket)
             socket.on(
                 'notif',
                 ({
                     username,
                     type,
                     avatar,
-                    ChallengeId,
                 }: {
                     username: string;
                     type: string;
@@ -43,8 +30,6 @@ export default function Notif() {
                     console.log('notif received');
                     setHidden(false);
                     setAvatar(avatar);
-                    setChallengeId(ChallengeId);
-                    setType(type);
                     console.log('avatar: ', avatar);
                     if (type === 'FRIEND') {
                         setMessage(`${username} sent you a friend request`);
@@ -59,7 +44,7 @@ export default function Notif() {
                     }, 5000);
                 },
             );
-    }, [socket]);
+    }, [queryClient, socket]);
 
     return (
         <>
@@ -81,8 +66,6 @@ export default function Notif() {
                             ease: [0, 0.71, 0.2, 1.01],
                         }}
                         whileHover={{ scale: 0.95 }}
-                        onHoverStart={(e) => {}}
-                        onHoverEnd={(e) => {}}
                         onClick={() => {
                             setHidden(true);
                         }}

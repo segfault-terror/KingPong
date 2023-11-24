@@ -1,17 +1,14 @@
 'use client';
+import Loading from '@/app/loading';
 import Ghost from '@/components/Ghost';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import { Friend, FriendState, UserStatus } from './types';
+import { InviteGameModal } from '@/components/ModalGame';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { stat } from 'fs';
-import Loading from '@/app/loading';
-import { use, useEffect, useState } from 'react';
-import { Socket, io } from 'socket.io-client';
-import { set } from 'react-hook-form';
-import { InviteGameModal } from '@/components/ModalGame';
 import { nanoid } from 'nanoid';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { Socket, io } from 'socket.io-client';
+import { Friend, FriendState, UserStatus } from './types';
 
 const EmptyFriendsList = () => {
     return (
@@ -85,7 +82,7 @@ const FriendCard = ({
         return () => {
             setTimeout(() => newSocket.close(), 0);
         };
-    }, []);
+    }, [username]);
 
     useEffect(() => {
         if (socket) {
@@ -182,12 +179,7 @@ const FriendCard = ({
 };
 
 export default function FriendsList({ friends }: FriendState) {
-    const {
-        data: user,
-        isLoading: myloading,
-        isError,
-        error,
-    } = useQuery({
+    const { data: user, isLoading: myloading } = useQuery({
         queryKey: ['friends', 'me'],
         queryFn: async () => {
             const { data } = await axios.get(`/api/user/get/me/friends`, {

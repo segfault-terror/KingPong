@@ -80,13 +80,13 @@ export default function Page() {
                         avatar: string;
                     },
             );
-        }, [leaderboardData]);
+        }, []);
 
         const myleague: string = useMemo(() => {
             return leaderboardData?.find(
                 (entry: newData) => entry.username === data?.username,
             )?.stats?.league;
-        }, [leaderboardData]);
+        }, []);
 
         const Transation = isMobile === false ? '' : 'flex-col';
 
@@ -94,7 +94,7 @@ export default function Page() {
         useEffect(() => {
             if (data?.stats === undefined) return;
             setPercent((data?.stats.XP / data?.stats.NextLevelXP) * 100);
-        }, [data]);
+        }, []);
 
         if (data?.stats === undefined) return <Loading />;
 
@@ -104,21 +104,21 @@ export default function Page() {
         return (
             <div className={`flex ${Transation}`}>
                 {isMobile ? (
-                                <Link
-                                    href={'/leaderboard'}
-                                    className="h-12 w-12  mt-4"
-                                    title="Toggle leaderboard"
-                                    placeholder="ranking"
-                                >
-                                    <img
-                                        src="/images/RankingStar.svg"
-                                        alt=""
-                                        className="w-full rounded-full bg-background  flex justify-center items-center shadow-lg drop-shadow-[0px_0px_10px_#FFE72D]"
-                                    />
-                                </Link>
-                            ) : (
-                                <>{Navbar(myleague, leaderboard)}</>
-                            )}
+                    <Link
+                        href={'/leaderboard'}
+                        className="h-12 w-12  mt-4"
+                        title="Toggle leaderboard"
+                        placeholder="ranking"
+                    >
+                        <img
+                            src="/images/RankingStar.svg"
+                            alt=""
+                            className="w-full rounded-full bg-background  flex justify-center items-center shadow-lg drop-shadow-[0px_0px_10px_#FFE72D]"
+                        />
+                    </Link>
+                ) : (
+                    <>{Navbar(myleague, leaderboard)}</>
+                )}
                 <main
                     className={`w-full min-h-[80vh] overflow-hidden flex flex-col justify-center items-center lg:justify-normal text-black transition-all duration-500 lg:my-16`}
                 >

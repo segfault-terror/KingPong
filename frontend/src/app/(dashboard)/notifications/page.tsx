@@ -1,13 +1,13 @@
 'use client';
 
+import Loading from '@/app/loading';
+import { useSocket } from '@/contexts/SocketContext';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import { redirect } from 'next/navigation';
+import { useEffect } from 'react';
 import Notification from './Notifications';
 import { NotificationProps } from './types';
-import axios from 'axios';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import Loading from '@/app/loading';
-import { redirect } from 'next/navigation';
-import { SocketProvider, useSocket } from '@/contexts/SocketContext';
-import { useEffect } from 'react';
 
 export default function Page() {
     const queryClient = useQueryClient();
@@ -24,7 +24,7 @@ export default function Page() {
             socket?.off('notifications');
             console.log('disconnect');
         };
-    }, [socket]);
+    }, [queryClient, socket]);
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ['notifications'],

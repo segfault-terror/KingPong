@@ -14,7 +14,7 @@ export function getExpToLevelUp(
     yourScore: number,
     opponentScore: number,
 ) {
-    let newXP = calculateXp(yourScore, opponentScore, 'medium', XP);
+    const newXP = calculateXp(yourScore, opponentScore, XP);
     console.log(level, newXP, nextLevelXP);
     console.log(getLevel(level, newXP, nextLevelXP));
     return getLevel(level, newXP, nextLevelXP);
@@ -23,7 +23,6 @@ export function getExpToLevelUp(
 function calculateXp(
     yourScore: number,
     opponentScore: number,
-    difficulty: string,
     baseXp: number,
 ): number {
     const scoreDifference: number = yourScore - opponentScore;
@@ -40,7 +39,7 @@ function calculateXp(
         scoreBonus += 0;
     }
 
-    let difficultyModifier: number = 4;
+    const difficultyModifier: number = 4;
 
     let xp: number = baseXp + scoreBonus * difficultyModifier;
 
