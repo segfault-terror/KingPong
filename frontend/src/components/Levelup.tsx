@@ -2,7 +2,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
 interface LevelUpProps {
     newLevel: string;
@@ -31,27 +30,14 @@ const levelStars = (newLevel: string) => {
     );
 };
 
-export default function LevelUp({ newLevel, data }: LevelUpProps) {
+export default function LevelUp({ newLevel }: LevelUpProps) {
     const { mutate: updateUser } = useMutation(async () => {
         return await axios.post(`/api/user/setdata`, {
             withCredentials: true,
         });
     });
-    //counter 10s
-    const [counter, setCounter] = useState(10);
+    //continue 10s
     const queryClient = useQueryClient();
-    useEffect(() => {
-        if (counter === 0) {
-            updateUser();
-            queryClient.invalidateQueries(['me'], {
-                exact: true,
-            });
-        }
-        const timer = setTimeout(() => {
-            setCounter(counter - 1);
-        }, 1000);
-        return () => clearTimeout(timer);
-    }, [counter, data, queryClient, updateUser]);
 
     return (
         <div className="min-h-screen bg-center bg-cover flex flex-col items-center justify-center relative overflow-hidden backdrop-blur-[1px]">
@@ -69,14 +55,14 @@ export default function LevelUp({ newLevel, data }: LevelUpProps) {
                         animationDuration: '1s',
                     }}
                     onClick={() => {
-                        setCounter(0);
+                        updateUser();
+                        queryClient.invalidateQueries(['me'], {
+                            exact: true,
+                        });
                     }}
                 >
                     continue
                 </Link>
-                <div className=" text-center flex justify-center items-center text-lg md:text-2xl lg:text-4xl font-nicomoji text-orange-400 absolute top-5 lg:top-10">
-                    You have {counter} seconds to continue
-                </div>
             </div>
             {levelStars(newLevel)}
         </div>
