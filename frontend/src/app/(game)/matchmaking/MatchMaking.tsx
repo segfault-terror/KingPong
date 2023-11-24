@@ -15,7 +15,7 @@ import { useSocket } from '@/contexts/SocketContext';
 import { useEffect, useState } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { set } from 'react-hook-form';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IoIosExit } from 'react-icons/io';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
@@ -57,9 +57,10 @@ export default function MatchMaking({
     const [animations, setAnimations] = useState(['', '', '', '', '', '']);
     const { socket } = useSocket();
     const [CancelMatchmaking, setCancelMatchmaking] = useState(false);
+    const clientquery = useQueryClient();
     useEffect(() => {
         if (socket) {
-            socket?.on(
+            socket.on(
                 'matchmakingfound',
                 ({
                     matchmaking,
@@ -72,6 +73,9 @@ export default function MatchMaking({
                         console.log('matchmaking found');
                         setAnimations(getAnimations(isDesktop));
                         setOppData(opponent);
+                        clientquery.invalidateQueries(['opponent']);
+                        clientquery.invalidateQueries([opponent]);
+                        clientquery.invalidateQueries(['me']);
                         setTimeout(() => {
                             setMatchmaking(false);
                         }, 4000);
@@ -83,7 +87,7 @@ export default function MatchMaking({
                 window.location.href = '/game/standing';
             });
             return () => {
-                socket?.off('matchmakingfound');
+                socket.off('matchmakingfound');
             };
         }
     }, [socket]);
