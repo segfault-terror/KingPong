@@ -45,7 +45,7 @@ export default function BanUserModal({
         setResults(
             filterMembers(channelMembers.members, channelMembers.admins, ''),
         );
-    }, [channelMembers]);
+    }, [channelMembers, isAdmin]);
 
     if (isLoading) {
         return (

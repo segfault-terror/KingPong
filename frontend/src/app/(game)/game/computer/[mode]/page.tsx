@@ -23,8 +23,6 @@ const Sketch = dynamic(() => import('react-p5').then((mod) => mod.default), {
     ssr: false,
 });
 
-const delai = (ms: number) => new Promise((res) => setTimeout(res, ms));
-
 export interface InitData {
     width: number;
     height: number;
@@ -32,7 +30,7 @@ export interface InitData {
     topPaddle: { width: number; height: number };
     bottomPaddle: { width: number; height: number };
     ball: { radius: number };
-    obstacles: {width: number; height: number }[];
+    obstacles: { width: number; height: number }[];
 }
 
 export interface Data {
@@ -49,7 +47,7 @@ let screenDim = {
     height: 0,
 };
 
-export default function Page({params}: { params: {mode: string} }) {
+export default function Page({ params }: { params: { mode: string } }) {
     const isSmartWatch = useMediaQuery('(max-width: 300px)');
     const [isMobile, setIsMobile] = React.useState('');
     const [ready, setReady] = React.useState(false);
@@ -110,7 +108,7 @@ export default function Page({params}: { params: {mode: string} }) {
             socket.off('update-game');
             socket.disconnect();
         };
-    }, []);
+    }, [params.mode]);
     const [{ w, h }, setDim] = React.useState({ w: '', h: '' });
     useEffect(() => {
         if (isSmartWatch) setIsMobile('hidden');
@@ -148,7 +146,7 @@ export default function Page({params}: { params: {mode: string} }) {
         const w = 600 * serverClientRatioW;
         const h = 800 * serverClientRatioH;
         setDim({ w: `w-[${w}px]`, h: `h-[${h}px]` });
-    }, [ready]);
+    }, [init, isSmartWatch, ready]);
 
     useEffect(() => {
         if (matchCancel) window.location.href = `/home`;

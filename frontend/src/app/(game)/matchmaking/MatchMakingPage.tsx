@@ -9,11 +9,10 @@ type Props = {
     me: any;
     oppData: any;
     setOppData: (data: any) => void;
-    mode:string;
+    mode: string;
     ChallengeId?: string;
 };
 export default function MatchMakingPage({
-    matchmaking,
     setmatchmaking,
     me,
     oppData,
@@ -21,14 +20,17 @@ export default function MatchMakingPage({
     mode,
     ChallengeId,
 }: Props) {
-    const data = { username: me.username, league: me.league, mode: mode };
     const { socket } = useSocket();
     useEffect(() => {
+        const data = { username: me.username, league: me.league, mode: mode };
         if (socket && ChallengeId) {
-            socket.emit('challenge', {id:ChallengeId, Challenger: me.username, Opponent: ""});
-        }
-        else if (socket) socket.emit('matchmaking', data);
-    }, [socket]);
+            socket.emit('challenge', {
+                id: ChallengeId,
+                Challenger: me.username,
+                Opponent: '',
+            });
+        } else if (socket) socket.emit('matchmaking', data);
+    }, [ChallengeId, me.league, me.username, mode, socket]);
 
     return (
         <MatchMaking
