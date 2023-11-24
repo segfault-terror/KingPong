@@ -22,7 +22,7 @@ export class NotificationsService {
                 user: true,
             },
         });
-        console.log(notification);
+
         return notification;
     }
 

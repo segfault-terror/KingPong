@@ -101,12 +101,12 @@ const Winner = (image: string) => {
             <img
                 src={image}
                 alt=""
-                className="rounded-full h-32 md:h-44 lg:h-52 xl:h-56 border-4 border-secondary-200 z-10 drop-shadow-neon-orange"
+                className="rounded-full h-32 w-32 md:h-44 md:w-44 lg:h-52 lg:w-52 xl:h-56 xl:w-56 border-4 border-secondary-200 z-10 drop-shadow-neon-orange"
             />
             <img
                 src={FirstPlace.src}
                 alt="FirstPlace"
-                className="animate-[TranslateYDown_1.5s_linear] h-12 md:h-16 lg:h-20 xl:h-24  flex justify-end items-end bottom-0 z-0 drop-shadow-neon-orange"
+                className="animate-[TranslateYDown_1.5s_linear] h-12 md:h-16 lg:h-20 xl:h-24 w-12 md:w-16 lg:w-20 xl:w-24 flex justify-end items-end bottom-0 z-0 drop-shadow-neon-orange"
             />
             <div className={`${animate}`}>
                 <img src="/images/StandingShadowFirst.svg" alt="" />
@@ -127,12 +127,12 @@ const Loser = (image: string) => {
             <img
                 src={image}
                 alt=""
-                className="rounded-full md:h-32 h-24 lg:h-36 xl:h-44 border-4 border-gray-500 z-10 flex justify-start items-start drop-shadow-[0px_0px_20px_#868686]"
+                className="rounded-full md:h-32 h-24 lg:h-36 xl:h-44 md:w-32 w-24 lg:w-36 xl:w-44 border-4 border-gray-500 z-10 flex justify-start items-start drop-shadow-[0px_0px_20px_#868686]"
             />
             <img
                 src={SecondPlace.src}
                 alt="SecondPlace"
-                className=" animate-[TranslateYDown_1.5s_linear] md:h-12 h-8 lg:h-16 xl:20 flex justify-end items-end z-0 drop-shadow-[0px_0px_10px_#868686]"
+                className="animate-[TranslateYDown_1.5s_linear] md:h-12 md:w-12 h-8 w-8 lg:h-16 lg:w-16 xl:h-20 xl:w-20 flex justify-end items-end z-0 drop-shadow-[0px_0px_10px_#868686]"
             />
             <div className={`${animate}`}>
                 <img src="/images/StandingShadowSecond.svg" alt="" />
@@ -159,8 +159,6 @@ const YouWin = (me: any, opponent: any) => {
 };
 
 const YouLose = (me: any, opponent: any) => {
-    console.log('me: ', me);
-    console.log('opponent: ', opponent);
     return (
         <div className="flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 relative">
             {Loser(me.avatar)}

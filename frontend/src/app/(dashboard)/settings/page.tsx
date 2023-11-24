@@ -9,7 +9,12 @@ import {
     useQueryClient,
 } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { UseFormRegister, UseFormResetField, set, useForm } from 'react-hook-form';
+import {
+    UseFormRegister,
+    UseFormResetField,
+    set,
+    useForm,
+} from 'react-hook-form';
 import { redirect, useRouter } from 'next/navigation';
 import { useContext } from 'react';
 import Loading from '@/app/loading';
@@ -187,7 +192,6 @@ export default function Settings() {
                 'profile',
                 'user',
             ]);
-            console.log('here');
             setTfa(false);
             focusManager.setFocused(false);
             focusManager.setFocused(true);
@@ -200,11 +204,7 @@ export default function Settings() {
     }
 
     if (isLoading) {
-        return (
-            <div className="bg-default fixed inset-0 z-50">
-                <Loading />
-            </div>
-        );
+        return <Loading />;
     }
     return (
         <main className="flex items-center justify-center my-9">

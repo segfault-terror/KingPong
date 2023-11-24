@@ -56,7 +56,6 @@ export function InviteGameModal({
                         if (!Challenge) {
                             setId(myId);
                             setTimeout(() => {
-                                console.log('id: ', myId);
                                 createNotification({
                                     id: senderId,
                                     type: 'GAME',

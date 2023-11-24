@@ -44,7 +44,6 @@ export default function PopNotif({
             });
         },
         onSuccess: () => {
-            console.log('deleted');
             queryClient.invalidateQueries(['notifications'], {
                 exact: true,
             });
@@ -58,7 +57,6 @@ export default function PopNotif({
             });
         },
         onSuccess: () => {
-            console.log('accepted');
             acceptNewFriend(true);
             queryClient.invalidateQueries(['notifications'], {
                 exact: true,
@@ -78,7 +76,6 @@ export default function PopNotif({
 
     useEffect(() => {
         if (redirected) {
-            console.log('redirecting');
             redirect(`/game/ranked/normal/${notif.ChallengeId}`);
         }
     }, [notif.ChallengeId, redirected]);
@@ -115,10 +112,6 @@ export default function PopNotif({
                         title="Accept"
                         onClick={() => {
                             if (notif.type == 'FRIEND') {
-                                console.log('me: ', me, {
-                                    sender: notif.username,
-                                    receiver: me.username,
-                                });
                                 socket?.emit('profile', {
                                     user1: me.username,
                                     user2: notif.username,
@@ -127,7 +120,6 @@ export default function PopNotif({
                                 updateModal(false);
                                 updateNotif(empty);
                             } else if (notif.type == 'GAME') {
-                                console.log('Game found');
                                 setRedirected(true);
                             }
                             deleteNotif({ id: notif.id });

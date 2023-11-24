@@ -84,7 +84,6 @@ export class UserService {
                 newLevelUp: false,
             },
         });
-        console.log(user);
         return user;
     }
 

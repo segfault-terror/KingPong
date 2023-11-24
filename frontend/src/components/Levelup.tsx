@@ -69,7 +69,6 @@ export default function LevelUp({ newLevel, data }: LevelUpProps) {
                         animationDuration: '1s',
                     }}
                     onClick={() => {
-                        console.log('clicked');
                         setCounter(0);
                     }}
                 >

@@ -130,7 +130,6 @@ export default function ChatInput({
         });
 
         socket?.on('new-message', () => {
-            console.log(`Invalidating query [dm, ${username}]`);
             queryClient.invalidateQueries(['dm', username], {
                 exact: true,
             });
@@ -140,7 +139,6 @@ export default function ChatInput({
         });
 
         socket?.on('new-channel-message', () => {
-            console.log(`Invalidating query [channel, ${channelName}]`);
             queryClient.invalidateQueries(['channel', channelName], {
                 exact: true,
             });

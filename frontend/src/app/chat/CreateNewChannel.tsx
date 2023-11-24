@@ -50,7 +50,6 @@ export default function CreateNewChannel() {
         );
     }
 
-    console.log(errors);
 
     return (
         <form

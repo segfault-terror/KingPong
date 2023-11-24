@@ -39,7 +39,6 @@ export default function Notification(props: NotificationProps) {
 
     const handleClick = () => {
         setAnimate(false);
-        console.log("clicked");
     }
     return (
         <div className={animate == true ? `min-h-screen w-screen flex justify-end opacity-0` : `flex justify-end animate-[TranslateLeft_1.5s_linear] overflow-hidden `}>

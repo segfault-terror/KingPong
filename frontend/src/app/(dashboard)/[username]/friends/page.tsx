@@ -31,12 +31,10 @@ export default function FriendsPage({
     const { socket } = useSocket();
     useEffect(() => {
         socket?.on('friends', () => {
-            console.log('friends connect');
             queryClient.invalidateQueries(['friends']);
         });
         return () => {
             socket?.off('friends');
-            console.log('friends disconnect');
         };
     }, [queryClient, socket]);
 
@@ -48,7 +46,6 @@ export default function FriendsPage({
         );
     }
 
-    console.log('hello from friends page');
     return (
         <main className="flex flex-col">
             <FriendsList friends={friends.friends} />

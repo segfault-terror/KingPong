@@ -19,8 +19,6 @@ export class AuthGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @UseGuards(WsAuthGuard)
     @SubscribeMessage('test')
     async connect(client: any, ...args: any[]) {
-        console.log('client connected', client.request.user);
-        console.log('args', args);
         client.emit('test', 'connected');
         this.io.in(client.request.user.id).emit('test', 'connected');
         return { event: 'test', data: 'connected' };

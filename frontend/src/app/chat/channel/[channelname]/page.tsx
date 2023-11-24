@@ -41,7 +41,6 @@ export default function Channel({ params }: ChannelProps) {
                     (user: any) => user.username === me.username,
                 ),
             );
-            console.log('isBanned', isBanned);
 
             return {
                 isMember,

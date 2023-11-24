@@ -31,7 +31,6 @@ export default function Page({
 
     const ChallengeId = params.id;
     useEffect(() => {
-        console.log('oppData: ', oppdata);
     }, [oppdata]);
 
     if (meLoading || me.stats === undefined || me.stats.league === undefined)

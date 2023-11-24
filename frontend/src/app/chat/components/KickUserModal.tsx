@@ -38,7 +38,6 @@ export default function KickUserModal({
         if (!channelMembers?.members || !channelMembers?.admins) return;
 
         if (isAdmin) {
-            console.log('Removing admins from ban list');
             channelMembers.admins = [];
         }
 

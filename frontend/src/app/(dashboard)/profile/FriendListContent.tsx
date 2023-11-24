@@ -120,7 +120,6 @@ export default function FriendListContent({
 						border border-white
 						text-secondary-200 font-jost hover:bg-secondary-200 hover:text-background"
                             onClick={() => {
-                                // console.log(data)
                                 InviteFriend({
                                     id: data.friendId,
                                     type: 'FRIEND',

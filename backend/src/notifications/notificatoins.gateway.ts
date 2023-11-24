@@ -26,14 +26,8 @@ export class NotificationsGateway
             (user) => user.username === username,
         );
         if (!user) {
-            console.log(
-                `[notifications] Registered ${username} for the first time`,
-            );
             this.connectedUsers.push({ username, sockets: [socket.id] });
         } else {
-            console.log(
-                `[notifications] Registered ${username} in another tab`,
-            );
             user.sockets.push(socket.id);
         }
         user.sockets.push(socket.id);
@@ -46,16 +40,6 @@ export class NotificationsGateway
 
         if (!user) return;
         user.sockets = user.sockets.filter((id) => id !== socket.id);
-
-        if (user.sockets.length === 0) {
-            console.log(
-                `[notifications] Unregistered ${user.username} from all tabs`,
-            );
-        } else {
-            console.log(
-                `[notifications] Unregistered ${user.username} from one tab`,
-            );
-        }
     }
 
     @SubscribeMessage('notif')
@@ -79,7 +63,6 @@ export class NotificationsGateway
         if (result)
             result.sockets.forEach((id) => {
                 this.server.to(id).emit('notif', { sender, type, avatar });
-                console.log(`+++${this.counter} - Notif to ${username}`);
                 this.counter++;
             });
     }

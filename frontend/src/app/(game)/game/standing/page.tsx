@@ -15,9 +15,6 @@ function Standing({ lastMatch, me }: { lastMatch: any; me: any }) {
             ? lastMatch.player2Id
             : lastMatch.player1Id;
     const opponent = me.id === idWinner ? idLoser : idWinner;
-    console.log('idWinner: ', idWinner);
-    console.log('idLoser: ', idLoser);
-    console.log('opponent: ', opponent);
     const { data: opponentData, isLoading: opponentLoading } = useQuery(
         ['opponent', opponent],
         async () => {
@@ -27,7 +24,6 @@ function Standing({ lastMatch, me }: { lastMatch: any; me: any }) {
         },
     );
     if (opponentLoading) return <Loading />;
-    console.log(opponentData);
     const winner = me.id === idWinner ? me.username : opponentData.username;
     const loser = me.id === idWinner ? opponentData.username : me.username;
 
@@ -35,7 +31,6 @@ function Standing({ lastMatch, me }: { lastMatch: any; me: any }) {
 }
 
 function StandingPage({ me }: { me: any }) {
-    console.log('standing : ', me.username);
 
     const {
         data: lastMatch,
@@ -56,7 +51,6 @@ function StandingPage({ me }: { me: any }) {
     });
     if (lastMatchLoading) return <Loading />;
     if (!lastMatch) redirect('/home');
-    console.log('lastMatch: ', lastMatch);
     return <Standing lastMatch={lastMatch} me={me} />;
 }
 

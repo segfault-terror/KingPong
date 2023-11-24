@@ -63,7 +63,6 @@ function ProtectedChannelContent(props: {
         defaultValues: { password: '' },
     });
 
-    console.log('inside password modal', props.wrongPassword);
 
     return (
         <form
@@ -144,7 +143,6 @@ export default function WelcomeChannel({
             return channel;
         },
         onSuccess: () => {
-            console.log('wach nta hna');
             queryClient.invalidateQueries(['channel', channelName, 'members'], {
                 exact: true,
             });
@@ -154,7 +152,6 @@ export default function WelcomeChannel({
             setRedirectChannel(true);
         },
         onError: () => {
-            console.log('you entered a wrong password');
             setWrongPassword(true);
         },
     });

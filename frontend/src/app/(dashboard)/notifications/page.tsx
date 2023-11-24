@@ -15,14 +15,12 @@ export default function Page() {
     const { socket } = useSocket();
     useEffect(() => {
         socket?.on('notifications', () => {
-            console.log('connect');
             setTimeout(() => {
                 queryClient.invalidateQueries(['notifications']);
             }, 100);
         });
         return () => {
             socket?.off('notifications');
-            console.log('disconnect');
         };
     }, [queryClient, socket]);
 
@@ -42,7 +40,6 @@ export default function Page() {
     if (isLoading) {
         return <Loading />;
     }
-    console.log('the notif is:', data);
     const notifications = data.map(
         (notification: any) =>
             ({

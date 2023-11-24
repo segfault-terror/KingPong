@@ -88,11 +88,9 @@ export class UserController {
 
     @Post('setdata')
     @UseGuards(AuthGard)
-    async updateUser(
-        @Req() req: any,
-    ) {
+    async updateUser(@Req() req: any) {
         const username = req.user.username;
-        console.log(username);
+
         const userByUsername = await this.userService.user({ username });
         if (!userByUsername) {
             throw new NotFoundException('User not found');

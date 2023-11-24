@@ -86,7 +86,6 @@ export class AuthController {
     @Get('firstLogin')
     @UseGuards(AuthGard)
     async firstLogin(@Req() req: any) {
-        console.log(req.user);
         await this.userService.updateUser({
             where: { email: req.user.email },
             data: { firstLogin: false },
@@ -115,7 +114,7 @@ export class AuthController {
             req.user,
         );
         if (!is2FAEnabled) {
-            return { message: 'Invalid code.', status: false }
+            return { message: 'Invalid code.', status: false };
         }
         await this.authService.turnOn2FA(req.user);
     }

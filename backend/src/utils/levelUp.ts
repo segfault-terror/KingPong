@@ -15,8 +15,6 @@ export function getExpToLevelUp(
     opponentScore: number,
 ) {
     const newXP = calculateXp(yourScore, opponentScore, XP);
-    console.log(level, newXP, nextLevelXP);
-    console.log(getLevel(level, newXP, nextLevelXP));
     return getLevel(level, newXP, nextLevelXP);
 }
 

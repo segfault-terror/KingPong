@@ -16,7 +16,6 @@ export default function useInvite() {
 
     const { mutate } = useMutation({
         mutationFn: async (data: any) => {
-            console.log(data);
             return await axios.post('/api/notifications/create', {
                 userId: me.id,
                 sendToId: data.id,

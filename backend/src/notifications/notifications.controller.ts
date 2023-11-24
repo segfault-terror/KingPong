@@ -57,8 +57,6 @@ export class NotificationsController {
 
     @Get('/existnotif/:username')
     async notifExist(@Req() data: any, @Query() query: any) {
-        // console.log("user: ",data.params.username, "body: ", data);
-        console.log('user: ', data.params.username, 'body: ', query);
         const user = await this.NotificationsService.getUserByUsername(
             data.params.username,
         );

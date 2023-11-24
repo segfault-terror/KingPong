@@ -66,7 +66,6 @@ export default function MatchMaking({
                     opponent: string;
                 }) => {
                     if (matchmaking) {
-                        console.log('matchmaking found');
                         setAnimations(getAnimations(isDesktop));
                         setOppData(opponent);
                         clientquery.invalidateQueries(['opponent']);
@@ -79,7 +78,6 @@ export default function MatchMaking({
                 },
             );
             socket.on('game-stop', (data) => {
-                console.log('finished:', data);
                 window.location.href = '/game/standing';
             });
             return () => {
@@ -90,7 +88,6 @@ export default function MatchMaking({
 
     useEffect(() => {
         if (CancelMatchmaking) {
-            console.log('cancel matchmaking');
             socket?.emit('cancel-matchmaking', { username: me.username });
             redirect('/home');
         }

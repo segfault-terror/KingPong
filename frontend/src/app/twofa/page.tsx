@@ -51,13 +51,10 @@ const Page: React.FC = () => {
     const onSubmit: SubmitHandler<TwoFAFormData> = async (data) => {
         // Get the pincode from the form data.
         data.pincode;
-        console.log('pincode: ', data.pincode);
         verify({ twofactorAuthenticationCode: data.pincode });
         try {
             if (error != '') throw 'Invalid pincode';
-            console.log('2FA code verified successfully', error);
         } catch (error) {
-            console.log('2FA code verification failed:');
             // setError('Invalid pincode');
         }
     };
@@ -78,12 +75,10 @@ const Page: React.FC = () => {
                     withCredentials: true,
                 },
             );
-            console.log('response: ', response);
             if (response.status === false) throw response.message;
             return response;
         } catch (error) {
             setError('Invalid pincode');
-            console.log('error: ', error);
             throw error;
         }
     };
@@ -93,7 +88,6 @@ const Page: React.FC = () => {
         isError,
     } = useMutation(updateTfa, {
         onSuccess: () => {
-            console.log('success ++++');
             update();
         },
         onError: (error: string) => {
@@ -104,12 +98,10 @@ const Page: React.FC = () => {
 
     const { mutate: update } = useMutation(updateUser, {
         onSuccess: () => {
-            console.log('success');
             setTfa(true);
             queryClient.invalidateQueries(['needOtp']);
         },
         onError: (error) => {
-            console.log(error);
         },
     });
 
@@ -135,7 +127,6 @@ const Page: React.FC = () => {
     }
 
     if (tfa || me?.data === false) {
-        console.log('redirecting home');
         setTfa(false);
         redirect('/home');
     }

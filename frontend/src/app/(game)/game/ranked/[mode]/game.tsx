@@ -74,7 +74,6 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
     useEffect(() => {
         if (socket) {
             socket.on('canvas', (data) => {
-                console.log('canvas');
                 setInit({
                     width: data.canvas.width,
                     height: data.canvas.height,
@@ -94,7 +93,6 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
             socket.on('game-stop', () => {
                 queryClient.invalidateQueries(['me']);
                 queryClient.invalidateQueries(['leaderboard']);
-                console.log('opponent disconnected');
                 setGameOver(true);
                 setTimeout(() => {
                     setWinner(me.username);
@@ -103,7 +101,6 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
             socket.on('finished', (data) => {
                 queryClient.invalidateQueries(['me']);
                 queryClient.invalidateQueries(['leaderboard']);
-                console.log('finished');
                 setGameOver(true);
                 setTimeout(() => {
                     setWinner(data.winner);
@@ -111,7 +108,6 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
                 }, 2000);
             });
             socket.on('disconnect', () => {
-                console.log('disconnected');
                 queryClient.invalidateQueries(['me']);
                 queryClient.invalidateQueries(['leaderboard']);
                 setGameOver(true);

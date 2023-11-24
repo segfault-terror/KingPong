@@ -110,7 +110,7 @@ export class GameGateway implements OnGatewayConnection {
     @SubscribeMessage('message')
     handleMessage(client: Socket, payload: any): string {
         client.emit('message', 'Hello world!');
-        console.log('payload', payload);
+
         return 'Hello world!';
     }
 
@@ -124,14 +124,11 @@ export class GameGateway implements OnGatewayConnection {
         this.connectedUsers = this.connectedUsers.filter(
             (user) => user.username !== '',
         );
-        console.log(`+++++ [Game] Register... ${username}`);
+
         const user = this.connectedUsers.find(
             (user) => user.username === username,
         );
         if (!user) {
-            console.log(
-                `++++++[Game] Registered ${username} for the first time`,
-            );
             this.connectedUsers.push({
                 username: username,
                 sockets: client.id,
@@ -140,8 +137,6 @@ export class GameGateway implements OnGatewayConnection {
             // change username in connected users
             user.username = username;
             user.sockets = client.id;
-            console.log(`++++++[Game] Registered ${username} in another tab`);
-            console.log(this.connectedUsers);
         }
         this.userService.updateUser({
             where: { email: client.request.user.email },
@@ -151,24 +146,19 @@ export class GameGateway implements OnGatewayConnection {
         });
 
         if (!user) {
-            console.log('new client:', client.id);
             this.connectedUsers.push({
                 sockets: client.id,
                 username: client.request.user.username,
             });
         }
         client.emit('already-ingame', 'You are already connected');
-        // else client.disconnect(true);
-
-        // console.log('client', client.id);
-        // this.computerService.startGame(client);
     }
 
     async handleDisconnect(socket: any) {
         const user = this.connectedUsers.find(
             (user) => user.sockets === socket.id,
         );
-        console.log('disconnect', this.connectedUsers);
+
         if (!user) return;
 
         const match = this.queueChallenge.find((match) => {
@@ -208,9 +198,8 @@ export class GameGateway implements OnGatewayConnection {
                     player.player1.username !== matchQueue.player1.username &&
                     player.player2.username !== matchQueue.player2.username,
             );
-            console.log('queueInMatch', this.queueInMatch);
         }
-        console.log(`------[Game] Unregistered ${user.username} from one tab`);
+
         this.queue = this.queue.filter(
             (queue) => queue.username !== user.username,
         );
@@ -285,11 +274,10 @@ export class GameGateway implements OnGatewayConnection {
 
     @SubscribeMessage('matchmaking')
     async handleGame(@MessageBody() data: any) {
-        console.log('data: ', data);
         const user = this.connectedUsers.find(
             (user) => user.username === data.username,
         );
-        console.log('user: ', user);
+
         if (!user) return;
         const UserQueue = this.queue.find(
             (queue) => queue.username === data.username,
@@ -306,9 +294,8 @@ export class GameGateway implements OnGatewayConnection {
                 (queue) =>
                     queue.league === data.league && queue.mode === data.mode,
             );
-            console.log('queue: ', queue);
+
             if (queue.length >= 2) {
-                console.log('matchmaking 2 players found');
                 this.server.to(queue[0].socket).emit('matchmakingfound', {
                     matchmaking: true,
                     opponent: queue[1].username,
@@ -417,7 +404,7 @@ export class GameGateway implements OnGatewayConnection {
         } else {
             match.Opponent.socket = user.sockets;
             match.Opponent.username = data.Challenger;
-            console.log(this.queueChallenge);
+
             this.server.to(match.Challenger.socket).emit('matchmakingfound', {
                 matchmaking: true,
                 opponent: match.Opponent.username,

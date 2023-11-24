@@ -42,7 +42,7 @@ export class AchievementsService {
         ) {
             newData = 'Fast Pong Silver';
         } else if (
-            minRound < 2 &&
+            minRound < 7 &&
             data.achievements.find((ach) => ach.type === AchievementType.SILVER)
         ) {
             newData = 'Fast Pong Gold';
@@ -175,8 +175,6 @@ export class AchievementsService {
         user: any;
         achievements: { type: AchievementType; title: string }[];
     }) {
-        console.log('username: ', data.user.username);
-        console.log('user streak: ', data.user.stats.winnerStreak);
         let newData: string;
         if (
             data.achievements.length === 0 &&
@@ -217,8 +215,6 @@ export class AchievementsService {
         user: any;
         achievements: { type: AchievementType; title: string }[];
     }) {
-        console.log('username: ', data.user.username);
-        console.log('user cleanSheet: ', data.user.stats.cleanSheets);
         let newData: string;
         if (
             data.achievements.length === 0 &&
@@ -293,7 +289,6 @@ export class AchievementsService {
 
     async GenerateAchievements(data: any) {
         const { player1, player2 } = data;
-        console.log('data: ', data);
         const user1 = await this.prisma.user.findUnique({
             where: { username: player1.username },
             include: {
@@ -432,7 +427,6 @@ export class AchievementsService {
 
         // Clean Sheet
         if (data.player1.score === 0) {
-            console.log('player 2 cleanSheet');
             this.cleanSheet({
                 user: user2,
                 achievements: achievementsUser2.filter((ach) => {
@@ -444,7 +438,6 @@ export class AchievementsService {
                 }),
             });
         } else if (data.player2.score === 0) {
-            console.log('player 1 cleanSheet');
             this.cleanSheet({
                 user: user1,
                 achievements: achievementsUser1.filter((ach) => {

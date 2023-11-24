@@ -109,7 +109,7 @@ export class RankedService {
         const playerSpeed = 10;
         const initialBallSpeed = 5;
         let ballSpeed = initialBallSpeed;
-        console.log('start game');
+
         const canvas = { width: 500, height: 800 };
         const engine = Engine.create({ gravity: { x: 0, y: 0 } });
         const world = engine.world;
@@ -266,7 +266,7 @@ export class RankedService {
             ) {
                 matchQueue.status = 'END';
                 this.updataData(matchQueue, client1, client2);
-                console.log('game ended');
+
                 return clearInterval(interval);
             }
 
@@ -362,7 +362,7 @@ export class RankedService {
                     matchQueue.dataAchieved.player1.MaxTimeRound,
                     Seconds,
                 );
-                console.log('Seconds 1 : ', Seconds);
+
                 Seconds = 0;
                 resetBall();
             }
@@ -377,7 +377,7 @@ export class RankedService {
                     matchQueue.dataAchieved.player2.MaxTimeRound,
                     Seconds,
                 );
-                console.log('Seconds 2 : ', Seconds);
+
                 Seconds = 0;
                 resetBall();
             }
@@ -417,12 +417,10 @@ export class RankedService {
         const interval = setInterval(GameHook, frameRate);
 
         client1.on('disconnect', () => {
-            console.log('client1 disconnected');
             matchQueue.status = 'CANCEL';
             clearInterval(interval);
         });
         client2.on('disconnect', () => {
-            console.log('client2 disconnected');
             matchQueue.status = 'CANCEL';
             clearInterval(interval);
         });

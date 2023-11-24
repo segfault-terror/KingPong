@@ -112,7 +112,6 @@ async function seed() {
                 type: AchievementType.GOLD,
             },
         ],
-        skipDuplicates: true,
     });
 }
 

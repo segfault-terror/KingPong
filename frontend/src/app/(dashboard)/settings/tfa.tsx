@@ -38,7 +38,6 @@ function TFA({
     const [errorMsg, setErrorMsg] = useState('');
 
     const updateTfa = async (data: any) => {
-        console.log('data: ', data.data.code);
         const { data: response } = await axios.post(
             '/api/auth/2fa/authenticate',
             {
@@ -80,7 +79,6 @@ function TFA({
     );
 
     const onSubmit: SubmitHandler<TfaProps> = (data) => {
-        console.log(data.code);
         verify({ data });
     };
 

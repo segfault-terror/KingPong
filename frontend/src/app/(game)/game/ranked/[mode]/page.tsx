@@ -29,9 +29,7 @@ export default function Page({ params }: { params: { mode: string } }) {
         }
     });
 
-    useEffect(() => {
-        console.log('oppData: ', oppdata);
-    }, [oppdata]);
+    useEffect(() => {}, [oppdata]);
 
     if (isError) redirect('/signin');
     if (meLoading || me.stats === undefined || me.stats.league === undefined)

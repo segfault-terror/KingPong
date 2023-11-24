@@ -84,14 +84,6 @@ const FriendCard = ({
         };
     }, [username]);
 
-    useEffect(() => {
-        if (socket) {
-            socket.on('challenge', (data: any) => {
-                console.log(data);
-            });
-        }
-    }, [socket]);
-
     if (myloading || friendLoading) {
         return <EmptyFriendsList />;
     }
@@ -196,8 +188,6 @@ export default function FriendsList({ friends }: FriendState) {
             </div>
         );
     }
-
-    console.log(user.friends);
 
     return (
         <div className="felx flex-col justify-center items-center w-full p-3 md:p-6 z-0 mt-3 md:mt-0 lg:max-w-5xl lg:mx-auto ">

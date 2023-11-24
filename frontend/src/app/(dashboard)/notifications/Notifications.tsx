@@ -61,7 +61,6 @@ const Notife = ({
             });
         },
         onSuccess: () => {
-            console.log('updated');
 
             queryClient.invalidateQueries(['notreaded']);
             queryClient.invalidateQueries(['notifications']);
@@ -79,7 +78,6 @@ const Notife = ({
             });
         },
         onSuccess: () => {
-            console.log('deleted');
             queryClient.invalidateQueries(['notifications']);
         },
     });
@@ -156,7 +154,6 @@ export default function Notification({ notifications }: NotificationState) {
             return data;
         },
     );
-    console.log('notifications: ', notifications);
     const queryClient = useQueryClient();
     const {
         mutate: clear,
@@ -189,11 +186,8 @@ export default function Notification({ notifications }: NotificationState) {
     const [deleteAll, setDeleteAll] = useState(false);
 
     useEffect(() => {
-        if (!isloadingMe)
-            console.log('useEffect: notifications', meData.username);
         if (!isloadingMe) socket?.emit('notifications', meData.username);
         if (!isloadingMe && acceptNewFriend) {
-            console.log('acceptNewFriend: ', meData.username);
             socket?.emit('friends', meData.username);
             setAcceptNewFriend(false);
         }

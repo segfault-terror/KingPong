@@ -27,10 +27,8 @@ export default function Notif() {
                     avatar: string;
                     ChallengeId: string;
                 }) => {
-                    console.log('notif received');
                     setHidden(false);
                     setAvatar(avatar);
-                    console.log('avatar: ', avatar);
                     if (type === 'FRIEND') {
                         setMessage(`${username} sent you a friend request`);
                     } else {
