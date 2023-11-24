@@ -84,17 +84,17 @@ async function seed() {
             },
             {
                 title: 'Clean Sheet Bronze',
-                description: 'Win a match without conceding a goal',
+                description: 'Win 3 match without conceding a goal',
                 type: AchievementType.BRONZE,
             },
             {
                 title: 'Clean Sheet Silver',
-                description: 'Win 3 matches without conceding a goal',
+                description: 'Win 5 matches without conceding a goal',
                 type: AchievementType.SILVER,
             },
             {
                 title: 'Clean Sheet Gold',
-                description: 'Win 5 matches without conceding a goal',
+                description: 'Win 10 matches without conceding a goal',
                 type: AchievementType.GOLD,
             },
             {
@@ -113,6 +113,7 @@ async function seed() {
                 type: AchievementType.GOLD,
             },
         ],
+        skipDuplicates: true,
     });
 
     const users = [
