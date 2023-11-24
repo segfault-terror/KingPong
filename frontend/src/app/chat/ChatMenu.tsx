@@ -6,7 +6,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import { redirect, usePathname, useRouter } from 'next/navigation';
 import path from 'path';
-import { ReactNode, useContext, useEffect, useState } from 'react';
+import { ReactNode, use, useContext, useEffect, useState } from 'react';
 import Loading from '../loading';
 import BanDialog from './components/BanUserDialog';
 import BanUserModal from './components/BanUserModal';
@@ -29,6 +29,9 @@ import UnmuteDialog from './components/UnmuteUserDialog';
 import UnmuteUserModal from './components/UnmuteUserModal';
 import { modalContext } from '@/contexts/contexts';
 import BlockConfirm from './components/BlockConfirm';
+import { InviteGameModal } from '@/components/ModalGame';
+import { nanoid } from 'nanoid';
+import { Socket, io } from 'socket.io-client';
 
 export default function ChatMenu() {
     const pathname = usePathname();
@@ -67,6 +70,27 @@ function DmMenu(props: { username: string }) {
     const [showClearConfirm, setShowClearConfirm] = useState(false);
     const { setDotsDropdown } = useContext(modalContext);
     const [showBlockConfirm, setShowBlockConfirm] = useState(false);
+    const [showIniteGameModal, setShowInviteGameModal] = useState(false);
+
+    const { data: me, isLoading: meIsLoading } = useQuery({
+        queryKey: ['user', 'me'],
+        queryFn: async () => {
+            const { data } = await axios.get('/api/user/me', {
+                withCredentials: true,
+            });
+            return data;
+        },
+    });
+
+    const { data: visitedUser, isLoading: visitedUserIsLoading } = useQuery({
+        queryKey: ['user', props.username],
+        queryFn: async () => {
+            const { data } = await axios.get(`/api/user/get/${props.username}`, {
+                withCredentials: true,
+            });
+            return data;
+        },
+    });
 
     const { data: dm, isLoading: dmIsLoding } = useQuery({
         queryFn: async () => {
@@ -98,7 +122,30 @@ function DmMenu(props: { username: string }) {
         },
     });
 
-    if (dmIsLoding || mutationIsLoading) {
+    const [socket, setSocket] = useState<Socket | null>(null);
+
+    useEffect(() => {
+        const newSocket = io('/Global', {
+            withCredentials: true,
+            path: '/api/socket',
+            autoConnect: false,
+        });
+
+        async function connect() {
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            newSocket.connect();
+        }
+
+        connect();
+
+        setSocket(newSocket);
+
+        return () => {
+            setTimeout(() => newSocket.close(), 0);
+        };
+    }, []);
+
+    if (dmIsLoding || mutationIsLoading || meIsLoading || visitedUserIsLoading) {
         return (
             <div className="bg-default fixed inset-0 z-50">
                 <Loading />
@@ -150,7 +197,20 @@ function DmMenu(props: { username: string }) {
                 <Link href={`/profile/${props.username}`}>View Profile</Link>
             </ChatMenuItem>
             <ChatMenuItem>
-                <button>Invite to Game</button>
+                <button onClick={() => setShowInviteGameModal(true)}>
+                    Invite to Game
+                </button>
+                {showIniteGameModal && (
+                    <InviteGameModal
+                    sender={visitedUser?.username}
+                    username={me?.username}
+                    avatar={me?.avatar}
+                    id={nanoid()}
+                    setHidden={setShowInviteGameModal}
+                    senderId={visitedUser?.id}
+                    socket={socket}
+                    />
+                )}
             </ChatMenuItem>
             <ChatMenuItem>
                 <button onClick={() => setShowBlockConfirm(true)}>Block</button>
