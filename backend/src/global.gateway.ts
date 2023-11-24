@@ -18,6 +18,7 @@ export class GlobalGateway implements OnGatewayDisconnect, OnGatewayConnection {
     @WebSocketServer() server: Namespace;
 
     async handleConnection(socket: any) {
+        if (!socket.request.user) return;
         const username = socket.request.user.username;
         const user = this.connectedUsers.find(
             (user) => user.username === username,
