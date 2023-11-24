@@ -93,8 +93,9 @@ export class RankedService {
             player1_score: matchQueue.player1.score1,
             player2_score: matchQueue.player2.score2,
         });
-        console.log('AchievementsService');
-        this.achievement.GenerateAchievements(matchQueue.dataAchieved);
+        setTimeout(() => {
+            this.achievement.GenerateAchievements(matchQueue.dataAchieved);
+        }, 1000);
     }
 
     startGame(
@@ -352,6 +353,7 @@ export class RankedService {
 
             if (Collision.collides(ball.body, table.topWall, null)) {
                 matchQueue.player1.score1++;
+                matchQueue.dataAchieved.player1.score++;
                 matchQueue.dataAchieved.player1.MinTimeRound = Math.min(
                     matchQueue.dataAchieved.player1.MinTimeRound,
                     Seconds,
@@ -366,6 +368,7 @@ export class RankedService {
             }
             if (Collision.collides(ball.body, table.bottomWall, null)) {
                 matchQueue.player2.score2++;
+                matchQueue.dataAchieved.player2.score++;
                 matchQueue.dataAchieved.player2.MinTimeRound = Math.min(
                     matchQueue.dataAchieved.player2.MinTimeRound,
                     Seconds,

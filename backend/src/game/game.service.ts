@@ -136,13 +136,42 @@ export class GameService {
                 data.player2_score,
                 data.player1_score,
             );
-        const winner1 = data.player1_score > data.player2_score ? user1.stats.wins + 1 : user1.stats.wins ;
-        const losses1 = data.player1_score < data.player2_score ? user1.stats.losses + 1 : user1.stats.losses ;
+        const winner1 =
+            data.player1_score > data.player2_score
+                ? user1.stats.wins + 1
+                : user1.stats.wins;
+        const losses1 =
+            data.player1_score < data.player2_score
+                ? user1.stats.losses + 1
+                : user1.stats.losses;
 
-        const winner2 = data.player2_score > data.player1_score ? user2.stats.wins + 1 : user2.stats.wins ;
-        const losses2 = data.player2_score < data.player1_score ? user2.stats.losses + 1 : user2.stats.losses ;
+        const winner2 =
+            data.player2_score > data.player1_score
+                ? user2.stats.wins + 1
+                : user2.stats.wins;
+        const losses2 =
+            data.player2_score < data.player1_score
+                ? user2.stats.losses + 1
+                : user2.stats.losses;
 
+        const winnerStreak1 =
+            data.player1_score > data.player2_score
+                ? user1.stats.winnerStreak + 1
+                : 0;
+        const winnerStreak2 =
+            data.player2_score > data.player1_score
+                ? user2.stats.winnerStreak + 1
+                : 0;
 
+        const cleanSheet1 =
+            data.player2_score === 0
+                ? user1.stats.cleanSheets + 1
+                : user1.stats.cleanSheets;
+
+        const cleanSheet2 =
+            data.player1_score === 0
+                ? user2.stats.cleanSheets + 1
+                : user2.stats.cleanSheets;
 
         const updatedUser1 = await this.prisma.user.update({
             where: {
@@ -158,6 +187,8 @@ export class GameService {
                         NextLevelXP: levelPlayer1.nextLevelXP,
                         wins: winner1,
                         losses: losses1,
+                        winnerStreak: winnerStreak1,
+                        cleanSheets: cleanSheet1,
                     },
                 },
                 newLevelUp: levelPlayer1.level > oldLevelPlayer1,
@@ -178,6 +209,8 @@ export class GameService {
                         NextLevelXP: levelPlayer2.nextLevelXP,
                         wins: winner2,
                         losses: losses2,
+                        winnerStreak: winnerStreak2,
+                        cleanSheets: cleanSheet2,
                     },
                 },
                 newLevelUp: levelPlayer2.level > oldLevelPlayer2,

@@ -86,8 +86,6 @@ export class GameGateway implements OnGatewayConnection {
             },
             'finished',
         );
-        console.log('AchievementsService');
-        this.achievement.GenerateAchievements(matchQueue.dataAchieved);
         // add the match to the database
         this.gameService.AddMatch(
             matchQueue.player1.username,
@@ -104,6 +102,9 @@ export class GameGateway implements OnGatewayConnection {
             player1_score: matchQueue.player1.score1,
             player2_score: matchQueue.player2.score2,
         });
+        setTimeout(() => {
+            this.achievement.GenerateAchievements(matchQueue.dataAchieved);
+        }, 1000);
     }
 
     @SubscribeMessage('message')
@@ -329,12 +330,14 @@ export class GameGateway implements OnGatewayConnection {
                     },
                     dataAchieved: {
                         player1: {
+                            score: 0,
                             username: queue[0].username,
                             MaxTimeRound: 0,
                             MinTimeRound: Infinity,
                             TimeTouchPaddle: 0,
                         },
                         player2: {
+                            score: 0,
                             username: queue[1].username,
                             MaxTimeRound: 0,
                             MinTimeRound: Infinity,
@@ -436,12 +439,14 @@ export class GameGateway implements OnGatewayConnection {
                 },
                 dataAchieved: {
                     player1: {
+                        score: 0,
                         username: match.Challenger.username,
                         MaxTimeRound: 0,
                         MinTimeRound: Infinity,
                         TimeTouchPaddle: 0,
                     },
                     player2: {
+                        score: 0,
                         username: match.Opponent.username,
                         MaxTimeRound: 0,
                         MinTimeRound: Infinity,
