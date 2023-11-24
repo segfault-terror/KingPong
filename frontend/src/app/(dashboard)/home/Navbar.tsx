@@ -12,7 +12,7 @@ export default function Navbar(myleague: string, leaderboard: any[]) {
                 className="text-3xl font-jost text-white"
             >
                 <img
-                    src={`/images/${myleague}-league.svg`}
+                    src={`/images/${myleague.toLocaleLowerCase()}-league.svg`}
                     alt=""
                     className="inline-block"
                 />
@@ -28,15 +28,15 @@ export default function Navbar(myleague: string, leaderboard: any[]) {
                 {leaderboard.length > 0 && (
                     <div className="w-full m-auto rounded-3xl bg-gradient-to-r from-primary to-purple-950">
                         <div className="flex justify-around items-center">
-                                <div className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Rank
-                                </div>
-                                <div className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Username
-                                </div>
-                                <div className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Score
-                                </div>
+                            <div className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Rank
+                            </div>
+                            <div className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Username
+                            </div>
+                            <div className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Score
+                            </div>
                         </div>
                         <div className="w-full flex flex-col ">
                             {leaderboard
