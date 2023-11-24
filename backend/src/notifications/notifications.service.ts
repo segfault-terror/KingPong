@@ -1,7 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
-import { async } from 'rxjs';
-
 
 @Injectable()
 export class NotificationsService {
@@ -44,7 +42,7 @@ export class NotificationsService {
     }
 
     async deleteAll(id: string) {
-        return  this.prisma.notification.deleteMany({
+        return this.prisma.notification.deleteMany({
             where: {
                 sendToId: id,
             },
@@ -52,25 +50,30 @@ export class NotificationsService {
     }
 
     async create(data: any) {
-        const me =  await this.prisma.user.findUnique({
+        const me = await this.prisma.user.findUnique({
             where: {
                 id: data.userId,
             },
-            select:{
+            select: {
                 Notifications: true,
                 username: true,
-            }
+            },
         });
 
         if (!me) {
             throw new NotFoundException('User not found');
         }
 
-        if (me.Notifications.some((notification) => notification.sendToId === data.sendToId && notification.type === data.type)) {
-            throw new NotFoundException('Notification already exists');
+        if (
+            me.Notifications.some(
+                (notification) =>
+                    notification.sendToId === data.sendToId &&
+                    notification.type === data.type,
+            )
+        ) {
+            return;
         }
-        const ChallengeId = data.type === 'GAME' ? data.ChallengeId : "";
-
+        const ChallengeId = data.type === 'GAME' ? data.ChallengeId : '';
 
         return this.prisma.notification.create({
             data: {
@@ -105,7 +108,11 @@ export class NotificationsService {
             return false;
         }
 
-        return notif.some((notification) => notification.userId === data.userId && notification.type === data.type);
+        return notif.some(
+            (notification) =>
+                notification.userId === data.userId &&
+                notification.type === data.type,
+        );
     }
 
     async getUserByUsername(username: string) {
