@@ -76,7 +76,7 @@ export default function PopNotif({
     });
 
     const { data: me, isLoading: meLoading } = useQuery(['me'], async () => {
-        const res = await axios.get('/api/users/me', {
+        const res = await axios.get('/api/user/me', {
             withCredentials: true,
         });
         return res.data;
@@ -141,7 +141,11 @@ export default function PopNotif({
                             deleteNotif({ id: notif.id });
                         }}
                     >
-                        <img src="/images/accept.svg" alt="" className="w-6 h-6" />
+                        <img
+                            src="/images/accept.svg"
+                            alt=""
+                            className="w-6 h-6"
+                        />
                     </button>
                     <button
                         className="flex justify-center items-center col-span-1 bg-red-400 w-1/2 h-6 m-auto rounded-full "
@@ -156,7 +160,11 @@ export default function PopNotif({
                             updateNotif(empty);
                         }}
                     >
-                        <img src="/images/decline.svg" alt="" className="w-4 h-4" />
+                        <img
+                            src="/images/decline.svg"
+                            alt=""
+                            className="w-4 h-4"
+                        />
                     </button>
                 </div>
             </div>
