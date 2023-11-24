@@ -17,6 +17,7 @@ export default function JoinPrivateChannelForm() {
     });
 
     const [wrongPassword, setWrongPassword] = useState(false);
+    const [alreadyMember, setAlreadyMember] = useState(false);
     const [redirectChannel, setRedirectChannel] = useState(false);
     const [channelName, setChannelName] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -44,6 +45,7 @@ export default function JoinPrivateChannelForm() {
         },
         onError: (err: any) => {
             if (err.response.status === 404) setWrongPassword(true);
+            if (err.response.status === 400) setAlreadyMember(true);
             else setErrorMessage(err.response.data.message);
         },
     });
@@ -69,6 +71,7 @@ export default function JoinPrivateChannelForm() {
                 joinChannel({
                     inviteCode: watch('password'),
                 });
+                setAlreadyMember(false);
                 setWrongPassword(false);
             })}
             className="flex flex-col items-center justify-center gap-4"
@@ -97,8 +100,11 @@ export default function JoinPrivateChannelForm() {
                         w-[60%]
                         text-sm"
             />
-            {wrongPassword && !errors.password?.message && (
+            {wrongPassword && !alreadyMember && !errors.password?.message && (
                 <p className="text-red-400">Wrong Code</p>
+            )}
+            {alreadyMember && !wrongPassword && !errors.password?.message && (
+                <p className="text-red-400">Already a member</p>
             )}
             <p className="text-red-400">{errors.password?.message}</p>
             <p className="text-red-400">{errorMessage}</p>

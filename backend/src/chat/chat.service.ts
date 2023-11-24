@@ -607,6 +607,15 @@ export class ChatService {
                 bannedUsers: {
                     select: { username: true },
                 },
+                owner: {
+                    select: { username: true },
+                },
+                admins: {
+                    select: { username: true },
+                },
+                members: {
+                    select: { username: true },
+                },
             },
         });
         if (!channel) {
@@ -618,6 +627,20 @@ export class ChatService {
         ) {
             throw new ForbiddenException(
                 `You are baned in the channel ${channel.name}`,
+            );
+        }
+
+        if (
+            channel.owner.username === requestUsername ||
+            channel.admins.some(
+                (admin) => admin.username === requestUsername,
+            ) ||
+            channel.members.some(
+                (member) => member.username === requestUsername,
+            )
+        ) {
+            throw new BadRequestException(
+                `You are already a member in ${channel.name}`,
             );
         }
 
