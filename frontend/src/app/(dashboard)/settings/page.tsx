@@ -207,7 +207,7 @@ export default function Settings() {
     return (
         <main className="flex items-center justify-center my-9">
             <div
-                className="bg-background border border-secondary-200 rounded-3xl lg:max-w-5xl w-full mx-2
+                className="bg-gradient-to-bl from-[#6D1D4F] to-background border border-secondary-200 rounded-3xl lg:max-w-5xl w-full mx-2
                             flex flex-col items-center justify-center gap-8 p-3"
             >
                 <h2 className="font-jost text-4xl font-bold text-secondary-200">

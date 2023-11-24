@@ -1,7 +1,8 @@
+'use client';
 import Modal from '@/components/Modal';
 import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 interface TfaProps {
@@ -34,24 +35,20 @@ function TFA({
         setValue('code', event.target.value);
     };
 
+    const [errorMsg, setErrorMsg] = useState('');
+
     const updateTfa = async (data: any) => {
         console.log('data: ', data.data.code);
-        try {
-            const { data: response } = await axios.post(
-                '/api/auth/2fa/authenticate',
-                {
-                    twoFactorAuthenticationCode: data.data.code,
-                },
-                {
-                    withCredentials: true,
-                },
-            );
-            console.log(response);
-            return response;
-        } catch (error) {
-            const err = error as any;
-            throw err.response?.data?.message;
-        }
+        const { data: response } = await axios.post(
+            '/api/auth/2fa/authenticate',
+            {
+                twoFactorAuthenticationCode: data.data.code,
+            },
+            {
+                withCredentials: true,
+            },
+        );
+        return response;
     };
 
     const { data, isLoading } = useQuery({
@@ -75,8 +72,9 @@ function TFA({
                 setTfa(true);
                 onToggle(!toggle);
             },
-            onError: (error) => {
-                console.log(error);
+            onError: (error: string) => {
+                setErrorMsg('code is invalid');
+                throw error;
             },
         },
     );
@@ -96,14 +94,16 @@ function TFA({
                     onToggle(false);
                     resetField('code');
                 }}
+                childrenClassName="bg-gradient-to-br from-primary to-background  flex flex-col justify-center itmes-center p-4 px-6 rounded-2xl"
             >
-                <div className="w-96 flex justify-center items-center text-2xl font-jost">
+                <div className="w-72 flex justify-center items-center text-2xl font-jost border-b-2 border-gray-400/20 m-auto">
                     Two-Factory authentication{' '}
                     <img src={'/images/lock.svg'} alt="lock" />
                 </div>
-                <div className="w-96 h-96 bg-primary rounded-2xl">
+
+                <div className="rounded-2xl">
                     <div className="flex flex-col">
-                        <div className="justify-center flex items-center">
+                        <div className="justify-center flex items-center my-4">
                             scan the qrCode with app authenticator
                         </div>
                         <div className="w-56 h-56 bg-black rounded-xl m-auto">
@@ -122,6 +122,11 @@ function TFA({
                                     <p className="text-red-600">*</p>
                                     Authentication code
                                 </label>
+                                {errorMsg && (
+                                    <div className="flex justify-center items-center text-red-600">
+                                        {errorMsg}
+                                    </div>
+                                )}
                                 <input
                                     type="text"
                                     id="code"
@@ -149,7 +154,8 @@ function TFA({
                                 <button
                                     title="verify"
                                     type="submit"
-                                    className="bg-green-500 text-black font-medium rounded-lg w-40 h-10 mt-4 m-auto"
+                                    className="bg-green-500 text-black font-medium rounded-lg w-40 h-10 mt-4
+                                    m-auto hover:scale-90 hover:bg-green-700 transition-all duration-300 ease-in-out"
                                 >
                                     {message}
                                 </button>
