@@ -37,7 +37,7 @@ export function InviteGameModal({
                     max-w-[400px] h-44 flex flex-col justify-evenly"
         >
             <h1 className="text-center text-xl font-jost">
-                Invite <span className="text-secondary-200">@{username}</span>{' '}
+                Invite <span className="text-secondary-200">@{sender}</span>{' '}
                 to a game?
                 <p className="text-lg font-jockey text-red-500">
                     {' '}
