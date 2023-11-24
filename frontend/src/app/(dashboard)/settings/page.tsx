@@ -9,13 +9,11 @@ import {
     useQueryClient,
 } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { UseFormRegister, UseFormResetField, useForm } from 'react-hook-form';
+import { UseFormRegister, UseFormResetField, set, useForm } from 'react-hook-form';
 import { redirect, useRouter } from 'next/navigation';
 import { useContext } from 'react';
 import Loading from '@/app/loading';
 import { TfaContext } from '@/contexts/contexts';
-
-
 
 const profile = {
     avatar: '',
@@ -69,6 +67,7 @@ function UploadAvatar({
 
 export default function Settings() {
     const { toggle, setToggle, tfa, setTfa } = useContext(TfaContext);
+    const [isFetched, setIsFetched] = React.useState(false);
     const [isDataFetched, setIsDataFetched] = React.useState(false);
     // fetch data from backend
     const { data, isLoading } = useQuery({
@@ -81,7 +80,8 @@ export default function Settings() {
                 setValue('fullname', me.data.fullname);
                 setValue('username', me.data.username);
                 setIsDataFetched(true);
-                setTfa(me.data.twoFactorEnabled)
+                setTfa(me.data.twoFactorEnabled);
+                setIsFetched(true);
                 return me.data;
             } catch {
                 redirect('/signin');
@@ -150,8 +150,10 @@ export default function Settings() {
                 'profile',
                 'user',
             ]);
-            focusManager.setFocused(false);
-            focusManager.setFocused(true);
+            setTimeout(() => {
+                focusManager.setFocused(false);
+                focusManager.setFocused(true);
+            }, 2000);
             router.push('/profile/' + data.username);
         },
         onError: async (error: string) => {},

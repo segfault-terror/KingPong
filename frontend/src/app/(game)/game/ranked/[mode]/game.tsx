@@ -136,18 +136,20 @@ export default function Game({ me, opponent }: { me: any; opponent: string }) {
         if (!ready) return;
         let serverClientRatioW = 1;
         let serverClientRatioH = 1;
-        if (screenDim.width < init.width || screenDim.height < init.height) {
+        if (
+            screenDim.width < init.width ||
+            screenDim.height * 0.7 < init.height
+        ) {
             const w = init.width;
             const h = init.height;
             const ratio = init.width / init.height;
 
             if (screenDim.width < init.width) {
-                console.log(screenDim.width, init.width);
                 init.width = screenDim.width * 0.9;
                 init.height = init.width / ratio;
             }
-            if (screenDim.height * 0.8 < init.height) {
-                init.height = screenDim.height * 0.8;
+            if (screenDim.height * 0.7 < init.height) {
+                init.height = screenDim.height * 0.7;
                 init.width = init.height * ratio;
             }
             serverClientRatioW = init.width / w;

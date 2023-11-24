@@ -16,6 +16,7 @@ export default function DashboardLayout({
 }) {
     const { error, data, isLoading } = useQuery({
         queryKey: ['auth'],
+        retry: false,
         queryFn: async () => {
             try {
                 const data = await axios.get(`/api/auth/status`, {

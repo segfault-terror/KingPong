@@ -53,6 +53,7 @@ export default function DropdownMenu() {
     const [open, setOpen] = useState(false);
     const { data, isLoading } = useQuery({
         queryKey: ['user'],
+        retry: false,
         queryFn: async () => {
             try {
                 const res = await axios.get(`/api/user/me`, {

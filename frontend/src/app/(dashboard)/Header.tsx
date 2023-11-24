@@ -29,6 +29,7 @@ function NavItem({
 export default function Header() {
     const { data: currentUser, isLoading: isLoadingme } = useQuery({
         queryKey: ['profile', 'current'],
+        retry: false,
         queryFn: async () => {
             const { data } = await axios.get(`/api/user/me`, {
                 withCredentials: true,
