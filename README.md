@@ -1,6 +1,6 @@
 ![Webserv Banner](doc/img/kingpong-banner.png)
 
-KingPong is a full-stack Pong game web application that brings the classic arcade experience to the modern web. With a seamless integration of Next.js, Nest.js, PostgreSQL (with Prisma), Nginx, Minio, and Docker, KingPong delivers a feature-rich environment for users to enjoy and compete.
+KingPong is a full-stack Pong game web application that brings the classic arcade experience to the modern web. With a seamless integration of Next.js, NestJS, PostgreSQL (with Prisma), Nginx, Minio, and Docker, KingPong delivers a feature-rich environment for users to enjoy and compete.
 
 ## Features
 
