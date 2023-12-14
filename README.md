@@ -22,7 +22,7 @@ Earn achievements as you progress through the game. Whether it's a high score, a
 ## Technologies Used
 
 - **Frontend:** Next.js 13
-- **Backend:** Nest.js
+- **Backend:** NestJS
 - **Database:** PostgreSQL with Prisma
 - **Reverse Proxy:** Nginx
 - **Static Object Storage:** Minio
